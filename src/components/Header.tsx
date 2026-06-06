@@ -83,6 +83,29 @@ const MASCULINO: MegaContent = {
   ],
 };
 
+const ACESSORIOS: MegaContent = {
+  columns: [
+    {
+      title: "Acessórios",
+      items: [
+        { label: "Bolsas", c: "bolsas" },
+        { label: "Cintos", c: "cintos" },
+        { label: "Bijuterias", c: "bijuterias" },
+        { label: "Óculos", c: "oculos" },
+        { label: "Lenços", c: "lencos" },
+        { label: "Chapéus", c: "chapeus" },
+      ],
+    },
+    {
+      title: "Coleções",
+      items: [
+        { label: "Novidades", c: "novidades" },
+        { label: "Mais Vendidos", c: "mais-vendidos" },
+      ],
+    },
+  ],
+};
+
 const PROMOCOES: MegaContent = {
   columns: [
     {
@@ -101,6 +124,15 @@ const PROMOCOES: MegaContent = {
     c: "promocoes",
   },
 };
+
+type MenuKey = "feminino" | "masculino" | "acessorios" | "promocoes" | null;
+
+const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; emoji?: string }[] = [
+  { key: "feminino", label: "Feminino", content: FEMININO },
+  { key: "masculino", label: "Masculino", content: MASCULINO },
+  { key: "acessorios", label: "Acessórios", content: ACESSORIOS },
+  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, emoji: "🔥" },
+];
 
 type MenuKey = "feminino" | "masculino" | "promocoes" | null;
 
