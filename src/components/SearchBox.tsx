@@ -46,12 +46,12 @@ export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () =
   }, []);
 
   useEffect(() => {
-    const term = q.trim();
+    const term = q.trim().slice(0, 80).replace(/["\\():*?]/g, " ").replace(/\s+/g, " ").trim();
     if (term.length < 2) { setResults([]); setActive(-1); return; }
     setLoading(true);
     const t = setTimeout(async () => {
       try {
-        const query = `title:*${term}* OR product_type:*${term}* OR tag:*${term}* OR variants.option_value:*${term}*`;
+        const query = `title:*${term}* OR product_type:*${term}* OR tag:*${term}*`;
         const data = await storefrontApiRequest(SEARCH_SUGGESTIONS_QUERY, { query });
         const list = (data?.data?.products?.edges ?? []).map((e: { node: Suggestion }) => e.node);
         setResults(list);
@@ -60,6 +60,7 @@ export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () =
     }, 250);
     return () => clearTimeout(t);
   }, [q]);
+
 
   const submit = () => {
     if (!q.trim()) return;
