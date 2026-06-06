@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, ImageOff } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { track } from "@/lib/analytics";
+
 
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const addItem = useCartStore((s) => s.addItem);
@@ -27,7 +29,14 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
       quantity: 1,
       selectedOptions: variant.selectedOptions ?? [],
     });
+    track.addToCart({
+      id: product.node.id,
+      name: product.node.title,
+      price: parseFloat(variant.price.amount),
+      currency: variant.price.currencyCode,
+    });
   };
+
 
   return (
     <Link

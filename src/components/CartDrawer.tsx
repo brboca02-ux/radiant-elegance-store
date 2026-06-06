@@ -4,6 +4,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ShoppingBag, Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice } from "@/lib/shopify";
+import { track } from "@/lib/analytics";
+
 
 export function CartDrawer() {
   const [open, setOpen] = useState(false);
@@ -16,8 +18,22 @@ export function CartDrawer() {
 
   const checkout = () => {
     const url = getCheckoutUrl();
-    if (url) { window.open(url, "_blank"); setOpen(false); }
+    if (url) {
+      track.beginCheckout({
+        value: total,
+        currency,
+        items: items.map((i) => ({
+          id: i.product.node.id,
+          name: i.product.node.title,
+          price: parseFloat(i.price.amount),
+          quantity: i.quantity,
+        })),
+      });
+      window.open(url, "_blank");
+      setOpen(false);
+    }
   };
+
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

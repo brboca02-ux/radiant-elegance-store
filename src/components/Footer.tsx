@@ -1,4 +1,6 @@
 import { Instagram, Facebook } from "lucide-react";
+import { NewsletterCapture } from "@/components/NewsletterCapture";
+
 
 export function Footer() {
   return (
@@ -31,17 +33,12 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-[11px] tracking-[0.3em] uppercase mb-5 text-gold">Newsletter</h4>
-          <p className="text-sm text-background/70 mb-4">Receba novidades, lançamentos e acessos antecipados.</p>
-          <form onSubmit={(e) => e.preventDefault()} className="flex">
-            <input
-              type="email"
-              required
-              placeholder="seu@email.com"
-              className="flex-1 bg-transparent border border-background/30 px-4 py-2.5 text-sm placeholder:text-background/40 focus:outline-none focus:border-gold"
-            />
-            <button className="px-5 bg-gold text-foreground text-[11px] tracking-[0.25em] uppercase hover:bg-gold/85">OK</button>
-          </form>
+          <p className="text-sm text-background/70 mb-4">Ganhe 5% OFF na primeira compra.</p>
+          <div className="bg-background text-foreground rounded-lg p-4">
+            <NewsletterCapture compact />
+          </div>
         </div>
+
       </div>
       <div className="border-t border-background/10 py-6 text-center text-xs text-background/60">
         © {new Date().getFullYear()} MD Modas · Todos os direitos reservados

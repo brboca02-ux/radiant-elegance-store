@@ -1,6 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { track } from "@/lib/analytics";
+
 import { Button } from "@/components/ui/button";
 import {
   formatPrice,
@@ -62,6 +64,19 @@ function ProductPage() {
   const variants = data.variants.edges.map((e) => e.node);
   const selected = variants[variantIdx] ?? variants[0];
   const images = data.images.edges.map((e) => e.node);
+
+  useEffect(() => {
+    if (selected) {
+      track.viewItem({
+        id: data.id,
+        name: data.title,
+        price: parseFloat(selected.price.amount),
+        currency: selected.price.currencyCode,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.id]);
+
   const videos = (data.media?.edges ?? [])
     .map((e) => e.node)
     .filter((m) => m.mediaContentType === "VIDEO" && m.sources && m.sources.length > 0);
@@ -182,11 +197,12 @@ function ProductPage() {
               {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "🛒 Adicionar à Sacola"}
             </Button>
             <Button asChild size="xl" className="w-full rounded-full bg-[#25D366] hover:bg-[#25D366]/90 text-white h-14 text-base">
-              <a href={waLink} target="_blank" rel="noopener noreferrer">
+              <a href={waLink} target="_blank" rel="noopener noreferrer" onClick={() => track.whatsappClick("product")}>
                 <MessageCircle className="w-5 h-5 mr-2" /> Comprar pelo WhatsApp
               </a>
             </Button>
           </div>
+
 
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
             <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Loja física em {STORE_INFO.city}</li>

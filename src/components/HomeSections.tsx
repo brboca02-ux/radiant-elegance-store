@@ -11,6 +11,10 @@ import lookbook2 from "@/assets/lookbook-2.jpg";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Truck, RefreshCcw, ShieldCheck, MessageCircle } from "lucide-react";
+import { buildWhatsAppLink } from "@/lib/shopify";
+import { useSiteConfig } from "@/lib/siteConfig";
+import { track } from "@/lib/analytics";
+
 
 const categories = [
   { label: "Vestidos", img: vestidos, q: "vestidos" },
@@ -29,23 +33,31 @@ const diferenciais = [
 ];
 
 export function HomeHero() {
+  const cfg = useSiteConfig();
   return (
     <section className="relative h-[72vh] sm:h-[80vh] min-h-[480px] md:min-h-[640px] overflow-hidden bg-secondary">
       <img src={hero} alt="Nova Coleção MD Modas" width={1920} height={1280} className="absolute inset-0 w-full h-full object-cover object-center animate-slow-zoom" />
       <div className="absolute inset-0 bg-gradient-to-r from-foreground/30 via-transparent to-foreground/10" />
       <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center">
         <div className="max-w-xl text-background animate-fade-up">
-          <span className="inline-block bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">Nova Coleção</span>
-          <h1 className="font-display font-extrabold text-5xl md:text-7xl leading-[1.05] mt-6 text-background">MD Modas</h1>
+          <span className="inline-block bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">{cfg.heroEyebrow}</span>
+          <h1 className="font-display font-extrabold text-5xl md:text-7xl leading-[1.05] mt-6 text-background">{cfg.heroTitle}</h1>
           <p className="text-base md:text-lg text-background/90 mt-6 leading-relaxed">
-            Moda feminina e masculina para todas as ocasiões.
+            {cfg.heroSubtitle}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button variant="default" size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full" asChild>
-              <Link to="/colecao" search={{ c: undefined }}>Comprar Agora</Link>
+              <Link to="/colecao" search={{ c: undefined }}>{cfg.heroCta}</Link>
             </Button>
             <Button variant="default" size="xl" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-full" asChild>
-              <a href="https://wa.me/5500000000000" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+              <a
+                href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track.whatsappClick("hero")}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" /> Chamar no WhatsApp
+              </a>
             </Button>
           </div>
         </div>
@@ -53,6 +65,7 @@ export function HomeHero() {
     </section>
   );
 }
+
 
 export function CategoriesSection() {
   return (
