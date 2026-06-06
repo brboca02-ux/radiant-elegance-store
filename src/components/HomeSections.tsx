@@ -79,29 +79,28 @@ export function HomeHero() {
 
 export function CategoriesSection() {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end justify-between mb-4 md:mb-5">
           <div>
-            <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">Categorias</h2>
-            <p className="text-sm text-muted-foreground mt-2">Encontre o que combina com você.</p>
+            <h2 className="font-display font-semibold text-lg md:text-xl tracking-tight">Categorias</h2>
           </div>
-          <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-sm font-medium text-primary hover:underline">
+          <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-primary hover:underline">
             Ver tudo →
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative aspect-[3/4] overflow-hidden bg-secondary"
+              className="group relative h-[110px] md:h-[160px] overflow-hidden bg-secondary"
             >
               <img src={c.img} alt={c.label} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4">
-                <h3 className="font-display font-semibold text-lg md:text-xl text-background">{c.label}</h3>
+              <div className="absolute inset-x-0 bottom-0 px-3 py-2">
+                <h3 className="font-semibold text-xs md:text-sm text-background tracking-wide">{c.label}</h3>
               </div>
             </Link>
           ))}
