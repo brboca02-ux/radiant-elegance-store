@@ -46,10 +46,10 @@ export function Footer() {
         <div>
           <h4 className={COL_TITLE}>Atendimento</h4>
           <ul className="space-y-3">
-            <li><a href="#" className={LINK}>Trocas e Devoluções</a></li>
-            <li><a href="#" className={LINK}>Política de Privacidade</a></li>
-            <li><a href="#" className={LINK}>Termos de Uso</a></li>
-            <li><a href="#" className={LINK}>Política de Entrega</a></li>
+            <li><Link to="/sobre" hash="trocas" className={LINK}>Trocas e Devoluções</Link></li>
+            <li><Link to="/sobre" hash="privacidade" className={LINK}>Política de Privacidade</Link></li>
+            <li><Link to="/sobre" hash="termos" className={LINK}>Termos de Uso</Link></li>
+            <li><Link to="/sobre" hash="entrega" className={LINK}>Política de Entrega</Link></li>
           </ul>
         </div>
 
@@ -80,19 +80,16 @@ export function Footer() {
       {/* Trust + payments */}
       <div className="border-t border-background/10">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-background/70">
-            <span className="inline-flex items-center gap-2"><Lock className="h-3.5 w-3.5" strokeWidth={1.5} /> Site Seguro</span>
-            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.5} /> Compra Segura</span>
-            <span className="inline-flex items-center gap-2"><MessageCircle className="h-3.5 w-3.5" strokeWidth={1.5} /> Atendimento via WhatsApp</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <PayBadge>Pix</PayBadge>
-            <PayBadge>Visa</PayBadge>
-            <PayBadge>Master</PayBadge>
-            <PayBadge>Elo</PayBadge>
-            <PayBadge>Amex</PayBadge>
-            <PayBadge>Hipercard</PayBadge>
-          </div>
+          <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-background/70 list-none">
+            <li className="inline-flex items-center gap-2"><Lock className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" /> Site Seguro</li>
+            <li className="inline-flex items-center gap-2"><ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" /> Compra Segura</li>
+            <li className="inline-flex items-center gap-2"><MessageCircle className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" /> Atendimento via WhatsApp</li>
+          </ul>
+          <ul aria-label="Formas de pagamento aceitas" className="flex flex-wrap items-center gap-2 list-none">
+            {["Pix", "Visa", "Mastercard", "Elo", "Amex", "Hipercard"].map((m) => (
+              <li key={m}><PayBadge label={`Aceitamos ${m}`}>{m}</PayBadge></li>
+            ))}
+          </ul>
         </div>
       </div>
 
@@ -106,9 +103,13 @@ export function Footer() {
   );
 }
 
-function PayBadge({ children }: { children: React.ReactNode }) {
+function PayBadge({ children, label }: { children: React.ReactNode; label?: string }) {
   return (
-    <span className="text-[10px] font-semibold tracking-wider uppercase bg-background/10 border border-background/15 text-background/85 px-2.5 py-1 rounded">
+    <span
+      role="img"
+      aria-label={label ?? (typeof children === "string" ? `Aceitamos ${children}` : undefined)}
+      className="text-[10px] font-semibold tracking-wider uppercase bg-background/10 border border-background/15 text-background/85 px-2.5 py-1 rounded"
+    >
       {children}
     </span>
   );
