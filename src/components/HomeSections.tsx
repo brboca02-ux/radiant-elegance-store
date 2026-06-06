@@ -17,46 +17,52 @@ import { track } from "@/lib/analytics";
 
 
 const categories = [
-  { label: "Vestidos", img: vestidos, q: "vestidos" },
+  { label: "Feminino", img: vestidos, q: "feminino" },
+  { label: "Masculino", img: blazers, q: "masculino" },
+  { label: "Vestidos", img: novidades, q: "vestidos" },
   { label: "Conjuntos", img: conjuntos, q: "conjuntos" },
-  { label: "Blazers", img: blazers, q: "blazers" },
-  { label: "Alfaiataria", img: alfaiataria, q: "alfaiataria" },
-  { label: "Tricots", img: tricots, q: "tricots" },
-  { label: "Novidades", img: novidades, q: "novidades" },
+  { label: "Plus Size", img: alfaiataria, q: "plus-size" },
 ];
 
 const diferenciais = [
   { i: Truck, t: "Frete para todo Brasil", d: "Envio expresso e seguro" },
   { i: RefreshCcw, t: "Troca facilitada", d: "Até 30 dias para você decidir" },
   { i: ShieldCheck, t: "Compra segura", d: "Pagamento criptografado" },
-  { i: MessageCircle, t: "Atendimento humanizado", d: "Consultoras de estilo dedicadas" },
+  { i: MessageCircle, t: "Atendimento humanizado", d: "Consultoras dedicadas" },
 ];
 
 export function HomeHero() {
   const cfg = useSiteConfig();
   return (
-    <section className="relative h-[72vh] sm:h-[80vh] min-h-[480px] md:min-h-[640px] overflow-hidden bg-secondary">
-      <img src={hero} alt="Nova Coleção MD Modas" width={1920} height={1280} className="absolute inset-0 w-full h-full object-cover object-center animate-slow-zoom" />
-      <div className="absolute inset-0 bg-gradient-to-r from-foreground/30 via-transparent to-foreground/10" />
+    <section className="relative h-[78vh] min-h-[560px] md:min-h-[680px] overflow-hidden bg-foreground">
+      <img
+        src={hero}
+        alt="MD Modas — Nova Coleção"
+        width={1920}
+        height={1280}
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
       <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center">
-        <div className="max-w-xl text-background animate-fade-up">
-          <span className="inline-block bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">{cfg.heroEyebrow}</span>
-          <h1 className="font-display font-extrabold text-5xl md:text-7xl leading-[1.05] mt-6 text-background">{cfg.heroTitle}</h1>
-          <p className="text-base md:text-lg text-background/90 mt-6 leading-relaxed">
-            {cfg.heroSubtitle}
+        <div className="max-w-2xl text-background">
+          <h1 className="font-display font-semibold text-5xl md:text-7xl leading-[1.02] text-background tracking-tight">
+            MD Modas
+          </h1>
+          <p className="text-lg md:text-xl text-background/90 mt-6 leading-relaxed font-light max-w-lg">
+            {cfg.heroSubtitle || "Moda feminina e masculina para todas as ocasiões."}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button variant="default" size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full" asChild>
-              <Link to="/colecao" search={{ c: undefined }}>{cfg.heroCta}</Link>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8 font-semibold" asChild>
+              <Link to="/colecao" search={{ c: undefined }}>Comprar Agora</Link>
             </Button>
-            <Button variant="default" size="xl" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-full" asChild>
+            <Button size="xl" variant="outline" className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-8 font-semibold" asChild>
               <a
                 href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track.whatsappClick("hero")}
               >
-                <MessageCircle className="w-4 h-4 mr-2" /> Chamar no WhatsApp
+                <MessageCircle className="w-4 h-4 mr-2" /> Falar no WhatsApp
               </a>
             </Button>
           </div>
@@ -69,25 +75,29 @@ export function HomeHero() {
 
 export function CategoriesSection() {
   return (
-    <section className="py-24 bg-background">
+    <section className="py-20 md:py-28 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="text-center mb-14">
-          <span className="eyebrow">Edição</span>
-          <h2 className="font-display text-4xl md:text-5xl mt-3">Categorias</h2>
-          <span className="gold-rule mt-5" />
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">Categorias</h2>
+            <p className="text-sm text-muted-foreground mt-2">Encontre o que combina com você.</p>
+          </div>
+          <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-sm font-medium text-primary hover:underline">
+            Ver tudo →
+          </Link>
         </div>
-        <div className="flex md:grid gap-3 md:gap-6 md:grid-cols-3 overflow-x-auto md:overflow-visible -mx-6 px-6 md:mx-0 md:px-0 snap-x snap-mandatory no-scrollbar">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative shrink-0 w-[42%] sm:w-[32%] md:w-auto aspect-[4/5] overflow-hidden bg-secondary snap-start"
+              className="group relative aspect-[3/4] overflow-hidden bg-secondary"
             >
-              <img src={c.img} alt={c.label} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110" />
-              <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/35 transition-colors duration-500" />
-              <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 flex items-end justify-between text-background">
-                <h3 className="font-display text-xl md:text-3xl">{c.label}</h3>
+              <img src={c.img} alt={c.label} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4">
+                <h3 className="font-display font-semibold text-lg md:text-xl text-background">{c.label}</h3>
               </div>
             </Link>
           ))}
@@ -96,6 +106,7 @@ export function CategoriesSection() {
     </section>
   );
 }
+
 
 export function LaunchSection() {
   return (
