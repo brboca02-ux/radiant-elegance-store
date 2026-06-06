@@ -1,0 +1,227 @@
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+
+export const STORE_ID = "store_md_modas";
+
+export type OrderStatus =
+  | "novo"
+  | "pago"
+  | "separando"
+  | "enviado"
+  | "entregue"
+  | "cancelado";
+
+export type PaymentStatus = "pendente" | "pago" | "estornado" | "falhou";
+export type PaymentMethod = "pix" | "cartao" | "boleto" | "whatsapp" | "manual";
+
+export const ORDER_STATUS_FLOW: OrderStatus[] = [
+  "novo", "pago", "separando", "enviado", "entregue",
+];
+
+export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
+  novo: "Novo",
+  pago: "Pago",
+  separando: "Separando",
+  enviado: "Enviado",
+  entregue: "Entregue",
+  cancelado: "Cancelado",
+};
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  variant_id: string | null;
+  name: string;
+  sku: string;
+  size?: string;
+  color?: string;
+  quantity: number;
+  price: number;
+}
+
+export interface OrderAddress {
+  name: string;
+  zip: string;
+  street: string;
+  number: string;
+  complement?: string;
+  district: string;
+  city: string;
+  state: string;
+}
+
+export interface OrderCustomer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  doc?: string;
+}
+
+export interface OrderHistoryEntry {
+  id: string;
+  order_id: string;
+  old_status: OrderStatus | null;
+  new_status: OrderStatus;
+  user_id: string;
+  note?: string;
+  created_at: string;
+}
+
+export interface Order {
+  id: string;
+  store_id: string;
+  number: string;
+  customer: OrderCustomer;
+  address: OrderAddress;
+  status: OrderStatus;
+  payment_status: PaymentStatus;
+  payment_method: PaymentMethod;
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  total: number;
+  items: OrderItem[];
+  history: OrderHistoryEntry[];
+  notes?: string;
+  created_at: string;
+}
+
+const uid = () => Math.random().toString(36).slice(2, 10);
+
+const today = new Date();
+const daysAgo = (d: number) => new Date(today.getTime() - d * 86400000).toISOString();
+
+const mkOrder = (
+  n: number,
+  status: OrderStatus,
+  payment: PaymentStatus,
+  customer: OrderCustomer,
+  items: Omit<OrderItem, "id" | "order_id">[],
+  shipping = 19.9,
+  discount = 0,
+  daysOffset = 0,
+): Order => {
+  const id = "o_" + uid();
+  const subtotal = items.reduce((a, i) => a + i.price * i.quantity, 0);
+  const total = subtotal + shipping - discount;
+  const created_at = daysAgo(daysOffset);
+  return {
+    id,
+    store_id: STORE_ID,
+    number: "#" + (1000 + n),
+    customer,
+    address: {
+      name: customer.name,
+      zip: "89010-000",
+      street: "Rua das Flores",
+      number: String(100 + n),
+      district: "Centro",
+      city: "Blumenau",
+      state: "SC",
+    },
+    status,
+    payment_status: payment,
+    payment_method: "pix",
+    subtotal,
+    shipping,
+    discount,
+    total,
+    items: items.map((i) => ({ ...i, id: uid(), order_id: id })),
+    history: [
+      {
+        id: uid(), order_id: id, old_status: null, new_status: "novo",
+        user_id: "admin", created_at,
+      },
+      ...(status !== "novo" ? [{
+        id: uid(), order_id: id, old_status: "novo" as OrderStatus,
+        new_status: status, user_id: "admin", created_at,
+      }] : []),
+    ],
+    created_at,
+  };
+};
+
+const seed: Order[] = [
+  mkOrder(42, "pago", "pago",
+    { id: "c_01", name: "Mariana Silva", email: "mari@email.com", phone: "+55 47 99999-1111" },
+    [
+      { product_id: "p_001", variant_id: null, name: "Vestido Aurora", sku: "VST-AUR", size: "M", color: "Preto", quantity: 1, price: 189.9 },
+      { product_id: "p_002", variant_id: null, name: "Blusa Elegance", sku: "BLU-ELE", size: "P", color: "Branco", quantity: 1, price: 99.9 },
+    ], 19.9, 0, 0),
+  mkOrder(41, "novo", "pendente",
+    { id: "c_02", name: "João Pereira", email: "joao@email.com", phone: "+55 47 98888-2222" },
+    [{ product_id: "p_004", variant_id: null, name: "Camisa Casual", sku: "CAM-CAS", size: "G", color: "Azul", quantity: 1, price: 149.9 }],
+    24.9, 0, 0),
+  mkOrder(40, "separando", "pago",
+    { id: "c_03", name: "Camila Souza", email: "cami@email.com", phone: "+55 47 97777-3333" },
+    [{ product_id: "p_003", variant_id: null, name: "Conjunto Classic", sku: "CJT-CLA", size: "M", color: "Bege", quantity: 1, price: 289.9 },
+     { product_id: "p_002", variant_id: null, name: "Blusa Elegance", sku: "BLU-ELE", size: "M", color: "Branco", quantity: 1, price: 99.9 }],
+    19.9, 20, 0),
+  mkOrder(39, "enviado", "pago",
+    { id: "c_04", name: "Ana Beatriz", email: "ana@email.com", phone: "+55 47 96666-4444" },
+    [{ product_id: "p_002", variant_id: null, name: "Blusa Elegance", sku: "BLU-ELE", size: "M", color: "Branco", quantity: 1, price: 99.9 }],
+    19.9, 0, 1),
+  mkOrder(38, "entregue", "pago",
+    { id: "c_05", name: "Roberto Lima", email: "rob@email.com", phone: "+55 47 95555-5555" },
+    [{ product_id: "p_001", variant_id: null, name: "Vestido Aurora", sku: "VST-AUR", size: "G", color: "Vinho", quantity: 1, price: 189.9 },
+     { product_id: "p_004", variant_id: null, name: "Camisa Casual", sku: "CAM-CAS", size: "G", color: "Azul", quantity: 1, price: 149.9 }],
+    0, 0, 3),
+  mkOrder(37, "cancelado", "estornado",
+    { id: "c_06", name: "Lucas Almeida", email: "lucas@email.com", phone: "+55 47 94444-6666" },
+    [{ product_id: "p_005", variant_id: null, name: "Vestido Plus Elegance", sku: "VST-PLU", size: "GG", color: "Preto", quantity: 1, price: 259.9 }],
+    19.9, 0, 5),
+];
+
+interface OrdersState {
+  orders: Order[];
+  list: () => Order[];
+  get: (id: string) => Order | undefined;
+  setStatus: (id: string, status: OrderStatus, user_id?: string, note?: string) => void;
+  cancel: (id: string, user_id?: string, note?: string) => void;
+  remove: (id: string) => void;
+}
+
+export const useOrdersStore = create<OrdersState>()(
+  persist(
+    (set, get) => ({
+      orders: seed,
+      list: () => get().orders,
+      get: (id) => get().orders.find((o) => o.id === id),
+      setStatus: (id, status, user_id = "admin", note) =>
+        set((s) => ({
+          orders: s.orders.map((o) => {
+            if (o.id !== id || o.status === status) return o;
+            const entry: OrderHistoryEntry = {
+              id: uid(), order_id: id, old_status: o.status, new_status: status,
+              user_id, note, created_at: new Date().toISOString(),
+            };
+            const payment_status: PaymentStatus =
+              status === "pago" || status === "separando" || status === "enviado" || status === "entregue"
+                ? "pago"
+                : status === "cancelado" ? "estornado" : o.payment_status;
+            return { ...o, status, payment_status, history: [...o.history, entry] };
+          }),
+        })),
+      cancel: (id, user_id = "admin", note) => get().setStatus(id, "cancelado", user_id, note),
+      remove: (id) => set((s) => ({ orders: s.orders.filter((o) => o.id !== id) })),
+    }),
+    { name: "md_orders_v1", storage: createJSONStorage(() => localStorage) },
+  ),
+);
+
+export const fmtBRL = (n: number) =>
+  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+export const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+
+export const statusTone: Record<OrderStatus, string> = {
+  novo: "bg-slate-100 text-slate-700 ring-slate-200",
+  pago: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  separando: "bg-amber-50 text-amber-700 ring-amber-200",
+  enviado: "bg-blue-50 text-blue-700 ring-blue-200",
+  entregue: "bg-violet-50 text-violet-700 ring-violet-200",
+  cancelado: "bg-rose-50 text-rose-700 ring-rose-200",
+};
