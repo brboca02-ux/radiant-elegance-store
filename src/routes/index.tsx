@@ -8,6 +8,8 @@ import {
   InstagramSection,
 } from "@/components/HomeSections";
 import { PromoCountdownBanner, RecebidosSection } from "@/components/PromoSections";
+import { NewsletterSection } from "@/components/NewsletterCapture";
+import { WhatsAppCTA } from "@/components/WhatsAppCTA";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,8 +34,10 @@ function Index() {
       <CategoriesSection />
       <RecebidosSection />
       <LaunchSection />
+      <WhatsAppCTA source="home" />
       <LookbookSection />
       <DifferentialsSection />
+      <NewsletterSection />
       <InstagramSection />
     </>
   );
