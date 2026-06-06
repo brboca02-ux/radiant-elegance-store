@@ -46,10 +46,10 @@ export function Footer() {
         <div>
           <h4 className={COL_TITLE}>Atendimento</h4>
           <ul className="space-y-3">
-            <li><Link to="/sobre" hash="trocas" className={LINK}>Trocas e Devoluções</Link></li>
-            <li><Link to="/sobre" hash="privacidade" className={LINK}>Política de Privacidade</Link></li>
-            <li><Link to="/sobre" hash="termos" className={LINK}>Termos de Uso</Link></li>
-            <li><Link to="/sobre" hash="entrega" className={LINK}>Política de Entrega</Link></li>
+            <li><Link to="/trocas-e-devolucoes" className={LINK}>Trocas e Devoluções</Link></li>
+            <li><Link to="/privacidade" className={LINK}>Política de Privacidade</Link></li>
+            <li><Link to="/termos" className={LINK}>Termos de Uso</Link></li>
+            <li><Link to="/trocas-e-devolucoes" className={LINK}>Política de Entrega</Link></li>
           </ul>
         </div>
 
