@@ -102,15 +102,16 @@ export function CategoriesSection() {
 }
 
 
-function SectionHeader({ kicker, title, link }: { kicker?: string; title: string; link?: { to: string; label: string; c?: string } }) {
+function SectionHeader({ kicker, title, subtitle, link }: { kicker?: string; title: string; subtitle?: string; link?: { to: string; label: string; c?: string } }) {
   return (
     <div className="flex items-end justify-between mb-10">
       <div>
-        {kicker && <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">{kicker}</p>}
+        {kicker && <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3">{kicker}</p>}
         <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">{title}</h2>
+        {subtitle && <p className="text-sm md:text-base text-muted-foreground mt-3 max-w-xl">{subtitle}</p>}
       </div>
       {link && (
-        <Link to="/colecao" search={{ c: link.c }} className="hidden md:inline text-sm font-medium text-foreground hover:text-primary underline-offset-4 hover:underline">
+        <Link to="/colecao" search={{ c: link.c }} className="hidden md:inline text-sm font-medium text-foreground hover:text-primary underline-offset-4 hover:underline whitespace-nowrap ml-6">
           {link.label} →
         </Link>
       )}
@@ -118,23 +119,23 @@ function SectionHeader({ kicker, title, link }: { kicker?: string; title: string
   );
 }
 
-export function LaunchSection() {
+export function BestSellersSection() {
   return (
-    <section id="colecao" className="py-20 md:py-28 bg-background">
+    <section className="py-20 md:py-28 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <SectionHeader kicker="Novidades" title="Recém-chegados" link={{ to: "/colecao", label: "Ver coleção", c: "novidades" }} />
-        <ProductGrid sortKey="CREATED_AT" reverse first={8} />
+        <SectionHeader kicker="Os queridinhos da loja" title="Mais Vendidos" subtitle="As peças preferidas pelas clientes da MD Modas." link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
+        <ProductGrid sortKey="BEST_SELLING" first={8} />
       </div>
     </section>
   );
 }
 
-export function BestSellersSection() {
+export function LaunchSection() {
   return (
-    <section className="py-20 md:py-28 bg-offwhite">
+    <section id="colecao" className="py-20 md:py-28 bg-offwhite">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <SectionHeader kicker="Os queridinhos" title="Mais Vendidos" link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
-        <ProductGrid sortKey="BEST_SELLING" first={8} />
+        <SectionHeader kicker="Acabou de chegar" title="Novidades" link={{ to: "/colecao", label: "Ver coleção", c: "novidades" }} />
+        <ProductGrid sortKey="CREATED_AT" reverse first={8} />
       </div>
     </section>
   );
@@ -156,13 +157,17 @@ export function LookbookSection() {
     <section className="py-20 md:py-28 bg-foreground text-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
         <div className="aspect-[4/5] overflow-hidden">
-          <img src={lookbook1} alt="Editorial MD Modas" loading="lazy" className="w-full h-full object-cover" />
+          <img src={lookbook1} alt="Editorial MD Modas — Joinville" loading="lazy" className="w-full h-full object-cover" />
         </div>
         <div className="space-y-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Editorial</p>
-          <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">Vestindo o seu dia a dia, com atitude.</h2>
-          <p className="text-base text-background/70 leading-relaxed max-w-md">
-            Peças versáteis para mulheres e homens reais. Tecidos confortáveis, caimento perfeito e curadoria pensada para você.
+          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-background/60">Editorial MD Modas</p>
+          <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
+            Moda para o seu dia, na sua cidade.
+          </h2>
+          <p className="text-base text-background/75 leading-relaxed max-w-md">
+            Há anos vestindo mulheres e homens de Joinville com peças selecionadas para o
+            dia a dia, trabalho e ocasiões especiais. Atendimento próximo, curadoria honesta
+            e o cuidado de uma loja física feita por gente da cidade.
           </p>
           <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8" asChild>
             <Link to="/colecao" search={{ c: undefined }}>Explorar coleção</Link>
@@ -173,13 +178,56 @@ export function LookbookSection() {
   );
 }
 
+export function LojaFisicaSection() {
+  return (
+    <section className="py-20 md:py-28 bg-offwhite">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+        <div className="aspect-[4/3] overflow-hidden bg-secondary order-2 md:order-1">
+          <iframe
+            src={STORE_INFO.mapsEmbed}
+            title={`Localização ${STORE_INFO.name}`}
+            loading="lazy"
+            className="w-full h-full border-0"
+          />
+        </div>
+        <div className="space-y-5 order-1 md:order-2">
+          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Visite nossa loja</p>
+          <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+            Estamos em {STORE_INFO.city}
+          </h2>
+          <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+            <p className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5 text-foreground shrink-0" /> {STORE_INFO.street} — {STORE_INFO.city}/{STORE_INFO.region}</p>
+            <p className="flex items-start gap-2"><Clock className="h-4 w-4 mt-0.5 text-foreground shrink-0" /> Seg a Sex: 9h–18h · Sáb: 9h–13h</p>
+            <p className="flex items-start gap-2"><MessageCircle className="h-4 w-4 mt-0.5 text-foreground shrink-0" /> WhatsApp: atendimento próximo e humanizado</p>
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button size="lg" className="bg-foreground hover:bg-foreground/90 text-background rounded-none px-6" asChild>
+              <a href={STORE_INFO.mapsEmbed.replace("&output=embed", "")} target="_blank" rel="noopener noreferrer">Como Chegar</a>
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-none px-6 border-foreground" asChild>
+              <a
+                href={buildWhatsAppLink("Olá! Vim pelo site e quero saber mais sobre a loja.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track.whatsappClick("loja-fisica")}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" /> Falar no WhatsApp
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function DifferentialsSection() {
   return (
-    <section className="py-14 md:py-16 bg-offwhite border-y border-border">
+    <section className="py-14 md:py-16 bg-background border-y border-border">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         {diferenciais.map(({ i: Icon, t, d }) => (
           <div key={t} className="flex items-start gap-3">
-            <Icon className="h-6 w-6 text-foreground shrink-0 mt-0.5" strokeWidth={1.5} />
+            <Icon className="h-5 w-5 text-foreground shrink-0 mt-0.5" strokeWidth={1.5} />
             <div>
               <h3 className="font-semibold text-sm">{t}</h3>
               <p className="text-xs text-muted-foreground mt-1">{d}</p>
@@ -196,16 +244,14 @@ export function InstagramSection() {
   return (
     <section className="py-20 md:py-28 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Instagram</p>
-            <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">@mdmodas</h2>
-          </div>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hidden md:inline text-sm font-medium hover:text-primary underline-offset-4 hover:underline">
-            Seguir →
-          </a>
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3">Instagram</p>
+          <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">Acompanhe nossas novidades</h2>
+          <p className="text-sm md:text-base text-muted-foreground mt-3">
+            Veja lançamentos, bastidores e novas coleções da MD Modas.
+          </p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
           {cells.map((src, i) => (
             <a key={i} href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="group relative aspect-square overflow-hidden bg-secondary">
               <img src={src} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -213,8 +259,14 @@ export function InstagramSection() {
             </a>
           ))}
         </div>
+        <div className="text-center">
+          <Button size="lg" variant="outline" className="rounded-none border-foreground px-8" asChild>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Ver Instagram</a>
+          </Button>
+        </div>
       </div>
     </section>
   );
 }
+
 
