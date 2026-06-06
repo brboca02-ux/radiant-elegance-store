@@ -167,21 +167,18 @@ export function RecebidosHomeSection() {
 
 export function LookbookSection() {
   return (
-    <section className="py-20 md:py-28 bg-foreground text-background">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <div className="aspect-[4/5] overflow-hidden">
-          <img src={lookbook1} alt="Editorial MD Modas — Joinville" loading="lazy" className="w-full h-full object-cover" />
-        </div>
-        <div className="space-y-6">
-          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-background/60">Editorial MD Modas</p>
-          <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
-            Moda para o seu dia, na sua cidade.
-          </h2>
-          <p className="text-base text-background/75 leading-relaxed max-w-md">
-            Há anos vestindo mulheres e homens de Joinville com peças selecionadas para o
-            dia a dia, trabalho e ocasiões especiais. Atendimento próximo, curadoria honesta
-            e o cuidado de uma loja física feita por gente da cidade.
-          </p>
+    <section className="py-16 md:py-24 bg-foreground text-background">
+      <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center space-y-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/60">Editorial MD Modas</p>
+        <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
+          Moda para o seu dia, na sua cidade.
+        </h2>
+        <p className="text-base text-background/75 leading-relaxed max-w-xl mx-auto">
+          Há anos vestindo mulheres e homens de Joinville com peças selecionadas para o
+          dia a dia, trabalho e ocasiões especiais. Atendimento próximo, curadoria honesta
+          e o cuidado de uma loja física feita por gente da cidade.
+        </p>
+        <div className="pt-2">
           <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8" asChild>
             <Link to="/colecao" search={{ c: undefined }}>Explorar coleção</Link>
           </Button>
@@ -190,6 +187,7 @@ export function LookbookSection() {
     </section>
   );
 }
+
 
 export function LojaFisicaSection() {
   return (
