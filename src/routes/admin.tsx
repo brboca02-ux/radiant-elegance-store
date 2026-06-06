@@ -18,7 +18,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPanel,
 });
 
-type Lead = { type: "email" | "whatsapp"; value: string; at: string };
+import { loadLeads, type Lead } from "@/lib/leads";
 
 function Field({
   label,
@@ -61,11 +61,7 @@ function AdminPanel() {
 
   useEffect(() => {
     setCfg(loadSiteConfig());
-    try {
-      setLeads(JSON.parse(localStorage.getItem("md_leads_v1") ?? "[]"));
-    } catch {
-      setLeads([]);
-    }
+    setLeads(loadLeads());
   }, []);
 
   const update = <K extends keyof SiteConfig>(k: K, v: SiteConfig[K]) => setCfg((c) => ({ ...c, [k]: v }));
@@ -82,7 +78,15 @@ function AdminPanel() {
   };
 
   const exportLeads = () => {
-    const csv = ["tipo,contato,data", ...leads.map((l) => `${l.type},${l.value},${l.at}`)].join("\n");
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const rows = leads.map((l) => {
+      const name = l.name ?? "";
+      const email = l.email ?? (l.type === "email" ? l.value ?? "" : "");
+      const whatsapp = l.whatsapp ?? (l.type === "whatsapp" ? l.value ?? "" : "");
+      const source = l.source ?? "newsletter";
+      return [name, email, whatsapp, source, l.at].map((v) => esc(String(v))).join(",");
+    });
+    const csv = ["nome,email,whatsapp,origem,data", ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -152,13 +156,17 @@ function AdminPanel() {
         </div>
         <ul className="text-sm space-y-1 max-h-72 overflow-auto border border-border rounded-md p-3 bg-offwhite">
           {leads.length === 0 && <li className="text-muted-foreground">Nenhum lead capturado ainda.</li>}
-          {leads.map((l, i) => (
-            <li key={i} className="flex justify-between gap-3">
-              <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{l.type}</span>
-              <span className="flex-1">{l.value}</span>
-              <span className="text-muted-foreground">{new Date(l.at).toLocaleDateString("pt-BR")}</span>
-            </li>
-          ))}
+          {leads.map((l, i) => {
+            const contato = l.email || l.whatsapp || l.value || "";
+            const origem = l.source ?? l.type ?? "newsletter";
+            return (
+              <li key={i} className="flex justify-between gap-3">
+                <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{origem}</span>
+                <span className="flex-1 truncate">{l.name ? `${l.name} · ` : ""}{contato}</span>
+                <span className="text-muted-foreground">{new Date(l.at).toLocaleDateString("pt-BR")}</span>
+              </li>
+            );
+          })}
         </ul>
       </section>
     </div>
