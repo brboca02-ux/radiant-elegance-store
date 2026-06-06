@@ -15,9 +15,9 @@ export function ProductGrid({ query, emptyHint = true }: { query?: string; empty
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="aspect-[4/5] bg-secondary animate-pulse" />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="aspect-[3/4] rounded-md bg-secondary animate-pulse" />
         ))}
       </div>
     );
@@ -25,9 +25,9 @@ export function ProductGrid({ query, emptyHint = true }: { query?: string; empty
 
   if (!data || data.length === 0) {
     return emptyHint ? (
-      <div className="py-16 text-center border border-dashed border-border">
+      <div className="py-16 text-center border border-dashed border-border rounded-md">
         <p className="font-display text-2xl mb-2">Coleção em preparação</p>
-        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+        <p className="text-sm text-muted-foreground max-w-md mx-auto px-4">
           Nenhum produto encontrado. Adicione produtos à sua loja Shopify para vê-los aparecer aqui automaticamente.
         </p>
       </div>
@@ -35,8 +35,12 @@ export function ProductGrid({ query, emptyHint = true }: { query?: string; empty
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-      {data.map((p) => <ProductCard key={p.node.id} product={p} />)}
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 items-stretch">
+      {data.map((p) => (
+        <div key={p.node.id} className="flex">
+          <ProductCard product={p} />
+        </div>
+      ))}
     </div>
   );
 }
