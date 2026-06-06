@@ -28,15 +28,16 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
     <Link
       to="/produto/$handle"
       params={{ handle: product.node.handle }}
-      className="group block"
+      className="group flex h-full w-full flex-col"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary">
         {img0 && (
           <img
             src={img0.url}
             alt={img0.altText ?? product.node.title}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 group-hover:opacity-0"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 group-hover:opacity-0"
           />
         )}
         {img1 && (
@@ -44,7 +45,8 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
             src={img1.url}
             alt=""
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100"
           />
         )}
         <button
@@ -55,9 +57,13 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
           {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Comprar"}
         </button>
       </div>
-      <div className="pt-4 text-center">
-        <h3 className="font-display text-base">{product.node.title}</h3>
-        <p className="text-sm mt-1 text-muted-foreground">{formatPrice(price.amount, price.currencyCode)}</p>
+      <div className="flex flex-1 flex-col pt-3 text-center">
+        <h3 className="font-display text-sm sm:text-base leading-snug line-clamp-2 min-h-[2.6em]">
+          {product.node.title}
+        </h3>
+        <p className="text-sm sm:text-[15px] mt-auto pt-2 font-semibold text-foreground">
+          {formatPrice(price.amount, price.currencyCode)}
+        </p>
       </div>
     </Link>
   );
