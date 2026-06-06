@@ -2,20 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Mail, MessageCircle, Check } from "lucide-react";
 import { track } from "@/lib/analytics";
-
-const STORAGE_KEY = "md_leads_v1";
-
-type Lead = { type: "email" | "whatsapp"; value: string; at: string };
-
-function saveLead(lead: Lead) {
-  try {
-    const list: Lead[] = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-    list.push(lead);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  } catch {
-    // ignore quota errors
-  }
-}
+import { cleanEmail, cleanPhone, isValidEmail, isValidPhone, saveLead } from "@/lib/leads";
 
 export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("");
@@ -24,28 +11,33 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanEmail = email.trim().slice(0, 254);
-    const cleanPhone = phone.replace(/[^\d+]/g, "").slice(0, 16);
-    if (!cleanEmail && !cleanPhone) {
+    const cEmail = cleanEmail(email);
+    const cPhone = cleanPhone(phone);
+    if (!cEmail && !cPhone) {
       toast.error("Informe seu e-mail ou WhatsApp.");
       return;
     }
-    if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
+    if (cEmail && !isValidEmail(cEmail)) {
       toast.error("E-mail inválido.");
       return;
     }
-    if (cleanPhone && cleanPhone.replace(/\D/g, "").length < 10) {
+    if (cPhone && !isValidPhone(cPhone)) {
       toast.error("WhatsApp inválido.");
       return;
     }
-    if (cleanEmail) saveLead({ type: "email", value: cleanEmail, at: new Date().toISOString() });
-    if (cleanPhone) saveLead({ type: "whatsapp", value: cleanPhone, at: new Date().toISOString() });
-    track.lead(cleanEmail && cleanPhone ? "email+whatsapp" : cleanEmail ? "email" : "whatsapp");
+    saveLead({
+      email: cEmail || undefined,
+      whatsapp: cPhone || undefined,
+      source: compact ? "footer" : "newsletter",
+      at: new Date().toISOString(),
+    });
+    track.lead(cEmail && cPhone ? "email+whatsapp" : cEmail ? "email" : "whatsapp");
     setDone(true);
     toast.success("Cadastro confirmado", {
       description: "Você receberá nossos lançamentos e novidades em primeira mão.",
     });
   };
+
 
 
   if (done) {
