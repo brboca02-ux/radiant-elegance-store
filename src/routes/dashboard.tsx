@@ -179,7 +179,7 @@ function DashboardPage() {
 
           {/* Low stock */}
           <Card className="lg:col-span-2">
-            <SectionHeader title="Produtos com Estoque Baixo" hint="Reposição recomendada" />
+            <SectionHeader title="Produtos com Estoque Baixo" hint="Reposição recomendada" to="/estoque" />
             <ul className="divide-y divide-border">
               {lowStock.map((p) => (
                 <li key={p.sku} className="flex items-center justify-between py-3">

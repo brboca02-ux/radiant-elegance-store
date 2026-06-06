@@ -21,6 +21,9 @@ export function ProductForm({ productId }: { productId?: string }) {
           name: existing.name, slug: existing.slug, description: existing.description,
           category_id: existing.category_id, brand: existing.brand, sku: existing.sku,
           price: existing.price, sale_price: existing.sale_price, stock: existing.stock,
+          reserved_stock: existing.reserved_stock ?? 0,
+          minimum_stock: existing.minimum_stock ?? 5,
+          track_stock: existing.track_stock ?? true,
           weight: existing.weight, status: existing.status,
           meta_title: existing.meta_title, meta_description: existing.meta_description,
           images: existing.images, variants: existing.variants,
@@ -167,6 +170,21 @@ export function ProductForm({ productId }: { productId?: string }) {
                 <Field label="Peso (kg)">
                   <input type="number" step="0.01" value={data.weight} onChange={(e) => set("weight", Number(e.target.value))} className={input} />
                 </Field>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 border-t border-border">
+                <Field label="Estoque mínimo">
+                  <input type="number" min={0} value={data.minimum_stock}
+                    onChange={(e) => set("minimum_stock", Number(e.target.value))} className={input} />
+                </Field>
+                <Field label="Estoque reservado">
+                  <input type="number" min={0} value={data.reserved_stock}
+                    onChange={(e) => set("reserved_stock", Number(e.target.value))} className={input} />
+                </Field>
+                <label className="flex items-end gap-2 pb-1.5">
+                  <input type="checkbox" checked={data.track_stock}
+                    onChange={(e) => set("track_stock", e.target.checked)} className="h-4 w-4" />
+                  <span className="text-sm">Controlar estoque</span>
+                </label>
               </div>
             </Card>
 
