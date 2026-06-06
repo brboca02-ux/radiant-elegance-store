@@ -19,6 +19,7 @@ import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
+import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 
 const TrocasEDevolucoesRoute = TrocasEDevolucoesRouteImport.update({
@@ -71,6 +72,11 @@ const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
   path: '/produtos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutosNovoRoute = ProdutosNovoRouteImport.update({
+  id: '/produtos/novo',
+  path: '/produtos/novo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
   id: '/produto/$handle',
   path: '/produto/$handle',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/produto/$handle': typeof ProdutoHandleRoute
+  '/produtos/novo': typeof ProdutosNovoRoute
   '/produtos/': typeof ProdutosIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/produto/$handle': typeof ProdutoHandleRoute
+  '/produtos/novo': typeof ProdutosNovoRoute
   '/produtos': typeof ProdutosIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/produto/$handle': typeof ProdutoHandleRoute
+  '/produtos/novo': typeof ProdutosNovoRoute
   '/produtos/': typeof ProdutosIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/trocas-e-devolucoes'
     | '/produto/$handle'
+    | '/produtos/novo'
     | '/produtos/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/trocas-e-devolucoes'
     | '/produto/$handle'
+    | '/produtos/novo'
     | '/produtos'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/trocas-e-devolucoes'
     | '/produto/$handle'
+    | '/produtos/novo'
     | '/produtos/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   TermosRoute: typeof TermosRoute
   TrocasEDevolucoesRoute: typeof TrocasEDevolucoesRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
+  ProdutosNovoRoute: typeof ProdutosNovoRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
 }
 
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produtos/novo': {
+      id: '/produtos/novo'
+      path: '/produtos/novo'
+      fullPath: '/produtos/novo'
+      preLoaderRoute: typeof ProdutosNovoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produto/$handle': {
       id: '/produto/$handle'
       path: '/produto/$handle'
@@ -266,8 +286,19 @@ const rootRouteChildren: RootRouteChildren = {
   TermosRoute: TermosRoute,
   TrocasEDevolucoesRoute: TrocasEDevolucoesRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
+  ProdutosNovoRoute: ProdutosNovoRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
