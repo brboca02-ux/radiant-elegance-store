@@ -127,7 +127,7 @@ function DashboardPage() {
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent orders */}
           <Card className="lg:col-span-2">
-            <SectionHeader title="Pedidos Recentes" hint="Últimas vendas registradas" />
+            <SectionHeader title="Pedidos Recentes" hint="Últimas vendas registradas" to="/pedidos" />
             <div className="overflow-x-auto -mx-2">
               <table className="w-full text-sm">
                 <thead>
