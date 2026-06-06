@@ -62,6 +62,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "MD Modas: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "MD Modas" },
+      { property: "og:locale", content: "pt_BR" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@mdmodas" },
+      { name: "theme-color", content: "#E500A4" },
+      { name: "format-detection", content: "telephone=no" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

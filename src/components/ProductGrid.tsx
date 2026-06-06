@@ -44,9 +44,11 @@ export function ProductGrid({
   if (!data || data.length === 0) {
     return emptyHint ? (
       <div className="py-16 text-center border border-dashed border-border rounded-md">
-        <p className="font-display text-2xl mb-2">Coleção em preparação</p>
+        <p className="font-display text-2xl mb-2">
+          {query ? "Nenhum produto encontrado" : "Coleção em preparação"}
+        </p>
         <p className="text-sm text-muted-foreground max-w-md mx-auto px-4">
-          Nenhum produto encontrado. Adicione produtos à sua loja Shopify para vê-los aparecer aqui automaticamente.
+          {query ? "Tente outro termo, categoria ou cor." : "Em breve novidades. Volte mais tarde ou fale com a gente no WhatsApp."}
         </p>
       </div>
     ) : null;
