@@ -30,8 +30,8 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative h-[88vh] min-h-[640px] overflow-hidden bg-secondary">
-      <img src={hero} alt="Nova Coleção Aura" width={1920} height={1280} className="absolute inset-0 w-full h-full object-cover animate-slow-zoom" />
+    <section className="relative h-[72vh] sm:h-[80vh] min-h-[480px] md:min-h-[640px] overflow-hidden bg-secondary">
+      <img src={hero} alt="Nova Coleção MD Modas" width={1920} height={1280} className="absolute inset-0 w-full h-full object-cover object-center animate-slow-zoom" />
       <div className="absolute inset-0 bg-gradient-to-r from-foreground/30 via-transparent to-foreground/10" />
       <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center">
         <div className="max-w-xl text-background animate-fade-up">
@@ -63,19 +63,18 @@ export function CategoriesSection() {
           <h2 className="font-display text-4xl md:text-5xl mt-3">Categorias</h2>
           <span className="gold-rule mt-5" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="flex md:grid gap-3 md:gap-6 md:grid-cols-3 overflow-x-auto md:overflow-visible -mx-6 px-6 md:mx-0 md:px-0 snap-x snap-mandatory no-scrollbar">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative aspect-[4/5] overflow-hidden bg-secondary"
+              className="group relative shrink-0 w-[42%] sm:w-[32%] md:w-auto aspect-[4/5] overflow-hidden bg-secondary snap-start"
             >
               <img src={c.img} alt={c.label} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110" />
               <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/35 transition-colors duration-500" />
-              <div className="absolute inset-x-0 bottom-0 p-6 flex items-end justify-between text-background">
-                <h3 className="font-display text-2xl md:text-3xl">{c.label}</h3>
-                <span className="text-[10px] tracking-[0.3em] uppercase opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">Ver →</span>
+              <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 flex items-end justify-between text-background">
+                <h3 className="font-display text-xl md:text-3xl">{c.label}</h3>
               </div>
             </Link>
           ))}
