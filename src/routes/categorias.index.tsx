@@ -1,3 +1,4 @@
+import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Pencil, Archive, Plus, ImageOff, Star } from "lucide-react";
@@ -20,6 +21,7 @@ function CategoriesListPage() {
   const archive = useCategoriesStore((s) => s.archive);
 
   return (
+    <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -139,5 +141,6 @@ function CategoriesListPage() {
         </div>
       </div>
     </div>
+    </AdminShell>
   );
 }

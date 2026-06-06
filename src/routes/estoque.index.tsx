@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowDownCircle, ArrowUpCircle, Settings2, AlertTriangle, History, Search } from "lucide-react";
@@ -39,6 +40,7 @@ function EstoquePage() {
   }, [products]);
 
   return (
+    <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -151,6 +153,7 @@ function EstoquePage() {
         />
       )}
     </div>
+    </AdminShell>
   );
 }
 

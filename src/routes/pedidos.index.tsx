@@ -1,3 +1,4 @@
+import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search, Eye, Printer, XCircle } from "lucide-react";
@@ -58,6 +59,7 @@ function OrdersListPage() {
   }, [orders]);
 
   return (
+    <AdminShell active="pedidos">
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -191,6 +193,7 @@ function OrdersListPage() {
         </p>
       </div>
     </div>
+    </AdminShell>
   );
 }
 
