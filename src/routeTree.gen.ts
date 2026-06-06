@@ -20,7 +20,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as PedidosIndexRouteImport } from './routes/pedidos.index'
+import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
 import { Route as EstoqueIndexRouteImport } from './routes/estoque.index'
+import { Route as ClientesIndexRouteImport } from './routes/clientes.index'
 import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
 import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
@@ -85,9 +87,19 @@ const PedidosIndexRoute = PedidosIndexRouteImport.update({
   path: '/pedidos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
+  id: '/marketing/',
+  path: '/marketing/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EstoqueIndexRoute = EstoqueIndexRouteImport.update({
   id: '/estoque/',
   path: '/estoque/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientesIndexRoute = ClientesIndexRouteImport.update({
+  id: '/clientes/',
+  path: '/clientes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
@@ -147,7 +159,9 @@ export interface FileRoutesByFullPath {
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
   '/categorias/': typeof CategoriasIndexRoute
+  '/clientes/': typeof ClientesIndexRoute
   '/estoque/': typeof EstoqueIndexRoute
+  '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
@@ -169,7 +183,9 @@ export interface FileRoutesByTo {
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
   '/categorias': typeof CategoriasIndexRoute
+  '/clientes': typeof ClientesIndexRoute
   '/estoque': typeof EstoqueIndexRoute
+  '/marketing': typeof MarketingIndexRoute
   '/pedidos': typeof PedidosIndexRoute
   '/produtos': typeof ProdutosIndexRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
@@ -192,7 +208,9 @@ export interface FileRoutesById {
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
   '/categorias/': typeof CategoriasIndexRoute
+  '/clientes/': typeof ClientesIndexRoute
   '/estoque/': typeof EstoqueIndexRoute
+  '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
@@ -216,7 +234,9 @@ export interface FileRouteTypes {
     | '/produto/$handle'
     | '/produtos/novo'
     | '/categorias/'
+    | '/clientes/'
     | '/estoque/'
+    | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
     | '/categorias/$id/editar'
@@ -238,7 +258,9 @@ export interface FileRouteTypes {
     | '/produto/$handle'
     | '/produtos/novo'
     | '/categorias'
+    | '/clientes'
     | '/estoque'
+    | '/marketing'
     | '/pedidos'
     | '/produtos'
     | '/categorias/$id/editar'
@@ -260,7 +282,9 @@ export interface FileRouteTypes {
     | '/produto/$handle'
     | '/produtos/novo'
     | '/categorias/'
+    | '/clientes/'
     | '/estoque/'
+    | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
     | '/categorias/$id/editar'
@@ -283,7 +307,9 @@ export interface RootRouteChildren {
   ProdutoHandleRoute: typeof ProdutoHandleRoute
   ProdutosNovoRoute: typeof ProdutosNovoRoute
   CategoriasIndexRoute: typeof CategoriasIndexRoute
+  ClientesIndexRoute: typeof ClientesIndexRoute
   EstoqueIndexRoute: typeof EstoqueIndexRoute
+  MarketingIndexRoute: typeof MarketingIndexRoute
   PedidosIndexRoute: typeof PedidosIndexRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
@@ -369,11 +395,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedidosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketing/': {
+      id: '/marketing/'
+      path: '/marketing'
+      fullPath: '/marketing/'
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/estoque/': {
       id: '/estoque/'
       path: '/estoque'
       fullPath: '/estoque/'
       preLoaderRoute: typeof EstoqueIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clientes/': {
+      id: '/clientes/'
+      path: '/clientes'
+      fullPath: '/clientes/'
+      preLoaderRoute: typeof ClientesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categorias/': {
@@ -451,7 +491,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutoHandleRoute: ProdutoHandleRoute,
   ProdutosNovoRoute: ProdutosNovoRoute,
   CategoriasIndexRoute: CategoriasIndexRoute,
+  ClientesIndexRoute: ClientesIndexRoute,
   EstoqueIndexRoute: EstoqueIndexRoute,
+  MarketingIndexRoute: MarketingIndexRoute,
   PedidosIndexRoute: PedidosIndexRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
