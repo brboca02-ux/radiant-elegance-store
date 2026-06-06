@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { storefrontApiRequest, SEARCH_SUGGESTIONS_QUERY, formatPrice } from "@/lib/shopify";
+import { track } from "@/lib/analytics";
+
 
 interface Suggestion {
   id: string;
@@ -61,10 +63,12 @@ export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () =
 
   const submit = () => {
     if (!q.trim()) return;
+    track.search(q.trim());
     setOpen(false);
     onNavigate?.();
     navigate({ to: "/colecao", search: { c: q.trim() } });
   };
+
 
   const goToActive = () => {
     const p = results[active];
