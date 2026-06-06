@@ -79,7 +79,7 @@ export function HomeHero() {
 
 export function CategoriesSection() {
   return (
-    <section className="py-8 md:py-12 bg-background">
+    <section className="py-5 md:py-7 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="flex items-end justify-between mb-4 md:mb-5">
           <div>
