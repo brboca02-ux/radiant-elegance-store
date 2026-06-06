@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { ProductGrid } from "@/components/ProductGrid";
 
-const searchSchema = z.object({ c: z.string().optional() });
+interface ColecaoSearch { c?: string }
 
 export const Route = createFileRoute("/colecao")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>): ColecaoSearch => ({
+    c: typeof search.c === "string" ? search.c : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Coleção — Aura Boutique" },
