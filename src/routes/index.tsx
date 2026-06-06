@@ -3,13 +3,13 @@ import {
   HomeHero,
   CategoriesSection,
   LaunchSection,
+  BestSellersSection,
+  RecebidosHomeSection,
   LookbookSection,
   DifferentialsSection,
   InstagramSection,
 } from "@/components/HomeSections";
-import { PromoCountdownBanner, RecebidosSection } from "@/components/PromoSections";
 import { NewsletterSection } from "@/components/NewsletterCapture";
-import { WhatsAppCTA } from "@/components/WhatsAppCTA";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,15 +30,14 @@ function Index() {
   return (
     <>
       <HomeHero />
-      <PromoCountdownBanner />
       <CategoriesSection />
-      <RecebidosSection />
       <LaunchSection />
-      <WhatsAppCTA source="home" />
+      <BestSellersSection />
+      <RecebidosHomeSection />
       <LookbookSection />
       <DifferentialsSection />
-      <NewsletterSection />
       <InstagramSection />
+      <NewsletterSection />
     </>
   );
 }
