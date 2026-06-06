@@ -209,7 +209,7 @@ export function Header() {
 
       {/* Desktop nav with mega menu */}
       <div ref={navRef} className="hidden md:block relative">
-        <nav className="flex items-center justify-center gap-8 lg:gap-12 pb-3 text-sm font-medium">
+        <nav className="flex items-center justify-center gap-6 lg:gap-8 pb-3 text-sm font-medium">
           {MENUS.map((m) => (
             <button
               key={m.key}
@@ -219,20 +219,28 @@ export function Header() {
               aria-expanded={activeMenu === m.key}
               aria-haspopup="true"
               className={`inline-flex items-center gap-1 transition ${
-                m.highlight ? "text-primary" : "text-foreground/80"
+                m.highlight ? "text-primary font-semibold" : "text-foreground/80"
               } hover:text-primary`}
             >
+              {m.emoji && <span aria-hidden>{m.emoji}</span>}
               {m.label}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "novidades" } as never} className="text-foreground/80 hover:text-primary transition">
-            Novidades
+          <Link to="/colecao" search={{ c: "novidades" } as never} className="inline-flex items-center gap-1 text-foreground/80 hover:text-primary transition">
+            <span aria-hidden>✨</span> Novidades
+          </Link>
+          <Link to="/colecao" search={{ c: "mais-vendidos" } as never} className="inline-flex items-center gap-1 text-foreground/80 hover:text-primary transition">
+            <span aria-hidden>⭐</span> Mais Vendidos
+          </Link>
+          <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-primary transition">
+            Recebidos da Semana
           </Link>
           <Link to="/sobre" className="text-foreground/80 hover:text-primary transition">
             Sobre
           </Link>
         </nav>
+
 
         {activeMenu && (
           <div
