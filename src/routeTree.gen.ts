@@ -19,9 +19,12 @@ import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
+import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
 import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
+import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
 import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
+import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
 
 const TrocasEDevolucoesRoute = TrocasEDevolucoesRouteImport.update({
   id: '/trocas-e-devolucoes',
@@ -73,6 +76,11 @@ const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
   path: '/produtos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
+  id: '/categorias/',
+  path: '/categorias/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutosNovoRoute = ProdutosNovoRouteImport.update({
   id: '/produtos/novo',
   path: '/produtos/novo',
@@ -83,9 +91,19 @@ const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
   path: '/produto/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriasNovoRoute = CategoriasNovoRouteImport.update({
+  id: '/categorias/novo',
+  path: '/categorias/novo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutosIdEditarRoute = ProdutosIdEditarRouteImport.update({
   id: '/produtos/$id/editar',
   path: '/produtos/$id/editar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
+  id: '/categorias/$id/editar',
+  path: '/categorias/$id/editar',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -99,9 +117,12 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
+  '/categorias/novo': typeof CategoriasNovoRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/categorias/': typeof CategoriasIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
+  '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRoutesByTo {
@@ -114,9 +135,12 @@ export interface FileRoutesByTo {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
+  '/categorias/novo': typeof CategoriasNovoRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/categorias': typeof CategoriasIndexRoute
   '/produtos': typeof ProdutosIndexRoute
+  '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRoutesById {
@@ -130,9 +154,12 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
+  '/categorias/novo': typeof CategoriasNovoRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/categorias/': typeof CategoriasIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
+  '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRouteTypes {
@@ -147,9 +174,12 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/trocas-e-devolucoes'
+    | '/categorias/novo'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/categorias/'
     | '/produtos/'
+    | '/categorias/$id/editar'
     | '/produtos/$id/editar'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -162,9 +192,12 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/trocas-e-devolucoes'
+    | '/categorias/novo'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/categorias'
     | '/produtos'
+    | '/categorias/$id/editar'
     | '/produtos/$id/editar'
   id:
     | '__root__'
@@ -177,9 +210,12 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/trocas-e-devolucoes'
+    | '/categorias/novo'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/categorias/'
     | '/produtos/'
+    | '/categorias/$id/editar'
     | '/produtos/$id/editar'
   fileRoutesById: FileRoutesById
 }
@@ -193,9 +229,12 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   TrocasEDevolucoesRoute: typeof TrocasEDevolucoesRoute
+  CategoriasNovoRoute: typeof CategoriasNovoRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
   ProdutosNovoRoute: typeof ProdutosNovoRoute
+  CategoriasIndexRoute: typeof CategoriasIndexRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
+  CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
   ProdutosIdEditarRoute: typeof ProdutosIdEditarRoute
 }
 
@@ -271,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/categorias/': {
+      id: '/categorias/'
+      path: '/categorias'
+      fullPath: '/categorias/'
+      preLoaderRoute: typeof CategoriasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos/novo': {
       id: '/produtos/novo'
       path: '/produtos/novo'
@@ -285,11 +331,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutoHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/categorias/novo': {
+      id: '/categorias/novo'
+      path: '/categorias/novo'
+      fullPath: '/categorias/novo'
+      preLoaderRoute: typeof CategoriasNovoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos/$id/editar': {
       id: '/produtos/$id/editar'
       path: '/produtos/$id/editar'
       fullPath: '/produtos/$id/editar'
       preLoaderRoute: typeof ProdutosIdEditarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias/$id/editar': {
+      id: '/categorias/$id/editar'
+      path: '/categorias/$id/editar'
+      fullPath: '/categorias/$id/editar'
+      preLoaderRoute: typeof CategoriasIdEditarRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -305,9 +365,12 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   TrocasEDevolucoesRoute: TrocasEDevolucoesRoute,
+  CategoriasNovoRoute: CategoriasNovoRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
   ProdutosNovoRoute: ProdutosNovoRoute,
+  CategoriasIndexRoute: CategoriasIndexRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
+  CategoriasIdEditarRoute: CategoriasIdEditarRoute,
   ProdutosIdEditarRoute: ProdutosIdEditarRoute,
 }
 export const routeTree = rootRouteImport
