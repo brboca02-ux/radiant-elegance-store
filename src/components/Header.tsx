@@ -3,6 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { Search, User, MessageCircle, Menu, X } from "lucide-react";
 import { CartDrawer } from "./CartDrawer";
 import { SearchBox } from "./SearchBox";
+import { buildWhatsAppLink } from "@/lib/shopify";
+import { track } from "@/lib/analytics";
+
 
 const nav = [
   { label: "Feminino", to: "/colecao" as const, search: { c: "feminino" as string | undefined } },
@@ -43,14 +46,16 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <a
-            href="https://wa.me/5500000000000"
+            href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"
+            onClick={() => track.whatsappClick("header")}
             className="hidden sm:inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition"
           >
             <MessageCircle className="h-4 w-4" /> WhatsApp
           </a>
+
           <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden h-10 w-10 flex items-center justify-center">
             <Search className="h-5 w-5" />
           </button>
@@ -102,13 +107,15 @@ export function Header() {
               ))}
             </nav>
             <a
-              href="https://wa.me/5500000000000"
+              href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track.whatsappClick("mobile-menu")}
               className="m-4 inline-flex items-center justify-center gap-2 bg-[#25D366] text-white py-3 rounded-full text-sm font-semibold"
             >
               <MessageCircle className="h-4 w-4" /> Falar no WhatsApp
             </a>
+
           </aside>
         </div>
       )}

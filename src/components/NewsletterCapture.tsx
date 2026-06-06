@@ -26,18 +26,29 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email && !phone) {
+    const cleanEmail = email.trim().slice(0, 254);
+    const cleanPhone = phone.replace(/[^\d+]/g, "").slice(0, 16);
+    if (!cleanEmail && !cleanPhone) {
       toast.error("Informe seu e-mail ou WhatsApp.");
       return;
     }
-    if (email) saveLead({ type: "email", value: email, at: new Date().toISOString() });
-    if (phone) saveLead({ type: "whatsapp", value: phone, at: new Date().toISOString() });
-    track.lead(email && phone ? "email+whatsapp" : email ? "email" : "whatsapp");
+    if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
+      toast.error("E-mail inválido.");
+      return;
+    }
+    if (cleanPhone && cleanPhone.replace(/\D/g, "").length < 10) {
+      toast.error("WhatsApp inválido.");
+      return;
+    }
+    if (cleanEmail) saveLead({ type: "email", value: cleanEmail, at: new Date().toISOString() });
+    if (cleanPhone) saveLead({ type: "whatsapp", value: cleanPhone, at: new Date().toISOString() });
+    track.lead(cleanEmail && cleanPhone ? "email+whatsapp" : cleanEmail ? "email" : "whatsapp");
     setDone(true);
     toast.success(`Cupom ${cfg.promoCoupon} enviado!`, {
       description: `Use no checkout para ${cfg.promoCouponPercent}% OFF na primeira compra.`,
     });
   };
+
 
   if (done) {
     return (
