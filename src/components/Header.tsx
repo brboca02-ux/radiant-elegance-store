@@ -381,17 +381,17 @@ export function Header() {
                 to="/colecao"
                 search={{ c: "novidades" } as never}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 px-5 py-3 text-base font-semibold border-b border-border/60"
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
               >
-                <span aria-hidden>✨</span> Novidades
+                Novidades
               </Link>
               <Link
                 to="/colecao"
                 search={{ c: "mais-vendidos" } as never}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 px-5 py-3 text-base font-semibold border-b border-border/60"
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
               >
-                <span aria-hidden>⭐</span> Mais Vendidos
+                Mais Vendidos
               </Link>
               <Link
                 to="/colecao"
