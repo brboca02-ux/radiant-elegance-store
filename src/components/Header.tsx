@@ -1,26 +1,140 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Search, User, MessageCircle, Menu, X } from "lucide-react";
+import { Search, User, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
 import { CartDrawer } from "./CartDrawer";
 import { SearchBox } from "./SearchBox";
 import { buildWhatsAppLink } from "@/lib/shopify";
 import { track } from "@/lib/analytics";
 
+type SearchParam = { c?: string };
+type LinkItem = { label: string; c: string; highlight?: boolean };
+type Column = { title: string; items: LinkItem[] };
+type MegaContent = {
+  columns: Column[];
+  promo?: { title: string; subtitle?: string; cta: string; c: string };
+};
 
-const nav = [
-  { label: "Feminino", to: "/colecao" as const, search: { c: "feminino" as string | undefined } },
-  { label: "Masculino", to: "/colecao" as const, search: { c: "masculino" } },
-  { label: "Vestidos", to: "/colecao" as const, search: { c: "vestidos" } },
-  { label: "Conjuntos", to: "/colecao" as const, search: { c: "conjuntos" } },
-  { label: "Plus Size", to: "/colecao" as const, search: { c: "plus-size" } },
-  { label: "Promoções", to: "/colecao" as const, search: { c: "promocoes" } },
-  { label: "Novidades", to: "/colecao" as const, search: { c: "novidades" } },
-  { label: "Sobre", to: "/sobre" as const, search: undefined },
+const FEMININO: MegaContent = {
+  columns: [
+    {
+      title: "Roupas",
+      items: [
+        { label: "Blusas", c: "blusas" },
+        { label: "Camisas", c: "camisas" },
+        { label: "Calças", c: "calcas" },
+        { label: "Jaquetas e Casacos", c: "jaquetas" },
+        { label: "Macacões", c: "macacoes" },
+        { label: "Saias", c: "saias" },
+        { label: "Shorts", c: "shorts" },
+        { label: "Vestidos", c: "vestidos" },
+        { label: "Conjuntos", c: "conjuntos" },
+      ],
+    },
+    {
+      title: "Tamanhos",
+      items: [
+        { label: "P", c: "tamanho-p" },
+        { label: "M", c: "tamanho-m" },
+        { label: "G", c: "tamanho-g" },
+        { label: "GG", c: "tamanho-gg" },
+        { label: "Plus Size", c: "plus-size" },
+      ],
+    },
+    {
+      title: "Coleções",
+      items: [
+        { label: "Novidades", c: "novidades" },
+        { label: "Recebidos da Semana", c: "recebidos-da-semana" },
+        { label: "Promoções", c: "promocoes", highlight: true },
+        { label: "Mais Vendidos", c: "mais-vendidos" },
+      ],
+    },
+  ],
+  promo: {
+    title: "Toda semana novidades",
+    subtitle: "Peças recém-chegadas na MD Modas",
+    cta: "Comprar Agora",
+    c: "novidades",
+  },
+};
+
+const MASCULINO: MegaContent = {
+  columns: [
+    {
+      title: "Roupas",
+      items: [
+        { label: "Camisetas", c: "camisetas" },
+        { label: "Polos", c: "polos" },
+        { label: "Camisas", c: "camisas-masc" },
+        { label: "Bermudas", c: "bermudas" },
+        { label: "Calças", c: "calcas-masc" },
+        { label: "Moletons", c: "moletons" },
+        { label: "Jaquetas", c: "jaquetas-masc" },
+      ],
+    },
+    {
+      title: "Coleções",
+      items: [
+        { label: "Novidades", c: "novidades" },
+        { label: "Promoções", c: "promocoes", highlight: true },
+        { label: "Mais Vendidos", c: "mais-vendidos" },
+      ],
+    },
+  ],
+};
+
+const PROMOCOES: MegaContent = {
+  columns: [
+    {
+      title: "Ofertas",
+      items: [
+        { label: "Até 50% OFF", c: "50-off", highlight: true },
+        { label: "Últimas oportunidades", c: "ultimas", highlight: true },
+        { label: "Recebidos em promoção", c: "recebidos-promo", highlight: true },
+      ],
+    },
+  ],
+  promo: {
+    title: "Promoções da Semana",
+    subtitle: "Aproveite enquanto durar o estoque",
+    cta: "Ver Ofertas",
+    c: "promocoes",
+  },
+};
+
+type MenuKey = "feminino" | "masculino" | "promocoes" | null;
+
+const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean }[] = [
+  { key: "feminino", label: "Feminino", content: FEMININO },
+  { key: "masculino", label: "Masculino", content: MASCULINO },
+  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<MenuKey>(null);
+  const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setActiveMenu(null);
+        setOpen(false);
+      }
+    }
+    function onClick(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setActiveMenu(null);
+    }
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
       <div className="bg-primary text-primary-foreground text-[11px] sm:text-xs py-1.5 sm:py-2 overflow-hidden">
@@ -66,18 +180,92 @@ export function Header() {
       {mobileSearch && (
         <div className="md:hidden px-4 pb-3"><SearchBox autoFocus onNavigate={() => setMobileSearch(false)} /></div>
       )}
-      <nav className="hidden md:flex items-center justify-center gap-6 lg:gap-8 pb-3 text-sm font-medium">
-        {nav.map((n) => (
-          <Link
-            key={n.label}
-            to={n.to}
-            search={n.search as never}
-            className="text-foreground/80 hover:text-primary transition"
-          >
-            {n.label}
+
+      {/* Desktop nav with mega menu */}
+      <div ref={navRef} className="hidden md:block relative">
+        <nav className="flex items-center justify-center gap-8 lg:gap-12 pb-3 text-sm font-medium">
+          {MENUS.map((m) => (
+            <button
+              key={m.key}
+              onMouseEnter={() => setActiveMenu(m.key)}
+              onFocus={() => setActiveMenu(m.key)}
+              onClick={() => setActiveMenu((v) => (v === m.key ? null : m.key))}
+              aria-expanded={activeMenu === m.key}
+              aria-haspopup="true"
+              className={`inline-flex items-center gap-1 transition ${
+                m.highlight ? "text-primary" : "text-foreground/80"
+              } hover:text-primary`}
+            >
+              {m.label}
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
+            </button>
+          ))}
+          <Link to="/colecao" search={{ c: "novidades" } as never} className="text-foreground/80 hover:text-primary transition">
+            Novidades
           </Link>
-        ))}
-      </nav>
+          <Link to="/sobre" className="text-foreground/80 hover:text-primary transition">
+            Sobre
+          </Link>
+        </nav>
+
+        {activeMenu && (
+          <div
+            onMouseLeave={() => setActiveMenu(null)}
+            className="absolute left-0 right-0 top-full z-50 animate-fade-in"
+          >
+            <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
+              <div className="bg-background border border-border rounded-2xl shadow-2xl p-8 grid grid-cols-12 gap-8">
+                {MENUS.find((m) => m.key === activeMenu)!.content.columns.map((col) => (
+                  <div key={col.title} className="col-span-12 sm:col-span-4 lg:col-span-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                      {col.title}
+                    </h3>
+                    <ul className="space-y-2">
+                      {col.items.map((it) => (
+                        <li key={it.label}>
+                          <Link
+                            to="/colecao"
+                            search={{ c: it.c } as SearchParam as never}
+                            onClick={() => setActiveMenu(null)}
+                            className={`text-sm hover:text-primary transition ${
+                              it.highlight ? "text-primary font-semibold" : "text-foreground/80"
+                            }`}
+                          >
+                            {it.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+                {MENUS.find((m) => m.key === activeMenu)!.content.promo && (
+                  <div className="col-span-12 lg:col-span-3 lg:col-start-10">
+                    {(() => {
+                      const p = MENUS.find((m) => m.key === activeMenu)!.content.promo!;
+                      return (
+                        <div className="h-full bg-primary/10 border border-primary/20 rounded-xl p-6 flex flex-col justify-between">
+                          <div>
+                            <h4 className="font-display text-lg font-bold text-primary mb-1">{p.title}</h4>
+                            {p.subtitle && <p className="text-sm text-foreground/70">{p.subtitle}</p>}
+                          </div>
+                          <Link
+                            to="/colecao"
+                            search={{ c: p.c } as SearchParam as never}
+                            onClick={() => setActiveMenu(null)}
+                            className="mt-4 inline-flex items-center justify-center bg-primary text-primary-foreground rounded-full px-4 py-2 text-sm font-semibold hover:opacity-90 transition"
+                          >
+                            {p.cta}
+                          </Link>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Mobile drawer */}
       {open && (
@@ -94,17 +282,71 @@ export function Header() {
               <SearchBox onNavigate={() => setOpen(false)} />
             </div>
             <nav className="flex-1 overflow-y-auto py-2">
-              {nav.map((n) => (
-                <Link
-                  key={n.label}
-                  to={n.to}
-                  search={n.search as never}
-                  onClick={() => setOpen(false)}
-                  className="block px-5 py-3 text-base font-medium border-b border-border/60 hover:bg-secondary"
-                >
-                  {n.label}
-                </Link>
-              ))}
+              {MENUS.map((m) => {
+                const isOpen = mobileAccordion === m.key;
+                return (
+                  <div key={m.key} className="border-b border-border/60">
+                    <button
+                      onClick={() => setMobileAccordion(isOpen ? null : m.key)}
+                      aria-expanded={isOpen}
+                      className={`w-full flex items-center justify-between px-5 py-3 text-base font-semibold ${
+                        m.highlight ? "text-primary" : ""
+                      }`}
+                    >
+                      {m.label}
+                      <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    <div
+                      className={`grid transition-all duration-300 ease-out ${
+                        isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="px-5 pb-3 space-y-3">
+                          {m.content.columns.map((col) => (
+                            <div key={col.title}>
+                              <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-2 mb-1">
+                                {col.title}
+                              </p>
+                              <ul className="space-y-1.5">
+                                {col.items.map((it) => (
+                                  <li key={it.label}>
+                                    <Link
+                                      to="/colecao"
+                                      search={{ c: it.c } as SearchParam as never}
+                                      onClick={() => setOpen(false)}
+                                      className={`block text-sm py-1 ${
+                                        it.highlight ? "text-primary font-medium" : "text-foreground/80"
+                                      }`}
+                                    >
+                                      {it.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              <Link
+                to="/colecao"
+                search={{ c: "novidades" } as never}
+                onClick={() => setOpen(false)}
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
+              >
+                Novidades
+              </Link>
+              <Link
+                to="/sobre"
+                onClick={() => setOpen(false)}
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
+              >
+                Sobre
+              </Link>
             </nav>
             <a
               href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
@@ -115,7 +357,6 @@ export function Header() {
             >
               <MessageCircle className="h-4 w-4" /> Falar no WhatsApp
             </a>
-
           </aside>
         </div>
       )}
