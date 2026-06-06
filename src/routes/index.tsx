@@ -7,13 +7,14 @@ import {
   DifferentialsSection,
   InstagramSection,
 } from "@/components/HomeSections";
+import { PromoCountdownBanner, RecebidosSection } from "@/components/PromoSections";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "MD Modas — Moda Feminina e Masculina" },
-      { name: "description", content: "MD Modas: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana. Compre pelo WhatsApp." },
-      { property: "og:title", content: "MD Modas — Moda Feminina e Masculina" },
+      { title: "MD Modas — Moda Feminina e Masculina em Joinville" },
+      { name: "description", content: "MD Modas: moda feminina e masculina em Joinville. Vestidos, conjuntos, plus size e novidades toda semana. Compre pelo WhatsApp." },
+      { property: "og:title", content: "MD Modas — Moda em Joinville" },
       { property: "og:description", content: "Vestidos, conjuntos, plus size e novidades. Compre pelo WhatsApp." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -27,7 +28,9 @@ function Index() {
   return (
     <>
       <HomeHero />
+      <PromoCountdownBanner />
       <CategoriesSection />
+      <RecebidosSection />
       <LaunchSection />
       <LookbookSection />
       <DifferentialsSection />

@@ -76,10 +76,45 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
+const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
+
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ClothingStore",
+  name: "MD Modas",
+  image: "/og-image.jpg",
+  "@id": "https://md-modas.lovable.app/#store",
+  url: "/",
+  telephone: "+55 47 0000-0000",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Rua Exemplo, 123 - Centro",
+    addressLocality: "Joinville",
+    addressRegion: "SC",
+    postalCode: "89201-000",
+    addressCountry: "BR",
+  },
+  areaServed: "Joinville e região",
+  openingHours: "Mo-Sa 09:00-18:00",
+};
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+        {GA_ID && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+            <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');` }} />
+          </>
+        )}
+        {META_PIXEL_ID && (
+          <script dangerouslySetInnerHTML={{ __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');fbq('track','PageView');` }} />
+        )}
+      </head>
       <body>
         {children}
         <Scripts />
