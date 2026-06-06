@@ -110,3 +110,12 @@
 .animate-fade-up { animation: fade-up 0.9s ease-out both; }
 .animate-slow-zoom { animation: slow-zoom 8s ease-out both; }
 .animate-marquee { animation: marquee 35s linear infinite; }
+
+.prose-legal { color: hsl(var(--foreground) / 0.85); font-size: 0.95rem; line-height: 1.75; }
+.prose-legal h2 { font-family: var(--font-display, inherit); font-size: 1.5rem; font-weight: 600; margin-top: 2.25rem; margin-bottom: 0.75rem; color: hsl(var(--foreground)); }
+.prose-legal p { margin-bottom: 1rem; }
+.prose-legal ul, .prose-legal ol { margin: 1rem 0 1.25rem 1.25rem; }
+.prose-legal ul { list-style: disc; }
+.prose-legal ol { list-style: decimal; }
+.prose-legal li { margin-bottom: 0.4rem; }
+.prose-legal strong { color: hsl(var(--foreground)); font-weight: 600; }
