@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShoppingBag, Package, AlertTriangle, DollarSign, Users, TrendingUp, ArrowUpRight } from "lucide-react";
+import { AdminShell } from "@/components/AdminShell";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -91,6 +92,7 @@ function SectionHeader({ title, hint, to }: { title: string; hint?: string; to?:
 
 function DashboardPage() {
   return (
+    <AdminShell active="dashboard">
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10">
         {/* Header */}
@@ -222,5 +224,6 @@ function DashboardPage() {
         </p>
       </div>
     </div>
+    </AdminShell>
   );
 }
