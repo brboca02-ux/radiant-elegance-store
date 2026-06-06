@@ -5,25 +5,48 @@ export const SHOPIFY_STORE_PERMANENT_DOMAIN = "aura-boutique-u79e9.myshopify.com
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 export const SHOPIFY_STOREFRONT_TOKEN = "e7b6f8596fe2ff012a17ffc6a00d11fb";
 
+// ====== Loja física – MD Modas Joinville ======
+export const STORE_INFO = {
+  name: "MD Modas",
+  city: "Joinville",
+  region: "SC",
+  country: "BR",
+  street: "Rua Exemplo, 123 - Centro", // ajuste com endereço real
+  postalCode: "89201-000",
+  phone: "+55 47 0000-0000",
+  whatsapp: "5500000000000", // troque pelo número real
+  mapsEmbed:
+    "https://www.google.com/maps?q=Joinville%2C+SC&output=embed",
+};
+
+export interface ShopifyVariantNode {
+  id: string;
+  title: string;
+  price: { amount: string; currencyCode: string };
+  availableForSale: boolean;
+  quantityAvailable?: number | null;
+  selectedOptions: Array<{ name: string; value: string }>;
+}
+
+export interface ShopifyMediaNode {
+  mediaContentType: "IMAGE" | "VIDEO" | "EXTERNAL_VIDEO" | "MODEL_3D";
+  previewImage?: { url: string } | null;
+  sources?: Array<{ url: string; mimeType: string; format?: string }>;
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
     title: string;
     description: string;
     handle: string;
+    productType?: string;
+    tags?: string[];
+    totalInventory?: number | null;
     priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
     images: { edges: Array<{ node: { url: string; altText: string | null } }> };
-    variants: {
-      edges: Array<{
-        node: {
-          id: string;
-          title: string;
-          price: { amount: string; currencyCode: string };
-          availableForSale: boolean;
-          selectedOptions: Array<{ name: string; value: string }>;
-        };
-      }>;
-    };
+    media?: { edges: Array<{ node: ShopifyMediaNode }> };
+    variants: { edges: Array<{ node: ShopifyVariantNode }> };
     options: Array<{ name: string; values: string[] }>;
   };
 }
@@ -50,34 +73,50 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   return data;
 }
 
+const PRODUCT_FIELDS = `
+  id title description handle productType tags totalInventory
+  priceRange { minVariantPrice { amount currencyCode } }
+  images(first: 6) { edges { node { url altText } } }
+  media(first: 8) {
+    edges { node {
+      mediaContentType
+      ... on MediaImage { previewImage { url } }
+      ... on Video { previewImage { url } sources { url mimeType format } }
+      ... on ExternalVideo { previewImage { url } host originUrl }
+    } }
+  }
+  variants(first: 20) {
+    edges { node {
+      id title availableForSale quantityAvailable
+      price { amount currencyCode }
+      selectedOptions { name value }
+    } }
+  }
+  options { name values }
+`;
+
 export const PRODUCTS_QUERY = `
-  query GetProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query) {
-      edges {
-        node {
-          id title description handle
-          priceRange { minVariantPrice { amount currencyCode } }
-          images(first: 5) { edges { node { url altText } } }
-          variants(first: 20) {
-            edges { node { id title price { amount currencyCode } availableForSale selectedOptions { name value } } }
-          }
-          options { name values }
-        }
-      }
+  query GetProducts($first: Int!, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+    products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
+      edges { node { ${PRODUCT_FIELDS} } }
     }
   }
 `;
 
 export const PRODUCT_BY_HANDLE_QUERY = `
   query GetProduct($handle: String!) {
-    product(handle: $handle) {
-      id title description handle
-      priceRange { minVariantPrice { amount currencyCode } }
-      images(first: 10) { edges { node { url altText } } }
-      variants(first: 20) {
-        edges { node { id title price { amount currencyCode } availableForSale selectedOptions { name value } } }
-      }
-      options { name values }
+    product(handle: $handle) { ${PRODUCT_FIELDS} }
+  }
+`;
+
+export const SEARCH_SUGGESTIONS_QUERY = `
+  query Suggest($query: String!) {
+    products(first: 6, query: $query) {
+      edges { node {
+        id title handle
+        priceRange { minVariantPrice { amount currencyCode } }
+        images(first: 1) { edges { node { url altText } } }
+      } }
     }
   }
 `;
@@ -89,4 +128,8 @@ export function formatPrice(amount: string | number, currency = "BRL") {
   } catch {
     return `${currency} ${n.toFixed(2)}`;
   }
+}
+
+export function buildWhatsAppLink(message: string) {
+  return `https://wa.me/${STORE_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
 }

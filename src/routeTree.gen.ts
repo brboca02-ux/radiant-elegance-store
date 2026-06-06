@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ColecaoRoute = ColecaoRouteImport.update({
   id: '/colecao',
   path: '/colecao',
@@ -32,35 +38,46 @@ const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/colecao': typeof ColecaoRoute
+  '/sobre': typeof SobreRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/colecao': typeof ColecaoRoute
+  '/sobre': typeof SobreRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/colecao': typeof ColecaoRoute
+  '/sobre': typeof SobreRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/colecao' | '/produto/$handle'
+  fullPaths: '/' | '/colecao' | '/sobre' | '/produto/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/colecao' | '/produto/$handle'
-  id: '__root__' | '/' | '/colecao' | '/produto/$handle'
+  to: '/' | '/colecao' | '/sobre' | '/produto/$handle'
+  id: '__root__' | '/' | '/colecao' | '/sobre' | '/produto/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ColecaoRoute: typeof ColecaoRoute
+  SobreRoute: typeof SobreRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/colecao': {
       id: '/colecao'
       path: '/colecao'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ColecaoRoute: ColecaoRoute,
+  SobreRoute: SobreRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
 }
 export const routeTree = rootRouteImport
