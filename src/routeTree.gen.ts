@@ -19,6 +19,7 @@ import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
+import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
 import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
@@ -73,6 +74,11 @@ const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
   path: '/produtos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
+  id: '/categorias/',
+  path: '/categorias/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutosNovoRoute = ProdutosNovoRouteImport.update({
   id: '/produtos/novo',
   path: '/produtos/novo',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/categorias/': typeof CategoriasIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/categorias': typeof CategoriasIndexRoute
   '/produtos': typeof ProdutosIndexRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/categorias/': typeof CategoriasIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/trocas-e-devolucoes'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/categorias/'
     | '/produtos/'
     | '/produtos/$id/editar'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/trocas-e-devolucoes'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/categorias'
     | '/produtos'
     | '/produtos/$id/editar'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/trocas-e-devolucoes'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/categorias/'
     | '/produtos/'
     | '/produtos/$id/editar'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   TrocasEDevolucoesRoute: typeof TrocasEDevolucoesRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
   ProdutosNovoRoute: typeof ProdutosNovoRoute
+  CategoriasIndexRoute: typeof CategoriasIndexRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
   ProdutosIdEditarRoute: typeof ProdutosIdEditarRoute
 }
@@ -271,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/categorias/': {
+      id: '/categorias/'
+      path: '/categorias'
+      fullPath: '/categorias/'
+      preLoaderRoute: typeof CategoriasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos/novo': {
       id: '/produtos/novo'
       path: '/produtos/novo'
@@ -307,9 +327,20 @@ const rootRouteChildren: RootRouteChildren = {
   TrocasEDevolucoesRoute: TrocasEDevolucoesRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
   ProdutosNovoRoute: ProdutosNovoRoute,
+  CategoriasIndexRoute: CategoriasIndexRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
   ProdutosIdEditarRoute: ProdutosIdEditarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
