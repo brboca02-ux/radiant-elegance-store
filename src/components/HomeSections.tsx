@@ -35,15 +35,18 @@ export function HomeHero() {
       <div className="absolute inset-0 bg-gradient-to-r from-foreground/30 via-transparent to-foreground/10" />
       <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center">
         <div className="max-w-xl text-background animate-fade-up">
-          <span className="eyebrow text-background/80">Outono · Inverno 2026</span>
-          <h1 className="font-display text-5xl md:text-7xl leading-[1.05] mt-6 text-background">Nova Coleção</h1>
-          <span className="gold-rule mt-8" />
-          <p className="text-base md:text-lg text-background/85 mt-8 leading-relaxed font-light">
-            Moda feminina sofisticada para mulheres que valorizam elegância, conforto e exclusividade.
+          <span className="inline-block bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">Nova Coleção</span>
+          <h1 className="font-display font-extrabold text-5xl md:text-7xl leading-[1.05] mt-6 text-background">MD Modas</h1>
+          <p className="text-base md:text-lg text-background/90 mt-6 leading-relaxed">
+            Moda feminina e masculina para todas as ocasiões.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Button variant="hero" size="xl" asChild><Link to="/colecao" search={{ c: undefined }}>Comprar Agora</Link></Button>
-            <Button variant="heroOutline" size="xl" asChild><a href="#colecao">Ver Coleção</a></Button>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button variant="default" size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full" asChild>
+              <Link to="/colecao" search={{ c: undefined }}>Comprar Agora</Link>
+            </Button>
+            <Button variant="default" size="xl" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-full" asChild>
+              <a href="https://wa.me/5500000000000" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+            </Button>
           </div>
         </div>
       </div>

@@ -5,10 +5,10 @@ export function Footer() {
     <footer className="bg-foreground text-background mt-24">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div>
-          <div className="font-display text-3xl tracking-[0.3em] uppercase">Aura</div>
+          <div className="font-display font-extrabold text-3xl"><span className="text-primary">MD</span> Modas</div>
           <span className="gold-rule mt-4" />
           <p className="text-sm text-background/70 mt-6 leading-relaxed">
-            Moda feminina sofisticada para mulheres que valorizam elegância, conforto e exclusividade.
+            Moda feminina e masculina para todas as ocasiões. Atendimento próximo e entregas para toda a região.
           </p>
         </div>
         <div>
@@ -43,8 +43,8 @@ export function Footer() {
           </form>
         </div>
       </div>
-      <div className="border-t border-background/10 py-6 text-center text-[11px] tracking-[0.25em] uppercase text-background/50">
-        © {new Date().getFullYear()} Aura Boutique · Todos os direitos reservados
+      <div className="border-t border-background/10 py-6 text-center text-xs text-background/60">
+        © {new Date().getFullYear()} MD Modas · Todos os direitos reservados
       </div>
     </footer>
   );

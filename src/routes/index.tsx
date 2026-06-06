@@ -11,10 +11,10 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aura Boutique — Moda Feminina Sofisticada" },
-      { name: "description", content: "Coleções premium de vestidos, conjuntos, alfaiataria e tricots. Elegância, conforto e exclusividade para a mulher contemporânea." },
-      { property: "og:title", content: "Aura Boutique — Moda Feminina Sofisticada" },
-      { property: "og:description", content: "Coleções premium de vestidos, conjuntos, alfaiataria e tricots." },
+      { title: "MD Modas — Moda Feminina e Masculina" },
+      { name: "description", content: "MD Modas: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana. Compre pelo WhatsApp." },
+      { property: "og:title", content: "MD Modas — Moda Feminina e Masculina" },
+      { property: "og:description", content: "Vestidos, conjuntos, plus size e novidades. Compre pelo WhatsApp." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
     ],
