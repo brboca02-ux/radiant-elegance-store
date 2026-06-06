@@ -83,6 +83,29 @@ const MASCULINO: MegaContent = {
   ],
 };
 
+const ACESSORIOS: MegaContent = {
+  columns: [
+    {
+      title: "Acessórios",
+      items: [
+        { label: "Bolsas", c: "bolsas" },
+        { label: "Cintos", c: "cintos" },
+        { label: "Bijuterias", c: "bijuterias" },
+        { label: "Óculos", c: "oculos" },
+        { label: "Lenços", c: "lencos" },
+        { label: "Chapéus", c: "chapeus" },
+      ],
+    },
+    {
+      title: "Coleções",
+      items: [
+        { label: "Novidades", c: "novidades" },
+        { label: "Mais Vendidos", c: "mais-vendidos" },
+      ],
+    },
+  ],
+};
+
 const PROMOCOES: MegaContent = {
   columns: [
     {
@@ -102,13 +125,16 @@ const PROMOCOES: MegaContent = {
   },
 };
 
-type MenuKey = "feminino" | "masculino" | "promocoes" | null;
+type MenuKey = "feminino" | "masculino" | "acessorios" | "promocoes" | null;
 
-const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean }[] = [
+const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; emoji?: string }[] = [
   { key: "feminino", label: "Feminino", content: FEMININO },
   { key: "masculino", label: "Masculino", content: MASCULINO },
-  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true },
+  { key: "acessorios", label: "Acessórios", content: ACESSORIOS },
+  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, emoji: "🔥" },
 ];
+
+
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -183,7 +209,7 @@ export function Header() {
 
       {/* Desktop nav with mega menu */}
       <div ref={navRef} className="hidden md:block relative">
-        <nav className="flex items-center justify-center gap-8 lg:gap-12 pb-3 text-sm font-medium">
+        <nav className="flex items-center justify-center gap-6 lg:gap-8 pb-3 text-sm font-medium">
           {MENUS.map((m) => (
             <button
               key={m.key}
@@ -193,20 +219,28 @@ export function Header() {
               aria-expanded={activeMenu === m.key}
               aria-haspopup="true"
               className={`inline-flex items-center gap-1 transition ${
-                m.highlight ? "text-primary" : "text-foreground/80"
+                m.highlight ? "text-primary font-semibold" : "text-foreground/80"
               } hover:text-primary`}
             >
+              {m.emoji && <span aria-hidden>{m.emoji}</span>}
               {m.label}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "novidades" } as never} className="text-foreground/80 hover:text-primary transition">
-            Novidades
+          <Link to="/colecao" search={{ c: "novidades" } as never} className="inline-flex items-center gap-1 text-foreground/80 hover:text-primary transition">
+            <span aria-hidden>✨</span> Novidades
+          </Link>
+          <Link to="/colecao" search={{ c: "mais-vendidos" } as never} className="inline-flex items-center gap-1 text-foreground/80 hover:text-primary transition">
+            <span aria-hidden>⭐</span> Mais Vendidos
+          </Link>
+          <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-primary transition">
+            Recebidos da Semana
           </Link>
           <Link to="/sobre" className="text-foreground/80 hover:text-primary transition">
             Sobre
           </Link>
         </nav>
+
 
         {activeMenu && (
           <div
@@ -293,7 +327,10 @@ export function Header() {
                         m.highlight ? "text-primary" : ""
                       }`}
                     >
-                      {m.label}
+                      <span className="inline-flex items-center gap-2">
+                        {m.emoji && <span aria-hidden>{m.emoji}</span>}
+                        {m.label}
+                      </span>
                       <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                     </button>
                     <div
@@ -336,9 +373,25 @@ export function Header() {
                 to="/colecao"
                 search={{ c: "novidades" } as never}
                 onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-5 py-3 text-base font-semibold border-b border-border/60"
+              >
+                <span aria-hidden>✨</span> Novidades
+              </Link>
+              <Link
+                to="/colecao"
+                search={{ c: "mais-vendidos" } as never}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-5 py-3 text-base font-semibold border-b border-border/60"
+              >
+                <span aria-hidden>⭐</span> Mais Vendidos
+              </Link>
+              <Link
+                to="/colecao"
+                search={{ c: "recebidos-da-semana" } as never}
+                onClick={() => setOpen(false)}
                 className="block px-5 py-3 text-base font-semibold border-b border-border/60"
               >
-                Novidades
+                Recebidos da Semana
               </Link>
               <Link
                 to="/sobre"
