@@ -2,15 +2,33 @@ import { useQuery } from "@tanstack/react-query";
 import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { ProductCard } from "./ProductCard";
 
-async function fetchProducts(query?: string) {
-  const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: 12, query: query ?? null });
+interface FetchOpts {
+  query?: string;
+  first?: number;
+  sortKey?: "CREATED_AT" | "BEST_SELLING" | "PRICE" | "TITLE" | "UPDATED_AT" | "RELEVANCE";
+  reverse?: boolean;
+}
+
+async function fetchProducts({ query, first = 12, sortKey, reverse }: FetchOpts) {
+  const data = await storefrontApiRequest(PRODUCTS_QUERY, {
+    first,
+    query: query ?? null,
+    sortKey: sortKey ?? null,
+    reverse: reverse ?? null,
+  });
   return (data?.data?.products?.edges ?? []) as ShopifyProduct[];
 }
 
-export function ProductGrid({ query, emptyHint = true }: { query?: string; emptyHint?: boolean }) {
+export function ProductGrid({
+  query,
+  first,
+  sortKey,
+  reverse,
+  emptyHint = true,
+}: { query?: string; first?: number; sortKey?: FetchOpts["sortKey"]; reverse?: boolean; emptyHint?: boolean }) {
   const { data, isLoading } = useQuery({
-    queryKey: ["products", query ?? "all"],
-    queryFn: () => fetchProducts(query),
+    queryKey: ["products", query ?? "all", first ?? 12, sortKey ?? "default", reverse ?? false],
+    queryFn: () => fetchProducts({ query, first, sortKey, reverse }),
   });
 
   if (isLoading) {
