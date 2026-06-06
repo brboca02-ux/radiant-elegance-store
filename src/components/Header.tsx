@@ -327,7 +327,10 @@ export function Header() {
                         m.highlight ? "text-primary" : ""
                       }`}
                     >
-                      {m.label}
+                      <span className="inline-flex items-center gap-2">
+                        {m.emoji && <span aria-hidden>{m.emoji}</span>}
+                        {m.label}
+                      </span>
                       <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                     </button>
                     <div
