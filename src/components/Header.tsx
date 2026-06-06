@@ -134,13 +134,7 @@ const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent;
   { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, emoji: "🔥" },
 ];
 
-type MenuKey = "feminino" | "masculino" | "promocoes" | null;
 
-const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean }[] = [
-  { key: "feminino", label: "Feminino", content: FEMININO },
-  { key: "masculino", label: "Masculino", content: MASCULINO },
-  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true },
-];
 
 export function Header() {
   const [open, setOpen] = useState(false);
