@@ -44,6 +44,9 @@ export interface Product {
   price: number;
   sale_price: number | null;
   stock: number;
+  reserved_stock: number;
+  minimum_stock: number;
+  track_stock: boolean;
   weight: number;
   status: ProductStatus;
   meta_title: string;
@@ -66,12 +69,17 @@ const mkImg = (product_id: string, url: string, position: number, is_primary = f
 const placeholderImg = (seed: string) =>
   `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=1200&q=80`;
 
+const baseProduct = {
+  reserved_stock: 0, minimum_stock: 5, track_stock: true,
+};
+
 const seed: Product[] = [
   {
     id: "p_001", store_id: STORE_ID, name: "Vestido Aurora", slug: "vestido-aurora",
     description: "Vestido midi com caimento fluido, ideal para ocasiões especiais.",
     category_id: "vestidos", brand: "MD Modas", sku: "VST-AUR",
     price: 229.9, sale_price: 189.9, stock: 12, weight: 0.4, status: "ativo",
+    ...baseProduct, reserved_stock: 2,
     meta_title: "Vestido Aurora — MD Modas", meta_description: "Vestido midi elegante para ocasiões especiais.",
     images: [
       mkImg("p_001", placeholderImg("1539109136881-3be0616acf4b"), 0, true),
@@ -88,12 +96,13 @@ const seed: Product[] = [
     id: "p_002", store_id: STORE_ID, name: "Blusa Elegance", slug: "blusa-elegance",
     description: "Blusa versátil para o dia a dia, ideal para compor produções modernas.",
     category_id: "feminino", brand: "MD Modas", sku: "BLU-ELE",
-    price: 99.9, sale_price: null, stock: 8, weight: 0.2, status: "ativo",
+    price: 99.9, sale_price: null, stock: 4, weight: 0.2, status: "ativo",
+    ...baseProduct,
     meta_title: "Blusa Elegance — MD Modas", meta_description: "Blusa elegante e confortável.",
     images: [mkImg("p_002", placeholderImg("1485518882345-15568b007407"), 0, true)],
     variants: [
-      { id: uid(), product_id: "p_002", size: "P", color: "Branco", stock: 3 },
-      { id: uid(), product_id: "p_002", size: "M", color: "Branco", stock: 5 },
+      { id: uid(), product_id: "p_002", size: "P", color: "Branco", stock: 1 },
+      { id: uid(), product_id: "p_002", size: "M", color: "Branco", stock: 3 },
     ],
     created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
   },
@@ -102,6 +111,7 @@ const seed: Product[] = [
     description: "Conjunto alfaiataria em duas peças com corte moderno.",
     category_id: "conjuntos", brand: "MD Modas", sku: "CJT-CLA",
     price: 329.9, sale_price: 289.9, stock: 2, weight: 0.7, status: "ativo",
+    ...baseProduct, reserved_stock: 1,
     meta_title: "Conjunto Classic — MD Modas", meta_description: "Conjunto alfaiataria moderno.",
     images: [mkImg("p_003", placeholderImg("1551488831-00ddcb6c6bd3"), 0, true)],
     variants: [
@@ -115,6 +125,7 @@ const seed: Product[] = [
     description: "Camisa masculina de algodão para uso casual.",
     category_id: "masculino", brand: "MD Modas", sku: "CAM-CAS",
     price: 149.9, sale_price: null, stock: 15, weight: 0.3, status: "ativo",
+    ...baseProduct,
     meta_title: "Camisa Casual — MD Modas", meta_description: "Camisa masculina confortável.",
     images: [mkImg("p_004", placeholderImg("1602810318383-e386cc2a3ccf"), 0, true)],
     variants: [
@@ -128,6 +139,7 @@ const seed: Product[] = [
     description: "Vestido plus size com modelagem confortável e elegante.",
     category_id: "plus-size", brand: "MD Modas", sku: "VST-PLU",
     price: 259.9, sale_price: null, stock: 0, weight: 0.5, status: "inativo",
+    ...baseProduct,
     meta_title: "Vestido Plus Elegance", meta_description: "Vestido plus size elegante.",
     images: [mkImg("p_005", placeholderImg("1496747611176-843222e1e57c"), 0, true)],
     variants: [],
@@ -144,6 +156,8 @@ interface ProductsState {
   duplicate: (id: string) => Product | undefined;
   archive: (id: string) => void;
   remove: (id: string) => void;
+  adjustStock: (id: string, delta: number) => void;
+  setStock: (id: string, value: number) => void;
 }
 
 export const useProductsStore = create<ProductsState>()(
@@ -178,13 +192,38 @@ export const useProductsStore = create<ProductsState>()(
         products: s.products.map((p) => (p.id === id ? { ...p, status: "arquivado" } : p)),
       })),
       remove: (id) => set((s) => ({ products: s.products.filter((p) => p.id !== id) })),
+      adjustStock: (id, delta) => set((s) => ({
+        products: s.products.map((p) => (p.id === id ? { ...p, stock: Math.max(0, p.stock + delta) } : p)),
+      })),
+      setStock: (id, value) => set((s) => ({
+        products: s.products.map((p) => (p.id === id ? { ...p, stock: Math.max(0, value) } : p)),
+      })),
     }),
-    { name: "md_products_v1", storage: createJSONStorage(() => localStorage) },
+    { name: "md_products_v2", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
 export const emptyProduct = (): Omit<Product, "id" | "store_id" | "created_at"> => ({
   name: "", slug: "", description: "", category_id: "feminino", brand: "MD Modas",
-  sku: "", price: 0, sale_price: null, stock: 0, weight: 0, status: "ativo",
+  sku: "", price: 0, sale_price: null, stock: 0, reserved_stock: 0,
+  minimum_stock: 5, track_stock: true, weight: 0, status: "ativo",
   meta_title: "", meta_description: "", images: [], variants: [],
 });
+
+// ---------- Stock helpers ----------
+export type StockLevel = "critico" | "baixo" | "normal" | "esgotado";
+
+export function stockLevel(p: Pick<Product, "stock" | "minimum_stock" | "track_stock">): StockLevel {
+  if (!p.track_stock) return "normal";
+  if (p.stock <= 0) return "esgotado";
+  if (p.stock <= 2) return "critico";
+  if (p.stock <= (p.minimum_stock || 5)) return "baixo";
+  return "normal";
+}
+
+export function stockStatusLabel(level: StockLevel): string {
+  return level === "esgotado" ? "Esgotado"
+    : level === "critico" ? "Crítico"
+    : level === "baixo" ? "Estoque Baixo"
+    : "Em Estoque";
+}
