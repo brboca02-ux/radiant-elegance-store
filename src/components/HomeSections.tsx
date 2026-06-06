@@ -79,29 +79,32 @@ export function HomeHero() {
 
 export function CategoriesSection() {
   return (
-    <section className="py-5 md:py-7 bg-background">
+    <section className="py-4 md:py-6 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display font-medium text-sm md:text-base tracking-tight text-muted-foreground uppercase">Categorias</h2>
-
+          <h2 className="font-medium text-[11px] tracking-[0.22em] text-muted-foreground uppercase">Categorias</h2>
           <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-primary hover:underline">
             Ver tudo →
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
+        <div className="flex md:grid md:grid-cols-5 gap-2 md:gap-3 overflow-x-auto md:overflow-visible -mx-6 px-6 md:mx-0 md:px-0 scrollbar-none snap-x snap-mandatory">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative h-[110px] md:h-[130px] lg:h-[150px] overflow-hidden bg-secondary"
+              className="group relative shrink-0 snap-start w-[140px] md:w-auto h-[100px] md:h-[130px] overflow-hidden bg-secondary"
             >
-              <img src={c.img} alt={c.label} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 px-3 py-1.5">
-                <h3 className="font-medium text-sm text-background tracking-wide">{c.label}</h3>
+              <img
+                src={c.img}
+                alt={c.label}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-foreground/25 transition-colors duration-300 group-hover:bg-foreground/45" />
+              <div className="absolute inset-x-0 bottom-0 px-3 py-2">
+                <h3 className="font-medium text-xs md:text-sm text-background tracking-wide">{c.label}</h3>
               </div>
-
             </Link>
           ))}
         </div>
@@ -109,6 +112,7 @@ export function CategoriesSection() {
     </section>
   );
 }
+
 
 
 function SectionHeader({ kicker, title, subtitle, link }: { kicker?: string; title: string; subtitle?: string; link?: { to: string; label: string; c?: string } }) {
