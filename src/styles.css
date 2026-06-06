@@ -119,3 +119,8 @@
 .prose-legal ol { list-style: decimal; }
 .prose-legal li { margin-bottom: 0.4rem; }
 .prose-legal strong { color: hsl(var(--foreground)); font-weight: 600; }
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
