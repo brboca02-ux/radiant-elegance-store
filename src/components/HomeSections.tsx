@@ -81,10 +81,9 @@ export function CategoriesSection() {
   return (
     <section className="py-5 md:py-7 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="flex items-end justify-between mb-4 md:mb-5">
-          <div>
-            <h2 className="font-display font-semibold text-lg md:text-xl tracking-tight">Categorias</h2>
-          </div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-display font-medium text-sm md:text-base tracking-tight text-muted-foreground uppercase">Categorias</h2>
+
           <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-primary hover:underline">
             Ver tudo →
           </Link>
