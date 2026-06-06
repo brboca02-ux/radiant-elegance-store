@@ -1,48 +1,115 @@
-import { Instagram, Facebook } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Instagram, MessageCircle, MapPin, ShieldCheck, Lock } from "lucide-react";
 import { NewsletterCapture } from "@/components/NewsletterCapture";
+import { STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 
+const COL_TITLE = "text-[11px] tracking-[0.3em] uppercase mb-5 text-background/60";
+const LINK = "text-sm text-background/75 hover:text-background transition";
 
 export function Footer() {
   return (
     <footer className="bg-foreground text-background mt-24">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20 grid grid-cols-1 md:grid-cols-4 gap-12">
-        <div>
-          <div className="font-display font-extrabold text-3xl"><span className="text-primary">MD</span> Modas</div>
-          <span className="gold-rule mt-4" />
-          <p className="text-sm text-background/70 mt-6 leading-relaxed">
-            Moda feminina e masculina para todas as ocasiões. Atendimento próximo e entregas para toda a região.
-          </p>
-        </div>
-        <div>
-          <h4 className="text-[11px] tracking-[0.3em] uppercase mb-5 text-gold">Instituição</h4>
-          <ul className="space-y-3 text-sm text-background/80">
-            <li><a href="#" className="hover:text-background">Sobre Nós</a></li>
-            <li><a href="#" className="hover:text-background">Trocas e Devoluções</a></li>
-            <li><a href="#" className="hover:text-background">Política de Privacidade</a></li>
-            <li><a href="#" className="hover:text-background">FAQ</a></li>
-            <li><a href="#" className="hover:text-background">Contato</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-[11px] tracking-[0.3em] uppercase mb-5 text-gold">Social</h4>
-          <div className="flex gap-4 text-background/80">
-            <a href="#" aria-label="Instagram" className="hover:text-gold"><Instagram className="h-5 w-5" strokeWidth={1.25} /></a>
-            <a href="#" aria-label="Facebook" className="hover:text-gold"><Facebook className="h-5 w-5" strokeWidth={1.25} /></a>
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
+        {/* Brand + Newsletter */}
+        <div className="lg:col-span-2">
+          <div className="font-display font-extrabold text-3xl">
+            <span className="text-primary">MD</span> Modas
           </div>
-          <p className="text-xs text-background/60 mt-6">WhatsApp · TikTok</p>
-        </div>
-        <div>
-          <h4 className="text-[11px] tracking-[0.3em] uppercase mb-5 text-gold">Newsletter</h4>
-          <p className="text-sm text-background/70 mb-4">Ganhe 5% OFF na primeira compra.</p>
-          <div className="bg-background text-foreground rounded-lg p-4">
-            <NewsletterCapture compact />
+          <p className="text-sm text-background/70 mt-5 leading-relaxed max-w-sm">
+            Moda feminina e masculina em Joinville. Curadoria honesta, atendimento próximo
+            e peças selecionadas para o seu dia a dia.
+          </p>
+          <div className="mt-7 max-w-sm">
+            <p className={COL_TITLE}>Newsletter</p>
+            <p className="text-sm text-background/70 mb-4">
+              Receba lançamentos, novidades e tendências em primeira mão.
+            </p>
+            <div className="bg-background text-foreground rounded-md p-4">
+              <NewsletterCapture compact />
+            </div>
           </div>
         </div>
 
+        <div>
+          <h4 className={COL_TITLE}>Institucional</h4>
+          <ul className="space-y-3">
+            <li><Link to="/sobre" className={LINK}>Sobre Nós</Link></li>
+            <li><a href="#loja" className={LINK}>Nossa Loja</a></li>
+            <li>
+              <a href={buildWhatsAppLink("Olá MD Modas, gostaria de falar com vocês.")} target="_blank" rel="noopener noreferrer" className={LINK}>
+                Contato
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className={COL_TITLE}>Atendimento</h4>
+          <ul className="space-y-3">
+            <li><a href="#" className={LINK}>Trocas e Devoluções</a></li>
+            <li><a href="#" className={LINK}>Política de Privacidade</a></li>
+            <li><a href="#" className={LINK}>Termos de Uso</a></li>
+            <li><a href="#" className={LINK}>Política de Entrega</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className={COL_TITLE}>Contato</h4>
+          <ul className="space-y-3">
+            <li>
+              <a href={buildWhatsAppLink("Olá MD Modas!")} target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
+                <MessageCircle className="h-4 w-4" strokeWidth={1.5} /> WhatsApp
+              </a>
+            </li>
+            <li>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
+                <Instagram className="h-4 w-4" strokeWidth={1.5} /> Instagram
+              </a>
+            </li>
+            <li className={`${LINK} flex items-start gap-2`}>
+              <MapPin className="h-4 w-4 mt-0.5 shrink-0" strokeWidth={1.5} />
+              <span>
+                {STORE_INFO.street}<br />
+                {STORE_INFO.city}/{STORE_INFO.region} · CEP {STORE_INFO.postalCode}
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div className="border-t border-background/10 py-6 text-center text-xs text-background/60">
-        © {new Date().getFullYear()} MD Modas · Todos os direitos reservados
+
+      {/* Trust + payments */}
+      <div className="border-t border-background/10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-background/70">
+            <span className="inline-flex items-center gap-2"><Lock className="h-3.5 w-3.5" strokeWidth={1.5} /> Site Seguro</span>
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.5} /> Compra Segura</span>
+            <span className="inline-flex items-center gap-2"><MessageCircle className="h-3.5 w-3.5" strokeWidth={1.5} /> Atendimento via WhatsApp</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <PayBadge>Pix</PayBadge>
+            <PayBadge>Visa</PayBadge>
+            <PayBadge>Master</PayBadge>
+            <PayBadge>Elo</PayBadge>
+            <PayBadge>Amex</PayBadge>
+            <PayBadge>Hipercard</PayBadge>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-background/10 py-6 text-center text-xs text-background/55 px-6">
+        <p>
+          MD Modas · CNPJ 00.000.000/0001-00 · {STORE_INFO.street}, {STORE_INFO.city}/{STORE_INFO.region} · CEP {STORE_INFO.postalCode}
+        </p>
+        <p className="mt-1">© {new Date().getFullYear()} MD Modas. Todos os direitos reservados.</p>
       </div>
     </footer>
+  );
+}
+
+function PayBadge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-[10px] font-semibold tracking-wider uppercase bg-background/10 border border-background/15 text-background/85 px-2.5 py-1 rounded">
+      {children}
+    </span>
   );
 }

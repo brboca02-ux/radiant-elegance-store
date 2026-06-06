@@ -127,11 +127,11 @@ const PROMOCOES: MegaContent = {
 
 type MenuKey = "feminino" | "masculino" | "acessorios" | "promocoes" | null;
 
-const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; emoji?: string }[] = [
+const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; badge?: string }[] = [
   { key: "feminino", label: "Feminino", content: FEMININO },
   { key: "masculino", label: "Masculino", content: MASCULINO },
   { key: "acessorios", label: "Acessórios", content: ACESSORIOS },
-  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, emoji: "🔥" },
+  { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, badge: "PROMOÇÃO" },
 ];
 
 
@@ -165,9 +165,9 @@ export function Header() {
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
       <div className="bg-primary text-primary-foreground text-[11px] sm:text-xs py-1.5 sm:py-2 overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-3 flex flex-nowrap sm:flex-wrap items-center justify-start sm:justify-center gap-x-5 sm:gap-x-6 gap-y-1 whitespace-nowrap overflow-x-auto no-scrollbar">
-          <span>🚚 Entregamos para toda região</span>
-          <span>📱 Compre pelo WhatsApp</span>
-          <span>💳 Parcelamento facilitado</span>
+          <span>Entregamos para toda a região</span>
+          <span>Atendimento pelo WhatsApp</span>
+          <span>Parcelamento facilitado</span>
         </div>
       </div>
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-6">
@@ -222,16 +222,20 @@ export function Header() {
                 m.highlight ? "text-primary font-semibold" : "text-foreground/80"
               } hover:text-primary`}
             >
-              {m.emoji && <span aria-hidden>{m.emoji}</span>}
               {m.label}
+              {m.badge && (
+                <span className="ml-1 text-[9px] font-semibold tracking-[0.18em] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-sm">
+                  {m.badge}
+                </span>
+              )}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "novidades" } as never} className="inline-flex items-center gap-1 text-foreground/80 hover:text-primary transition">
-            <span aria-hidden>✨</span> Novidades
+          <Link to="/colecao" search={{ c: "novidades" } as never} className="text-foreground/80 hover:text-primary transition">
+            Novidades
           </Link>
-          <Link to="/colecao" search={{ c: "mais-vendidos" } as never} className="inline-flex items-center gap-1 text-foreground/80 hover:text-primary transition">
-            <span aria-hidden>⭐</span> Mais Vendidos
+          <Link to="/colecao" search={{ c: "mais-vendidos" } as never} className="text-foreground/80 hover:text-primary transition">
+            Mais Vendidos
           </Link>
           <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-primary transition">
             Recebidos da Semana
@@ -328,8 +332,12 @@ export function Header() {
                       }`}
                     >
                       <span className="inline-flex items-center gap-2">
-                        {m.emoji && <span aria-hidden>{m.emoji}</span>}
                         {m.label}
+                        {m.badge && (
+                          <span className="text-[9px] font-semibold tracking-[0.18em] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-sm">
+                            {m.badge}
+                          </span>
+                        )}
                       </span>
                       <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                     </button>
@@ -373,17 +381,17 @@ export function Header() {
                 to="/colecao"
                 search={{ c: "novidades" } as never}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 px-5 py-3 text-base font-semibold border-b border-border/60"
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
               >
-                <span aria-hidden>✨</span> Novidades
+                Novidades
               </Link>
               <Link
                 to="/colecao"
                 search={{ c: "mais-vendidos" } as never}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 px-5 py-3 text-base font-semibold border-b border-border/60"
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
               >
-                <span aria-hidden>⭐</span> Mais Vendidos
+                Mais Vendidos
               </Link>
               <Link
                 to="/colecao"

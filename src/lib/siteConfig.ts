@@ -26,8 +26,8 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   promoSubtitle: "Aproveite descontos exclusivos até domingo",
   promoCoupon: "BEMVINDA5",
   promoCouponPercent: 5,
-  newsletterTitle: "Ganhe 5% OFF na primeira compra",
-  newsletterSubtitle: "Cadastre seu e-mail ou WhatsApp e receba o cupom exclusivo.",
+  newsletterTitle: "Lançamentos em primeira mão",
+  newsletterSubtitle: "Receba novidades, recebidos da semana e tendências da MD Modas direto no seu e-mail.",
   whatsappCtaTitle: "Precisa de ajuda para escolher?",
   whatsappCtaSubtitle: "Fale com uma consultora MD Modas pelo WhatsApp.",
 };
