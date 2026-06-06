@@ -92,16 +92,6 @@ const MarketingIndexRoute = MarketingIndexRouteImport.update({
   path: '/marketing/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MarketingIndexRoute = MarketingIndexRouteImport.update({
-  id: '/marketing/',
-  path: '/marketing/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientesIndexRoute = ClientesIndexRouteImport.update({
-  id: '/clientes/',
-  path: '/clientes/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EstoqueIndexRoute = EstoqueIndexRouteImport.update({
   id: '/estoque/',
   path: '/estoque/',
@@ -431,20 +421,6 @@ declare module '@tanstack/react-router' {
       path: '/categorias'
       fullPath: '/categorias/'
       preLoaderRoute: typeof CategoriasIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clientes/': {
-      id: '/clientes/'
-      path: '/clientes'
-      fullPath: '/clientes/'
-      preLoaderRoute: typeof ClientesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/marketing/': {
-      id: '/marketing/'
-      path: '/marketing'
-      fullPath: '/marketing/'
-      preLoaderRoute: typeof MarketingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produtos/novo': {
