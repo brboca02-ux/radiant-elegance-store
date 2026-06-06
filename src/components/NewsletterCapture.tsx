@@ -18,7 +18,6 @@ function saveLead(lead: Lead) {
 }
 
 export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
-  const cfg = useSiteConfig();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [done, setDone] = useState(false);
@@ -43,8 +42,8 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
     if (cleanPhone) saveLead({ type: "whatsapp", value: cleanPhone, at: new Date().toISOString() });
     track.lead(cleanEmail && cleanPhone ? "email+whatsapp" : cleanEmail ? "email" : "whatsapp");
     setDone(true);
-    toast.success(`Cupom ${cfg.promoCoupon} enviado!`, {
-      description: `Use no checkout para ${cfg.promoCouponPercent}% OFF na primeira compra.`,
+    toast.success("Cadastro confirmado", {
+      description: "Você receberá nossos lançamentos e novidades em primeira mão.",
     });
   };
 
@@ -52,11 +51,10 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
   if (done) {
     return (
       <div className={`text-center ${compact ? "" : "py-8"}`}>
-        <Gift className="mx-auto h-8 w-8 text-primary" />
-        <p className="font-display text-xl mt-3">Pronto!</p>
+        <Check className="mx-auto h-8 w-8 text-primary" strokeWidth={1.5} />
+        <p className="font-display text-xl mt-3">Cadastro confirmado</p>
         <p className="text-sm text-muted-foreground mt-2">
-          Seu cupom <span className="font-semibold text-primary">{cfg.promoCoupon}</span> garante{" "}
-          {cfg.promoCouponPercent}% OFF.
+          Você receberá nossos lançamentos em primeira mão.
         </p>
       </div>
     );
@@ -86,23 +84,25 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
       </div>
       <button
         type="submit"
-        className="w-full bg-primary text-primary-foreground rounded-md py-2.5 text-sm font-semibold tracking-wide hover:bg-primary/90 transition"
+        className="w-full bg-foreground text-background rounded-md py-2.5 text-sm font-semibold tracking-wide hover:bg-foreground/90 transition"
       >
-        Quero meu cupom de {cfg.promoCouponPercent}% OFF
+        Quero receber novidades
       </button>
     </form>
   );
 }
 
 export function NewsletterSection() {
-  const cfg = useSiteConfig();
   return (
-    <section className="py-20 bg-offwhite">
+    <section className="py-20 md:py-24 bg-offwhite border-t border-border">
       <div className="max-w-xl mx-auto px-6 text-center">
-        <span className="eyebrow">Exclusivo</span>
-        <h2 className="font-display text-3xl md:text-4xl mt-3">{cfg.newsletterTitle}</h2>
-        <span className="gold-rule mt-4" />
-        <p className="text-sm text-muted-foreground mt-5">{cfg.newsletterSubtitle}</p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Newsletter MD Modas</p>
+        <h2 className="font-display font-semibold text-3xl md:text-4xl mt-4 tracking-tight">
+          Lançamentos em primeira mão
+        </h2>
+        <p className="text-sm md:text-base text-muted-foreground mt-4 leading-relaxed">
+          Receba lançamentos, novidades e tendências da MD Modas direto no seu e-mail.
+        </p>
         <div className="mt-8">
           <NewsletterCapture />
         </div>
