@@ -40,10 +40,10 @@ export function HomeHero() {
         alt="MD Modas — Nova Coleção"
         width={1920}
         height={1280}
-        className="absolute inset-0 w-full h-full object-cover object-[30%_center] md:object-center"
+        className="absolute inset-0 w-full h-full object-cover object-[22%_20%] sm:object-[28%_center] md:object-center"
       />
       {/* Mobile: dark overlay for legibility. Desktop: subtle right-side wash, text sits in negative space */}
-      <div className="absolute inset-0 bg-foreground/45 md:bg-gradient-to-l md:from-background/30 md:via-transparent md:to-foreground/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/30 to-foreground/10 md:bg-gradient-to-l md:from-background/30 md:via-transparent md:to-foreground/20" />
       <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center md:justify-end">
         <div className="max-w-xl text-background md:text-foreground md:bg-background/0">
           <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/80 md:text-foreground/70 mb-5">
