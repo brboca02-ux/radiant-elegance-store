@@ -34,32 +34,35 @@ const diferenciais = [
 export function HomeHero() {
   const cfg = useSiteConfig();
   return (
-    <section className="relative h-[78vh] min-h-[560px] md:min-h-[680px] overflow-hidden bg-foreground">
+    <section className="relative h-[78vh] min-h-[560px] md:min-h-[680px] overflow-hidden bg-[#a98869]">
       <img
         src={hero}
         alt="MD Modas — Nova Coleção"
         width={1920}
         height={1280}
-        className="absolute inset-0 w-full h-full object-cover object-center"
+        className="absolute inset-0 w-full h-full object-cover object-[30%_center] md:object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
-      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center">
-        <div className="max-w-2xl text-background">
-          <h1 className="font-display font-semibold text-5xl md:text-7xl leading-[1.02] text-background tracking-tight">
-            MD Modas
+      {/* Mobile: dark overlay for legibility. Desktop: subtle right-side wash, text sits in negative space */}
+      <div className="absolute inset-0 bg-foreground/45 md:bg-gradient-to-l md:from-background/30 md:via-transparent md:to-foreground/20" />
+      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center md:justify-end">
+        <div className="max-w-xl text-background md:text-foreground md:bg-background/0">
+          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/80 md:text-foreground/70 mb-5">
+            Nova Coleção
+          </p>
+          <h1 className="font-display font-semibold text-5xl md:text-6xl lg:text-7xl leading-[1.02] tracking-tight">
+            Moda para o seu dia,<br className="hidden md:block" /> na sua cidade.
           </h1>
-          <p className="text-lg md:text-xl text-background/90 mt-6 leading-relaxed font-light max-w-lg">
-            {cfg.heroSubtitle || "Moda feminina e masculina para todas as ocasiões."}
+          <p className="text-base md:text-lg mt-6 leading-relaxed font-light max-w-md text-background/90 md:text-foreground/75">
+            {cfg.heroSubtitle || "Moda feminina e masculina selecionada em Joinville."}
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8 font-semibold" asChild>
+            <Button size="xl" className="bg-foreground hover:bg-foreground/90 text-background md:bg-foreground rounded-none px-8 font-semibold" asChild>
               <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
             </Button>
-            <Button size="xl" variant="outline" className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-8 font-semibold" asChild>
+            <Button size="xl" variant="outline" className="bg-transparent border-background text-background md:border-foreground md:text-foreground hover:bg-background hover:text-foreground md:hover:bg-foreground md:hover:text-background rounded-none px-8 font-semibold" asChild>
               <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
             </Button>
           </div>
-
         </div>
       </div>
     </section>
