@@ -9,38 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 
+const ColecaoRoute = ColecaoRouteImport.update({
+  id: '/colecao',
+  path: '/colecao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
+  id: '/produto/$handle',
+  path: '/produto/$handle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/colecao': typeof ColecaoRoute
+  '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/colecao': typeof ColecaoRoute
+  '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/colecao': typeof ColecaoRoute
+  '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/colecao' | '/produto/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/colecao' | '/produto/$handle'
+  id: '__root__' | '/' | '/colecao' | '/produto/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ColecaoRoute: typeof ColecaoRoute
+  ProdutoHandleRoute: typeof ProdutoHandleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/colecao': {
+      id: '/colecao'
+      path: '/colecao'
+      fullPath: '/colecao'
+      preLoaderRoute: typeof ColecaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +75,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produto/$handle': {
+      id: '/produto/$handle'
+      path: '/produto/$handle'
+      fullPath: '/produto/$handle'
+      preLoaderRoute: typeof ProdutoHandleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ColecaoRoute: ColecaoRoute,
+  ProdutoHandleRoute: ProdutoHandleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -1,29 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  HomeHero,
+  CategoriesSection,
+  LaunchSection,
+  LookbookSection,
+  DifferentialsSection,
+  InstagramSection,
+} from "@/components/HomeSections";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Aura Boutique — Moda Feminina Sofisticada" },
+      { name: "description", content: "Coleções premium de vestidos, conjuntos, alfaiataria e tricots. Elegância, conforto e exclusividade para a mulher contemporânea." },
+      { property: "og:title", content: "Aura Boutique — Moda Feminina Sofisticada" },
+      { property: "og:description", content: "Coleções premium de vestidos, conjuntos, alfaiataria e tricots." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      <HomeHero />
+      <CategoriesSection />
+      <LaunchSection />
+      <LookbookSection />
+      <DifferentialsSection />
+      <InstagramSection />
+    </>
   );
 }
