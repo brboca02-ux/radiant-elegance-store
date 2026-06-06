@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { AdminShell } from "@/components/AdminShell";
 import {
   DEFAULT_SITE_CONFIG,
   loadSiteConfig,
@@ -11,14 +12,12 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Painel — MD Modas" },
+      { title: "Configurações — MD Modas" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
   component: AdminPanel,
 });
-
-import { loadLeads, type Lead } from "@/lib/leads";
 
 function Field({
   label,
@@ -57,11 +56,9 @@ function Field({
 
 function AdminPanel() {
   const [cfg, setCfg] = useState<SiteConfig>(DEFAULT_SITE_CONFIG);
-  const [leads, setLeads] = useState<Lead[]>([]);
 
   useEffect(() => {
     setCfg(loadSiteConfig());
-    setLeads(loadLeads());
   }, []);
 
   const update = <K extends keyof SiteConfig>(k: K, v: SiteConfig[K]) => setCfg((c) => ({ ...c, [k]: v }));
@@ -77,26 +74,8 @@ function AdminPanel() {
     toast.success("Conteúdo restaurado para o padrão.");
   };
 
-  const exportLeads = () => {
-    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
-    const rows = leads.map((l) => {
-      const name = l.name ?? "";
-      const email = l.email ?? (l.type === "email" ? l.value ?? "" : "");
-      const whatsapp = l.whatsapp ?? (l.type === "whatsapp" ? l.value ?? "" : "");
-      const source = l.source ?? "newsletter";
-      return [name, email, whatsapp, source, l.at].map((v) => esc(String(v))).join(",");
-    });
-    const csv = ["nome,email,whatsapp,origem,data", ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "md-modas-leads.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
+    <AdminShell active="configuracoes">
     <div className="max-w-3xl mx-auto px-6 py-12">
       <div className="mb-8">
         <h1 className="font-display text-3xl">Painel MD Modas</h1>
