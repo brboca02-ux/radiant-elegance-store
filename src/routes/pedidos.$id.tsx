@@ -1,0 +1,226 @@
+import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useMemo } from "react";
+import {
+  ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
+  Clock, Send,
+} from "lucide-react";
+import {
+  useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
+  fmtBRL, fmtDate, type OrderStatus,
+} from "@/stores/ordersStore";
+
+export const Route = createFileRoute("/pedidos/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalhe do Pedido — MD Modas" },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+  }),
+  component: OrderDetailPage,
+});
+
+function OrderDetailPage() {
+  const { id } = useParams({ from: "/pedidos/$id" });
+  const order = useOrdersStore((s) => s.orders.find((o) => o.id === id));
+  const setStatus = useOrdersStore((s) => s.setStatus);
+  const cancel = useOrdersStore((s) => s.cancel);
+
+  const nextStatus = useMemo<OrderStatus | null>(() => {
+    if (!order || order.status === "cancelado" || order.status === "entregue") return null;
+    const idx = ORDER_STATUS_FLOW.indexOf(order.status);
+    return idx >= 0 && idx < ORDER_STATUS_FLOW.length - 1 ? ORDER_STATUS_FLOW[idx + 1] : null;
+  }, [order]);
+
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Pedido não encontrado.</p>
+          <Link to="/pedidos" className="text-primary hover:underline text-sm mt-2 inline-block">Voltar</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-muted/30 print:bg-white">
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-10">
+        {/* Header */}
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4 print:hidden">
+          <div>
+            <Link to="/pedidos" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-3.5 w-3.5" /> Pedidos
+            </Link>
+            <h1 className="font-display text-3xl md:text-4xl tracking-tight mt-1">Pedido {order.number}</h1>
+            <p className="text-sm text-muted-foreground mt-1">Criado em {fmtDate(order.created_at)}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {nextStatus && (
+              <button
+                onClick={() => setStatus(order.id, nextStatus)}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-foreground/85">
+                <CheckCircle2 className="h-4 w-4" /> Avançar para {ORDER_STATUS_LABEL[nextStatus]}
+              </button>
+            )}
+            <button onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background text-sm hover:bg-muted">
+              <Printer className="h-4 w-4" /> Imprimir pedido
+            </button>
+            <button
+              onClick={() => alert("Confirmação reenviada para " + order.customer.email)}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background text-sm hover:bg-muted">
+              <Send className="h-4 w-4" /> Reenviar
+            </button>
+            {order.status !== "cancelado" && order.status !== "entregue" && (
+              <button
+                onClick={() => confirm("Cancelar este pedido?") && cancel(order.id)}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background text-sm text-rose-600 hover:bg-rose-50">
+                <XCircle className="h-4 w-4" /> Cancelar
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mb-6 flex items-center gap-3">
+          <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ${statusTone[order.status]}`}>
+            {ORDER_STATUS_LABEL[order.status]}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Pagamento: <strong className="capitalize">{order.payment_status}</strong> · {order.payment_method.toUpperCase()}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Items */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card title="Produtos" icon={<Package className="h-4 w-4" />}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                    <tr className="border-b border-border">
+                      <th className="text-left py-2 font-medium">Produto</th>
+                      <th className="text-right py-2 font-medium">Qtd</th>
+                      <th className="text-right py-2 font-medium">Preço</th>
+                      <th className="text-right py-2 font-medium">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order.items.map((it) => (
+                      <tr key={it.id} className="border-b border-border last:border-0">
+                        <td className="py-3">
+                          <div className="font-medium">{it.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            SKU {it.sku}{it.size ? ` · ${it.size}` : ""}{it.color ? ` · ${it.color}` : ""}
+                          </div>
+                        </td>
+                        <td className="py-3 text-right">{it.quantity}</td>
+                        <td className="py-3 text-right">{fmtBRL(it.price)}</td>
+                        <td className="py-3 text-right font-medium">{fmtBRL(it.price * it.quantity)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Totals */}
+              <div className="mt-4 ml-auto max-w-xs space-y-1 text-sm">
+                <Row label="Subtotal" value={fmtBRL(order.subtotal)} />
+                <Row label="Frete" value={fmtBRL(order.shipping)} />
+                {order.discount > 0 && <Row label="Desconto" value={"− " + fmtBRL(order.discount)} />}
+                <div className="flex justify-between pt-2 border-t border-border font-semibold text-base">
+                  <span>Total</span><span>{fmtBRL(order.total)}</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Timeline */}
+            <Card title="Histórico / Timeline" icon={<Clock className="h-4 w-4" />}>
+              <ol className="relative border-l border-border ml-2 space-y-4">
+                {order.history.map((h) => (
+                  <li key={h.id} className="ml-4">
+                    <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full bg-primary" />
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ${statusTone[h.new_status]}`}>
+                        {ORDER_STATUS_LABEL[h.new_status]}
+                      </span>
+                      {h.old_status && (
+                        <span className="text-xs text-muted-foreground">
+                          (de {ORDER_STATUS_LABEL[h.old_status]})
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {fmtDate(h.created_at)} · por {h.user_id}
+                    </p>
+                    {h.note && <p className="text-xs mt-1">{h.note}</p>}
+                  </li>
+                ))}
+              </ol>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <Card title="Cliente" icon={<User className="h-4 w-4" />}>
+              <div className="text-sm space-y-1">
+                <p className="font-medium">{order.customer.name}</p>
+                <p className="text-muted-foreground flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5" /> {order.customer.email}
+                </p>
+                <p className="text-muted-foreground">{order.customer.phone}</p>
+              </div>
+            </Card>
+
+            <Card title="Endereço de Entrega" icon={<MapPin className="h-4 w-4" />}>
+              <div className="text-sm text-muted-foreground space-y-0.5">
+                <p>{order.address.street}, {order.address.number}</p>
+                {order.address.complement && <p>{order.address.complement}</p>}
+                <p>{order.address.district}</p>
+                <p>{order.address.city} — {order.address.state}</p>
+                <p>CEP {order.address.zip}</p>
+              </div>
+            </Card>
+
+            <Card title="Alterar status">
+              <div className="grid grid-cols-2 gap-2">
+                {ORDER_STATUS_FLOW.map((s) => (
+                  <button
+                    key={s}
+                    disabled={s === order.status}
+                    onClick={() => setStatus(order.id, s)}
+                    className="h-9 rounded-md border border-border text-xs hover:bg-muted disabled:opacity-50 disabled:bg-muted disabled:cursor-not-allowed">
+                    {ORDER_STATUS_LABEL[s]}
+                  </button>
+                ))}
+              </div>
+            </Card>
+
+            <button onClick={() => window.print()}
+              className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md border border-border bg-background text-sm hover:bg-muted print:hidden">
+              <Printer className="h-4 w-4" /> Imprimir separação
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Card({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-border bg-background p-5">
+      <h2 className="text-sm font-semibold flex items-center gap-2 mb-4">
+        {icon} {title}
+      </h2>
+      {children}
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between text-muted-foreground">
+      <span>{label}</span><span className="text-foreground">{value}</span>
+    </div>
+  );
+}
