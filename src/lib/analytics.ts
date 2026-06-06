@@ -67,4 +67,12 @@ export const track = {
     ga("generate_lead", { source });
     pixel("Lead", { source });
   },
+  popupView(name: string) {
+    ga("popup_view", { popup: name });
+    pixel("PopupView", { popup: name }, true);
+  },
+  exitIntentView() {
+    ga("exit_intent_view");
+    pixel("ExitIntentView", {}, true);
+  },
 };
