@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Mail, MessageCircle, Gift } from "lucide-react";
-import { useSiteConfig } from "@/lib/siteConfig";
+import { Mail, MessageCircle, Check } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 const STORAGE_KEY = "md_leads_v1";
