@@ -35,38 +35,38 @@ const diferenciais = [
 export function HomeHero() {
   const cfg = useSiteConfig();
   return (
-    <section className="relative h-[88vh] min-h-[620px] md:h-[78vh] md:min-h-[680px] overflow-hidden bg-[#a98869]">
+    <section className="relative h-[88vh] min-h-[620px] lg:h-[78vh] lg:min-h-[680px] overflow-hidden bg-[#a98869]">
       <picture>
-        {/* Desktop / tablet: landscape composition, model on the left, negative space on the right */}
-        <source media="(min-width: 768px)" srcSet={hero} width={1920} height={1280} />
-        {/* Mobile: dedicated portrait composition, face safe in the upper third */}
+        {/* Desktop: landscape composition, model on the left, negative space on the right */}
+        <source media="(min-width: 1024px)" srcSet={hero} width={1920} height={1280} />
+        {/* Mobile + tablet: dedicated portrait composition, face safe in the upper third */}
         <img
           src={heroMobile}
           alt="MD Modas — Nova Coleção"
           width={1080}
           height={1452}
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover object-[center_top] md:object-[20%_center] lg:object-[24%_center]"
+          className="absolute inset-0 w-full h-full object-cover object-[center_top] lg:object-[24%_center]"
         />
       </picture>
-      {/* Mobile: strong bottom gradient so text sits clear of the model. Desktop: very subtle wash over negative space. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent md:bg-gradient-to-l md:from-background/25 md:via-transparent md:to-foreground/10" />
-      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end pb-10 md:items-center md:pb-0 md:justify-end">
-        <div className="max-w-xl text-background md:text-foreground">
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/80 md:text-foreground/70 mb-4 md:mb-5">
+      {/* Mobile + tablet: strong bottom gradient so text sits clear of the model. Desktop: very subtle wash over negative space. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent lg:bg-gradient-to-l lg:from-background/25 lg:via-transparent lg:to-foreground/10" />
+      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end pb-10 lg:items-center lg:pb-0 lg:justify-end">
+        <div className="max-w-xl text-background lg:text-foreground">
+          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/80 lg:text-foreground/70 mb-4 lg:mb-5">
             Nova Coleção
           </p>
-          <h1 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.04] tracking-tight">
-            Moda para o seu dia,<br className="hidden md:block" /> na sua cidade.
+          <h1 className="font-display font-semibold text-4xl sm:text-5xl lg:text-7xl leading-[1.04] tracking-tight">
+            Moda para o seu dia,<br className="hidden lg:block" /> na sua cidade.
           </h1>
-          <p className="text-sm sm:text-base md:text-lg mt-4 md:mt-6 leading-relaxed font-light max-w-md text-background/90 md:text-foreground/75">
+          <p className="text-sm sm:text-base lg:text-lg mt-4 lg:mt-6 leading-relaxed font-light max-w-md text-background/90 lg:text-foreground/75">
             {cfg.heroSubtitle || "Moda feminina e masculina selecionada em Joinville."}
           </p>
-          <div className="mt-6 md:mt-10 flex flex-wrap gap-3">
-            <Button size="xl" className="bg-foreground hover:bg-foreground/90 text-background rounded-none px-6 md:px-8 font-semibold" asChild>
+          <div className="mt-6 lg:mt-10 flex flex-wrap gap-3">
+            <Button size="xl" className="bg-foreground hover:bg-foreground/90 text-background rounded-none px-6 lg:px-8 font-semibold" asChild>
               <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
             </Button>
-            <Button size="xl" variant="outline" className="bg-transparent border-background text-background md:border-foreground md:text-foreground hover:bg-background hover:text-foreground md:hover:bg-foreground md:hover:text-background rounded-none px-6 md:px-8 font-semibold" asChild>
+            <Button size="xl" variant="outline" className="bg-transparent border-background text-background lg:border-foreground lg:text-foreground hover:bg-background hover:text-foreground lg:hover:bg-foreground lg:hover:text-background rounded-none px-6 lg:px-8 font-semibold" asChild>
               <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
             </Button>
           </div>
