@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
+import heroMobile from "@/assets/hero-mobile.jpg";
 import vestidos from "@/assets/cat-vestidos.jpg";
 import conjuntos from "@/assets/cat-conjuntos.jpg";
 import blazers from "@/assets/cat-blazers.jpg";
