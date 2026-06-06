@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { LeadPopup } from "@/components/LeadPopup";
 import { useCartSync } from "@/hooks/useCartSync";
 
 function NotFoundComponent() {
@@ -138,6 +139,7 @@ function AppShell() {
       </main>
       <Footer />
       <WhatsAppFloat />
+      <LeadPopup />
       <Toaster position="top-center" />
     </>
   );
