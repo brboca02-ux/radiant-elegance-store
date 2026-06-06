@@ -53,19 +53,13 @@ export function HomeHero() {
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8 font-semibold" asChild>
-              <Link to="/colecao" search={{ c: undefined }}>Comprar Agora</Link>
+              <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
             </Button>
             <Button size="xl" variant="outline" className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-8 font-semibold" asChild>
-              <a
-                href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => track.whatsappClick("hero")}
-              >
-                <MessageCircle className="w-4 h-4 mr-2" /> Falar no WhatsApp
-              </a>
+              <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
             </Button>
           </div>
+
         </div>
       </div>
     </section>
