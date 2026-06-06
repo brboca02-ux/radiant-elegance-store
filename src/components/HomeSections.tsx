@@ -10,8 +10,8 @@ import lookbook1 from "@/assets/lookbook-1.jpg";
 import lookbook2 from "@/assets/lookbook-2.jpg";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
-import { Truck, RefreshCcw, ShieldCheck, MessageCircle } from "lucide-react";
-import { buildWhatsAppLink } from "@/lib/shopify";
+import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock } from "lucide-react";
+import { buildWhatsAppLink, STORE_INFO } from "@/lib/shopify";
 import { useSiteConfig } from "@/lib/siteConfig";
 import { track } from "@/lib/analytics";
 
