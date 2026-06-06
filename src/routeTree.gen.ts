@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
@@ -17,6 +18,11 @@ import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ColecaoRoute = ColecaoRouteImport.update({
@@ -38,12 +44,14 @@ const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/colecao': typeof ColecaoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/colecao': typeof ColecaoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
@@ -51,20 +59,28 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/colecao': typeof ColecaoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/colecao' | '/sobre' | '/produto/$handle'
+  fullPaths: '/' | '/colecao' | '/sitemap.xml' | '/sobre' | '/produto/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/colecao' | '/sobre' | '/produto/$handle'
-  id: '__root__' | '/' | '/colecao' | '/sobre' | '/produto/$handle'
+  to: '/' | '/colecao' | '/sitemap.xml' | '/sobre' | '/produto/$handle'
+  id:
+    | '__root__'
+    | '/'
+    | '/colecao'
+    | '/sitemap.xml'
+    | '/sobre'
+    | '/produto/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ColecaoRoute: typeof ColecaoRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
 }
@@ -76,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/colecao': {
@@ -105,9 +128,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ColecaoRoute: ColecaoRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
