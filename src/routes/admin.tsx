@@ -126,28 +126,7 @@ function AdminPanel() {
         </button>
       </div>
 
-      <section className="mt-14 border-t border-border pt-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-xl">Leads capturados ({leads.length})</h2>
-          <button onClick={exportLeads} disabled={!leads.length} className="text-sm font-semibold text-primary disabled:opacity-40">
-            Exportar CSV
-          </button>
-        </div>
-        <ul className="text-sm space-y-1 max-h-72 overflow-auto border border-border rounded-md p-3 bg-offwhite">
-          {leads.length === 0 && <li className="text-muted-foreground">Nenhum lead capturado ainda.</li>}
-          {leads.map((l, i) => {
-            const contato = l.email || l.whatsapp || l.value || "";
-            const origem = l.source ?? l.type ?? "newsletter";
-            return (
-              <li key={i} className="flex justify-between gap-3">
-                <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{origem}</span>
-                <span className="flex-1 truncate">{l.name ? `${l.name} · ` : ""}{contato}</span>
-                <span className="text-muted-foreground">{new Date(l.at).toLocaleDateString("pt-BR")}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
     </div>
+    </AdminShell>
   );
 }

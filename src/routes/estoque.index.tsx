@@ -153,6 +153,7 @@ function EstoquePage() {
         />
       )}
     </div>
+    </AdminShell>
   );
 }
 
@@ -244,7 +245,6 @@ function MovementDialog({
         </div>
       </div>
     </div>
-    </AdminShell>
   );
 }
 
