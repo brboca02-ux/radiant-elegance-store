@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { getMockShopifyProducts } from "@/lib/mockProducts";
 import { ProductCard } from "./ProductCard";
 
 interface FetchOpts {
@@ -9,14 +10,21 @@ interface FetchOpts {
   reverse?: boolean;
 }
 
-async function fetchProducts({ query, first = 12, sortKey, reverse }: FetchOpts) {
-  const data = await storefrontApiRequest(PRODUCTS_QUERY, {
-    first,
-    query: query ?? null,
-    sortKey: sortKey ?? null,
-    reverse: reverse ?? null,
-  });
-  return (data?.data?.products?.edges ?? []) as ShopifyProduct[];
+async function fetchProducts({ query, first = 12, sortKey, reverse }: FetchOpts): Promise<ShopifyProduct[]> {
+  try {
+    const data = await storefrontApiRequest(PRODUCTS_QUERY, {
+      first,
+      query: query ?? null,
+      sortKey: sortKey ?? null,
+      reverse: reverse ?? null,
+    });
+    const edges = (data?.data?.products?.edges ?? []) as ShopifyProduct[];
+    if (edges.length > 0) return edges;
+  } catch {
+    // fallback abaixo
+  }
+  // Fallback: vitrine usa fotos mocadas do catálogo local quando o Shopify n\u00e3o retorna.
+  return getMockShopifyProducts({ query, first });
 }
 
 export function ProductGrid({
