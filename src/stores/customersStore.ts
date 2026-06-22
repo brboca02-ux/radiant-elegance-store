@@ -34,50 +34,7 @@ export interface Customer {
 const uid = () => Math.random().toString(36).slice(2, 10);
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
 
-const seed: Customer[] = [
-  {
-    id: "c_01", store_id: STORE_ID, name: "Mariana Silva",
-    email: "mari@email.com", whatsapp: "+55 47 99999-1111",
-    total_orders: 4, total_spent: 1289.6, last_order_at: daysAgo(0),
-    status: "vip", created_at: daysAgo(120),
-    messages: [
-      { id: uid(), customer_id: "c_01", channel: "whatsapp", direction: "out",
-        body: "Olá Mariana! Seu pedido foi enviado 💛", user_id: "admin", created_at: daysAgo(1) },
-      { id: uid(), customer_id: "c_01", channel: "whatsapp", direction: "in",
-        body: "Obrigada! Recebi com tudo certo.", created_at: daysAgo(1) },
-    ],
-  },
-  {
-    id: "c_02", store_id: STORE_ID, name: "João Pereira",
-    email: "joao@email.com", whatsapp: "+55 47 98888-2222",
-    total_orders: 1, total_spent: 174.8, last_order_at: daysAgo(0),
-    status: "ativo", created_at: daysAgo(2), messages: [],
-  },
-  {
-    id: "c_03", store_id: STORE_ID, name: "Camila Souza",
-    email: "cami@email.com", whatsapp: "+55 47 97777-3333",
-    total_orders: 3, total_spent: 939.5, last_order_at: daysAgo(0),
-    status: "vip", created_at: daysAgo(90), messages: [],
-  },
-  {
-    id: "c_04", store_id: STORE_ID, name: "Ana Beatriz",
-    email: "ana@email.com", whatsapp: "+55 47 96666-4444",
-    total_orders: 2, total_spent: 219.7, last_order_at: daysAgo(1),
-    status: "ativo", created_at: daysAgo(45), messages: [],
-  },
-  {
-    id: "c_05", store_id: STORE_ID, name: "Roberto Lima",
-    email: "rob@email.com", whatsapp: "+55 47 95555-5555",
-    total_orders: 5, total_spent: 1849.0, last_order_at: daysAgo(3),
-    status: "vip", created_at: daysAgo(200), messages: [],
-  },
-  {
-    id: "c_06", store_id: STORE_ID, name: "Lucas Almeida",
-    email: "lucas@email.com", whatsapp: "+55 47 94444-6666",
-    total_orders: 1, total_spent: 0, last_order_at: daysAgo(5),
-    status: "inativo", created_at: daysAgo(30), messages: [],
-  },
-];
+const seed: Customer[] = [];
 
 interface CustomersState {
   customers: Customer[];
