@@ -145,6 +145,51 @@ const seed: Product[] = [
     variants: [],
     created_at: new Date(Date.now() - 86400000 * 14).toISOString(),
   },
+  {
+    id: "p_006", store_id: STORE_ID, name: "Cropped Terracota", slug: "cropped-terracota",
+    description: "Cropped em sarja terracota com alças largas e detalhe de botões frontais. Modelagem ajustada ao corpo.",
+    category_id: "feminino", brand: "MD Modas", sku: "CRP-TER",
+    price: 89.9, sale_price: 69.9, stock: 8, weight: 0.2, status: "ativo",
+    ...baseProduct,
+    meta_title: "Cropped Terracota — MD Modas", meta_description: "Cropped terracota com alças e botões.",
+    images: [mkImg("p_006", "/__l5e/assets-v1/1d6e2807-f16a-42fc-bb26-0a331ccce87c/cropped-terracota.jpg", 0, true)],
+    variants: [
+      { id: uid(), product_id: "p_006", size: "P", color: "Terracota", stock: 3 },
+      { id: uid(), product_id: "p_006", size: "M", color: "Terracota", stock: 3 },
+      { id: uid(), product_id: "p_006", size: "G", color: "Terracota", stock: 2 },
+    ],
+    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: "p_007", store_id: STORE_ID, name: "Conjunto Tie Dye", slug: "conjunto-tie-dye",
+    description: "Conjunto em tecido tie dye, confortável e estiloso. Disponível em três estampas exclusivas.",
+    category_id: "conjuntos", brand: "MD Modas", sku: "CJT-TDY",
+    price: 159.9, sale_price: 129.9, stock: 9, weight: 0.5, status: "ativo",
+    ...baseProduct,
+    meta_title: "Conjunto Tie Dye — MD Modas", meta_description: "Conjunto tie dye estiloso e confortável.",
+    images: [mkImg("p_007", "/__l5e/assets-v1/1738a724-bb5b-462c-a4d8-f29933d5695b/conjuntos-tiedye.jpg", 0, true)],
+    variants: [
+      { id: uid(), product_id: "p_007", size: "P", color: "Branco", stock: 3 },
+      { id: uid(), product_id: "p_007", size: "M", color: "Vermelho", stock: 3 },
+      { id: uid(), product_id: "p_007", size: "M", color: "Marrom", stock: 3 },
+    ],
+    created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+  },
+  {
+    id: "p_008", store_id: STORE_ID, name: "Camiseta Esportiva Vermelha", slug: "camiseta-esportiva-vermelha",
+    description: "Camiseta básica de algodão em vermelho intenso. Caimento confortável para o dia a dia ou esporte.",
+    category_id: "masculino", brand: "MD Modas", sku: "CAM-VER",
+    price: 79.9, sale_price: null, stock: 20, weight: 0.25, status: "ativo",
+    ...baseProduct,
+    meta_title: "Camiseta Vermelha — MD Modas", meta_description: "Camiseta básica vermelha em algodão.",
+    images: [mkImg("p_008", "/__l5e/assets-v1/94b0d593-2624-40b6-b49b-f9e6ff66cbfe/camiseta-vermelha.jpg", 0, true)],
+    variants: [
+      { id: uid(), product_id: "p_008", size: "P", color: "Vermelho", stock: 5 },
+      { id: uid(), product_id: "p_008", size: "M", color: "Vermelho", stock: 8 },
+      { id: uid(), product_id: "p_008", size: "G", color: "Vermelho", stock: 7 },
+    ],
+    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+  },
 ];
 
 interface ProductsState {
@@ -199,7 +244,7 @@ export const useProductsStore = create<ProductsState>()(
         products: s.products.map((p) => (p.id === id ? { ...p, stock: Math.max(0, value) } : p)),
       })),
     }),
-    { name: "md_products_v2", storage: createJSONStorage(() => localStorage) },
+    { name: "md_products_v3", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
