@@ -1,19 +1,12 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
 
 import { Button } from "@/components/ui/button";
-import {
-  formatPrice,
-  PRODUCT_BY_HANDLE_QUERY,
-  storefrontApiRequest,
-  STORE_INFO,
-  buildWhatsAppLink,
-  type ShopifyMediaNode,
-  type ShopifyVariantNode,
-} from "@/lib/shopify";
+import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
+import { useProductsStore } from "@/stores/productsStore";
+import { productToShopify } from "@/lib/mockProducts";
 import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame } from "lucide-react";
 
 export const Route = createFileRoute("/produto/$handle")({
@@ -30,56 +23,42 @@ export const Route = createFileRoute("/produto/$handle")({
   component: ProductPage,
 });
 
-interface ProductDetail {
-  id: string;
-  title: string;
-  description: string;
-  handle: string;
-  priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
-  images: { edges: Array<{ node: { url: string; altText: string | null } }> };
-  media?: { edges: Array<{ node: ShopifyMediaNode }> };
-  variants: { edges: Array<{ node: ShopifyVariantNode }> };
-  options: Array<{ name: string; values: string[] }>;
-}
-
 function ProductPage() {
   const { handle } = Route.useParams();
-  const { data, isLoading } = useQuery({
-    queryKey: ["product", handle],
-    queryFn: async () => {
-      const r = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
-      const p = r?.data?.product as ProductDetail | null;
-      if (!p) throw notFound();
-      return p;
-    },
-  });
+  const products = useProductsStore((s) => s.products);
+  const loaded = useProductsStore((s) => s.loaded);
+  const loading = useProductsStore((s) => s.loading);
+
+  const product = useMemo(() => products.find((p) => p.slug === handle), [products, handle]);
+  const data = useMemo(() => (product ? productToShopify(product).node : null), [product]);
+
   const addItem = useCartStore((s) => s.addItem);
   const isAdding = useCartStore((s) => s.isLoading);
   const [variantIdx, setVariantIdx] = useState(0);
 
-  if (isLoading || !data) {
+  useEffect(() => {
+    if (data) {
+      const variants = data.variants.edges.map((e) => e.node);
+      const selected = variants[0];
+      if (selected) {
+        track.viewItem({
+          id: data.id, name: data.title,
+          price: parseFloat(selected.price.amount),
+          currency: selected.price.currencyCode,
+        });
+      }
+    }
+  }, [data?.id]); // eslint-disable-line
+
+  if (loading || (!loaded && !product)) {
     return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
   }
+  if (loaded && !product) throw notFound();
+  if (!data) return null;
 
   const variants = data.variants.edges.map((e) => e.node);
   const selected = variants[variantIdx] ?? variants[0];
   const images = data.images.edges.map((e) => e.node);
-
-  useEffect(() => {
-    if (selected) {
-      track.viewItem({
-        id: data.id,
-        name: data.title,
-        price: parseFloat(selected.price.amount),
-        currency: selected.price.currencyCode,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.id]);
-
-  const videos = (data.media?.edges ?? [])
-    .map((e) => e.node)
-    .filter((m) => m.mediaContentType === "VIDEO" && m.sources && m.sources.length > 0);
 
   const lowStock =
     typeof selected?.quantityAvailable === "number" &&
@@ -100,8 +79,7 @@ function ProductPage() {
 
   const productUrl = typeof window !== "undefined" ? window.location.href : `/produto/${handle}`;
   const optionsText = selected?.selectedOptions?.length
-    ? selected.selectedOptions.map((o) => `${o.name}: ${o.value}`).join(", ")
-    : "";
+    ? selected.selectedOptions.map((o) => `${o.name}: ${o.value}`).join(", ") : "";
   const priceText = selected ? formatPrice(selected.price.amount, selected.price.currencyCode) : "";
   const waMessage = [
     `Olá! Tenho interesse no produto *${data.title}*`,
@@ -112,7 +90,6 @@ function ProductPage() {
   ].filter(Boolean).join(" ");
   const waLink = buildWhatsAppLink(waMessage);
 
-  // JSON-LD Product schema
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -137,26 +114,8 @@ function ProductPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {videos.map((v, i) => {
-            const src = v.sources?.find((s) => s.mimeType === "video/mp4") ?? v.sources?.[0];
-            if (!src) return null;
-            return (
-              <div key={`v${i}`} className="md:col-span-2 aspect-[4/5] bg-secondary overflow-hidden rounded-md">
-                <video
-                  src={src.url}
-                  poster={v.previewImage?.url}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  controls
-                />
-              </div>
-            );
-          })}
           {images.map((img, i) => (
-            <div key={i} className={`bg-secondary overflow-hidden rounded-md ${i === 0 && videos.length === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}>
+            <div key={i} className={`bg-secondary overflow-hidden rounded-md ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}>
               <img src={img.url} alt={img.altText ?? data.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
             </div>
           ))}
@@ -202,7 +161,6 @@ function ProductPage() {
               </a>
             </Button>
           </div>
-
 
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
             <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Loja física em {STORE_INFO.city}</li>
