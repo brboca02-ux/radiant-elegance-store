@@ -279,3 +279,25 @@ END $seed$;
 --
 -- =====================================================================
 
+
+-- =====================================================================
+-- 9) Storage bucket público para imagens enviadas pelo painel
+--    (Se der erro de permissão, crie pelo Dashboard → Storage → New bucket
+--     com nome "product-images" e public = true)
+-- =====================================================================
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('product-images', 'product-images', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Policies do bucket: leitura pública, escrita só admin
+DROP POLICY IF EXISTS "public read product images" ON storage.objects;
+CREATE POLICY "public read product images" ON storage.objects FOR SELECT
+  USING (bucket_id = 'product-images');
+
+DROP POLICY IF EXISTS "admins upload product images" ON storage.objects;
+CREATE POLICY "admins upload product images" ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'product-images' AND public.has_role(auth.uid(), 'admin'));
+
+DROP POLICY IF EXISTS "admins delete product images" ON storage.objects;
+CREATE POLICY "admins delete product images" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'product-images' AND public.has_role(auth.uid(), 'admin'));
