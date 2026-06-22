@@ -122,12 +122,22 @@ function ProductPage() {
               key={i}
               onClick={() => setLightboxIdx(i)}
               aria-label={`Ampliar imagem ${i + 1}`}
-              className={`bg-secondary overflow-hidden rounded-md group ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}
+              className={`relative bg-secondary overflow-hidden rounded-md group ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}
             >
-              <img src={img.url} alt={img.altText ?? data.title} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
+              <img
+                src={img.url}
+                alt={img.altText ?? data.title}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={i === 0 ? "high" : "auto"}
+                onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
+                className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
             </button>
           ))}
         </div>
+
 
         <div className="lg:sticky lg:top-32 lg:self-start">
           <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">MD Modas</span>
