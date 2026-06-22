@@ -14,6 +14,7 @@ import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ColecaoRouteImport } from './routes/colecao'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -56,6 +57,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/colecao': typeof ColecaoRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/colecao': typeof ColecaoRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/colecao': typeof ColecaoRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/colecao'
     | '/dashboard'
+    | '/login'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/colecao'
     | '/dashboard'
+    | '/login'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/colecao'
     | '/dashboard'
+    | '/login'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ColecaoRoute: typeof ColecaoRoute
   DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ColecaoRoute: ColecaoRoute,
   DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
@@ -523,13 +544,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
