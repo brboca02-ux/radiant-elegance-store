@@ -1,71 +1,75 @@
-# Integração total com Supabase (e-commerce sincronizado)
+# Plano: Checkout completo no site (pronto para plugar gateway e frete)
 
-Hoje os produtos vivem apenas em `localStorage` (zustand persist), por isso somem entre dispositivos e a home aparece vazia quando o Shopify não responde. Vamos mover tudo para o Supabase que já está configurado em `src/lib/supabaseClient.ts` (projeto `snqvhexeruvlyrtzsdnm`).
+Objetivo: cliente conclui a compra dentro do site (sem WhatsApp), o pedido é gravado no Supabase, e existe um webhook genérico esperando a confirmação do gateway. Quando você tiver as chaves do gateway/frete, é só plugar — toda a estrutura já estará pronta.
 
-## 1. Schema no Supabase (migração SQL)
+## 1. Banco de dados (Supabase)
 
-Tabelas em `public`:
+Criar 4 tabelas via migration:
 
-- **categories** — `id, slug, name, position, created_at`
-- **products** — `id, store_id, name, slug (único), description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, status ('ativo'|'inativo'|'arquivado'), meta_title, meta_description, created_at, updated_at`
-- **product_images** — `id, product_id (fk cascade), url, position, is_primary`
-- **product_variants** — `id, product_id (fk cascade), size, color, stock`
-- **stock_movements** — `id, product_id, type ('entrada'|'saida'|'ajuste'), quantity, reason, notes, user_id, user_name, created_at`
-- **user_roles** + enum `app_role ('admin'|'user')` + função `has_role(uuid, app_role)` (security definer), seguindo o padrão obrigatório.
+- **`customers`** — `id, user_id (nullable), name, email, phone, cpf, created_at`
+- **`addresses`** — `id, customer_id, cep, street, number, complement, district, city, state, created_at`
+- **`orders`** — `id, order_number (humano: MD-2026-0001), customer_id, address_id, status (pendente|aguardando_pagamento|pago|enviado|entregue|cancelado), subtotal, shipping_cost, discount, total, payment_method (pix|cartao|boleto), payment_provider (mercadopago|asaas|...), payment_id (id externo), shipping_method, tracking_code, notes, created_at, updated_at, paid_at`
+- **`order_items`** — `id, order_id, product_id, product_name, variant_size, variant_color, unit_price, quantity, subtotal`
 
-### Storage
-- Bucket público `product-images` para fotos enviadas pelo painel.
+RLS + GRANTs:
+- `customers` / `addresses` / `orders` / `order_items`: usuário autenticado lê/escreve só os próprios; admin (via `has_role`) lê/escreve tudo.
+- Trigger no `INSERT` de `orders` que decrementa `products.stock` na hora.
+- Função `generate_order_number()` para o `order_number` sequencial.
 
-### RLS + Grants (regras)
-- `products`, `product_images`, `product_variants`, `categories`:
-  - `SELECT` público (`anon` + `authenticated`) **apenas** quando `status = 'ativo'` (em products) — vitrine pública.
-  - `INSERT/UPDATE/DELETE` apenas para `has_role(auth.uid(), 'admin')`.
-- `stock_movements` e `user_roles`: apenas admin.
-- `GRANT`s explícitos para `anon`, `authenticated`, `service_role` em cada tabela (Supabase exige GRANT explícito).
+## 2. Fluxo de checkout (frontend)
 
-## 2. Camada de dados no app
+Novas rotas:
 
-- `src/lib/api/products.ts` — funções client-side usando o `supabase` browser client (chave publishable, RLS aplica):
-  - `listPublicProducts({ query, limit, category })` — lê produtos ativos + imagens.
-  - `listAdminProducts()` — todos os status (precisa admin pela RLS).
-  - `getProductBySlug(slug)`
-  - `upsertProduct(payload)` / `archiveProduct(id)` / `duplicateProduct(id)`
-  - `uploadProductImage(file)` → retorna URL pública
-  - `recordStockMovement(...)`
-- React Query (`@tanstack/react-query`, já instalado) como cache. Sem `localStorage` como fonte de verdade.
+- **`/checkout`** — formulário em 3 etapas (uma página, sem reload):
+  1. **Identificação**: nome, e-mail, telefone, CPF (auto-preenche se logado)
+  2. **Entrega**: CEP (busca ViaCEP automática), rua, número, complemento, bairro, cidade, estado + escolha do método de frete (stub mostra opções fixas por enquanto: PAC, SEDEX, Retirada na loja)
+  3. **Pagamento**: escolha entre Pix / Cartão / Boleto (todos com selo "em integração") + resumo final
+  - Botão "Finalizar pedido" cria a `order` no Supabase com `status = aguardando_pagamento` e redireciona para `/pedido/sucesso/:numero`
 
-## 3. Refatorar stores e telas
+- **`/pedido/sucesso/$numero`** — mostra número do pedido, resumo, instruções ("Em breve o link de pagamento será gerado quando o gateway estiver ativo"), botão "Acompanhar meus pedidos".
 
-- `productsStore.ts`, `stockStore.ts`, `categoriesStore.ts` viram **hooks finos** sobre React Query (mantendo a mesma API pública para minimizar mudanças nos componentes):
-  - `useProducts()`, `useProduct(id)`, `useCreateProduct()`, `useUpdateProduct()`, etc.
-- Telas que mudam:
-  - `produtos.index.tsx`, `produtos.novo.tsx`, `produtos.$id.editar.tsx` → usam mutations Supabase + upload de imagens para o bucket.
-  - `estoque.index.tsx`, `estoque.historico.tsx` → leitura/escrita em `stock_movements`.
-  - `categorias.*` → CRUD em `categories`.
-  - `ProductGrid.tsx` (vitrine) e `produto.$handle.tsx` → fonte primária = Supabase; Shopify só como fallback opcional (desabilitado por padrão, já que a loja está sem plano ativo).
-  - `HomeSections.tsx` → lê do Supabase.
+- **`/meus-pedidos`** (para o cliente, dentro de `_authenticated`) — lista pedidos do usuário logado.
 
-## 4. Promover seu usuário a admin
+Mudanças no que já existe:
+- `CartDrawer`: botão "Comprar pelo WhatsApp" continua existindo, mas o principal vira **"Finalizar Compra"** → `/checkout`.
+- Página do produto: idem.
+- Painel admin `/pedidos`: já existe a tela, vou plugar nos dados reais da nova tabela `orders`.
 
-- Inserir manualmente uma linha em `user_roles` para o e-mail `adm@adm` (vou pedir confirmação do `user_id` após criar a migração, ou faço lookup pelo email no `auth.users` dentro do seed).
+## 3. Camada de adapters (pronta pra plugar gateway/frete)
 
-## 5. Migração das imagens que você enviou
+Arquivos em `src/lib/integrations/`:
 
-Os arquivos de imagem que você forneceu estão em `src/assets/*.jpg.asset.json`. Vou:
-1. Criar um seed SQL que insere as categorias e ~40 produtos referenciando essas imagens (URLs públicas via storage **ou** mantendo as URLs já hospedadas no assets do Lovable).
-2. Cada produto entra com `status='ativo'`, estoque inicial (sugerido: 10 unidades), preço placeholder que você ajusta no painel.
+- **`payment.ts`** — interface `PaymentProvider` com `createPayment(order)` retornando `{ paymentId, paymentUrl, qrCode? }`. Implementação `MockPaymentProvider` por enquanto (apenas gera id fake e marca a ordem como aguardando). Quando você escolher Mercado Pago / Asaas / etc., só troco a implementação ativa.
+- **`shipping.ts`** — interface `ShippingProvider` com `quote({ cep, items })` retornando `[{ name, price, days }]`. Implementação `MockShippingProvider` com tabela fixa: Retirada Joinville (grátis), PAC (R$ 19,90 / 5 dias), SEDEX (R$ 34,90 / 2 dias) + frete grátis acima de R$ 299.
 
-Assim a home volta a mostrar peças **imediatamente** após a migração, e qualquer produto novo cadastrado pelo painel aparece em todo o site em tempo real (React Query revalida).
+Quando você fornecer as APIs, é só trocar `MockPaymentProvider` por `MercadoPagoProvider` (ou outro) — nenhum componente UI precisa mudar.
 
-## 6. Detalhes técnicos
+## 4. Webhook genérico de pagamento
 
-- Cliente Supabase atual já é browser-only com persistSession — perfeito para painel admin autenticado.
-- RLS garante que `anon` só veja produtos ativos; admin (via JWT com claim de role) faz tudo.
-- Sem necessidade de server functions nesta fase — todas as operações usam o client Supabase + RLS.
-- O badge de Shopify continua disponível como fallback opcional via flag.
+Rota `src/routes/api/public/payment-webhook.ts` (server route):
+- Aceita `POST` com `{ orderId, status, providerId, signature }`
+- Valida assinatura HMAC (segredo `PAYMENT_WEBHOOK_SECRET` — vou gerar via `generate_secret`)
+- Usa `supabaseAdmin` pra atualizar `orders.status = 'pago'` + `paid_at = now()`
+- Retorna 200/401 padrão
 
-## Perguntas antes de executar
+Pronto pra apontar o painel do gateway pra essa URL quando chegar a hora.
 
-1. **Preço/estoque iniciais dos 40 produtos seed**: posso usar valores placeholder (ex: R$ 149,90 e 10 unidades) para você ajustar depois? Ou prefere deixar tudo zerado e cadastrar manualmente?
-2. **Shopify**: posso desativar completamente como fonte da vitrine (Supabase passa a ser único)? Ou manter como fallback?
-3. Confirme o e-mail do usuário admin (`adm@adm`?) para eu já inserir o role.
+## 5. O que você precisa decidir depois (não bloqueia agora)
+
+- Gateway (Mercado Pago / Asaas / outro) → eu plugo no `payment.ts`
+- Frete (Melhor Envio / Frenet / tabela fixa) → eu plugo no `shipping.ts`
+- Token do gateway e do frete → me passa quando tiver, eu armazeno via secret
+
+## Detalhes técnicos
+
+- Stack: TanStack Start + Supabase existente (não Lovable Cloud — confirmando seu setup atual).
+- Validação de formulários: `react-hook-form` + `zod`.
+- Busca de CEP: ViaCEP (público, sem chave).
+- Estados pendentes do pedido têm reserva de estoque (movem `stock` → `reserved_stock`); cancelamento devolve.
+- Toda navegação pós-checkout limpa o carrinho do Zustand.
+
+## Entrega em uma única passada
+
+Faço migration + adapters + checkout + páginas de sucesso/meus-pedidos + plug no admin + webhook stub, tudo de uma vez. Depois é só você confirmar os fluxos clicando.
+
+Posso seguir?
