@@ -117,11 +117,18 @@ function ProductPage() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {images.map((img, i) => (
-            <div key={i} className={`bg-secondary overflow-hidden rounded-md ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}>
-              <img src={img.url} alt={img.altText ?? data.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-            </div>
+            <button
+              type="button"
+              key={i}
+              onClick={() => setLightboxIdx(i)}
+              aria-label={`Ampliar imagem ${i + 1}`}
+              className={`bg-secondary overflow-hidden rounded-md group ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}
+            >
+              <img src={img.url} alt={img.altText ?? data.title} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-700" />
+            </button>
           ))}
         </div>
+
         <div className="lg:sticky lg:top-32 lg:self-start">
           <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">MD Modas</span>
           <h1 className="font-display font-extrabold text-3xl md:text-4xl mt-3">{data.title}</h1>
