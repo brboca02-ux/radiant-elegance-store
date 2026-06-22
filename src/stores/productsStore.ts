@@ -127,7 +127,7 @@ export const useProductsStore = create<ProductsState>()(
         products: s.products.map((p) => (p.id === id ? { ...p, stock: Math.max(0, value) } : p)),
       })),
     }),
-    { name: "md_products_v10", storage: createJSONStorage(() => localStorage) },
+    { name: "md_products_v11", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
