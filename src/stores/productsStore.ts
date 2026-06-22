@@ -639,7 +639,7 @@ export const useProductsStore = create<ProductsState>()(
         products: s.products.map((p) => (p.id === id ? { ...p, stock: Math.max(0, value) } : p)),
       })),
     }),
-    { name: "md_products_v8", storage: createJSONStorage(() => localStorage) },
+    { name: "md_products_v9", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
