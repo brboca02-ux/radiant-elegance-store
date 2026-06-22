@@ -1,6 +1,9 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Store } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Store, LogOut } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
 
 type MenuKey = "dashboard" | "produtos" | "pedidos" | "clientes" | "marketing" | "configuracoes";
 
@@ -26,6 +29,28 @@ export function AdminShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [openMobile, setOpenMobile] = useState(false);
+  const navigate = useNavigate();
+  const { session, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !session) {
+      navigate({ to: "/login", search: { redirect: pathname } });
+    }
+  }, [loading, session, navigate, pathname]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    toast.success("Sessão encerrada.");
+    navigate({ to: "/login" });
+  }
+
+  if (loading || !session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="text-sm text-muted-foreground">Carregando painel...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-muted/30 flex">
@@ -57,8 +82,17 @@ export function AdminShell({
             );
           })}
         </nav>
-        <div className="p-3 border-t border-border text-[11px] text-muted-foreground">
-          loja · store_md_modas
+        <div className="p-3 border-t border-border space-y-2">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 text-xs font-medium text-foreground/70 hover:text-foreground px-2 py-1.5 rounded-md hover:bg-muted transition"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Sair
+          </button>
+          <div className="text-[11px] text-muted-foreground truncate" title={session.user.email ?? ""}>
+            {session.user.email}
+          </div>
         </div>
       </aside>
 
