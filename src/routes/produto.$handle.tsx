@@ -7,7 +7,7 @@ import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { useProductsStore } from "@/stores/productsStore";
 import { productToShopify } from "@/lib/mockProducts";
-import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame } from "lucide-react";
+import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/produto/$handle")({
   head: ({ params }) => ({
