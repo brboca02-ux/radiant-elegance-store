@@ -10,7 +10,10 @@ import { track } from "@/lib/analytics";
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const addItem = useCartStore((s) => s.addItem);
   const isLoading = useCartStore((s) => s.isLoading);
+  const [loaded0, setLoaded0] = useState(false);
+  const [loaded1, setLoaded1] = useState(false);
   const variant = product.node.variants.edges[0]?.node;
+
   const img0 = product.node.images.edges[0]?.node;
   const img1 = product.node.images.edges[1]?.node ?? img0;
   const price = product.node.priceRange.minVariantPrice;
