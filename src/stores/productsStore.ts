@@ -104,6 +104,51 @@ const seed: Product[] = [
     ],
     created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
   },
+  {
+    id: "p_003", store_id: STORE_ID, name: "Legging Tie Dye Marrom", slug: "legging-tiedye-marrom",
+    description: "Legging seamless com efeito tie dye em tons de marrom e preto. Detalhe vazado lateral com franjas, modelagem push up.",
+    category_id: "feminino", brand: "MD Modas", sku: "LEG-TDY-MAR",
+    price: 159.9, sale_price: 129.9, stock: 10, weight: 0.3, status: "ativo",
+    ...baseProduct,
+    meta_title: "Legging Tie Dye Marrom — MD Modas", meta_description: "Legging tie dye marrom com franjas laterais.",
+    images: [mkImg("p_003", "/__l5e/assets-v1/e8a0e862-7567-4eda-91a1-0e13444da7ea/legging-tiedye-marrom.jpg", 0, true)],
+    variants: [
+      { id: uid(), product_id: "p_003", size: "P", color: "Marrom", stock: 4 },
+      { id: uid(), product_id: "p_003", size: "M", color: "Marrom", stock: 4 },
+      { id: uid(), product_id: "p_003", size: "G", color: "Marrom", stock: 2 },
+    ],
+    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+  },
+  {
+    id: "p_004", store_id: STORE_ID, name: "Bermuda Masculina Verde Militar", slug: "bermuda-masc-verde-militar",
+    description: "Bermuda masculina em moletinho verde militar, com bolsos zíper, cordão de ajuste e detalhes em alto relevo.",
+    category_id: "masculino", brand: "MD Modas", sku: "BER-MAS-VRD",
+    price: 109.9, sale_price: 89.9, stock: 12, weight: 0.35, status: "ativo",
+    ...baseProduct,
+    meta_title: "Bermuda Masculina Verde Militar — MD Modas", meta_description: "Bermuda esportiva verde militar masculina.",
+    images: [mkImg("p_004", "/__l5e/assets-v1/9c64939a-0b37-45da-a2e4-076c156bee9f/bermuda-masc-verde.jpg", 0, true)],
+    variants: [
+      { id: uid(), product_id: "p_004", size: "M", color: "Verde Militar", stock: 4 },
+      { id: uid(), product_id: "p_004", size: "G", color: "Verde Militar", stock: 5 },
+      { id: uid(), product_id: "p_004", size: "GG", color: "Verde Militar", stock: 3 },
+    ],
+    created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+  },
+  {
+    id: "p_005", store_id: STORE_ID, name: "Short Alfaiataria Marrom", slug: "short-alfaiataria-marrom",
+    description: "Short de alfaiataria cintura alta em marrom, com passantes e botões frontais encapados. Caimento estruturado e elegante.",
+    category_id: "feminino", brand: "MD Modas", sku: "SHO-ALF-MAR",
+    price: 139.9, sale_price: null, stock: 9, weight: 0.25, status: "ativo",
+    ...baseProduct,
+    meta_title: "Short Alfaiataria Marrom — MD Modas", meta_description: "Short de alfaiataria marrom cintura alta.",
+    images: [mkImg("p_005", "/__l5e/assets-v1/983fcc47-05e2-4a1a-a068-7dae7cb87c6c/short-alfaiataria-marrom.jpg", 0, true)],
+    variants: [
+      { id: uid(), product_id: "p_005", size: "P", color: "Marrom", stock: 3 },
+      { id: uid(), product_id: "p_005", size: "M", color: "Marrom", stock: 4 },
+      { id: uid(), product_id: "p_005", size: "G", color: "Marrom", stock: 2 },
+    ],
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+  },
 ];
 
 interface ProductsState {
