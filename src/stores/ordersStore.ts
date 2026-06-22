@@ -143,36 +143,7 @@ const mkOrder = (
   };
 };
 
-const seed: Order[] = [
-  mkOrder(42, "pago", "pago",
-    { id: "c_01", name: "Mariana Silva", email: "mari@email.com", phone: "+55 47 99999-1111" },
-    [
-      { product_id: "p_001", variant_id: null, name: "Vestido Aurora", sku: "VST-AUR", size: "M", color: "Preto", quantity: 1, price: 189.9 },
-      { product_id: "p_002", variant_id: null, name: "Blusa Elegance", sku: "BLU-ELE", size: "P", color: "Branco", quantity: 1, price: 99.9 },
-    ], 19.9, 0, 0),
-  mkOrder(41, "novo", "pendente",
-    { id: "c_02", name: "João Pereira", email: "joao@email.com", phone: "+55 47 98888-2222" },
-    [{ product_id: "p_004", variant_id: null, name: "Camisa Casual", sku: "CAM-CAS", size: "G", color: "Azul", quantity: 1, price: 149.9 }],
-    24.9, 0, 0),
-  mkOrder(40, "separando", "pago",
-    { id: "c_03", name: "Camila Souza", email: "cami@email.com", phone: "+55 47 97777-3333" },
-    [{ product_id: "p_003", variant_id: null, name: "Conjunto Classic", sku: "CJT-CLA", size: "M", color: "Bege", quantity: 1, price: 289.9 },
-     { product_id: "p_002", variant_id: null, name: "Blusa Elegance", sku: "BLU-ELE", size: "M", color: "Branco", quantity: 1, price: 99.9 }],
-    19.9, 20, 0),
-  mkOrder(39, "enviado", "pago",
-    { id: "c_04", name: "Ana Beatriz", email: "ana@email.com", phone: "+55 47 96666-4444" },
-    [{ product_id: "p_002", variant_id: null, name: "Blusa Elegance", sku: "BLU-ELE", size: "M", color: "Branco", quantity: 1, price: 99.9 }],
-    19.9, 0, 1),
-  mkOrder(38, "entregue", "pago",
-    { id: "c_05", name: "Roberto Lima", email: "rob@email.com", phone: "+55 47 95555-5555" },
-    [{ product_id: "p_001", variant_id: null, name: "Vestido Aurora", sku: "VST-AUR", size: "G", color: "Vinho", quantity: 1, price: 189.9 },
-     { product_id: "p_004", variant_id: null, name: "Camisa Casual", sku: "CAM-CAS", size: "G", color: "Azul", quantity: 1, price: 149.9 }],
-    0, 0, 3),
-  mkOrder(37, "cancelado", "estornado",
-    { id: "c_06", name: "Lucas Almeida", email: "lucas@email.com", phone: "+55 47 94444-6666" },
-    [{ product_id: "p_005", variant_id: null, name: "Vestido Plus Elegance", sku: "VST-PLU", size: "GG", color: "Preto", quantity: 1, price: 259.9 }],
-    19.9, 0, 5),
-];
+const seed: Order[] = [];
 
 interface OrdersState {
   orders: Order[];
@@ -207,7 +178,7 @@ export const useOrdersStore = create<OrdersState>()(
       cancel: (id, user_id = "admin", note) => get().setStatus(id, "cancelado", user_id, note),
       remove: (id) => set((s) => ({ orders: s.orders.filter((o) => o.id !== id) })),
     }),
-    { name: "md_orders_v1", storage: createJSONStorage(() => localStorage) },
+    { name: "md_orders_v2", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
