@@ -3,9 +3,11 @@ import { supabase } from "@/lib/supabaseClient";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/login" });
+    if (!data.user) {
+      throw redirect({ to: "/auth", search: { redirect: location.href } });
+    }
     return { user: data.user };
   },
   component: () => <Outlet />,
