@@ -171,15 +171,20 @@ async function replaceImagesAndVariants(
 
 // ----- Storage upload ----------------------------------------------------
 export async function uploadProductImage(file: File): Promise<string> {
-  const ext = file.name.split(".").pop() ?? "jpg";
+  // Normaliza para 3:4 com fundo detectado, reescala e converte para webp
+  // — assim a vitrine usa object-cover sem cortar nenhuma peça.
+  const { normalizeProductImage } = await import("@/lib/imageProcessing");
+  const processed = await normalizeProductImage(file).catch(() => file);
+  const ext = processed.name.split(".").pop() ?? "webp";
   const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const { error } = await supabase.storage.from("product-images").upload(path, file, {
-    cacheControl: "3600", upsert: false, contentType: file.type,
+  const { error } = await supabase.storage.from("product-images").upload(path, processed, {
+    cacheControl: "31536000", upsert: false, contentType: processed.type,
   });
   if (error) throw error;
   const { data } = supabase.storage.from("product-images").getPublicUrl(path);
   return data.publicUrl;
 }
+
 
 // ----- Stock movements ---------------------------------------------------
 export type DbMovement = {

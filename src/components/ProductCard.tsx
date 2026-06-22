@@ -1,14 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { Loader2, ImageOff } from "lucide-react";
+import { useState } from "react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
 import { track } from "@/lib/analytics";
 
 
+
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const addItem = useCartStore((s) => s.addItem);
   const isLoading = useCartStore((s) => s.isLoading);
+  const [loaded0, setLoaded0] = useState(false);
+  const [loaded1, setLoaded1] = useState(false);
   const variant = product.node.variants.edges[0]?.node;
+
   const img0 = product.node.images.edges[0]?.node;
   const img1 = product.node.images.edges[1]?.node ?? img0;
   const price = product.node.priceRange.minVariantPrice;
@@ -48,6 +53,9 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary">
         {img0 ? (
           <>
+            {!loaded0 && (
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
+            )}
             <img
               src={img0.url}
               alt={img0.altText ?? product.node.title}
@@ -55,7 +63,8 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
               decoding="async"
               width={600}
               height={800}
-              className="absolute inset-0 w-full h-full object-contain object-center p-2 transition-all duration-700 group-hover:opacity-0 group-hover:scale-105"
+              onLoad={() => setLoaded0(true)}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
             />
             {img1 && (
               <img
@@ -66,11 +75,12 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
                 decoding="async"
                 width={600}
                 height={800}
-                className="absolute inset-0 w-full h-full object-contain object-center p-2 scale-100 transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                onLoad={() => setLoaded1(true)}
+                className={`absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100 ${loaded1 ? "opacity-100" : "opacity-0"}`}
               />
             )}
-
           </>
+
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
             <ImageOff className="h-8 w-8 mb-2" />
