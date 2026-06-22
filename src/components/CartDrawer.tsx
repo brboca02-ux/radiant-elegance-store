@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingBag, Minus, Plus, Trash2, Loader2 } from "lucide-react";
@@ -8,8 +9,9 @@ import { track } from "@/lib/analytics";
 
 
 export function CartDrawer() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, syncCart } = useCartStore();
   const total = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const totalItems = items.reduce((s, i) => s + i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
@@ -17,22 +19,21 @@ export function CartDrawer() {
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
   const checkout = () => {
-    const url = getCheckoutUrl();
-    if (url) {
-      track.beginCheckout({
-        value: total,
-        currency,
-        items: items.map((i) => ({
-          id: i.product.node.id,
-          name: i.product.node.title,
-          price: parseFloat(i.price.amount),
-          quantity: i.quantity,
-        })),
-      });
-      window.open(url, "_blank");
-      setOpen(false);
-    }
+    if (items.length === 0) return;
+    track.beginCheckout({
+      value: total,
+      currency,
+      items: items.map((i) => ({
+        id: i.product.node.id,
+        name: i.product.node.title,
+        price: parseFloat(i.price.amount),
+        quantity: i.quantity,
+      })),
+    });
+    setOpen(false);
+    navigate({ to: "/checkout" });
   };
+
 
 
   return (

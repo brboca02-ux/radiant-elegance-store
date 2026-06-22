@@ -1,0 +1,367 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck } from "lucide-react";
+import { useCartStore } from "@/stores/cartStore";
+import { useAuth } from "@/hooks/useAuth";
+import { formatPrice } from "@/lib/shopify";
+import { shipping, type ShippingQuote } from "@/lib/integrations/shipping";
+import { payment, type PaymentMethod } from "@/lib/integrations/payment";
+import { lookupCep, formatCep } from "@/lib/integrations/viacep";
+import { createOrder } from "@/lib/api/supaOrders";
+import { supabase } from "@/lib/supabaseClient";
+
+export const Route = createFileRoute("/checkout")({
+  head: () => ({
+    meta: [
+      { title: "Finalizar Compra — MD Modas" },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+  }),
+  component: CheckoutPage,
+});
+
+const onlyDigits = (s: string) => s.replace(/\D/g, "");
+
+function CheckoutPage() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const items = useCartStore((s) => s.items);
+  const clearCart = useCartStore((s) => s.clearCart);
+
+  // identificação
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [cpf, setCpf] = useState("");
+
+  // endereço
+  const [cep, setCep] = useState("");
+  const [street, setStreet] = useState("");
+  const [number, setNumber] = useState("");
+  const [complement, setComplement] = useState("");
+  const [district, setDistrict] = useState("");
+  const [city, setCity] = useState("");
+  const [stateUf, setStateUf] = useState("");
+  const [cepLoading, setCepLoading] = useState(false);
+
+  // frete e pagamento
+  const [quotes, setQuotes] = useState<ShippingQuote[]>([]);
+  const [shippingCode, setShippingCode] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
+  const [submitting, setSubmitting] = useState(false);
+
+  const subtotal = useMemo(
+    () => items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0),
+    [items],
+  );
+  const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
+  const selectedQuote = quotes.find((q) => q.code === shippingCode);
+  const shippingCost = selectedQuote?.price ?? 0;
+  const total = subtotal + shippingCost;
+
+  // pré-preenche email/nome do usuário logado
+  useEffect(() => {
+    if (user?.email && !email) setEmail(user.email);
+    const meta = (user?.user_metadata ?? {}) as { full_name?: string; name?: string };
+    if ((meta.full_name || meta.name) && !name) setName(meta.full_name || meta.name || "");
+  }, [user]); // eslint-disable-line
+
+  // cotação de frete sempre que CEP ou subtotal mudam
+  useEffect(() => {
+    const c = onlyDigits(cep);
+    if (c.length !== 8) { setQuotes([]); setShippingCode(""); return; }
+    let cancelled = false;
+    (async () => {
+      const q = await shipping.quote({ cep: c, subtotal, itemsCount });
+      if (cancelled) return;
+      setQuotes(q);
+      if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
+    })();
+    return () => { cancelled = true; };
+  }, [cep, subtotal, itemsCount]); // eslint-disable-line
+
+  const onCepBlur = async () => {
+    const c = onlyDigits(cep);
+    if (c.length !== 8) return;
+    setCepLoading(true);
+    const data = await lookupCep(c);
+    setCepLoading(false);
+    if (!data) { toast.error("CEP não encontrado"); return; }
+    setStreet(data.logradouro || street);
+    setDistrict(data.bairro || district);
+    setCity(data.localidade || city);
+    setStateUf(data.uf || stateUf);
+  };
+
+  const canSubmit =
+    items.length > 0 &&
+    name.trim().length >= 2 &&
+    /.+@.+\..+/.test(email) &&
+    onlyDigits(cep).length === 8 &&
+    street && number && district && city && stateUf &&
+    shippingCode && !submitting;
+
+  const handleSubmit = async () => {
+    if (!canSubmit) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const order = await createOrder({
+        customer: {
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          phone: onlyDigits(phone) || undefined,
+          cpf: onlyDigits(cpf) || undefined,
+          user_id: user?.id ?? null,
+        },
+        address: {
+          cep: onlyDigits(cep),
+          street, number, complement: complement || undefined,
+          district, city, state: stateUf,
+        },
+        items: items.map((i) => ({
+          product_id: null, // mapping para uuid real (opcional)
+          product_name: i.product.node.title,
+          variant_size: i.selectedOptions.find((o) => /tam|size/i.test(o.name))?.value,
+          variant_color: i.selectedOptions.find((o) => /cor|color/i.test(o.name))?.value,
+          unit_price: parseFloat(i.price.amount),
+          quantity: i.quantity,
+        })),
+        subtotal: +subtotal.toFixed(2),
+        shipping_cost: +shippingCost.toFixed(2),
+        shipping_method: selectedQuote?.name ?? "",
+        discount: 0,
+        total: +total.toFixed(2),
+        payment_method: paymentMethod,
+      });
+
+      // cria pagamento (mock por enquanto)
+      try {
+        const pay = await payment.createPayment({
+          orderId: order.id,
+          orderNumber: order.order_number,
+          amount: order.total,
+          method: paymentMethod,
+          customer: { name, email, cpf: onlyDigits(cpf) || undefined, phone: onlyDigits(phone) || undefined },
+        });
+        await supabase.from("orders").update({
+          payment_provider: pay.provider,
+          payment_id: pay.paymentId,
+          payment_url: pay.paymentUrl ?? null,
+        }).eq("id", order.id);
+      } catch (e) {
+        console.warn("Pagamento não pôde ser criado:", e);
+      }
+
+      clearCart();
+      toast.success("Pedido criado!", { description: order.order_number });
+      navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
+    } catch (e) {
+      console.error(e);
+      toast.error("Não foi possível finalizar o pedido", {
+        description: (e as Error).message,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (items.length === 0) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <h1 className="font-display text-3xl">Sua sacola está vazia</h1>
+          <p className="text-sm text-muted-foreground mt-3">Adicione produtos antes de finalizar a compra.</p>
+          <button onClick={() => navigate({ to: "/" })} className="mt-6 bg-foreground text-background px-8 py-3 text-[11px] tracking-[0.25em] uppercase">
+            Ir para a loja
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-background min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
+        <h1 className="font-display text-3xl md:text-4xl tracking-tight">Finalizar Compra</h1>
+        <p className="text-sm text-muted-foreground mt-1">Preencha seus dados para concluir o pedido.</p>
+
+        <div className="grid lg:grid-cols-[1fr_380px] gap-8 mt-8">
+          <div className="space-y-8">
+            {/* Identificação */}
+            <Section icon={<User className="h-4 w-4" />} title="Seus dados">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="Nome completo *">
+                  <input value={name} onChange={(e) => setName(e.target.value)} className={inp} placeholder="Maria Silva" />
+                </Field>
+                <Field label="E-mail *">
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inp} placeholder="voce@email.com" />
+                </Field>
+                <Field label="Telefone / WhatsApp">
+                  <input value={phone} onChange={(e) => setPhone(e.target.value)} className={inp} placeholder="(47) 99999-9999" />
+                </Field>
+                <Field label="CPF">
+                  <input value={cpf} onChange={(e) => setCpf(e.target.value)} className={inp} placeholder="000.000.000-00" />
+                </Field>
+              </div>
+            </Section>
+
+            {/* Endereço */}
+            <Section icon={<MapPin className="h-4 w-4" />} title="Endereço de entrega">
+              <div className="grid sm:grid-cols-[180px_1fr] gap-3">
+                <Field label="CEP *">
+                  <div className="relative">
+                    <input
+                      value={cep}
+                      onChange={(e) => setCep(formatCep(e.target.value))}
+                      onBlur={onCepBlur}
+                      className={inp}
+                      placeholder="00000-000"
+                      inputMode="numeric"
+                      maxLength={9}
+                    />
+                    {cepLoading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
+                  </div>
+                </Field>
+                <Field label="Rua *">
+                  <input value={street} onChange={(e) => setStreet(e.target.value)} className={inp} />
+                </Field>
+                <Field label="Número *">
+                  <input value={number} onChange={(e) => setNumber(e.target.value)} className={inp} />
+                </Field>
+                <Field label="Complemento">
+                  <input value={complement} onChange={(e) => setComplement(e.target.value)} className={inp} placeholder="Apto, bloco…" />
+                </Field>
+                <Field label="Bairro *">
+                  <input value={district} onChange={(e) => setDistrict(e.target.value)} className={inp} />
+                </Field>
+                <div className="grid grid-cols-[1fr_80px] gap-3">
+                  <Field label="Cidade *">
+                    <input value={city} onChange={(e) => setCity(e.target.value)} className={inp} />
+                  </Field>
+                  <Field label="UF *">
+                    <input value={stateUf} onChange={(e) => setStateUf(e.target.value.toUpperCase())} className={inp} maxLength={2} />
+                  </Field>
+                </div>
+              </div>
+            </Section>
+
+            {/* Frete */}
+            <Section icon={<Truck className="h-4 w-4" />} title="Frete">
+              {onlyDigits(cep).length !== 8 ? (
+                <p className="text-sm text-muted-foreground">Informe o CEP para ver as opções de entrega.</p>
+              ) : quotes.length === 0 ? (
+                <p className="text-sm text-muted-foreground flex items-center gap-2"><Loader2 className="h-3 w-3 animate-spin" /> Calculando…</p>
+              ) : (
+                <div className="space-y-2">
+                  {quotes.map((q) => (
+                    <label key={q.code} className={`flex items-center justify-between border rounded-md p-3 cursor-pointer transition ${shippingCode === q.code ? "border-primary bg-primary/5" : "border-border hover:border-foreground/40"}`}>
+                      <div className="flex items-center gap-3">
+                        <input type="radio" name="ship" checked={shippingCode === q.code} onChange={() => setShippingCode(q.code)} />
+                        <div>
+                          <p className="text-sm font-medium">{q.name}</p>
+                          <p className="text-xs text-muted-foreground">{q.description ?? `Entrega em até ${q.days} dia${q.days > 1 ? "s" : ""} úteis`}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-semibold">
+                        {q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </Section>
+
+            {/* Pagamento */}
+            <Section icon={<CreditCard className="h-4 w-4" />} title="Pagamento">
+              <div className="grid sm:grid-cols-3 gap-2">
+                {(["pix", "cartao", "boleto"] as PaymentMethod[]).map((m) => (
+                  <label key={m} className={`border rounded-md p-3 cursor-pointer text-sm font-medium text-center transition ${paymentMethod === m ? "border-primary bg-primary/5" : "border-border hover:border-foreground/40"}`}>
+                    <input type="radio" name="pm" className="hidden" checked={paymentMethod === m} onChange={() => setPaymentMethod(m)} />
+                    {m === "pix" ? "Pix" : m === "cartao" ? "Cartão de crédito" : "Boleto"}
+                  </label>
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Gateway de pagamento em integração — o pedido será criado e você receberá instruções por e-mail/WhatsApp.
+              </p>
+            </Section>
+          </div>
+
+          {/* Resumo */}
+          <aside className="lg:sticky lg:top-28 lg:self-start space-y-4">
+            <div className="border border-border rounded-md p-5 bg-secondary/30">
+              <h2 className="font-display text-lg mb-4">Resumo</h2>
+              <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+                {items.map((i) => (
+                  <div key={i.variantId} className="flex gap-3 text-sm">
+                    <div className="w-12 h-16 bg-secondary overflow-hidden flex-shrink-0">
+                      {i.product.node.images?.edges?.[0]?.node && (
+                        <img src={i.product.node.images.edges[0].node.url} alt="" className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="line-clamp-2">{i.product.node.title}</p>
+                      <p className="text-xs text-muted-foreground">{i.quantity}× · {i.selectedOptions.map((o) => o.value).join(" · ")}</p>
+                    </div>
+                    <span className="text-sm font-medium">{formatPrice(parseFloat(i.price.amount) * i.quantity, "BRL")}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 pt-4 border-t border-border space-y-2 text-sm">
+                <Row label="Subtotal" value={formatPrice(subtotal, "BRL")} />
+                <Row label="Frete" value={shippingCost === 0 ? "Grátis" : formatPrice(shippingCost, "BRL")} muted={!shippingCode} />
+                <Row label="Total" value={formatPrice(total, "BRL")} bold />
+              </div>
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                className="w-full mt-5 bg-foreground text-background h-12 text-[11px] tracking-[0.25em] uppercase font-medium hover:bg-foreground/90 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Finalizar pedido <ChevronRight className="h-4 w-4" /></>}
+              </button>
+              <p className="mt-3 text-[10px] text-muted-foreground text-center">
+                Ao finalizar você concorda com nossos termos e política de privacidade.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const inp = "w-full h-10 px-3 rounded-md border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+
+function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
+  return (
+    <section className="border border-border rounded-md p-5 bg-background">
+      <h2 className="font-display text-lg mb-4 flex items-center gap-2">
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</span>
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="block text-xs font-medium text-muted-foreground mb-1">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function Row({ label, value, bold, muted }: { label: string; value: string; bold?: boolean; muted?: boolean }) {
+  return (
+    <div className={`flex justify-between ${bold ? "text-base font-semibold pt-2 border-t border-border" : ""} ${muted ? "text-muted-foreground" : ""}`}>
+      <span>{label}</span>
+      <span>{value}</span>
+    </div>
+  );
+}
