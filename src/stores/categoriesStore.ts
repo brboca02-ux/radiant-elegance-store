@@ -65,7 +65,7 @@ export const useCategoriesStore = create<CategoriesState>()(
       })),
       remove: (id) => set((s) => ({ categories: s.categories.filter((c) => c.id !== id) })),
     }),
-    { name: "md_categories_v1", storage: createJSONStorage(() => localStorage) },
+    { name: "md_categories_v2", storage: createJSONStorage(() => localStorage) },
   ),
 );
 

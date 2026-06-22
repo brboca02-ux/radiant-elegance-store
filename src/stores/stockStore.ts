@@ -66,6 +66,6 @@ export const useStockStore = create<StockState>()(
         return m;
       },
     }),
-    { name: "md_stock_v1", storage: createJSONStorage(() => localStorage) },
+    { name: "md_stock_v2", storage: createJSONStorage(() => localStorage) },
   ),
 );

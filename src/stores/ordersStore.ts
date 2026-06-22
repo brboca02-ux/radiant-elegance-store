@@ -178,7 +178,7 @@ export const useOrdersStore = create<OrdersState>()(
       cancel: (id, user_id = "admin", note) => get().setStatus(id, "cancelado", user_id, note),
       remove: (id) => set((s) => ({ orders: s.orders.filter((o) => o.id !== id) })),
     }),
-    { name: "md_orders_v1", storage: createJSONStorage(() => localStorage) },
+    { name: "md_orders_v2", storage: createJSONStorage(() => localStorage) },
   ),
 );
 

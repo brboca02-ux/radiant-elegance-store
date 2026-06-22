@@ -69,7 +69,7 @@ export const useCustomersStore = create<CustomersState>()(
           ),
         })),
     }),
-    { name: "md_customers_v1", storage: createJSONStorage(() => localStorage) },
+    { name: "md_customers_v2", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
