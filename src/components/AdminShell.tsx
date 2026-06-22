@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Store, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Store, LogOut, ShieldCheck, ExternalLink } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabaseClient";
@@ -53,16 +53,33 @@ export function AdminShell({
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 flex">
+    <div className="min-h-screen bg-muted/30 flex admin-scope">
       {/* Sidebar — desktop */}
-      <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-border bg-background sticky top-0 h-screen">
-        <div className="px-5 h-16 flex items-center gap-2 border-b border-border">
-          <Store className="h-5 w-5 text-primary" />
-          <span className="font-display font-extrabold tracking-tight">
-            <span className="text-primary">MD</span> Modas
-          </span>
+      <aside className="hidden lg:flex w-64 shrink-0 flex-col border-r border-border bg-[#0b0b0f] text-white sticky top-0 h-screen">
+        <div className="px-5 h-16 flex items-center gap-2 border-b border-white/10">
+          <div className="h-9 w-9 rounded-md bg-primary flex items-center justify-center">
+            <Store className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <div className="leading-tight">
+            <div className="font-display font-extrabold tracking-tight text-sm">
+              <span className="text-primary">MD</span> Modas
+            </div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
+              Painel admin
+            </div>
+          </div>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+
+        <div className="px-3 pt-3">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary/15 border border-primary/30">
+            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+              Modo administrador
+            </span>
+          </div>
+        </div>
+
+        <nav className="flex-1 p-3 space-y-1 mt-2">
           {MENU.map((m) => {
             const isActive = active === m.key;
             const Icon = m.icon;
@@ -72,8 +89,8 @@ export function AdminShell({
                 to={m.to}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
                   isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-[0_8px_20px_-12px_var(--primary)]"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -82,38 +99,79 @@ export function AdminShell({
             );
           })}
         </nav>
-        <div className="p-3 border-t border-border space-y-2">
+
+        <div className="p-3 border-t border-white/10 space-y-3">
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-between text-[11px] font-medium text-white/60 hover:text-white px-2 py-1.5 rounded-md hover:bg-white/5 transition"
+          >
+            <span className="flex items-center gap-2">
+              <ExternalLink className="h-3.5 w-3.5" />
+              Ver loja
+            </span>
+          </a>
+          <div className="flex items-center gap-3 px-2">
+            <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-[11px] font-bold text-primary uppercase">
+              {(session.user.email ?? "?").slice(0, 1)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[11px] font-semibold text-white truncate" title={session.user.email ?? ""}>
+                {session.user.email}
+              </div>
+              <div className="text-[10px] text-white/50">Administrador</div>
+            </div>
+          </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 text-xs font-medium text-foreground/70 hover:text-foreground px-2 py-1.5 rounded-md hover:bg-muted transition"
+            className="w-full flex items-center justify-center gap-2 text-xs font-semibold text-white/80 hover:text-white px-3 py-2 rounded-md bg-white/5 hover:bg-white/10 transition border border-white/10"
           >
             <LogOut className="h-3.5 w-3.5" />
-            Sair
+            Sair do painel
           </button>
-          <div className="text-[11px] text-muted-foreground truncate" title={session.user.email ?? ""}>
-            {session.user.email}
-          </div>
         </div>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 inset-x-0 z-30 h-14 bg-background border-b border-border flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 inset-x-0 z-30 h-14 bg-[#0b0b0f] text-white border-b border-white/10 flex items-center justify-between px-4">
         <button
           onClick={() => setOpenMobile(true)}
-          className="text-sm font-medium px-3 py-1.5 rounded-md border border-border"
+          className="text-sm font-medium px-3 py-1.5 rounded-md border border-white/20"
         >
           Menu
         </button>
-        <span className="font-display font-bold"><span className="text-primary">MD</span> Modas</span>
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          <span className="font-display font-bold text-sm">
+            <span className="text-primary">MD</span> Admin
+          </span>
+        </div>
         <span className="w-12" />
       </div>
 
       {openMobile && (
         <div className="lg:hidden fixed inset-0 z-40">
           <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpenMobile(false)} />
-          <aside className="absolute left-0 top-0 h-full w-72 bg-background shadow-2xl p-4">
-            <div className="mb-4 font-display font-bold text-lg">
-              <span className="text-primary">MD</span> Modas
+          <aside className="absolute left-0 top-0 h-full w-72 bg-[#0b0b0f] text-white shadow-2xl p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
+                <Store className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <div className="leading-tight">
+                <div className="font-display font-bold text-base">
+                  <span className="text-primary">MD</span> Modas
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
+                  Painel admin
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-primary/15 border border-primary/30 mb-4">
+              <ShieldCheck className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                Modo administrador
+              </span>
             </div>
             <nav className="space-y-1">
               {MENU.map((m) => {
@@ -125,7 +183,7 @@ export function AdminShell({
                     to={m.to}
                     onClick={() => setOpenMobile(false)}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${
-                      isActive ? "bg-primary/10 text-primary" : "text-foreground/80"
+                      isActive ? "bg-primary text-primary-foreground" : "text-white/80 hover:bg-white/5"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -134,14 +192,42 @@ export function AdminShell({
                 );
               })}
             </nav>
+            <button
+              onClick={handleLogout}
+              className="mt-6 w-full flex items-center justify-center gap-2 text-xs font-semibold text-white/80 px-3 py-2 rounded-md bg-white/5 border border-white/10"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Sair do painel
+            </button>
           </aside>
         </div>
       )}
 
       {/* Main */}
       <div className="flex-1 min-w-0 pt-14 lg:pt-0">
+        {/* Admin top bar */}
+        <div className="hidden lg:flex sticky top-0 z-30 h-12 items-center justify-between px-6 lg:px-10 bg-gradient-to-r from-[#0b0b0f] via-[#161118] to-[#0b0b0f] border-b border-primary/30 text-white">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/20 border border-primary/40">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+                Painel administrativo
+              </span>
+            </div>
+            <span className="text-[11px] text-white/50">
+              {MENU.find((m) => m.key === active)?.label}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] text-white/60">
+            <a href="/" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-1.5">
+              <ExternalLink className="h-3 w-3" /> Ver loja pública
+            </a>
+            <span className="text-white/20">|</span>
+            <span className="truncate max-w-[180px]">{session.user.email}</span>
+          </div>
+        </div>
+
         {tabs && tabs.length > 0 && (
-          <div className="sticky top-14 lg:top-0 z-20 bg-background/95 backdrop-blur border-b border-border">
+          <div className="sticky top-14 lg:top-12 z-20 bg-background/95 backdrop-blur border-b border-border">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
               <div className="flex gap-1 overflow-x-auto">
                 {tabs.map((t) => {
