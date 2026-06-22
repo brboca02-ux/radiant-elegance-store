@@ -68,6 +68,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@mdmodas" },
       { name: "theme-color", content: "#E500A4" },
       { name: "format-detection", content: "telephone=no" },
+      { property: "og:title", content: "MD Modas — Moda Feminina e Masculina" },
+      { name: "twitter:title", content: "MD Modas — Moda Feminina e Masculina" },
+      { property: "og:description", content: "MD Modas: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana." },
+      { name: "twitter:description", content: "MD Modas: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9cb6d142-24f3-48de-a281-08feb761ef0b" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9cb6d142-24f3-48de-a281-08feb761ef0b" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
