@@ -53,6 +53,9 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary">
         {img0 ? (
           <>
+            {!loaded0 && (
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
+            )}
             <img
               src={img0.url}
               alt={img0.altText ?? product.node.title}
@@ -60,7 +63,8 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
               decoding="async"
               width={600}
               height={800}
-              className="absolute inset-0 w-full h-full object-contain object-center p-2 transition-all duration-700 group-hover:opacity-0 group-hover:scale-105"
+              onLoad={() => setLoaded0(true)}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
             />
             {img1 && (
               <img
@@ -71,11 +75,12 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
                 decoding="async"
                 width={600}
                 height={800}
-                className="absolute inset-0 w-full h-full object-contain object-center p-2 scale-100 transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                onLoad={() => setLoaded1(true)}
+                className={`absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100 ${loaded1 ? "opacity-100" : "opacity-0"}`}
               />
             )}
-
           </>
+
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
             <ImageOff className="h-8 w-8 mb-2" />
