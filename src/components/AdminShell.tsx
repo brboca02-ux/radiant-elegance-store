@@ -227,7 +227,7 @@ export function AdminShell({
         </div>
 
         {tabs && tabs.length > 0 && (
-          <div className="sticky top-14 lg:top-0 z-20 bg-background/95 backdrop-blur border-b border-border">
+          <div className="sticky top-14 lg:top-12 z-20 bg-background/95 backdrop-blur border-b border-border">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
               <div className="flex gap-1 overflow-x-auto">
                 {tabs.map((t) => {
