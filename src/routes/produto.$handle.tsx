@@ -187,6 +187,49 @@ function ProductPage() {
           </div>
         </div>
       </div>
+
+      {lightboxIdx !== null && images[lightboxIdx] && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setLightboxIdx(null)}
+        >
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setLightboxIdx(null); }}
+            aria-label="Fechar"
+            className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx - 1 + images.length) % images.length); }}
+                aria-label="Anterior"
+                className="absolute left-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx + 1) % images.length); }}
+                aria-label="Próxima"
+                className="absolute right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </>
+          )}
+          <img
+            src={images[lightboxIdx].url}
+            alt={images[lightboxIdx].altText ?? data.title}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
+
