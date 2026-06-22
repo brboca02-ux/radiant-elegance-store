@@ -7,7 +7,7 @@ import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { useProductsStore } from "@/stores/productsStore";
 import { productToShopify } from "@/lib/mockProducts";
-import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame } from "lucide-react";
+import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/produto/$handle")({
   head: ({ params }) => ({
@@ -35,6 +35,8 @@ function ProductPage() {
   const addItem = useCartStore((s) => s.addItem);
   const isAdding = useCartStore((s) => s.isLoading);
   const [variantIdx, setVariantIdx] = useState(0);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
 
   useEffect(() => {
     if (data) {
@@ -115,11 +117,18 @@ function ProductPage() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {images.map((img, i) => (
-            <div key={i} className={`bg-secondary overflow-hidden rounded-md ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}>
-              <img src={img.url} alt={img.altText ?? data.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-            </div>
+            <button
+              type="button"
+              key={i}
+              onClick={() => setLightboxIdx(i)}
+              aria-label={`Ampliar imagem ${i + 1}`}
+              className={`bg-secondary overflow-hidden rounded-md group ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}
+            >
+              <img src={img.url} alt={img.altText ?? data.title} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-700" />
+            </button>
           ))}
         </div>
+
         <div className="lg:sticky lg:top-32 lg:self-start">
           <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">MD Modas</span>
           <h1 className="font-display font-extrabold text-3xl md:text-4xl mt-3">{data.title}</h1>
@@ -178,6 +187,49 @@ function ProductPage() {
           </div>
         </div>
       </div>
+
+      {lightboxIdx !== null && images[lightboxIdx] && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setLightboxIdx(null)}
+        >
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setLightboxIdx(null); }}
+            aria-label="Fechar"
+            className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx - 1 + images.length) % images.length); }}
+                aria-label="Anterior"
+                className="absolute left-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx + 1) % images.length); }}
+                aria-label="Próxima"
+                className="absolute right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </>
+          )}
+          <img
+            src={images[lightboxIdx].url}
+            alt={images[lightboxIdx].altText ?? data.title}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
+

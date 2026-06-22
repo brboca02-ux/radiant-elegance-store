@@ -55,7 +55,7 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
               decoding="async"
               width={600}
               height={800}
-              className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 group-hover:opacity-0"
+              className="absolute inset-0 w-full h-full object-contain object-center p-2 transition-all duration-700 group-hover:opacity-0 group-hover:scale-105"
             />
             {img1 && (
               <img
@@ -66,9 +66,10 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
                 decoding="async"
                 width={600}
                 height={800}
-                className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100"
+                className="absolute inset-0 w-full h-full object-contain object-center p-2 scale-100 transition-transform duration-[1200ms] ease-out group-hover:scale-110"
               />
             )}
+
           </>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
