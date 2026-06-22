@@ -132,8 +132,9 @@ export function ProductForm({ productId }: { productId?: string }) {
           <div className="flex gap-2">
             <button onClick={() => navigate({ to: "/produtos" })}
               className="rounded-lg border border-border px-4 py-2.5 text-sm">Cancelar</button>
-            <button onClick={save}
-              className="rounded-lg bg-foreground text-background px-4 py-2.5 text-sm font-medium hover:bg-foreground/85">
+            <button onClick={save} disabled={saving || uploading}
+              className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-4 py-2.5 text-sm font-medium hover:bg-foreground/85 disabled:opacity-60">
+              {(saving || uploading) && <Loader2 className="h-4 w-4 animate-spin" />}
               {existing ? "Salvar alterações" : "Criar produto"}
             </button>
           </div>
