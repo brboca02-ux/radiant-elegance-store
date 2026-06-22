@@ -17,6 +17,7 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ColecaoRouteImport } from './routes/colecao'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
@@ -31,8 +32,11 @@ import { Route as PedidosIdRouteImport } from './routes/pedidos.$id'
 import { Route as EstoqueHistoricoRouteImport } from './routes/estoque.historico'
 import { Route as ClientesIdRouteImport } from './routes/clientes.$id'
 import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
+import { Route as AuthenticatedMeusPedidosRouteImport } from './routes/_authenticated/meus-pedidos'
 import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
+import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
 import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
+import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
 
 const TrocasEDevolucoesRoute = TrocasEDevolucoesRouteImport.update({
   id: '/trocas-e-devolucoes',
@@ -72,6 +76,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const ColecaoRoute = ColecaoRouteImport.update({
   id: '/colecao',
   path: '/colecao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -144,9 +153,20 @@ const CategoriasNovoRoute = CategoriasNovoRouteImport.update({
   path: '/categorias/novo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMeusPedidosRoute =
+  AuthenticatedMeusPedidosRouteImport.update({
+    id: '/_authenticated/meus-pedidos',
+    path: '/meus-pedidos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProdutosIdEditarRoute = ProdutosIdEditarRouteImport.update({
   id: '/produtos/$id/editar',
   path: '/produtos/$id/editar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoSucessoNumeroRoute = PedidoSucessoNumeroRouteImport.update({
+  id: '/pedido/sucesso/$numero',
+  path: '/pedido/sucesso/$numero',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
@@ -154,10 +174,16 @@ const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
   path: '/categorias/$id/editar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentWebhookRoute = ApiPublicPaymentWebhookRouteImport.update({
+  id: '/api/public/payment-webhook',
+  path: '/api/public/payment-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/checkout': typeof CheckoutRoute
   '/colecao': typeof ColecaoRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
@@ -166,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
+  '/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/categorias/novo': typeof CategoriasNovoRoute
   '/clientes/$id': typeof ClientesIdRoute
   '/estoque/historico': typeof EstoqueHistoricoRoute
@@ -178,12 +205,15 @@ export interface FileRoutesByFullPath {
   '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
+  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
+  '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/checkout': typeof CheckoutRoute
   '/colecao': typeof ColecaoRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
@@ -192,6 +222,7 @@ export interface FileRoutesByTo {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
+  '/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/categorias/novo': typeof CategoriasNovoRoute
   '/clientes/$id': typeof ClientesIdRoute
   '/estoque/historico': typeof EstoqueHistoricoRoute
@@ -204,13 +235,16 @@ export interface FileRoutesByTo {
   '/marketing': typeof MarketingIndexRoute
   '/pedidos': typeof PedidosIndexRoute
   '/produtos': typeof ProdutosIndexRoute
+  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
+  '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/checkout': typeof CheckoutRoute
   '/colecao': typeof ColecaoRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
@@ -219,6 +253,7 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
+  '/_authenticated/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/categorias/novo': typeof CategoriasNovoRoute
   '/clientes/$id': typeof ClientesIdRoute
   '/estoque/historico': typeof EstoqueHistoricoRoute
@@ -231,7 +266,9 @@ export interface FileRoutesById {
   '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
+  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
+  '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRouteTypes {
@@ -239,6 +276,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/checkout'
     | '/colecao'
     | '/dashboard'
     | '/login'
@@ -247,6 +285,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/trocas-e-devolucoes'
+    | '/meus-pedidos'
     | '/categorias/novo'
     | '/clientes/$id'
     | '/estoque/historico'
@@ -259,12 +298,15 @@ export interface FileRouteTypes {
     | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
+    | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
+    | '/pedido/sucesso/$numero'
     | '/produtos/$id/editar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
+    | '/checkout'
     | '/colecao'
     | '/dashboard'
     | '/login'
@@ -273,6 +315,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/trocas-e-devolucoes'
+    | '/meus-pedidos'
     | '/categorias/novo'
     | '/clientes/$id'
     | '/estoque/historico'
@@ -285,12 +328,15 @@ export interface FileRouteTypes {
     | '/marketing'
     | '/pedidos'
     | '/produtos'
+    | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
+    | '/pedido/sucesso/$numero'
     | '/produtos/$id/editar'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/checkout'
     | '/colecao'
     | '/dashboard'
     | '/login'
@@ -299,6 +345,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/trocas-e-devolucoes'
+    | '/_authenticated/meus-pedidos'
     | '/categorias/novo'
     | '/clientes/$id'
     | '/estoque/historico'
@@ -311,13 +358,16 @@ export interface FileRouteTypes {
     | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
+    | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
+    | '/pedido/sucesso/$numero'
     | '/produtos/$id/editar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  CheckoutRoute: typeof CheckoutRoute
   ColecaoRoute: typeof ColecaoRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
@@ -326,6 +376,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   TrocasEDevolucoesRoute: typeof TrocasEDevolucoesRoute
+  AuthenticatedMeusPedidosRoute: typeof AuthenticatedMeusPedidosRoute
   CategoriasNovoRoute: typeof CategoriasNovoRoute
   ClientesIdRoute: typeof ClientesIdRoute
   EstoqueHistoricoRoute: typeof EstoqueHistoricoRoute
@@ -338,7 +389,9 @@ export interface RootRouteChildren {
   MarketingIndexRoute: typeof MarketingIndexRoute
   PedidosIndexRoute: typeof PedidosIndexRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
+  ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
+  PedidoSucessoNumeroRoute: typeof PedidoSucessoNumeroRoute
   ProdutosIdEditarRoute: typeof ProdutosIdEditarRoute
 }
 
@@ -398,6 +451,13 @@ declare module '@tanstack/react-router' {
       path: '/colecao'
       fullPath: '/colecao'
       preLoaderRoute: typeof ColecaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -498,11 +558,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasNovoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/meus-pedidos': {
+      id: '/_authenticated/meus-pedidos'
+      path: '/meus-pedidos'
+      fullPath: '/meus-pedidos'
+      preLoaderRoute: typeof AuthenticatedMeusPedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos/$id/editar': {
       id: '/produtos/$id/editar'
       path: '/produtos/$id/editar'
       fullPath: '/produtos/$id/editar'
       preLoaderRoute: typeof ProdutosIdEditarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/sucesso/$numero': {
+      id: '/pedido/sucesso/$numero'
+      path: '/pedido/sucesso/$numero'
+      fullPath: '/pedido/sucesso/$numero'
+      preLoaderRoute: typeof PedidoSucessoNumeroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categorias/$id/editar': {
@@ -512,12 +586,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasIdEditarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payment-webhook': {
+      id: '/api/public/payment-webhook'
+      path: '/api/public/payment-webhook'
+      fullPath: '/api/public/payment-webhook'
+      preLoaderRoute: typeof ApiPublicPaymentWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  CheckoutRoute: CheckoutRoute,
   ColecaoRoute: ColecaoRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
@@ -526,6 +608,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   TrocasEDevolucoesRoute: TrocasEDevolucoesRoute,
+  AuthenticatedMeusPedidosRoute: AuthenticatedMeusPedidosRoute,
   CategoriasNovoRoute: CategoriasNovoRoute,
   ClientesIdRoute: ClientesIdRoute,
   EstoqueHistoricoRoute: EstoqueHistoricoRoute,
@@ -538,7 +621,9 @@ const rootRouteChildren: RootRouteChildren = {
   MarketingIndexRoute: MarketingIndexRoute,
   PedidosIndexRoute: PedidosIndexRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
+  ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
+  PedidoSucessoNumeroRoute: PedidoSucessoNumeroRoute,
   ProdutosIdEditarRoute: ProdutosIdEditarRoute,
 }
 export const routeTree = rootRouteImport
