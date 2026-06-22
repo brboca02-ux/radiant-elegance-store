@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { storefrontApiRequest, SEARCH_SUGGESTIONS_QUERY, formatPrice } from "@/lib/shopify";
