@@ -153,9 +153,25 @@ export function AdminShell({
       {openMobile && (
         <div className="lg:hidden fixed inset-0 z-40">
           <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpenMobile(false)} />
-          <aside className="absolute left-0 top-0 h-full w-72 bg-background shadow-2xl p-4">
-            <div className="mb-4 font-display font-bold text-lg">
-              <span className="text-primary">MD</span> Modas
+          <aside className="absolute left-0 top-0 h-full w-72 bg-[#0b0b0f] text-white shadow-2xl p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
+                <Store className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <div className="leading-tight">
+                <div className="font-display font-bold text-base">
+                  <span className="text-primary">MD</span> Modas
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
+                  Painel admin
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-primary/15 border border-primary/30 mb-4">
+              <ShieldCheck className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                Modo administrador
+              </span>
             </div>
             <nav className="space-y-1">
               {MENU.map((m) => {
@@ -167,7 +183,7 @@ export function AdminShell({
                     to={m.to}
                     onClick={() => setOpenMobile(false)}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${
-                      isActive ? "bg-primary/10 text-primary" : "text-foreground/80"
+                      isActive ? "bg-primary text-primary-foreground" : "text-white/80 hover:bg-white/5"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -176,12 +192,40 @@ export function AdminShell({
                 );
               })}
             </nav>
+            <button
+              onClick={handleLogout}
+              className="mt-6 w-full flex items-center justify-center gap-2 text-xs font-semibold text-white/80 px-3 py-2 rounded-md bg-white/5 border border-white/10"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Sair do painel
+            </button>
           </aside>
         </div>
       )}
 
       {/* Main */}
       <div className="flex-1 min-w-0 pt-14 lg:pt-0">
+        {/* Admin top bar */}
+        <div className="hidden lg:flex sticky top-0 z-30 h-12 items-center justify-between px-6 lg:px-10 bg-gradient-to-r from-[#0b0b0f] via-[#161118] to-[#0b0b0f] border-b border-primary/30 text-white">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/20 border border-primary/40">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+                Painel administrativo
+              </span>
+            </div>
+            <span className="text-[11px] text-white/50">
+              {MENU.find((m) => m.key === active)?.label}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] text-white/60">
+            <a href="/" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-1.5">
+              <ExternalLink className="h-3 w-3" /> Ver loja pública
+            </a>
+            <span className="text-white/20">|</span>
+            <span className="truncate max-w-[180px]">{session.user.email}</span>
+          </div>
+        </div>
+
         {tabs && tabs.length > 0 && (
           <div className="sticky top-14 lg:top-0 z-20 bg-background/95 backdrop-blur border-b border-border">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
