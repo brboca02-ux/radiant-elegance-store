@@ -20,26 +20,7 @@ export interface StockMovement {
 
 const uid = () => "m_" + Math.random().toString(36).slice(2, 10);
 
-const seedMovements: StockMovement[] = [
-  {
-    id: uid(), store_id: STORE_ID, product_id: "p_001", product_name: "Vestido Aurora",
-    type: "entrada", quantity: 10, reason: "Compra fornecedor", notes: "NF 1240",
-    user_id: "u_admin", user_name: "Admin",
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-  },
-  {
-    id: uid(), store_id: STORE_ID, product_id: "p_002", product_name: "Blusa Elegance",
-    type: "saida", quantity: -3, reason: "Venda balcão", notes: "",
-    user_id: "u_admin", user_name: "Admin",
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: uid(), store_id: STORE_ID, product_id: "p_003", product_name: "Conjunto Classic",
-    type: "ajuste", quantity: 2, reason: "Contagem física", notes: "Inventário mensal",
-    user_id: "u_admin", user_name: "Admin",
-    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-  },
-];
+const seedMovements: StockMovement[] = [];
 
 interface StockState {
   movements: StockMovement[];
