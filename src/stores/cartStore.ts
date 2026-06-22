@@ -157,14 +157,14 @@ export const useCartStore = create<CartStore>()(
         if (quantity <= 0) return get().removeItem(variantId);
         const { items, cartId, clearCart } = get();
         const item = items.find((i) => i.variantId === variantId);
-        if (!item?.lineId || !cartId) return;
+        if (!item) return;
         set({ isLoading: true });
         try {
-          const res = await updateShopifyCartLine(cartId, item.lineId, quantity);
-          if (res.success) {
-            const cur = get().items;
-            set({ items: cur.map((i) => (i.variantId === variantId ? { ...i, quantity } : i)) });
-          } else if (res.cartNotFound) clearCart();
+          if (cartId && item.lineId) {
+            const res = await updateShopifyCartLine(cartId, item.lineId, quantity).catch(() => ({ success: false }));
+            if ("cartNotFound" in res && res.cartNotFound) { clearCart(); return; }
+          }
+          set({ items: get().items.map((i) => (i.variantId === variantId ? { ...i, quantity } : i)) });
         } finally {
           set({ isLoading: false });
         }
@@ -173,18 +173,20 @@ export const useCartStore = create<CartStore>()(
       removeItem: async (variantId) => {
         const { items, cartId, clearCart } = get();
         const item = items.find((i) => i.variantId === variantId);
-        if (!item?.lineId || !cartId) return;
+        if (!item) return;
         set({ isLoading: true });
         try {
-          const res = await removeLineFromShopifyCart(cartId, item.lineId);
-          if (res.success) {
-            const cur = get().items.filter((i) => i.variantId !== variantId);
-            cur.length === 0 ? clearCart() : set({ items: cur });
-          } else if (res.cartNotFound) clearCart();
+          if (cartId && item.lineId) {
+            const res = await removeLineFromShopifyCart(cartId, item.lineId).catch(() => ({ success: false }));
+            if ("cartNotFound" in res && res.cartNotFound) { clearCart(); return; }
+          }
+          const cur = get().items.filter((i) => i.variantId !== variantId);
+          cur.length === 0 ? clearCart() : set({ items: cur });
         } finally {
           set({ isLoading: false });
         }
       },
+
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
       getCheckoutUrl: () => get().checkoutUrl,
