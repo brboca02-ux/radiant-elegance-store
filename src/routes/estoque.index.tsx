@@ -141,13 +141,17 @@ function EstoquePage() {
         <MovementDialog
           type={openType}
           onClose={() => setOpenType(null)}
-          onSubmit={(payload) => {
-            const m = record(payload);
-            if (m) {
-              toast.success("Movimentação registrada");
-              setOpenType(null);
-            } else {
-              toast.error("Produto inválido");
+          onSubmit={async (payload) => {
+            try {
+              const m = await record(payload);
+              if (m) {
+                toast.success("Movimentação registrada");
+                setOpenType(null);
+              } else {
+                toast.error("Produto inválido");
+              }
+            } catch (e) {
+              toast.error((e as Error).message || "Erro ao registrar");
             }
           }}
         />
