@@ -17,6 +17,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { LeadPopup } from "@/components/LeadPopup";
 import { useCartSync } from "@/hooks/useCartSync";
+import { useHydrateStores } from "@/hooks/useHydrateStores";
 
 function NotFoundComponent() {
   return (
@@ -137,6 +138,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function AppShell() {
   useCartSync();
+  useHydrateStores();
   return (
     <>
       <Header />

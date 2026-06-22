@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus } from "lucide-react";
+import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2 } from "lucide-react";
 import {
   useProductsStore, CATEGORIES, SIZES, emptyProduct, slugify,
   type Product, type ProductImage, type ProductVariant, type ProductStatus,
 } from "@/stores/productsStore";
+import { uploadProductImage } from "@/lib/api/supaProducts";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -40,14 +41,14 @@ export function ProductForm({ productId }: { productId?: string }) {
 
   // ---------- Images ----------
   const dragIdx = useRef<number | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const addFiles = (files: FileList | File[]) => {
+  const addFiles = async (files: FileList | File[]) => {
     const arr = Array.from(files);
-    Promise.all(arr.map((f) => new Promise<string>((res) => {
-      const r = new FileReader();
-      r.onload = () => res(String(r.result));
-      r.readAsDataURL(f);
-    }))).then((urls) => {
+    setUploading(true);
+    try {
+      const urls = await Promise.all(arr.map((f) => uploadProductImage(f)));
       setData((d) => {
         const next = [...d.images];
         urls.forEach((url) => {
@@ -58,7 +59,11 @@ export function ProductForm({ productId }: { productId?: string }) {
         });
         return { ...d, images: next };
       });
-    });
+    } catch (e) {
+      toast.error("Falha no upload: " + (e as Error).message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const removeImage = (id: string) => setData((d) => {
@@ -88,18 +93,25 @@ export function ProductForm({ productId }: { productId?: string }) {
   const removeVariant = (id: string) => setData((d) => ({ ...d, variants: d.variants.filter((v) => v.id !== id) }));
 
   // ---------- Save ----------
-  const save = () => {
+  const save = async () => {
     if (!data.name.trim()) return toast.error("Informe o nome do produto.");
     if (data.price <= 0) return toast.error("Informe um preço válido.");
     const payload = { ...data, slug: data.slug || slugify(data.name) };
-    if (existing) {
-      update(existing.id, payload);
-      toast.success("Produto atualizado");
-    } else {
-      create(payload);
-      toast.success("Produto criado");
+    setSaving(true);
+    try {
+      if (existing) {
+        await update(existing.id, payload);
+        toast.success("Produto atualizado");
+      } else {
+        await create(payload);
+        toast.success("Produto criado");
+      }
+      navigate({ to: "/produtos" });
+    } catch (e) {
+      toast.error("Erro ao salvar: " + (e as Error).message);
+    } finally {
+      setSaving(false);
     }
-    navigate({ to: "/produtos" });
   };
 
   return (
@@ -120,8 +132,9 @@ export function ProductForm({ productId }: { productId?: string }) {
           <div className="flex gap-2">
             <button onClick={() => navigate({ to: "/produtos" })}
               className="rounded-lg border border-border px-4 py-2.5 text-sm">Cancelar</button>
-            <button onClick={save}
-              className="rounded-lg bg-foreground text-background px-4 py-2.5 text-sm font-medium hover:bg-foreground/85">
+            <button onClick={save} disabled={saving || uploading}
+              className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-4 py-2.5 text-sm font-medium hover:bg-foreground/85 disabled:opacity-60">
+              {(saving || uploading) && <Loader2 className="h-4 w-4 animate-spin" />}
               {existing ? "Salvar alterações" : "Criar produto"}
             </button>
           </div>

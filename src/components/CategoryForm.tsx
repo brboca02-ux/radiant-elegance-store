@@ -37,12 +37,16 @@ export function CategoryForm({ categoryId }: { categoryId?: string }) {
     r.readAsDataURL(file);
   };
 
-  const save = () => {
+  const save = async () => {
     if (!data.name.trim()) return toast.error("Informe o nome da categoria.");
     const payload = { ...data, slug: data.slug || slugify(data.name) };
-    if (existing) { update(existing.id, payload); toast.success("Categoria atualizada"); }
-    else { create(payload); toast.success("Categoria criada"); }
-    navigate({ to: "/categorias" });
+    try {
+      if (existing) { await update(existing.id, payload); toast.success("Categoria atualizada"); }
+      else { await create(payload); toast.success("Categoria criada"); }
+      navigate({ to: "/categorias" });
+    } catch (e) {
+      toast.error("Erro: " + (e as Error).message);
+    }
   };
 
   return (
