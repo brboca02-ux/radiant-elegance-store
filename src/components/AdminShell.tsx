@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Store, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Store, LogOut, ShieldCheck, ExternalLink } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabaseClient";
