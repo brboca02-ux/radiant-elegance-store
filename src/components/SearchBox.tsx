@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { storefrontApiRequest, SEARCH_SUGGESTIONS_QUERY, formatPrice } from "@/lib/shopify";
@@ -87,7 +87,8 @@ export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () =
     else if (e.key === "Enter" && active >= 0) { e.preventDefault(); goToActive(); }
   };
 
-  const listboxId = useMemo(() => `search-listbox-${Math.random().toString(36).slice(2, 8)}`, []);
+  const reactId = useId();
+  const listboxId = `search-listbox-${reactId.replace(/[^a-zA-Z0-9]/g, "")}`;
 
   return (
     <div ref={ref} className="relative w-full">
