@@ -13,7 +13,6 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
-  ssr: false,
   head: () => ({
     meta: [
       { title: "Entrar — MD Modas Admin" },
