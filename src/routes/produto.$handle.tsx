@@ -35,6 +35,8 @@ function ProductPage() {
   const addItem = useCartStore((s) => s.addItem);
   const isAdding = useCartStore((s) => s.isLoading);
   const [variantIdx, setVariantIdx] = useState(0);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
 
   useEffect(() => {
     if (data) {
