@@ -43,10 +43,8 @@ const FEMININO: MegaContent = {
     {
       title: "Coleções",
       items: [
-        { label: "Novidades", c: "novidades" },
         { label: "Recebidos da Semana", c: "recebidos-da-semana" },
         { label: "Promoções", c: "promocoes", highlight: true },
-        { label: "Mais Vendidos", c: "mais-vendidos" },
       ],
     },
   ],
@@ -54,7 +52,7 @@ const FEMININO: MegaContent = {
     title: "Toda semana novidades",
     subtitle: "Peças recém-chegadas na MD Modas",
     cta: "Comprar Agora",
-    c: "novidades",
+    c: "recebidos-da-semana",
   },
 };
 
