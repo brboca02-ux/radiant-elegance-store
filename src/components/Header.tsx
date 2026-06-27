@@ -73,9 +73,8 @@ const MASCULINO: MegaContent = {
     {
       title: "Coleções",
       items: [
-        { label: "Novidades", c: "novidades" },
+        { label: "Recebidos da Semana", c: "recebidos-da-semana" },
         { label: "Promoções", c: "promocoes", highlight: true },
-        { label: "Mais Vendidos", c: "mais-vendidos" },
       ],
     },
   ],
