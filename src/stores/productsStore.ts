@@ -9,6 +9,8 @@ export const STORE_ID = "store_md_modas";
 export const CATEGORIES = [
   { id: "feminino", name: "Feminino" },
   { id: "masculino", name: "Masculino" },
+  { id: "infantil", name: "Infantil" },
+  { id: "calcados", name: "Calçados" },
   { id: "vestidos", name: "Vestidos" },
   { id: "conjuntos", name: "Conjuntos" },
   { id: "plus-size", name: "Plus Size" },
