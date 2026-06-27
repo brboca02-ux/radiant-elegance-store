@@ -2,8 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   HomeHero,
   CategoriesSection,
-  BestSellersSection,
-  LaunchSection,
   RecebidosHomeSection,
   LookbookSection,
   LojaFisicaSection,
