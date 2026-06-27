@@ -285,12 +285,6 @@ export function Header() {
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "novidades" } as never} className="text-foreground/80 hover:text-primary transition">
-            Novidades
-          </Link>
-          <Link to="/colecao" search={{ c: "mais-vendidos" } as never} className="text-foreground/80 hover:text-primary transition">
-            Mais Vendidos
-          </Link>
           <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-primary transition">
             Recebidos da Semana
           </Link>
