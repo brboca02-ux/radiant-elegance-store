@@ -30,8 +30,6 @@ function Index() {
     <>
       <HomeHero />
       <CategoriesSection />
-      <BestSellersSection />
-      <LaunchSection />
       <RecebidosHomeSection />
       <LookbookSection />
       <LojaFisicaSection />
