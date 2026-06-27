@@ -43,10 +43,8 @@ const FEMININO: MegaContent = {
     {
       title: "Coleções",
       items: [
-        { label: "Novidades", c: "novidades" },
         { label: "Recebidos da Semana", c: "recebidos-da-semana" },
         { label: "Promoções", c: "promocoes", highlight: true },
-        { label: "Mais Vendidos", c: "mais-vendidos" },
       ],
     },
   ],
@@ -54,7 +52,7 @@ const FEMININO: MegaContent = {
     title: "Toda semana novidades",
     subtitle: "Peças recém-chegadas na MD Modas",
     cta: "Comprar Agora",
-    c: "novidades",
+    c: "recebidos-da-semana",
   },
 };
 
@@ -75,9 +73,70 @@ const MASCULINO: MegaContent = {
     {
       title: "Coleções",
       items: [
-        { label: "Novidades", c: "novidades" },
+        { label: "Recebidos da Semana", c: "recebidos-da-semana" },
         { label: "Promoções", c: "promocoes", highlight: true },
-        { label: "Mais Vendidos", c: "mais-vendidos" },
+      ],
+    },
+  ],
+};
+
+const INFANTIL: MegaContent = {
+  columns: [
+    {
+      title: "Meninas",
+      items: [
+        { label: "Vestidos", c: "infantil-vestidos" },
+        { label: "Conjuntos", c: "infantil-conjuntos-fem" },
+        { label: "Blusas", c: "infantil-blusas-fem" },
+        { label: "Calças e Shorts", c: "infantil-calcas-fem" },
+      ],
+    },
+    {
+      title: "Meninos",
+      items: [
+        { label: "Camisetas", c: "infantil-camisetas" },
+        { label: "Conjuntos", c: "infantil-conjuntos-masc" },
+        { label: "Bermudas", c: "infantil-bermudas" },
+        { label: "Moletons", c: "infantil-moletons" },
+      ],
+    },
+    {
+      title: "Idades",
+      items: [
+        { label: "1 a 4 anos", c: "infantil-1-4" },
+        { label: "5 a 8 anos", c: "infantil-5-8" },
+        { label: "9 a 12 anos", c: "infantil-9-12" },
+      ],
+    },
+  ],
+};
+
+const CALCADOS: MegaContent = {
+  columns: [
+    {
+      title: "Feminino",
+      items: [
+        { label: "Tênis", c: "tenis-fem" },
+        { label: "Sandálias", c: "sandalias" },
+        { label: "Rasteirinhas", c: "rasteirinhas" },
+        { label: "Botas", c: "botas-fem" },
+        { label: "Scarpins", c: "scarpins" },
+      ],
+    },
+    {
+      title: "Masculino",
+      items: [
+        { label: "Tênis", c: "tenis-masc" },
+        { label: "Sapatênis", c: "sapatenis" },
+        { label: "Mocassins", c: "mocassins" },
+        { label: "Chinelos", c: "chinelos" },
+      ],
+    },
+    {
+      title: "Infantil",
+      items: [
+        { label: "Tênis Infantil", c: "tenis-infantil" },
+        { label: "Sandálias Infantis", c: "sandalias-infantil" },
       ],
     },
   ],
@@ -94,13 +153,6 @@ const ACESSORIOS: MegaContent = {
         { label: "Óculos", c: "oculos" },
         { label: "Lenços", c: "lencos" },
         { label: "Chapéus", c: "chapeus" },
-      ],
-    },
-    {
-      title: "Coleções",
-      items: [
-        { label: "Novidades", c: "novidades" },
-        { label: "Mais Vendidos", c: "mais-vendidos" },
       ],
     },
   ],
@@ -125,11 +177,13 @@ const PROMOCOES: MegaContent = {
   },
 };
 
-type MenuKey = "feminino" | "masculino" | "acessorios" | "promocoes" | null;
+type MenuKey = "feminino" | "masculino" | "infantil" | "calcados" | "acessorios" | "promocoes" | null;
 
 const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; badge?: string }[] = [
   { key: "feminino", label: "Feminino", content: FEMININO },
   { key: "masculino", label: "Masculino", content: MASCULINO },
+  { key: "infantil", label: "Infantil", content: INFANTIL },
+  { key: "calcados", label: "Calçados", content: CALCADOS },
   { key: "acessorios", label: "Acessórios", content: ACESSORIOS },
   { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, badge: "PROMOÇÃO" },
 ];
@@ -231,12 +285,6 @@ export function Header() {
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "novidades" } as never} className="text-foreground/80 hover:text-primary transition">
-            Novidades
-          </Link>
-          <Link to="/colecao" search={{ c: "mais-vendidos" } as never} className="text-foreground/80 hover:text-primary transition">
-            Mais Vendidos
-          </Link>
           <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-primary transition">
             Recebidos da Semana
           </Link>
@@ -377,22 +425,6 @@ export function Header() {
                   </div>
                 );
               })}
-              <Link
-                to="/colecao"
-                search={{ c: "novidades" } as never}
-                onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
-              >
-                Novidades
-              </Link>
-              <Link
-                to="/colecao"
-                search={{ c: "mais-vendidos" } as never}
-                onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
-              >
-                Mais Vendidos
-              </Link>
               <Link
                 to="/colecao"
                 search={{ c: "recebidos-da-semana" } as never}

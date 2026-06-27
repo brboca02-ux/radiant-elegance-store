@@ -20,9 +20,9 @@ import { track } from "@/lib/analytics";
 const categories = [
   { label: "Feminino", img: vestidos, q: "feminino" },
   { label: "Masculino", img: blazers, q: "masculino" },
-  { label: "Vestidos", img: novidades, q: "vestidos" },
-  { label: "Conjuntos", img: conjuntos, q: "conjuntos" },
-  { label: "Plus Size", img: alfaiataria, q: "plus-size" },
+  { label: "Infantil", img: novidades, q: "infantil" },
+  { label: "Calçados", img: alfaiataria, q: "calcados" },
+  { label: "Plus Size", img: conjuntos, q: "plus-size" },
 ];
 
 const diferenciais = [
