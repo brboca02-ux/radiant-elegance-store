@@ -427,22 +427,6 @@ export function Header() {
               })}
               <Link
                 to="/colecao"
-                search={{ c: "novidades" } as never}
-                onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
-              >
-                Novidades
-              </Link>
-              <Link
-                to="/colecao"
-                search={{ c: "mais-vendidos" } as never}
-                onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
-              >
-                Mais Vendidos
-              </Link>
-              <Link
-                to="/colecao"
                 search={{ c: "recebidos-da-semana" } as never}
                 onClick={() => setOpen(false)}
                 className="block px-5 py-3 text-base font-semibold border-b border-border/60"
