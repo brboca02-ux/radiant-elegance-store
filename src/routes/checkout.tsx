@@ -313,7 +313,17 @@ function CheckoutPage() {
               </div>
               <div className="mt-5 pt-4 border-t border-border space-y-2 text-sm">
                 <Row label="Subtotal" value={formatPrice(subtotal, "BRL")} />
-                <Row label="Frete" value={shippingCost === 0 ? "Grátis" : formatPrice(shippingCost, "BRL")} muted={!shippingCode} />
+                <Row
+                  label="Frete"
+                  value={
+                    selectedQuote?.code === "cotacao"
+                      ? "A consultar"
+                      : shippingCost === 0
+                        ? "Grátis"
+                        : formatPrice(shippingCost, "BRL")
+                  }
+                  muted={!shippingCode}
+                />
                 <Row label="Total" value={formatPrice(total, "BRL")} bold />
               </div>
               <button
