@@ -267,7 +267,7 @@ function CheckoutPage() {
                         </div>
                       </div>
                       <span className="text-sm font-semibold">
-                        {q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
+                        {q.code === "cotacao" ? "A consultar" : q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
                       </span>
                     </label>
                   ))}
