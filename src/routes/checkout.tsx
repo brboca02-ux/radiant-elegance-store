@@ -67,19 +67,19 @@ function CheckoutPage() {
     if ((meta.full_name || meta.name) && !name) setName(meta.full_name || meta.name || "");
   }, [user]); // eslint-disable-line
 
-  // cotação de frete sempre que CEP ou subtotal mudam
+  // cotação de frete sempre que CEP/cidade/subtotal mudam
   useEffect(() => {
     const c = onlyDigits(cep);
     if (c.length !== 8) { setQuotes([]); setShippingCode(""); return; }
     let cancelled = false;
     (async () => {
-      const q = await shipping.quote({ cep: c, subtotal, itemsCount });
+      const q = await shipping.quote({ cep: c, subtotal, itemsCount, city, state: stateUf });
       if (cancelled) return;
       setQuotes(q);
       if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
     })();
     return () => { cancelled = true; };
-  }, [cep, subtotal, itemsCount]); // eslint-disable-line
+  }, [cep, city, stateUf, subtotal, itemsCount]); // eslint-disable-line
 
   const onCepBlur = async () => {
     const c = onlyDigits(cep);
