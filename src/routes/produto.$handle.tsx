@@ -65,6 +65,15 @@ function ProductPage() {
     return [...set];
   }, [variants]);
 
+  const colorHexMap = useMemo(() => {
+    const map: Record<string, string | null> = {};
+    variants.forEach((v) => {
+      const c = v.selectedOptions.find((o) => o.name === "Cor")?.value;
+      if (c && v.colorHex && !map[c]) map[c] = v.colorHex;
+    });
+    return map;
+  }, [variants]);
+
   const sizes = useMemo(() => {
     const set = new Set<string>();
     variants.forEach((v) => {
