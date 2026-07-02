@@ -271,28 +271,68 @@ export function DifferentialsSection() {
 }
 
 export function InstagramSection() {
-  const cells = [vestidos, conjuntos, blazers, alfaiataria, tricots, novidades, lookbook1, lookbook2];
+  // Grid curada de posts recentes. Para plugar o feed real do Instagram (Graph API),
+  // basta substituir "cells" por dados retornados de uma server function usando um
+  // token de longa duração da Meta e mapear cada item para { image, permalink }.
+  const cells: Array<{ img: string; permalink: string }> = [
+    { img: vestidos, permalink: INSTAGRAM_URL },
+    { img: conjuntos, permalink: INSTAGRAM_URL },
+    { img: blazers, permalink: INSTAGRAM_URL },
+    { img: alfaiataria, permalink: INSTAGRAM_URL },
+    { img: tricots, permalink: INSTAGRAM_URL },
+    { img: novidades, permalink: INSTAGRAM_URL },
+    { img: lookbook1, permalink: INSTAGRAM_URL },
+    { img: lookbook2, permalink: INSTAGRAM_URL },
+  ];
   return (
     <section className="py-20 md:py-28 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3">Instagram</p>
-          <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">Acompanhe nossas novidades</h2>
+          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3 inline-flex items-center gap-2">
+            <Instagram className="h-3.5 w-3.5" strokeWidth={1.8} /> Instagram
+          </p>
+          <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+            @{INSTAGRAM_HANDLE}
+          </h2>
           <p className="text-sm md:text-base text-muted-foreground mt-3">
-            Veja lançamentos, bastidores e novas coleções da MD Modas.
+            Lançamentos, bastidores e provas da semana. Toque em um post para abrir no Instagram.
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
-          {cells.map((src, i) => (
-            <a key={i} href="https://www.instagram.com/mdmodasfem_/" target="_blank" rel="noopener noreferrer" className="group relative aspect-square overflow-hidden bg-secondary">
-              <img src={src} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors" />
+          {cells.map((c, i) => (
+            <a
+              key={i}
+              href={c.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Abrir post ${i + 1} no Instagram`}
+              className="group relative aspect-square overflow-hidden bg-secondary"
+            >
+              <img
+                src={c.img}
+                alt=""
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors flex items-center justify-center">
+                <Instagram
+                  className="h-6 w-6 text-background opacity-0 group-hover:opacity-100 transition-opacity"
+                  strokeWidth={1.5}
+                />
+              </div>
             </a>
           ))}
         </div>
         <div className="text-center">
-          <Button size="lg" variant="outline" className="rounded-none border-foreground px-8" asChild>
-            <a href="https://www.instagram.com/mdmodasfem_/" target="_blank" rel="noopener noreferrer">Ver Instagram</a>
+          <Button
+            size="lg"
+            className="bg-foreground hover:bg-foreground/90 text-background rounded-none px-8"
+            asChild
+          >
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <Instagram className="w-4 h-4 mr-2" strokeWidth={1.5} />
+              Seguir @{INSTAGRAM_HANDLE}
+            </a>
           </Button>
         </div>
       </div>
