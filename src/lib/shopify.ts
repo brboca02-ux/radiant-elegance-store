@@ -11,12 +11,12 @@ export const STORE_INFO = {
   city: "Joinville",
   region: "SC",
   country: "BR",
-  street: "Rua Exemplo, 123 - Centro", // ajuste com endereço real
-  postalCode: "89201-000",
+  street: "Rua Santa Luzia, 672 - Aventureiro",
+  postalCode: "89225-100",
   phone: "+55 47 0000-0000",
   whatsapp: "5500000000000", // troque pelo número real
   mapsEmbed:
-    "https://www.google.com/maps?q=Joinville%2C+SC&output=embed",
+    "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+672+-+Aventureiro%2C+Joinville%2C+SC&output=embed",
 };
 
 export interface ShopifyVariantNode {
