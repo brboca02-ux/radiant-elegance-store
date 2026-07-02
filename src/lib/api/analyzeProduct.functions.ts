@@ -34,10 +34,15 @@ Formato exato:
   "description": "Descrição vendedora em português com tecido, caimento e ocasião de uso (2-3 frases)",
   "category_id": "uma de: ${CATEGORIES.join(", ")}",
   "color": "cor predominante em português (ex: Preto, Off-White, Verde-Militar)",
+  "colors": [{"name": "nome da cor em português", "hex": "#rrggbb"}],
+  "sizes_suggested": ["PP","P","M","G","GG"],
   "meta_title": "Título SEO em português (máx 60 caracteres)",
   "meta_description": "Descrição SEO em português (máx 155 caracteres)"
 }
-Regras de categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/botas → "calcados"; vestidos femininos → "vestidos"; conjuntos coordenados → "conjuntos"; peças plus size explícitas → "plus-size"; demais femininas → "feminino"; masculinas → "masculino".`;
+Regras:
+- "colors": inclua APENAS as cores realmente visíveis na peça (1 a 4 cores), com hex real e nome curto em português.
+- "sizes_suggested": tamanhos típicos para essa peça. Roupa adulta: ["PP","P","M","G","GG"]. Plus size: ["G","GG","XG","EXG"]. Infantil: ["2","4","6","8","10"]. Calçados femininos: ["34","35","36","37","38","39"]. Se for peça de tamanho único (bolsa, acessório), use ["Único"].
+- Categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/botas → "calcados"; vestidos femininos → "vestidos"; conjuntos coordenados → "conjuntos"; peças plus size explícitas → "plus-size"; demais femininas → "feminino"; masculinas → "masculino".`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -71,7 +76,7 @@ Regras de categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/b
     const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
     const raw = json.choices?.[0]?.message?.content ?? "";
     const cleaned = raw.replace(/```json|```/g, "").trim();
-    let parsed: Partial<AnalyzedProduct>;
+    let parsed: Partial<AnalyzedProduct> & { colors?: unknown; sizes_suggested?: unknown };
     try {
       parsed = JSON.parse(cleaned);
     } catch {
@@ -79,11 +84,35 @@ Regras de categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/b
     }
 
     const category = (CATEGORIES.includes(parsed.category_id ?? "") ? parsed.category_id : "feminino") as AnalyzedProduct["category_id"];
+
+    const hexRe = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
+    const rawColors = Array.isArray(parsed.colors) ? parsed.colors : [];
+    const colors: DetectedColor[] = rawColors
+      .map((c) => {
+        const obj = c as { name?: unknown; hex?: unknown };
+        const name = (obj?.name ?? "").toString().trim().slice(0, 30);
+        const hex = (obj?.hex ?? "").toString().trim();
+        return { name, hex: hexRe.test(hex) ? hex : "" };
+      })
+      .filter((c) => c.name)
+      .slice(0, 5);
+    if (colors.length === 0 && parsed.color) {
+      colors.push({ name: parsed.color.toString().slice(0, 30), hex: "" });
+    }
+
+    const rawSizes = Array.isArray(parsed.sizes_suggested) ? parsed.sizes_suggested : [];
+    const sizes_suggested = rawSizes
+      .map((s) => String(s).trim().slice(0, 6))
+      .filter(Boolean)
+      .slice(0, 10);
+
     return {
       name: (parsed.name ?? "").toString().slice(0, 80) || "Produto MD Modas",
       description: (parsed.description ?? "").toString(),
       category_id: category,
-      color: (parsed.color ?? "Único").toString().slice(0, 40) || "Único",
+      color: (parsed.color ?? colors[0]?.name ?? "Único").toString().slice(0, 40) || "Único",
+      colors,
+      sizes_suggested: sizes_suggested.length ? sizes_suggested : ["PP", "P", "M", "G", "GG"],
       meta_title: (parsed.meta_title ?? parsed.name ?? "").toString().slice(0, 70),
       meta_description: (parsed.meta_description ?? parsed.description ?? "").toString().slice(0, 170),
     };
