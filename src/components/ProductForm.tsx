@@ -180,29 +180,46 @@ export function ProductForm({ productId }: { productId?: string }) {
   const addCustomColor = () => {
     const name = customColor.trim();
     if (!name) return;
-    if (!aiColors.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+    const key = norm(name);
+    const exists = aiColors.find((c) => norm(c.name) === key);
+    if (!exists) {
       setAiColors((c) => [...c, { name, hex: "" }]);
+      setSelColors((s) => new Set(s).add(name));
+    } else {
+      setSelColors((s) => new Set(s).add(exists.name));
+      toast.info("Cor já existe na lista");
     }
-    setSelColors((s) => new Set(s).add(name));
     setCustomColor("");
   };
 
   const addCustomSize = () => {
     const s = customSize.trim().toUpperCase();
     if (!s) return;
-    if (!aiSizesSuggested.includes(s)) setAiSizesSuggested((arr) => [...arr, s]);
-    setSelSizes((set) => new Set(set).add(s));
+    const key = norm(s);
+    const exists = aiSizesSuggested.find((x) => norm(x) === key);
+    if (!exists) {
+      setAiSizesSuggested((arr) => [...arr, s]);
+      setSelSizes((set) => new Set(set).add(s));
+    } else {
+      setSelSizes((set) => new Set(set).add(exists));
+      toast.info("Tamanho já existe na lista");
+    }
     setCustomSize("");
   };
 
   const applyAiVariants = () => {
-    const cols = [...selColors];
-    const szs = [...selSizes];
+    // Dedupe selections (case-insensitive)
+    const colsMap = new Map<string, string>();
+    [...selColors].forEach((c) => { const k = norm(c); if (k && !colsMap.has(k)) colsMap.set(k, c); });
+    const szsMap = new Map<string, string>();
+    [...selSizes].forEach((s) => { const k = norm(s); if (k && !szsMap.has(k)) szsMap.set(k, s); });
+    const cols = [...colsMap.values()];
+    const szs = [...szsMap.values()];
     if (cols.length === 0 || szs.length === 0) {
       toast.error("Selecione ao menos uma cor e um tamanho.");
       return;
     }
-    const hexByName = new Map(aiColors.map((c) => [c.name, c.hex]));
+    const hexByName = new Map(aiColors.map((c) => [norm(c.name), c.hex]));
     const variants: ProductVariant[] = [];
     cols.forEach((c) => {
       szs.forEach((s) => {
@@ -211,7 +228,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           product_id: productId ?? "new",
           size: s,
           color: c,
-          color_hex: hexByName.get(c) || null,
+          color_hex: hexByName.get(norm(c)) || null,
           stock: Math.max(0, Math.floor(perStock) || 0),
         });
       });
@@ -221,10 +238,13 @@ export function ProductForm({ productId }: { productId?: string }) {
       variants,
       category_id: aiCategory || d.category_id,
       name: d.name.trim() || aiPieceType.trim() || d.name,
+      meta_title: aiMetaTitle ? aiMetaTitle.slice(0, 60) : d.meta_title,
+      meta_description: aiMetaDescription ? aiMetaDescription.slice(0, 160) : d.meta_description,
     }));
     setAiOpen(false);
     toast.success(`${variants.length} variações criadas e aplicadas`);
   };
+
 
 
   // ---------- Save ----------
