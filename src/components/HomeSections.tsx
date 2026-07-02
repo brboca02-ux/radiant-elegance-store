@@ -264,7 +264,7 @@ export function InstagramSection() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
           {cells.map((src, i) => (
-            <a key={i} href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="group relative aspect-square overflow-hidden bg-secondary">
+            <a key={i} href="https://www.instagram.com/mdmodasfem_/" target="_blank" rel="noopener noreferrer" className="group relative aspect-square overflow-hidden bg-secondary">
               <img src={src} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors" />
             </a>
@@ -272,7 +272,7 @@ export function InstagramSection() {
         </div>
         <div className="text-center">
           <Button size="lg" variant="outline" className="rounded-none border-foreground px-8" asChild>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Ver Instagram</a>
+            <a href="https://www.instagram.com/mdmodasfem_/" target="_blank" rel="noopener noreferrer">Ver Instagram</a>
           </Button>
         </div>
       </div>
