@@ -77,7 +77,7 @@ export function HomeHero() {
             href={INSTAGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => track.instagramClick?.("hero")}
+            onClick={() => (track as unknown as { instagramClick?: (p: string) => void }).instagramClick?.("hero")}
             className="mt-5 lg:mt-6 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.24em] text-background/85 lg:text-foreground/75 hover:text-primary transition-colors group"
           >
             <Instagram className="h-4 w-4" strokeWidth={1.5} />
