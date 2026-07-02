@@ -1,8 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, MessageCircle, Loader2, Package } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshCw } from "lucide-react";
 import { getOrderByNumber } from "@/lib/api/supaOrders";
 import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedido/sucesso/$numero")({
   head: ({ params }) => ({
@@ -14,12 +17,84 @@ export const Route = createFileRoute("/pedido/sucesso/$numero")({
   component: SuccessPage,
 });
 
+function statusMeta(s: string) {
+  switch (s) {
+    case "pago":
+      return {
+        label: "Pagamento confirmado",
+        Icon: CheckCircle2,
+        tone: "text-emerald-600",
+        bg: "bg-emerald-500/10",
+        border: "border-emerald-500/30",
+        desc: "Recebemos a confirmação do Mercado Pago. Vamos preparar seu pedido para envio.",
+      };
+    case "cancelado":
+    case "falhou":
+      return {
+        label: "Pagamento não concluído",
+        Icon: XCircle,
+        tone: "text-red-600",
+        bg: "bg-red-500/10",
+        border: "border-red-500/30",
+        desc: "O pagamento não foi confirmado. Se precisar de ajuda, fale com a gente pelo WhatsApp.",
+      };
+    case "estornado":
+      return {
+        label: "Pagamento estornado",
+        Icon: XCircle,
+        tone: "text-red-600",
+        bg: "bg-red-500/10",
+        border: "border-red-500/30",
+        desc: "O valor foi estornado. Qualquer dúvida, chame no WhatsApp.",
+      };
+    default:
+      return {
+        label: "Aguardando pagamento",
+        Icon: Clock,
+        tone: "text-amber-600",
+        bg: "bg-amber-500/10",
+        border: "border-amber-500/30",
+        desc: "Assim que o Mercado Pago confirmar o pagamento, esta página é atualizada automaticamente.",
+      };
+  }
+}
+
 function SuccessPage() {
   const { numero } = Route.useParams();
-  const { data: order, isLoading } = useQuery({
+  const qc = useQueryClient();
+  const { data: order, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["order", numero],
     queryFn: () => getOrderByNumber(numero),
+    refetchInterval: (q) => {
+      const data = q.state.data;
+      if (!data) return false;
+      // polling apenas enquanto aguarda pagamento (fallback caso Realtime não chegue)
+      return data.status === "aguardando_pagamento" ? 15000 : false;
+    },
   });
+
+  // Realtime: escuta updates do pedido pelo order_number
+  useEffect(() => {
+    const channel = supabase
+      .channel(`order-${numero}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "orders", filter: `order_number=eq.${numero}` },
+        (payload) => {
+          const next = payload.new as { status?: string };
+          if (next?.status && next.status !== "aguardando_pagamento") {
+            const label = next.status === "pago" ? "Pagamento confirmado!" : "Status do pedido atualizado";
+            if (next.status === "pago") toast.success(label);
+            else toast.info(label);
+          }
+          qc.invalidateQueries({ queryKey: ["order", numero] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [numero, qc]);
 
   if (isLoading) {
     return (
@@ -30,34 +105,61 @@ function SuccessPage() {
   }
   if (!order) throw notFound();
 
-  const waMsg = `Olá! Acabei de fazer o pedido *${order.order_number}* no site. Pode me ajudar com o pagamento?`;
+  const m = statusMeta(order.status);
+  const waMsg = `Olá! Fiz o pedido *${order.order_number}* no site. Pode me ajudar?`;
   const waLink = buildWhatsAppLink(waMsg);
+  const showPayCta = order.status === "aguardando_pagamento" && order.payment_url;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="text-center">
-        <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-          <CheckCircle2 className="h-9 w-9" />
+        <div className={`inline-flex h-16 w-16 items-center justify-center rounded-full ${m.bg} ${m.tone} mb-4`}>
+          <m.Icon className="h-9 w-9" />
         </div>
-        <h1 className="font-display text-3xl">Pedido recebido!</h1>
+        <h1 className="font-display text-3xl">
+          {order.status === "aguardando_pagamento" ? "Pedido recebido!" : m.label}
+        </h1>
         <p className="text-sm text-muted-foreground mt-2">
           Número do pedido: <span className="font-semibold text-foreground">{order.order_number}</span>
         </p>
       </div>
 
-      <div className="mt-8 border border-border rounded-md p-6 bg-secondary/20">
-        <p className="text-sm">
-          Recebemos seu pedido com sucesso. Em breve nossa equipe entrará em contato para
-          confirmar o pagamento — gateway de pagamento em integração.
-        </p>
-        <a
-          href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-md w-full sm:w-auto"
-        >
-          <MessageCircle className="h-4 w-4" /> Falar no WhatsApp
-        </a>
+      <div className={`mt-8 border rounded-md p-6 ${m.bg} ${m.border}`}>
+        <div className="flex items-start gap-3">
+          <m.Icon className={`h-5 w-5 shrink-0 mt-0.5 ${m.tone}`} />
+          <div className="flex-1">
+            <p className={`text-sm font-semibold ${m.tone}`}>{m.label}</p>
+            <p className="text-sm mt-1 text-foreground/80">{m.desc}</p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {showPayCta && (
+                <a
+                  href={order.payment_url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-md text-sm font-semibold hover:bg-primary/90"
+                >
+                  Pagar com Mercado Pago
+                </a>
+              )}
+              <button
+                onClick={() => refetch()}
+                className="inline-flex items-center justify-center gap-2 border border-border px-4 py-2.5 rounded-md text-sm hover:bg-background/60"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+                Atualizar status
+              </button>
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-2.5 rounded-md text-sm hover:opacity-90"
+              >
+                <MessageCircle className="h-4 w-4" /> WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mt-6 border border-border rounded-md p-6 space-y-4">
@@ -91,8 +193,13 @@ function SuccessPage() {
         )}
       </div>
 
-      <div className="mt-8 text-center">
-        <Link to="/" className="text-sm text-primary hover:underline">← Voltar para a loja</Link>
+      <div className="mt-8 text-center space-y-2">
+        <Link to="/pedido/acompanhar" className="block text-sm text-primary hover:underline">
+          Consultar outro pedido
+        </Link>
+        <Link to="/" className="block text-sm text-muted-foreground hover:text-foreground">
+          ← Voltar para a loja
+        </Link>
         <p className="text-xs text-muted-foreground mt-3">
           Dúvidas? {STORE_INFO.city} · {STORE_INFO.phone ?? ""}
         </p>

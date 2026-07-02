@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { AdminNotificationsBell } from "@/components/admin/AdminNotificationsBell";
 
 type MenuKey = "dashboard" | "produtos" | "pedidos" | "clientes" | "marketing" | "configuracoes";
 
@@ -163,7 +164,7 @@ export function AdminShell({
             <span className="text-primary">MD</span> Admin
           </span>
         </div>
-        <span className="w-12" />
+        <AdminNotificationsBell />
       </div>
 
       {openMobile && typeof document !== "undefined" && createPortal(
@@ -272,6 +273,7 @@ export function AdminShell({
             </a>
             <span className="text-white/20">|</span>
             <span className="truncate max-w-[180px]">{session.user.email}</span>
+            <AdminNotificationsBell />
           </div>
         </div>
 
