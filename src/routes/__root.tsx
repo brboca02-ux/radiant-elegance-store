@@ -174,7 +174,7 @@ function AppShell() {
   return (
     <>
       <Header />
-      <main className="min-h-[60vh]">
+      <main className="min-h-[60vh] pb-24 lg:pb-0">
         <Outlet />
       </main>
       <Footer />
