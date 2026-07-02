@@ -33,7 +33,7 @@ export function AdminShell({
   const { session, loading } = useAuth();
 
   useEffect(() => {
-    if (!loading && !session) {
+    if (!loading && !session && !pathname.startsWith("/login")) {
       navigate({ to: "/login", search: { redirect: pathname } });
     }
   }, [loading, session, navigate, pathname]);
