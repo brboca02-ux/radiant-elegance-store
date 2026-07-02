@@ -39,6 +39,21 @@ export function AdminShell({
     }
   }, [loading, session, navigate, pathname]);
 
+  // Fecha o menu mobile ao trocar de rota e bloqueia scroll do body enquanto aberto
+  useEffect(() => {
+    setOpenMobile(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (openMobile) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [openMobile]);
+
   async function handleLogout() {
     await supabase.auth.signOut();
     toast.success("Sessão encerrada.");
