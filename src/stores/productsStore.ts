@@ -27,6 +27,7 @@ export interface ProductImage {
 export interface ProductVariant {
   id: string; product_id: string;
   size: Size | string; color: string; stock: number;
+  color_hex?: string | null;
 }
 
 export type ProductStatus = "ativo" | "inativo" | "arquivado";

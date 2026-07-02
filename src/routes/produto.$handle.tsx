@@ -37,7 +37,8 @@ const COLOR_HEX: Record<string, string> = {
 
 const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
-function colorSwatch(name: string): string {
+function colorSwatch(name: string, override?: string | null): string {
+  if (override && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(override)) return override;
   const n = norm(name);
   return COLOR_HEX[n] ?? COLOR_HEX[n.split(" ")[0]] ?? "#cfcfcf";
 }
@@ -62,6 +63,15 @@ function ProductPage() {
     const set = new Set<string>();
     variants.forEach((v) => v.selectedOptions.find((o) => o.name === "Cor")?.value && set.add(v.selectedOptions.find((o) => o.name === "Cor")!.value));
     return [...set];
+  }, [variants]);
+
+  const colorHexMap = useMemo(() => {
+    const map: Record<string, string | null> = {};
+    variants.forEach((v) => {
+      const c = v.selectedOptions.find((o) => o.name === "Cor")?.value;
+      if (c && v.colorHex && !map[c]) map[c] = v.colorHex;
+    });
+    return map;
   }, [variants]);
 
   const sizes = useMemo(() => {
@@ -272,7 +282,7 @@ function ProductPage() {
                       aria-label={`Cor ${c}`}
                       aria-pressed={active}
                       className={`relative h-9 w-9 rounded-full border transition ${active ? "ring-2 ring-primary ring-offset-2 border-primary" : "border-border hover:border-foreground/50"} ${!avail ? "opacity-40" : ""}`}
-                      style={{ backgroundColor: colorSwatch(c) }}
+                      style={{ backgroundColor: colorSwatch(c, colorHexMap[c]) }}
                     >
                       {active && (
                         <Check className="h-4 w-4 absolute inset-0 m-auto text-white mix-blend-difference" />

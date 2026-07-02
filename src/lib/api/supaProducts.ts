@@ -24,7 +24,7 @@ type DbProduct = {
   meta_description: string | null;
   created_at: string;
   product_images?: { id: string; url: string; position: number; is_primary: boolean }[];
-  product_variants?: { id: string; size: string; color: string; stock: number }[];
+  product_variants?: { id: string; size: string; color: string; color_hex: string | null; stock: number }[];
 };
 
 const num = (v: number | string | null | undefined) =>
@@ -38,7 +38,7 @@ function rowToProduct(r: DbProduct): Product {
       position: i.position, is_primary: i.is_primary,
     }));
   const variants: ProductVariant[] = (r.product_variants ?? []).map((v) => ({
-    id: v.id, product_id: r.id, size: v.size, color: v.color, stock: v.stock,
+    id: v.id, product_id: r.id, size: v.size, color: v.color, color_hex: v.color_hex ?? null, stock: v.stock,
   }));
   return {
     id: r.id, store_id: STORE_ID,
@@ -63,7 +63,7 @@ function rowToProduct(r: DbProduct): Product {
 }
 
 const SELECT =
-  "id, slug, name, description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, status, meta_title, meta_description, created_at, product_images(id,url,position,is_primary), product_variants(id,size,color,stock)";
+  "id, slug, name, description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, status, meta_title, meta_description, created_at, product_images(id,url,position,is_primary), product_variants(id,size,color,color_hex,stock)";
 
 // ----- Reads -------------------------------------------------------------
 export async function listAllProducts(): Promise<Product[]> {
@@ -161,7 +161,7 @@ async function replaceImagesAndVariants(
     await supabase.from("product_variants").delete().eq("product_id", productId);
     if (variants.length) {
       const rows = variants.map((v) => ({
-        product_id: productId, size: String(v.size), color: v.color, stock: v.stock,
+        product_id: productId, size: String(v.size), color: v.color, color_hex: v.color_hex ?? null, stock: v.stock,
       }));
       const { error } = await supabase.from("product_variants").insert(rows);
       if (error) throw error;

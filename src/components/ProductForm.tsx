@@ -104,6 +104,8 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [customColor, setCustomColor] = useState("");
   const [customSize, setCustomSize] = useState("");
   const [perStock, setPerStock] = useState<number>(5);
+  const [aiCategory, setAiCategory] = useState<string>("feminino");
+  const [aiPieceType, setAiPieceType] = useState<string>("");
 
   const openAiSuggest = async () => {
     const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
@@ -114,7 +116,6 @@ export function ProductForm({ productId }: { productId?: string }) {
     setAiLoading(true);
     setAiOpen(true);
     try {
-      // Convert to data URL so any bucket (public or signed) works.
       const resp = await fetch(primary.url);
       const blob = await resp.blob();
       const dataUrl: string = await new Promise((resolve, reject) => {
@@ -129,6 +130,8 @@ export function ProductForm({ productId }: { productId?: string }) {
       setAiSizesSuggested(result.sizes_suggested);
       setSelColors(new Set(colors.map((c) => c.name)));
       setSelSizes(new Set(result.sizes_suggested));
+      setAiCategory(result.category_id);
+      setAiPieceType(result.piece_type || "");
     } catch (e) {
       toast.error((e as Error).message);
       setAiOpen(false);
@@ -168,6 +171,7 @@ export function ProductForm({ productId }: { productId?: string }) {
       toast.error("Selecione ao menos uma cor e um tamanho.");
       return;
     }
+    const hexByName = new Map(aiColors.map((c) => [c.name, c.hex]));
     const variants: ProductVariant[] = [];
     cols.forEach((c) => {
       szs.forEach((s) => {
@@ -176,14 +180,21 @@ export function ProductForm({ productId }: { productId?: string }) {
           product_id: productId ?? "new",
           size: s,
           color: c,
+          color_hex: hexByName.get(c) || null,
           stock: Math.max(0, Math.floor(perStock) || 0),
         });
       });
     });
-    setData((d) => ({ ...d, variants }));
+    setData((d) => ({
+      ...d,
+      variants,
+      category_id: aiCategory || d.category_id,
+      name: d.name.trim() || aiPieceType.trim() || d.name,
+    }));
     setAiOpen(false);
-    toast.success(`${variants.length} variações criadas`);
+    toast.success(`${variants.length} variações criadas e aplicadas`);
   };
+
 
   // ---------- Save ----------
   const save = async () => {
@@ -426,6 +437,36 @@ export function ProductForm({ productId }: { productId?: string }) {
             </div>
           ) : (
             <div className="space-y-5">
+              {/* Categoria + tipo de peça detectados */}
+              <div className="rounded-lg border border-border bg-muted/30 p-3">
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Detecção da IA · corrija se precisar
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Categoria</span>
+                    <select
+                      value={aiCategory}
+                      onChange={(e) => setAiCategory(e.target.value)}
+                      className={`${input} h-9 text-xs`}
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Tipo de peça</span>
+                    <input
+                      value={aiPieceType}
+                      onChange={(e) => setAiPieceType(e.target.value)}
+                      placeholder="Ex: Vestido midi"
+                      className={`${input} h-9 text-xs`}
+                    />
+                  </label>
+                </div>
+              </div>
+
               {/* Cores */}
               <div>
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">

@@ -19,10 +19,10 @@ export function productToShopify(p: Product): ShopifyProduct {
       totalInventory: p.stock,
       priceRange: { minVariantPrice: { amount: price, currencyCode: "BRL" } },
       images: { edges: images.map((i) => ({ node: { url: i.url, altText: p.name } })) },
-      variants: {
+        variants: {
         edges: (p.variants.length
           ? p.variants
-          : [{ id: `v_${p.id}`, product_id: p.id, size: "Único", color: "Padrão", stock: p.stock }]
+          : [{ id: `v_${p.id}`, product_id: p.id, size: "Único", color: "Padrão", stock: p.stock, color_hex: null }]
         ).map((v) => ({
           node: {
             id: `mock:${v.id}`,
@@ -34,6 +34,7 @@ export function productToShopify(p: Product): ShopifyProduct {
               { name: "Tamanho", value: String(v.size) },
               { name: "Cor", value: v.color },
             ],
+            colorHex: v.color_hex ?? null,
           },
         })),
       },
