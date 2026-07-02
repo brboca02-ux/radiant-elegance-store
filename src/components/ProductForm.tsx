@@ -407,6 +407,148 @@ export function ProductForm({ productId }: { productId?: string }) {
           </div>
         </div>
       </div>
+
+      <Dialog open={aiOpen} onOpenChange={setAiOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" /> Cores e tamanhos
+            </DialogTitle>
+            <DialogDescription>
+              Confirme as cores detectadas e marque os tamanhos disponíveis. Ao aplicar, criamos as variações automaticamente.
+            </DialogDescription>
+          </DialogHeader>
+
+          {aiLoading ? (
+            <div className="py-10 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              Analisando imagem com IA...
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {/* Cores */}
+              <div>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Cores detectadas
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {aiColors.map((c) => {
+                    const active = selColors.has(c.name);
+                    return (
+                      <button
+                        key={c.name}
+                        type="button"
+                        onClick={() => toggle(selColors, c.name, setSelColors)}
+                        className={`inline-flex items-center gap-2 rounded-full border pl-1.5 pr-3 py-1 text-xs transition ${
+                          active ? "border-primary bg-primary/10 text-foreground" : "border-border hover:border-foreground/50 text-muted-foreground"
+                        }`}
+                      >
+                        <span
+                          className="h-5 w-5 rounded-full border border-border shrink-0"
+                          style={{ backgroundColor: c.hex || "#cfcfcf" }}
+                        />
+                        <span className="font-medium">{c.name}</span>
+                        {active && <Check className="h-3 w-3 text-primary" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomColor(); } }}
+                    placeholder="Adicionar outra cor…"
+                    className={`${input} text-xs h-8`}
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomColor}
+                    className="rounded-md border border-border px-2 text-xs hover:bg-muted"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Tamanhos */}
+              <div>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Tamanhos disponíveis
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {aiSizesSuggested.map((s) => {
+                    const active = selSizes.has(s);
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => toggle(selSizes, s, setSelSizes)}
+                        className={`min-w-10 h-8 px-2.5 text-xs font-semibold rounded-md border transition ${
+                          active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60 text-foreground"
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={customSize}
+                    onChange={(e) => setCustomSize(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
+                    placeholder="Adicionar outro tamanho…"
+                    className={`${input} text-xs h-8`}
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomSize}
+                    className="rounded-md border border-border px-2 text-xs hover:bg-muted"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Estoque por variação */}
+              <div>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Estoque inicial por variação
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  value={perStock}
+                  onChange={(e) => setPerStock(Number(e.target.value))}
+                  className={`${input} h-9 w-32`}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Serão criadas <b>{selColors.size * selSizes.size}</b> variações (cor × tamanho).
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setAiOpen(false)}
+              className="rounded-md border border-border px-4 py-2 text-sm hover:bg-muted"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={applyAiVariants}
+              disabled={aiLoading || selColors.size === 0 || selSizes.size === 0}
+              className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold disabled:opacity-50"
+            >
+              <Check className="h-4 w-4" /> Aplicar variações
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
