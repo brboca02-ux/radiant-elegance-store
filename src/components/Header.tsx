@@ -462,7 +462,7 @@ export function Header() {
             </a>
           </aside>
         </div>
-      )}
+      ), document.body)}
     </header>
   );
 }
