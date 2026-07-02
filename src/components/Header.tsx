@@ -253,7 +253,9 @@ export function Header() {
           <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden h-10 w-10 flex items-center justify-center">
             <Search className="h-5 w-5" />
           </button>
-          <User className="h-5 w-5 hidden md:block" />
+          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex h-10 w-10 items-center justify-center text-foreground/70 hover:text-primary transition">
+            <User className="h-5 w-5" />
+          </Link>
           <CartDrawer />
         </div>
       </div>
