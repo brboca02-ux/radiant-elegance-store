@@ -10,10 +10,10 @@ export function WhatsAppFloat() {
       rel="noopener noreferrer"
       aria-label="Atendimento WhatsApp"
       onClick={() => track.whatsappClick("float")}
-      className="fixed bottom-5 right-5 md:bottom-6 md:right-6 z-50 flex items-center gap-3 bg-[#25D366] text-white pl-4 pr-5 py-3 rounded-full shadow-xl hover:scale-105 transition"
+      className="fixed bottom-5 right-5 md:bottom-6 md:right-6 z-50 flex items-center gap-3 bg-[#25D366] text-white p-3 lg:pl-4 lg:pr-5 lg:py-3 rounded-full shadow-xl hover:scale-105 transition"
     >
       <MessageCircle className="h-6 w-6" strokeWidth={2} />
-      <span className="hidden sm:inline text-sm font-semibold">Precisa de ajuda? Fale conosco</span>
+      <span className="hidden lg:inline text-sm font-semibold">Precisa de ajuda? Fale conosco</span>
     </a>
   );
 }
