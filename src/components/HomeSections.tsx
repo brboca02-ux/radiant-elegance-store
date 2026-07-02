@@ -73,6 +73,17 @@ export function HomeHero() {
               <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
             </Button>
           </div>
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track.instagramClick?.("hero")}
+            className="mt-5 lg:mt-6 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.24em] text-background/85 lg:text-foreground/75 hover:text-primary transition-colors group"
+          >
+            <Instagram className="h-4 w-4" strokeWidth={1.5} />
+            <span>Siga @{INSTAGRAM_HANDLE}</span>
+            <span className="transition-transform group-hover:translate-x-0.5">→</span>
+          </a>
         </div>
       </div>
     </section>
