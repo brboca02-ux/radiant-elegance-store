@@ -7,6 +7,7 @@ export type AnalyzedProduct = {
   name: string;
   description: string;
   category_id: "feminino" | "masculino" | "infantil" | "calcados" | "vestidos" | "conjuntos" | "plus-size";
+  piece_type: string;
   color: string;
   colors: DetectedColor[];
   sizes_suggested: string[];
