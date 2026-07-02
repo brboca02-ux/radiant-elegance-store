@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { z } from "zod";
-import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshCw, Copy } from "lucide-react";
 import { getOrderByNumber } from "@/lib/api/supaOrders";
 import { getOrderPublic, type PublicOrder } from "@/lib/api/orderTracking";
 import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
@@ -146,10 +146,19 @@ function SuccessPage() {
   if (!order) throw notFound();
 
   const m = statusMeta(order.status);
-  const waMsg = `Olá! Fiz o pedido *${order.order_number}* no site. Pode me ajudar?`;
+  const waMsg = `Olá MD Modas! Meu pedido é *${order.order_number}* e gostaria de acompanhar o status. Obrigado!`;
   const waLink = buildWhatsAppLink(waMsg);
   const showPayCta = order.status === "aguardando_pagamento" && order.payment_url;
   const paid = order.status === "pago";
+
+  const copyOrderNumber = async () => {
+    try {
+      await navigator.clipboard.writeText(order.order_number);
+      toast.success("Código copiado!", { description: "Guarde para acompanhar seu pedido." });
+    } catch {
+      toast.error("Não foi possível copiar. Anote manualmente.");
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
@@ -163,6 +172,36 @@ function SuccessPage() {
         <p className="text-sm text-muted-foreground mt-2">
           Número do pedido: <span className="font-semibold text-foreground">{order.order_number}</span>
         </p>
+      </div>
+
+      {/* Card: anote seu código de acompanhamento */}
+      <div className="mt-6 border-2 border-dashed border-primary/40 rounded-md p-5 bg-primary/5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary mb-2">
+          📌 Anote seu código de acompanhamento
+        </p>
+        <p className="text-xs text-muted-foreground mb-3">
+          Use este código para consultar seu pedido a qualquer momento em <Link to="/pedido/acompanhar" className="underline hover:text-primary">Acompanhar pedido</Link> ou envie para nós no WhatsApp.
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <code className="flex-1 min-w-[180px] font-mono text-lg font-bold tracking-wider text-foreground bg-background border border-border rounded px-3 py-2 text-center select-all">
+            {order.order_number}
+          </code>
+          <button
+            onClick={copyOrderNumber}
+            className="inline-flex items-center justify-center gap-1.5 border border-border px-3 py-2 rounded-md text-xs font-medium hover:bg-background"
+            aria-label="Copiar código do pedido"
+          >
+            <Copy className="h-3.5 w-3.5" /> Copiar
+          </button>
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#25D366] text-white px-3 py-2 rounded-md text-xs font-semibold hover:opacity-90"
+          >
+            <MessageCircle className="h-3.5 w-3.5" /> Enviar no WhatsApp
+          </a>
+        </div>
       </div>
 
       <div className={`mt-8 border rounded-md p-6 ${m.bg} ${m.border}`}>

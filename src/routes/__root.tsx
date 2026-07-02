@@ -95,21 +95,53 @@ const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
   "@type": "ClothingStore",
+  "@id": "https://mdmodas.lovable.app/#store",
   name: "MD Modas",
-  image: "/og-image.jpg",
-  "@id": "https://md-modas.lovable.app/#store",
-  url: "/",
+  description:
+    "Loja de moda feminina e masculina no bairro Aventureiro, em Joinville/SC. Vestidos, conjuntos, plus size, calçados e novidades toda semana.",
+  image: "https://mdmodas.lovable.app/og-image.jpg",
+  logo: "https://mdmodas.lovable.app/og-image.jpg",
+  url: "https://mdmodas.lovable.app/",
   telephone: "+55 47 0000-0000",
+  priceRange: "$$",
+  currenciesAccepted: "BRL",
+  paymentAccepted: "Pix, Cartão de crédito, Boleto",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Santa Luzia, 672 - Aventureiro",
+    streetAddress: "Rua Santa Luzia, 672",
     addressLocality: "Joinville",
     addressRegion: "SC",
     postalCode: "89225-100",
     addressCountry: "BR",
+    // bairro
+    neighborhood: "Aventureiro",
   },
-  areaServed: "Joinville e região",
-  openingHours: "Mo-Sa 09:00-18:00",
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: -26.2543,
+    longitude: -48.8112,
+  },
+  hasMap:
+    "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+672+-+Aventureiro%2C+Joinville%2C+SC",
+  areaServed: [
+    { "@type": "City", name: "Joinville" },
+    { "@type": "AdministrativeArea", name: "Santa Catarina" },
+  ],
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Saturday",
+      opens: "09:00",
+      closes: "13:00",
+    },
+  ],
+  sameAs: ["https://www.instagram.com/mdmodasfem_/"],
 };
 
 function RootShell({ children }: { children: ReactNode }) {

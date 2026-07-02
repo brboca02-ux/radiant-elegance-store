@@ -84,6 +84,15 @@ export function HomeHero() {
             <span>Siga @{INSTAGRAM_HANDLE}</span>
             <span className="transition-transform group-hover:translate-x-0.5">→</span>
           </a>
+          <div className="mt-3">
+            <a
+              href="#loja"
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.24em] text-background/70 lg:text-foreground/60 hover:text-primary transition-colors"
+            >
+              <MapPin className="h-3.5 w-3.5" strokeWidth={1.5} />
+              Visite a loja no Aventureiro, Joinville →
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -211,7 +220,7 @@ export function LookbookSection() {
 
 export function LojaFisicaSection() {
   return (
-    <section className="py-20 md:py-28 bg-offwhite">
+    <section id="loja" aria-labelledby="loja-titulo" className="py-20 md:py-28 bg-offwhite scroll-mt-24">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
         <div className="aspect-[4/3] overflow-hidden bg-secondary order-2 md:order-1">
           <iframe
@@ -223,8 +232,8 @@ export function LojaFisicaSection() {
         </div>
         <div className="space-y-5 order-1 md:order-2">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Visite nossa loja</p>
-          <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
-            Estamos em {STORE_INFO.city}
+          <h2 id="loja-titulo" className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+            Loja MD Modas — Aventureiro, Joinville/SC
           </h2>
           <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
             <p className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5 text-foreground shrink-0" /> {STORE_INFO.street} — {STORE_INFO.city}/{STORE_INFO.region}</p>
