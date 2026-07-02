@@ -102,7 +102,7 @@ const localBusinessJsonLd = {
   image: "https://mdmodas.lovable.app/og-image.jpg",
   logo: "https://mdmodas.lovable.app/og-image.jpg",
   url: "https://mdmodas.lovable.app/",
-  telephone: "+55 47 0000-0000",
+  telephone: "+55 47 98446-8103",
   priceRange: "$$",
   currenciesAccepted: "BRL",
   paymentAccepted: "Pix, Cartão de crédito, Boleto",
