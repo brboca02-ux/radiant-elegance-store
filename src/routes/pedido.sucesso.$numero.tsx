@@ -1,13 +1,19 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { z } from "zod";
 import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshCw } from "lucide-react";
 import { getOrderByNumber } from "@/lib/api/supaOrders";
+import { getOrderPublic, type PublicOrder } from "@/lib/api/orderTracking";
 import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { FulfillmentStepper } from "@/components/FulfillmentStepper";
+
+const searchSchema = z.object({ email: z.string().email().optional() });
 
 export const Route = createFileRoute("/pedido/sucesso/$numero")({
+  validateSearch: searchSchema,
   head: ({ params }) => ({
     meta: [
       { title: `Pedido ${params.numero} — MD Modas` },
@@ -16,6 +22,31 @@ export const Route = createFileRoute("/pedido/sucesso/$numero")({
   }),
   component: SuccessPage,
 });
+
+interface OrderView extends PublicOrder {}
+
+function toView(o: Awaited<ReturnType<typeof getOrderByNumber>>): OrderView | null {
+  if (!o) return null;
+  return {
+    id: o.id,
+    order_number: o.order_number,
+    status: o.status,
+    fulfillment_status: (o as unknown as { fulfillment_status?: OrderView["fulfillment_status"] }).fulfillment_status ?? null,
+    fulfillment_history: (o as unknown as { fulfillment_history?: OrderView["fulfillment_history"] }).fulfillment_history ?? [],
+    subtotal: o.subtotal,
+    shipping_cost: o.shipping_cost,
+    shipping_method: o.shipping_method,
+    discount: o.discount,
+    total: o.total,
+    payment_method: o.payment_method,
+    payment_url: o.payment_url,
+    tracking_code: o.tracking_code,
+    created_at: o.created_at,
+    paid_at: o.paid_at,
+    address: o.address,
+    items: o.items,
+  };
+}
 
 function statusMeta(s: string) {
   switch (s) {
@@ -61,15 +92,22 @@ function statusMeta(s: string) {
 
 function SuccessPage() {
   const { numero } = Route.useParams();
+  const { email } = Route.useSearch();
   const qc = useQueryClient();
+
   const { data: order, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ["order", numero],
-    queryFn: () => getOrderByNumber(numero),
+    queryKey: ["order", numero, email ?? ""],
+    queryFn: async (): Promise<OrderView | null> => {
+      if (email) return await getOrderPublic(numero, email);
+      return toView(await getOrderByNumber(numero));
+    },
     refetchInterval: (q) => {
       const data = q.state.data;
       if (!data) return false;
-      // polling apenas enquanto aguarda pagamento (fallback caso Realtime não chegue)
-      return data.status === "aguardando_pagamento" ? 15000 : false;
+      // polling enquanto aguarda pagamento OU enquanto ainda não foi entregue
+      if (data.status === "aguardando_pagamento") return 15000;
+      if (data.status === "pago" && data.fulfillment_status !== "entregue") return 30000;
+      return false;
     },
   });
 
@@ -81,20 +119,22 @@ function SuccessPage() {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "orders", filter: `order_number=eq.${numero}` },
         (payload) => {
-          const next = payload.new as { status?: string };
-          if (next?.status && next.status !== "aguardando_pagamento") {
-            const label = next.status === "pago" ? "Pagamento confirmado!" : "Status do pedido atualizado";
-            if (next.status === "pago") toast.success(label);
-            else toast.info(label);
+          const next = payload.new as { status?: string; fulfillment_status?: string | null };
+          const prev = payload.old as { status?: string; fulfillment_status?: string | null };
+          if (next.status && next.status !== prev.status) {
+            if (next.status === "pago") toast.success("Pagamento confirmado!");
+            else toast.info("Status do pedido atualizado.");
+          } else if (next.fulfillment_status && next.fulfillment_status !== prev.fulfillment_status) {
+            toast.success(`Etapa atualizada: ${next.fulfillment_status}`);
           }
-          qc.invalidateQueries({ queryKey: ["order", numero] });
+          qc.invalidateQueries({ queryKey: ["order", numero, email ?? ""] });
         },
       )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [numero, qc]);
+  }, [numero, email, qc]);
 
   if (isLoading) {
     return (
@@ -109,6 +149,7 @@ function SuccessPage() {
   const waMsg = `Olá! Fiz o pedido *${order.order_number}* no site. Pode me ajudar?`;
   const waLink = buildWhatsAppLink(waMsg);
   const showPayCta = order.status === "aguardando_pagamento" && order.payment_url;
+  const paid = order.status === "pago";
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
@@ -160,6 +201,24 @@ function SuccessPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Stepper de fulfillment */}
+      <div className="mt-6 border border-border rounded-md p-6 bg-background">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold">Preparação do seu pedido</h2>
+          {order.tracking_code && (
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Rastreio: <span className="text-foreground">{order.tracking_code}</span>
+            </span>
+          )}
+        </div>
+        <FulfillmentStepper current={order.fulfillment_status} paid={paid} />
+        {!paid && (
+          <p className="mt-4 text-xs text-muted-foreground text-center">
+            As etapas aparecem aqui após a confirmação do pagamento.
+          </p>
+        )}
       </div>
 
       <div className="mt-6 border border-border rounded-md p-6 space-y-4">

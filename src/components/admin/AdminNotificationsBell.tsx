@@ -163,7 +163,7 @@ export function AdminNotificationsBell() {
               return (
                 <Link
                   key={r.id}
-                  to="/pedidos/$id"
+                  to="/pedidos/rastreio/$id"
                   params={{ id: r.id }}
                   onClick={() => setOpen(false)}
                   className={`flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition ${isNew ? "bg-primary/5" : ""}`}
