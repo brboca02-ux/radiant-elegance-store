@@ -30,11 +30,16 @@ function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [forgot, setForgot] = useState(false);
 
+  const safeRedirect =
+    redirect && !redirect.startsWith("/login") && !redirect.startsWith("/auth")
+      ? redirect
+      : "/dashboard";
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: redirect ?? "/dashboard" });
+      if (data.session) navigate({ to: safeRedirect });
     });
-  }, [navigate, redirect]);
+  }, [navigate, safeRedirect]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +51,7 @@ function LoginPage() {
       return;
     }
     toast.success("Bem-vindo de volta!");
-    navigate({ to: redirect ?? "/dashboard" });
+    navigate({ to: safeRedirect });
   }
 
   async function handleForgot(e: React.FormEvent) {
