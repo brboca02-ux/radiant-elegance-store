@@ -305,9 +305,16 @@ function CheckoutPage() {
                           <p className="text-xs text-muted-foreground">{q.description ?? `Entrega em até ${q.days} dia${q.days > 1 ? "s" : ""} úteis`}</p>
                         </div>
                       </div>
-                      <span className="text-sm font-semibold">
-                        {q.code === "cotacao" ? "A consultar" : q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
-                      </span>
+                      <div className="text-right">
+                        <span className="block text-sm font-semibold">
+                          {q.code === "cotacao" ? "A consultar" : q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
+                        </span>
+                        {q.code !== "cotacao" && (
+                          <span className="block text-[11px] text-muted-foreground mt-0.5">
+                            Chega {estimatedDeliveryLabel(q.days)}
+                          </span>
+                        )}
+                      </div>
                     </label>
                   ))}
                 </div>
