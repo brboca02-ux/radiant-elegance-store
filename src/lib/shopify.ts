@@ -26,6 +26,7 @@ export interface ShopifyVariantNode {
   availableForSale: boolean;
   quantityAvailable?: number | null;
   selectedOptions: Array<{ name: string; value: string }>;
+  colorHex?: string | null;
 }
 
 export interface ShopifyMediaNode {
