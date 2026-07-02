@@ -166,56 +166,89 @@ export function AdminShell({
         <span className="w-12" />
       </div>
 
-      {openMobile && (
-        <div className="lg:hidden fixed inset-0 z-40">
-          <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpenMobile(false)} />
-          <aside className="absolute left-0 top-0 h-full w-72 bg-[#0b0b0f] text-white shadow-2xl p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
-                <Store className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <div className="leading-tight">
-                <div className="font-display font-bold text-base">
-                  <span className="text-primary">MD</span> Modas
+      {openMobile && typeof document !== "undefined" && createPortal(
+        <div className="lg:hidden fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpenMobile(false)} />
+          <aside className="absolute left-0 top-0 h-full w-[85%] max-w-xs bg-[#0b0b0f] text-white shadow-2xl flex flex-col animate-in slide-in-from-left">
+            <div className="flex items-center justify-between p-4 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
+                  <Store className="h-4 w-4 text-primary-foreground" />
                 </div>
-                <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
-                  Painel admin
+                <div className="leading-tight">
+                  <div className="font-display font-bold text-base">
+                    <span className="text-primary">MD</span> Modas
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
+                    Painel admin
+                  </div>
                 </div>
               </div>
+              <button
+                onClick={() => setOpenMobile(false)}
+                aria-label="Fechar menu"
+                className="h-9 w-9 flex items-center justify-center rounded-md border border-white/10 hover:bg-white/5"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
-            <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-primary/15 border border-primary/30 mb-4">
-              <ShieldCheck className="h-3 w-3 text-primary" />
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-                Modo administrador
-              </span>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-primary/15 border border-primary/30 mb-4">
+                <ShieldCheck className="h-3 w-3 text-primary" />
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                  Modo administrador
+                </span>
+              </div>
+              <nav className="space-y-1">
+                {MENU.map((m) => {
+                  const isActive = active === m.key;
+                  const Icon = m.icon;
+                  return (
+                    <Link
+                      key={m.key}
+                      to={m.to}
+                      onClick={() => setOpenMobile(false)}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${
+                        isActive ? "bg-primary text-primary-foreground" : "text-white/80 hover:bg-white/5"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {m.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 flex items-center gap-2 text-xs text-white/70 hover:text-white px-3 py-2 rounded-md bg-white/5 border border-white/10"
+              >
+                <ExternalLink className="h-3.5 w-3.5" /> Ver loja pública
+              </a>
             </div>
-            <nav className="space-y-1">
-              {MENU.map((m) => {
-                const isActive = active === m.key;
-                const Icon = m.icon;
-                return (
-                  <Link
-                    key={m.key}
-                    to={m.to}
-                    onClick={() => setOpenMobile(false)}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${
-                      isActive ? "bg-primary text-primary-foreground" : "text-white/80 hover:bg-white/5"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {m.label}
-                  </Link>
-                );
-              })}
-            </nav>
-            <button
-              onClick={handleLogout}
-              className="mt-6 w-full flex items-center justify-center gap-2 text-xs font-semibold text-white/80 px-3 py-2 rounded-md bg-white/5 border border-white/10"
-            >
-              <LogOut className="h-3.5 w-3.5" /> Sair do painel
-            </button>
+            <div className="p-4 border-t border-white/10 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-[11px] font-bold text-primary uppercase">
+                  {(session.user.email ?? "?").slice(0, 1)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] font-semibold text-white truncate" title={session.user.email ?? ""}>
+                    {session.user.email}
+                  </div>
+                  <div className="text-[10px] text-white/50">Administrador</div>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 text-xs font-semibold text-white/90 px-3 py-2 rounded-md bg-white/5 border border-white/10 hover:bg-white/10"
+              >
+                <LogOut className="h-3.5 w-3.5" /> Sair do painel
+              </button>
+            </div>
           </aside>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {/* Main */}
