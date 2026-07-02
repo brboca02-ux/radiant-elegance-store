@@ -3,6 +3,7 @@ import { Loader2, ImageOff } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { buildSrcSet, CARD_SIZES, BLUR_PLACEHOLDER } from "@/lib/image";
 import { track } from "@/lib/analytics";
 
 
@@ -54,10 +55,17 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
         {img0 ? (
           <>
             {!loaded0 && (
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
+              <img
+                src={BLUR_PLACEHOLDER}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
+              />
             )}
             <img
               src={img0.url}
+              srcSet={buildSrcSet(img0.url)}
+              sizes={CARD_SIZES}
               alt={img0.altText ?? product.node.title}
               loading="lazy"
               decoding="async"
@@ -69,6 +77,8 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
             {img1 && (
               <img
                 src={img1.url}
+                srcSet={buildSrcSet(img1.url)}
+                sizes={CARD_SIZES}
                 alt=""
                 aria-hidden="true"
                 loading="lazy"

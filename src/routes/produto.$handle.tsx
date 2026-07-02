@@ -8,6 +8,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useProductsStore } from "@/stores/productsStore";
 import { productToShopify } from "@/lib/mockProducts";
 import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame, X, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { buildSrcSet, PDP_SIZES, BLUR_PLACEHOLDER } from "@/lib/image";
 
 export const Route = createFileRoute("/produto/$handle")({
   head: ({ params }) => ({
@@ -221,10 +222,13 @@ function ProductPage() {
               <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
               <img
                 src={img.url}
+                srcSet={buildSrcSet(img.url, [480, 800, 1200, 1600])}
+                sizes={PDP_SIZES}
                 alt={img.altText ?? data.title}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 fetchPriority={i === 0 ? "high" : "auto"}
+                style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
                 onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
                 className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
