@@ -3,6 +3,7 @@ import { Loader2, ImageOff } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { buildSrcSet, CARD_SIZES, BLUR_PLACEHOLDER } from "@/lib/image";
 import { track } from "@/lib/analytics";
 
 
