@@ -370,6 +370,13 @@ function CheckoutPage() {
                   }
                   muted={!shippingCode}
                 />
+                {selectedQuote && selectedQuote.code !== "cotacao" && (
+                  <Row
+                    label="Previsão de entrega"
+                    value={estimatedDeliveryLabel(selectedQuote.days)}
+                    muted
+                  />
+                )}
                 <Row label="Total" value={formatPrice(total, "BRL")} bold />
               </div>
               <button
