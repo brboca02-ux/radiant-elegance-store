@@ -23,6 +23,24 @@ export const Route = createFileRoute("/checkout")({
 
 const onlyDigits = (s: string) => s.replace(/\D/g, "");
 
+// Soma "days" dias úteis a partir de hoje, pulando sábado/domingo.
+function addBusinessDays(days: number): Date {
+  const d = new Date();
+  let added = 0;
+  while (added < days) {
+    d.setDate(d.getDate() + 1);
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) added++;
+  }
+  return d;
+}
+
+function estimatedDeliveryLabel(days: number): string {
+  if (!days || days <= 0) return "Hoje";
+  const date = addBusinessDays(days);
+  return date.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
+}
+
 function CheckoutPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -287,9 +305,16 @@ function CheckoutPage() {
                           <p className="text-xs text-muted-foreground">{q.description ?? `Entrega em até ${q.days} dia${q.days > 1 ? "s" : ""} úteis`}</p>
                         </div>
                       </div>
-                      <span className="text-sm font-semibold">
-                        {q.code === "cotacao" ? "A consultar" : q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
-                      </span>
+                      <div className="text-right">
+                        <span className="block text-sm font-semibold">
+                          {q.code === "cotacao" ? "A consultar" : q.price === 0 ? "Grátis" : formatPrice(q.price, "BRL")}
+                        </span>
+                        {q.code !== "cotacao" && (
+                          <span className="block text-[11px] text-muted-foreground mt-0.5">
+                            Chega {estimatedDeliveryLabel(q.days)}
+                          </span>
+                        )}
+                      </div>
                     </label>
                   ))}
                 </div>
@@ -345,6 +370,13 @@ function CheckoutPage() {
                   }
                   muted={!shippingCode}
                 />
+                {selectedQuote && selectedQuote.code !== "cotacao" && (
+                  <Row
+                    label="Previsão de entrega"
+                    value={estimatedDeliveryLabel(selectedQuote.days)}
+                    muted
+                  />
+                )}
                 <Row label="Total" value={formatPrice(total, "BRL")} bold />
               </div>
               <button
