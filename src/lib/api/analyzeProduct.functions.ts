@@ -1,11 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+export type DetectedColor = { name: string; hex: string };
+
 export type AnalyzedProduct = {
   name: string;
   description: string;
   category_id: "feminino" | "masculino" | "infantil" | "calcados" | "vestidos" | "conjuntos" | "plus-size";
   color: string;
+  colors: DetectedColor[];
+  sizes_suggested: string[];
   meta_title: string;
   meta_description: string;
 };
