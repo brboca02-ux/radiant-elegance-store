@@ -437,6 +437,36 @@ export function ProductForm({ productId }: { productId?: string }) {
             </div>
           ) : (
             <div className="space-y-5">
+              {/* Categoria + tipo de peça detectados */}
+              <div className="rounded-lg border border-border bg-muted/30 p-3">
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Detecção da IA · corrija se precisar
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Categoria</span>
+                    <select
+                      value={aiCategory}
+                      onChange={(e) => setAiCategory(e.target.value)}
+                      className={`${input} h-9 text-xs`}
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Tipo de peça</span>
+                    <input
+                      value={aiPieceType}
+                      onChange={(e) => setAiPieceType(e.target.value)}
+                      placeholder="Ex: Vestido midi"
+                      className={`${input} h-9 text-xs`}
+                    />
+                  </label>
+                </div>
+              </div>
+
               {/* Cores */}
               <div>
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
