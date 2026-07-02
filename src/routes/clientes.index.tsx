@@ -76,15 +76,15 @@ function ClientesPage() {
         </div>
 
         {/* Filtros */}
-        <div className="rounded-xl border border-border bg-background p-4 mb-4 flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[220px]">
+        <div className="rounded-xl border border-border bg-background p-4 mb-4 grid grid-cols-1 sm:grid-cols-[1fr_200px] gap-3">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar cliente…" className="pl-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar cliente…" className="pl-9 w-full" />
           </div>
           <select
             value={field}
             onChange={(e) => setField(e.target.value as typeof field)}
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
           >
             <option value="all">Todos os campos</option>
             <option value="name">Nome</option>
