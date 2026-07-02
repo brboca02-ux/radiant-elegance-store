@@ -37,7 +37,8 @@ const COLOR_HEX: Record<string, string> = {
 
 const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
-function colorSwatch(name: string): string {
+function colorSwatch(name: string, override?: string | null): string {
+  if (override && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(override)) return override;
   const n = norm(name);
   return COLOR_HEX[n] ?? COLOR_HEX[n.split(" ")[0]] ?? "#cfcfcf";
 }
