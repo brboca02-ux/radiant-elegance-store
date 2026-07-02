@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
-      throw redirect({ to: "/auth", search: { redirect: location.href } });
+      throw redirect({ to: "/login", search: { redirect: location.href } });
     }
     return { user: data.user };
   },
