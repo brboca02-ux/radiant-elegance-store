@@ -473,13 +473,28 @@ export function ProductForm({ productId }: { productId?: string }) {
       <Dialog open={aiOpen} onOpenChange={setAiOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" /> Cores e tamanhos
-            </DialogTitle>
-            <DialogDescription>
-              Confirme as cores detectadas e marque os tamanhos disponíveis. Ao aplicar, criamos as variações automaticamente.
-            </DialogDescription>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <DialogTitle className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" /> Cores e tamanhos
+                </DialogTitle>
+                <DialogDescription>
+                  Confirme as cores detectadas e marque os tamanhos disponíveis. Ao aplicar, criamos as variações automaticamente.
+                </DialogDescription>
+              </div>
+              <button
+                type="button"
+                onClick={reanalyze}
+                disabled={aiLoading || data.images.length === 0}
+                title="Reanalisar a imagem principal"
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-muted disabled:opacity-50"
+              >
+                {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                Reanalisar com IA
+              </button>
+            </div>
           </DialogHeader>
+
 
           {aiLoading ? (
             <div className="py-10 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
