@@ -442,6 +442,13 @@ export function Header() {
               >
                 Sobre
               </Link>
+              <Link
+                to="/dashboard"
+                onClick={() => setOpen(false)}
+                className="block px-5 py-3 text-base font-semibold border-b border-border/60 text-primary"
+              >
+                Painel admin
+              </Link>
             </nav>
             <a
               href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
