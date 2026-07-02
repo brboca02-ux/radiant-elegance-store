@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Copy, Archive, Plus, Search, ImageOff } from "lucide-react";
+import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles } from "lucide-react";
 import { useProductsStore, CATEGORIES, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
@@ -47,12 +47,20 @@ function ProductsListPage() {
             <h1 className="font-display text-3xl md:text-4xl tracking-tight mt-1">Produtos</h1>
             <p className="text-sm text-muted-foreground mt-1">{rows.length} de {products.length} produtos</p>
           </div>
-          <Link
-            to="/produtos/novo"
-            className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-4 py-2.5 text-sm font-medium hover:bg-foreground/85"
-          >
-            <Plus className="h-4 w-4" /> Novo Produto
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to="/produtos/rapido"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold hover:bg-primary/90"
+            >
+              <Sparkles className="h-4 w-4" /> Cadastro rápido com IA
+            </Link>
+            <Link
+              to="/produtos/novo"
+              className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-4 py-2.5 text-sm font-medium hover:bg-foreground/85"
+            >
+              <Plus className="h-4 w-4" /> Novo Produto
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}

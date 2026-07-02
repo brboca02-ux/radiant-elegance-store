@@ -27,6 +27,7 @@ import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
 import { Route as EstoqueIndexRouteImport } from './routes/estoque.index'
 import { Route as ClientesIndexRouteImport } from './routes/clientes.index'
 import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
+import { Route as ProdutosRapidoRouteImport } from './routes/produtos.rapido'
 import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 import { Route as PedidosIdRouteImport } from './routes/pedidos.$id'
@@ -128,6 +129,11 @@ const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
   path: '/categorias/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutosRapidoRoute = ProdutosRapidoRouteImport.update({
+  id: '/produtos/rapido',
+  path: '/produtos/rapido',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutosNovoRoute = ProdutosNovoRouteImport.update({
   id: '/produtos/novo',
   path: '/produtos/novo',
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/pedidos/$id': typeof PedidosIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/produtos/rapido': typeof ProdutosRapidoRoute
   '/categorias/': typeof CategoriasIndexRoute
   '/clientes/': typeof ClientesIndexRoute
   '/estoque/': typeof EstoqueIndexRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/pedidos/$id': typeof PedidosIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/produtos/rapido': typeof ProdutosRapidoRoute
   '/categorias': typeof CategoriasIndexRoute
   '/clientes': typeof ClientesIndexRoute
   '/estoque': typeof EstoqueIndexRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/pedidos/$id': typeof PedidosIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
   '/produtos/novo': typeof ProdutosNovoRoute
+  '/produtos/rapido': typeof ProdutosRapidoRoute
   '/categorias/': typeof CategoriasIndexRoute
   '/clientes/': typeof ClientesIndexRoute
   '/estoque/': typeof EstoqueIndexRoute
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/pedidos/$id'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/produtos/rapido'
     | '/categorias/'
     | '/clientes/'
     | '/estoque/'
@@ -328,6 +338,7 @@ export interface FileRouteTypes {
     | '/pedidos/$id'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/produtos/rapido'
     | '/categorias'
     | '/clientes'
     | '/estoque'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/pedidos/$id'
     | '/produto/$handle'
     | '/produtos/novo'
+    | '/produtos/rapido'
     | '/categorias/'
     | '/clientes/'
     | '/estoque/'
@@ -390,6 +402,7 @@ export interface RootRouteChildren {
   PedidosIdRoute: typeof PedidosIdRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
   ProdutosNovoRoute: typeof ProdutosNovoRoute
+  ProdutosRapidoRoute: typeof ProdutosRapidoRoute
   CategoriasIndexRoute: typeof CategoriasIndexRoute
   ClientesIndexRoute: typeof ClientesIndexRoute
   EstoqueIndexRoute: typeof EstoqueIndexRoute
@@ -530,6 +543,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produtos/rapido': {
+      id: '/produtos/rapido'
+      path: '/produtos/rapido'
+      fullPath: '/produtos/rapido'
+      preLoaderRoute: typeof ProdutosRapidoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos/novo': {
       id: '/produtos/novo'
       path: '/produtos/novo'
@@ -640,6 +660,7 @@ const rootRouteChildren: RootRouteChildren = {
   PedidosIdRoute: PedidosIdRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
   ProdutosNovoRoute: ProdutosNovoRoute,
+  ProdutosRapidoRoute: ProdutosRapidoRoute,
   CategoriasIndexRoute: CategoriasIndexRoute,
   ClientesIndexRoute: ClientesIndexRoute,
   EstoqueIndexRoute: EstoqueIndexRoute,
@@ -654,13 +675,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
