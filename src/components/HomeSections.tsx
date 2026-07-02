@@ -11,10 +11,13 @@ import lookbook1 from "@/assets/lookbook-1.jpg";
 import lookbook2 from "@/assets/lookbook-2.jpg";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
-import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock } from "lucide-react";
+import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock, Instagram } from "lucide-react";
 import { buildWhatsAppLink, STORE_INFO } from "@/lib/shopify";
 import { useSiteConfig } from "@/lib/siteConfig";
 import { track } from "@/lib/analytics";
+
+export const INSTAGRAM_HANDLE = "mdmodasfem_";
+export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
 
 const categories = [
