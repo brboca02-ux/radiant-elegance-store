@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2 } from "lucide-react";
+import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2, Sparkles, Check } from "lucide-react";
 import {
   useProductsStore, CATEGORIES, SIZES, emptyProduct, slugify,
   type Product, type ProductImage, type ProductVariant, type ProductStatus,
 } from "@/stores/productsStore";
 import { uploadProductImage } from "@/lib/api/supaProducts";
+import { analyzeProductImage, type DetectedColor } from "@/lib/api/analyzeProduct.functions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -91,6 +93,97 @@ export function ProductForm({ productId }: { productId?: string }) {
     ...d, variants: d.variants.map((v) => (v.id === id ? { ...v, ...patch } : v)),
   }));
   const removeVariant = (id: string) => setData((d) => ({ ...d, variants: d.variants.filter((v) => v.id !== id) }));
+
+  // ---------- AI variant suggestion ----------
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiColors, setAiColors] = useState<DetectedColor[]>([]);
+  const [aiSizesSuggested, setAiSizesSuggested] = useState<string[]>([]);
+  const [selColors, setSelColors] = useState<Set<string>>(new Set());
+  const [selSizes, setSelSizes] = useState<Set<string>>(new Set());
+  const [customColor, setCustomColor] = useState("");
+  const [customSize, setCustomSize] = useState("");
+  const [perStock, setPerStock] = useState<number>(5);
+
+  const openAiSuggest = async () => {
+    const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
+    if (!primary) {
+      toast.error("Envie ao menos uma imagem antes de usar a IA.");
+      return;
+    }
+    setAiLoading(true);
+    setAiOpen(true);
+    try {
+      // Convert to data URL so any bucket (public or signed) works.
+      const resp = await fetch(primary.url);
+      const blob = await resp.blob();
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result ?? ""));
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+      });
+      const result = await analyzeProductImage({ data: { imageDataUrl: dataUrl } });
+      const colors = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      setAiColors(colors);
+      setAiSizesSuggested(result.sizes_suggested);
+      setSelColors(new Set(colors.map((c) => c.name)));
+      setSelSizes(new Set(result.sizes_suggested));
+    } catch (e) {
+      toast.error((e as Error).message);
+      setAiOpen(false);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const toggle = (set: Set<string>, val: string, setter: (s: Set<string>) => void) => {
+    const next = new Set(set);
+    if (next.has(val)) next.delete(val); else next.add(val);
+    setter(next);
+  };
+
+  const addCustomColor = () => {
+    const name = customColor.trim();
+    if (!name) return;
+    if (!aiColors.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+      setAiColors((c) => [...c, { name, hex: "" }]);
+    }
+    setSelColors((s) => new Set(s).add(name));
+    setCustomColor("");
+  };
+
+  const addCustomSize = () => {
+    const s = customSize.trim().toUpperCase();
+    if (!s) return;
+    if (!aiSizesSuggested.includes(s)) setAiSizesSuggested((arr) => [...arr, s]);
+    setSelSizes((set) => new Set(set).add(s));
+    setCustomSize("");
+  };
+
+  const applyAiVariants = () => {
+    const cols = [...selColors];
+    const szs = [...selSizes];
+    if (cols.length === 0 || szs.length === 0) {
+      toast.error("Selecione ao menos uma cor e um tamanho.");
+      return;
+    }
+    const variants: ProductVariant[] = [];
+    cols.forEach((c) => {
+      szs.forEach((s) => {
+        variants.push({
+          id: uid(),
+          product_id: productId ?? "new",
+          size: s,
+          color: c,
+          stock: Math.max(0, Math.floor(perStock) || 0),
+        });
+      });
+    });
+    setData((d) => ({ ...d, variants }));
+    setAiOpen(false);
+    toast.success(`${variants.length} variações criadas`);
+  };
 
   // ---------- Save ----------
   const save = async () => {
@@ -248,12 +341,30 @@ export function ProductForm({ productId }: { productId?: string }) {
 
             {/* Variants */}
             <Card title="Variações" hint="Controle estoque por tamanho e cor.">
+              <div className="-mt-2 mb-3 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={openAiSuggest}
+                  disabled={aiLoading || data.images.length === 0}
+                  title={data.images.length === 0 ? "Envie uma imagem primeiro" : "Detectar cores e sugerir tamanhos com IA"}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/5 text-primary px-2.5 py-1.5 text-xs font-semibold hover:bg-primary/10 disabled:opacity-50"
+                >
+                  {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                  Detectar cores e tamanhos com IA
+                </button>
+                <span className="text-[11px] text-muted-foreground">
+                  Só clicar, marcar tamanhos e confirmar cores.
+                </span>
+              </div>
               <div className="space-y-2">
                 {data.variants.map((v) => (
                   <div key={v.id} className="grid grid-cols-12 gap-2 items-center">
                     <select value={v.size} onChange={(e) => updateVariant(v.id, { size: e.target.value })}
                       className={`${input} col-span-3`}>
                       {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+                      {!SIZES.includes(v.size as typeof SIZES[number]) && v.size && (
+                        <option value={v.size}>{v.size}</option>
+                      )}
                     </select>
                     <input placeholder="Cor (livre)" value={v.color} onChange={(e) => updateVariant(v.id, { color: e.target.value })}
                       className={`${input} col-span-5`} />
@@ -296,6 +407,148 @@ export function ProductForm({ productId }: { productId?: string }) {
           </div>
         </div>
       </div>
+
+      <Dialog open={aiOpen} onOpenChange={setAiOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" /> Cores e tamanhos
+            </DialogTitle>
+            <DialogDescription>
+              Confirme as cores detectadas e marque os tamanhos disponíveis. Ao aplicar, criamos as variações automaticamente.
+            </DialogDescription>
+          </DialogHeader>
+
+          {aiLoading ? (
+            <div className="py-10 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              Analisando imagem com IA...
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {/* Cores */}
+              <div>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Cores detectadas
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {aiColors.map((c) => {
+                    const active = selColors.has(c.name);
+                    return (
+                      <button
+                        key={c.name}
+                        type="button"
+                        onClick={() => toggle(selColors, c.name, setSelColors)}
+                        className={`inline-flex items-center gap-2 rounded-full border pl-1.5 pr-3 py-1 text-xs transition ${
+                          active ? "border-primary bg-primary/10 text-foreground" : "border-border hover:border-foreground/50 text-muted-foreground"
+                        }`}
+                      >
+                        <span
+                          className="h-5 w-5 rounded-full border border-border shrink-0"
+                          style={{ backgroundColor: c.hex || "#cfcfcf" }}
+                        />
+                        <span className="font-medium">{c.name}</span>
+                        {active && <Check className="h-3 w-3 text-primary" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomColor(); } }}
+                    placeholder="Adicionar outra cor…"
+                    className={`${input} text-xs h-8`}
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomColor}
+                    className="rounded-md border border-border px-2 text-xs hover:bg-muted"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Tamanhos */}
+              <div>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Tamanhos disponíveis
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {aiSizesSuggested.map((s) => {
+                    const active = selSizes.has(s);
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => toggle(selSizes, s, setSelSizes)}
+                        className={`min-w-10 h-8 px-2.5 text-xs font-semibold rounded-md border transition ${
+                          active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60 text-foreground"
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={customSize}
+                    onChange={(e) => setCustomSize(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
+                    placeholder="Adicionar outro tamanho…"
+                    className={`${input} text-xs h-8`}
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomSize}
+                    className="rounded-md border border-border px-2 text-xs hover:bg-muted"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Estoque por variação */}
+              <div>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Estoque inicial por variação
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  value={perStock}
+                  onChange={(e) => setPerStock(Number(e.target.value))}
+                  className={`${input} h-9 w-32`}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Serão criadas <b>{selColors.size * selSizes.size}</b> variações (cor × tamanho).
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setAiOpen(false)}
+              className="rounded-md border border-border px-4 py-2 text-sm hover:bg-muted"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={applyAiVariants}
+              disabled={aiLoading || selColors.size === 0 || selSizes.size === 0}
+              className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold disabled:opacity-50"
+            >
+              <Check className="h-4 w-4" /> Aplicar variações
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
