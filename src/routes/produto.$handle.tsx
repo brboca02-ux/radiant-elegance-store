@@ -8,6 +8,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useProductsStore } from "@/stores/productsStore";
 import { productToShopify } from "@/lib/mockProducts";
 import { Loader2, ShieldCheck, Truck, RefreshCcw, MapPin, MessageCircle, Flame, X, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { buildSrcSet, PDP_SIZES, BLUR_PLACEHOLDER } from "@/lib/image";
 
 export const Route = createFileRoute("/produto/$handle")({
   head: ({ params }) => ({
