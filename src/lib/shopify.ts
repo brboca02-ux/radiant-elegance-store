@@ -13,8 +13,8 @@ export const STORE_INFO = {
   country: "BR",
   street: "Rua Santa Luzia, 672 - Aventureiro",
   postalCode: "89225-100",
-  phone: "+55 47 0000-0000",
-  whatsapp: "5500000000000", // troque pelo número real
+  phone: "+55 47 98446-8103",
+  whatsapp: "5547984468103",
   mapsEmbed:
     "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+672+-+Aventureiro%2C+Joinville%2C+SC&output=embed",
 };
