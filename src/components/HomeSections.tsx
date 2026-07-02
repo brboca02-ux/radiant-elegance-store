@@ -84,6 +84,15 @@ export function HomeHero() {
             <span>Siga @{INSTAGRAM_HANDLE}</span>
             <span className="transition-transform group-hover:translate-x-0.5">→</span>
           </a>
+          <div className="mt-3">
+            <a
+              href="#loja"
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.24em] text-background/70 lg:text-foreground/60 hover:text-primary transition-colors"
+            >
+              <MapPin className="h-3.5 w-3.5" strokeWidth={1.5} />
+              Visite a loja no Aventureiro, Joinville →
+            </a>
+          </div>
         </div>
       </div>
     </section>
