@@ -63,7 +63,7 @@ function rowToProduct(r: DbProduct): Product {
 }
 
 const SELECT =
-  "id, slug, name, description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, status, meta_title, meta_description, created_at, product_images(id,url,position,is_primary), product_variants(id,size,color,stock)";
+  "id, slug, name, description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, status, meta_title, meta_description, created_at, product_images(id,url,position,is_primary), product_variants(id,size,color,color_hex,stock)";
 
 // ----- Reads -------------------------------------------------------------
 export async function listAllProducts(): Promise<Product[]> {
