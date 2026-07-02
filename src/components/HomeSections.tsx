@@ -192,9 +192,15 @@ export function LookbookSection() {
           dia a dia, trabalho e ocasiões especiais. Atendimento próximo, curadoria honesta
           e o cuidado de uma loja física feita por gente da cidade.
         </p>
-        <div className="pt-2">
+        <div className="pt-2 flex flex-wrap gap-3 justify-center">
           <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8" asChild>
             <Link to="/colecao" search={{ c: undefined }}>Explorar coleção</Link>
+          </Button>
+          <Button size="xl" variant="outline" className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-8" asChild>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <Instagram className="w-4 h-4 mr-2" strokeWidth={1.5} />
+              Siga @{INSTAGRAM_HANDLE}
+            </a>
           </Button>
         </div>
       </div>
