@@ -161,7 +161,7 @@ async function replaceImagesAndVariants(
     await supabase.from("product_variants").delete().eq("product_id", productId);
     if (variants.length) {
       const rows = variants.map((v) => ({
-        product_id: productId, size: String(v.size), color: v.color, stock: v.stock,
+        product_id: productId, size: String(v.size), color: v.color, color_hex: v.color_hex ?? null, stock: v.stock,
       }));
       const { error } = await supabase.from("product_variants").insert(rows);
       if (error) throw error;
