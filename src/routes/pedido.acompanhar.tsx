@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Loader2, Search, Package } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { getOrderPublic } from "@/lib/api/orderTracking";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedido/acompanhar")({
@@ -31,18 +31,16 @@ function TrackPage() {
     }
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("order_number, customer:customers(email)")
-        .eq("order_number", num)
-        .maybeSingle();
-      if (error) throw error;
-      const found = data as unknown as { order_number: string; customer: { email: string } | null } | null;
-      if (!found || found.customer?.email?.toLowerCase() !== mail) {
+      const found = await getOrderPublic(num, mail);
+      if (!found) {
         toast.error("Pedido não encontrado ou e-mail não confere.");
         return;
       }
-      navigate({ to: "/pedido/sucesso/$numero", params: { numero: found.order_number } });
+      navigate({
+        to: "/pedido/sucesso/$numero",
+        params: { numero: found.order_number },
+        search: { email: mail },
+      });
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível consultar agora. Tente novamente.");

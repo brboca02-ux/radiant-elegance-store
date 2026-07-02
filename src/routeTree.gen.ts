@@ -37,6 +37,7 @@ import { Route as ClientesIdRouteImport } from './routes/clientes.$id'
 import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
 import { Route as AuthenticatedMeusPedidosRouteImport } from './routes/_authenticated/meus-pedidos'
 import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
+import { Route as PedidosRastreioIdRouteImport } from './routes/pedidos.rastreio.$id'
 import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
 import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
 import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
@@ -181,6 +182,11 @@ const ProdutosIdEditarRoute = ProdutosIdEditarRouteImport.update({
   path: '/produtos/$id/editar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidosRastreioIdRoute = PedidosRastreioIdRouteImport.update({
+  id: '/pedidos/rastreio/$id',
+  path: '/pedidos/rastreio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PedidoSucessoNumeroRoute = PedidoSucessoNumeroRouteImport.update({
   id: '/pedido/sucesso/$numero',
   path: '/pedido/sucesso/$numero',
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
+  '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRoutesByTo {
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
+  '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRoutesById {
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
+  '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
 }
 export interface FileRouteTypes {
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
     | '/pedido/sucesso/$numero'
+    | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
     | '/pedido/sucesso/$numero'
+    | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
   id:
     | '__root__'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
     | '/pedido/sucesso/$numero'
+    | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
   fileRoutesById: FileRoutesById
 }
@@ -425,6 +437,7 @@ export interface RootRouteChildren {
   ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
   PedidoSucessoNumeroRoute: typeof PedidoSucessoNumeroRoute
+  PedidosRastreioIdRoute: typeof PedidosRastreioIdRoute
   ProdutosIdEditarRoute: typeof ProdutosIdEditarRoute
 }
 
@@ -626,6 +639,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosIdEditarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedidos/rastreio/$id': {
+      id: '/pedidos/rastreio/$id'
+      path: '/pedidos/rastreio/$id'
+      fullPath: '/pedidos/rastreio/$id'
+      preLoaderRoute: typeof PedidosRastreioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pedido/sucesso/$numero': {
       id: '/pedido/sucesso/$numero'
       path: '/pedido/sucesso/$numero'
@@ -691,6 +711,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
   PedidoSucessoNumeroRoute: PedidoSucessoNumeroRoute,
+  PedidosRastreioIdRoute: PedidosRastreioIdRoute,
   ProdutosIdEditarRoute: ProdutosIdEditarRoute,
 }
 export const routeTree = rootRouteImport
