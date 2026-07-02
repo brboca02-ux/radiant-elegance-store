@@ -67,6 +67,26 @@ function CheckoutPage() {
     if ((meta.full_name || meta.name) && !name) setName(meta.full_name || meta.name || "");
   }, [user]); // eslint-disable-line
 
+  // auto-preenche endereço assim que o CEP fica completo (8 dígitos)
+  useEffect(() => {
+    const c = onlyDigits(cep);
+    if (c.length !== 8) return;
+    let cancelled = false;
+    setCepLoading(true);
+    (async () => {
+      const data = await lookupCep(c);
+      if (cancelled) return;
+      setCepLoading(false);
+      if (!data) { toast.error("CEP não encontrado. Verifique e tente novamente."); return; }
+      setStreet((prev) => data.logradouro || prev);
+      setDistrict((prev) => data.bairro || prev);
+      setCity(data.localidade || "");
+      setStateUf(data.uf || "");
+      toast.success("Endereço encontrado — calculando frete…");
+    })();
+    return () => { cancelled = true; };
+  }, [cep]);
+
   // cotação de frete sempre que CEP/cidade/subtotal mudam
   useEffect(() => {
     const c = onlyDigits(cep);
@@ -82,8 +102,9 @@ function CheckoutPage() {
   }, [cep, city, stateUf, subtotal, itemsCount]); // eslint-disable-line
 
   const onCepBlur = async () => {
+    // fallback caso o efeito não tenha rodado (ex.: colar sem disparar change)
     const c = onlyDigits(cep);
-    if (c.length !== 8) return;
+    if (c.length !== 8 || street) return;
     setCepLoading(true);
     const data = await lookupCep(c);
     setCepLoading(false);
