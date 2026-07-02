@@ -207,13 +207,14 @@ function TrackingAdminPage() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const map = {
+  type Meta = { Icon: typeof CheckCircle2; cls: string; label: string };
+  const map: Record<string, Meta> = {
     pago: { Icon: CheckCircle2, cls: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30", label: "Pago" },
     aguardando_pagamento: { Icon: Clock, cls: "bg-amber-500/10 text-amber-600 border-amber-500/30", label: "Aguardando pagamento" },
     cancelado: { Icon: XCircle, cls: "bg-red-500/10 text-red-600 border-red-500/30", label: "Cancelado" },
     estornado: { Icon: XCircle, cls: "bg-red-500/10 text-red-600 border-red-500/30", label: "Estornado" },
-  } as const;
-  const m = (map as Record<string, typeof map.pago | undefined>)[status] ?? map.aguardando_pagamento;
+  };
+  const m = map[status] ?? map.aguardando_pagamento;
   return (
     <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${m.cls}`}>
       <m.Icon className="h-3.5 w-3.5" /> {m.label}
