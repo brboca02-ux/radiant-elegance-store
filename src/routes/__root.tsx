@@ -102,10 +102,10 @@ const localBusinessJsonLd = {
   telephone: "+55 47 0000-0000",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Exemplo, 123 - Centro",
+    streetAddress: "Rua Santa Luzia, 672 - Aventureiro",
     addressLocality: "Joinville",
     addressRegion: "SC",
-    postalCode: "89201-000",
+    postalCode: "89225-100",
     addressCountry: "BR",
   },
   areaServed: "Joinville e região",
