@@ -24,7 +24,7 @@ type DbProduct = {
   meta_description: string | null;
   created_at: string;
   product_images?: { id: string; url: string; position: number; is_primary: boolean }[];
-  product_variants?: { id: string; size: string; color: string; stock: number }[];
+  product_variants?: { id: string; size: string; color: string; color_hex: string | null; stock: number }[];
 };
 
 const num = (v: number | string | null | undefined) =>
