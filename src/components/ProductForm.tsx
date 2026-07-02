@@ -106,15 +106,18 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [perStock, setPerStock] = useState<number>(5);
   const [aiCategory, setAiCategory] = useState<string>("feminino");
   const [aiPieceType, setAiPieceType] = useState<string>("");
+  const [aiMetaTitle, setAiMetaTitle] = useState<string>("");
+  const [aiMetaDescription, setAiMetaDescription] = useState<string>("");
 
-  const openAiSuggest = async () => {
+  const norm = (s: string) => s.trim().toLowerCase();
+
+  const runAnalysis = async () => {
     const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
     if (!primary) {
       toast.error("Envie ao menos uma imagem antes de usar a IA.");
       return;
     }
     setAiLoading(true);
-    setAiOpen(true);
     try {
       const resp = await fetch(primary.url);
       const blob = await resp.blob();
@@ -125,20 +128,48 @@ export function ProductForm({ productId }: { productId?: string }) {
         r.readAsDataURL(blob);
       });
       const result = await analyzeProductImage({ data: { imageDataUrl: dataUrl } });
-      const colors = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      // Dedupe colors by normalized name
+      const seenC = new Set<string>();
+      const colorsRaw = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      const colors = colorsRaw.filter((c) => {
+        const k = norm(c.name);
+        if (!k || seenC.has(k)) return false;
+        seenC.add(k);
+        return true;
+      });
+      // Dedupe sizes
+      const seenS = new Set<string>();
+      const sizes = result.sizes_suggested.filter((s) => {
+        const k = norm(s);
+        if (!k || seenS.has(k)) return false;
+        seenS.add(k);
+        return true;
+      });
       setAiColors(colors);
-      setAiSizesSuggested(result.sizes_suggested);
+      setAiSizesSuggested(sizes);
       setSelColors(new Set(colors.map((c) => c.name)));
-      setSelSizes(new Set(result.sizes_suggested));
+      setSelSizes(new Set(sizes));
       setAiCategory(result.category_id);
       setAiPieceType(result.piece_type || "");
+      setAiMetaTitle(result.meta_title || "");
+      setAiMetaDescription(result.meta_description || "");
     } catch (e) {
       toast.error((e as Error).message);
-      setAiOpen(false);
+      throw e;
     } finally {
       setAiLoading(false);
     }
   };
+
+  const openAiSuggest = async () => {
+    setAiOpen(true);
+    try { await runAnalysis(); } catch { setAiOpen(false); }
+  };
+
+  const reanalyze = async () => {
+    try { await runAnalysis(); toast.success("Análise atualizada"); } catch { /* toast já exibido */ }
+  };
+
 
   const toggle = (set: Set<string>, val: string, setter: (s: Set<string>) => void) => {
     const next = new Set(set);
