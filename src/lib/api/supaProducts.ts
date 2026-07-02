@@ -38,7 +38,7 @@ function rowToProduct(r: DbProduct): Product {
       position: i.position, is_primary: i.is_primary,
     }));
   const variants: ProductVariant[] = (r.product_variants ?? []).map((v) => ({
-    id: v.id, product_id: r.id, size: v.size, color: v.color, stock: v.stock,
+    id: v.id, product_id: r.id, size: v.size, color: v.color, color_hex: v.color_hex ?? null, stock: v.stock,
   }));
   return {
     id: r.id, store_id: STORE_ID,
