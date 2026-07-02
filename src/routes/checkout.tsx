@@ -23,6 +23,24 @@ export const Route = createFileRoute("/checkout")({
 
 const onlyDigits = (s: string) => s.replace(/\D/g, "");
 
+// Soma "days" dias úteis a partir de hoje, pulando sábado/domingo.
+function addBusinessDays(days: number): Date {
+  const d = new Date();
+  let added = 0;
+  while (added < days) {
+    d.setDate(d.getDate() + 1);
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) added++;
+  }
+  return d;
+}
+
+function estimatedDeliveryLabel(days: number): string {
+  if (!days || days <= 0) return "Hoje";
+  const date = addBusinessDays(days);
+  return date.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
+}
+
 function CheckoutPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
