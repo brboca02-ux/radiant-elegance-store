@@ -357,7 +357,7 @@ export function Header() {
       </div>
 
       {/* Mobile drawer */}
-      {open && (
+      {open && typeof document !== "undefined" && createPortal((
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background shadow-2xl flex flex-col animate-in slide-in-from-left">
