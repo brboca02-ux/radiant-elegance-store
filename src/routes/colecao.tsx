@@ -30,7 +30,7 @@ function ColecaoPage() {
   const safe = c ? sanitizeTerm(c) : "";
   const activeCat = CATEGORIES.find((cat) => cat.id === safe);
   const title = activeCat ? activeCat.name : safe ? safe.charAt(0).toUpperCase() + safe.slice(1) : "Toda a Coleção";
-  const query = safe ? `tag:${safe} OR product_type:${safe} OR title:*${safe}*` : undefined;
+  const query = safe || undefined;
 
   const chip = (active: boolean) =>
     `px-4 py-2 rounded-full text-sm border transition-colors ${

@@ -14,11 +14,17 @@ interface FetchOpts {
 
 async function fetchShopify({ query, first = 12, sortKey, reverse }: FetchOpts): Promise<ShopifyProduct[]> {
   try {
-    const data = await storefrontApiRequest(PRODUCTS_QUERY, {
-      first, query: query ?? null,
-      sortKey: sortKey ?? null, reverse: reverse ?? null,
-    });
-    return (data?.data?.products?.edges ?? []) as ShopifyProduct[];
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    const data = await Promise.race([
+      storefrontApiRequest(PRODUCTS_QUERY, {
+        first, query: query ?? null,
+        sortKey: sortKey ?? null, reverse: reverse ?? null,
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 4000)),
+    ]);
+    clearTimeout(timeout);
+    return (((data as { data?: { products?: { edges?: ShopifyProduct[] } } })?.data?.products?.edges) ?? []) as ShopifyProduct[];
   } catch {
     return [];
   }
@@ -32,11 +38,14 @@ export function ProductGrid({
   const loading = useProductsStore((s) => s.loading);
   const loaded = useProductsStore((s) => s.loaded);
 
-  // Shopify só como reforço opcional (vazio se loja sem plano).
+  const hasSupabaseProducts = products.some((p) => p.status === "ativo");
+
+  // Shopify só como fallback quando não há produtos no Supabase.
   const { data: shopifyData } = useQuery({
     queryKey: ["shopify-products", query ?? "all", first, sortKey ?? "default", reverse ?? false],
     queryFn: () => fetchShopify({ query, first, sortKey, reverse }),
     staleTime: 60_000,
+    enabled: loaded && !hasSupabaseProducts,
   });
 
   const items = useMemo<ShopifyProduct[]>(() => {
