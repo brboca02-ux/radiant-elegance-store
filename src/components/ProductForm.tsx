@@ -106,15 +106,18 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [perStock, setPerStock] = useState<number>(5);
   const [aiCategory, setAiCategory] = useState<string>("feminino");
   const [aiPieceType, setAiPieceType] = useState<string>("");
+  const [aiMetaTitle, setAiMetaTitle] = useState<string>("");
+  const [aiMetaDescription, setAiMetaDescription] = useState<string>("");
 
-  const openAiSuggest = async () => {
+  const norm = (s: string) => s.trim().toLowerCase();
+
+  const runAnalysis = async () => {
     const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
     if (!primary) {
       toast.error("Envie ao menos uma imagem antes de usar a IA.");
       return;
     }
     setAiLoading(true);
-    setAiOpen(true);
     try {
       const resp = await fetch(primary.url);
       const blob = await resp.blob();
@@ -125,20 +128,48 @@ export function ProductForm({ productId }: { productId?: string }) {
         r.readAsDataURL(blob);
       });
       const result = await analyzeProductImage({ data: { imageDataUrl: dataUrl } });
-      const colors = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      // Dedupe colors by normalized name
+      const seenC = new Set<string>();
+      const colorsRaw = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      const colors = colorsRaw.filter((c) => {
+        const k = norm(c.name);
+        if (!k || seenC.has(k)) return false;
+        seenC.add(k);
+        return true;
+      });
+      // Dedupe sizes
+      const seenS = new Set<string>();
+      const sizes = result.sizes_suggested.filter((s) => {
+        const k = norm(s);
+        if (!k || seenS.has(k)) return false;
+        seenS.add(k);
+        return true;
+      });
       setAiColors(colors);
-      setAiSizesSuggested(result.sizes_suggested);
+      setAiSizesSuggested(sizes);
       setSelColors(new Set(colors.map((c) => c.name)));
-      setSelSizes(new Set(result.sizes_suggested));
+      setSelSizes(new Set(sizes));
       setAiCategory(result.category_id);
       setAiPieceType(result.piece_type || "");
+      setAiMetaTitle(result.meta_title || "");
+      setAiMetaDescription(result.meta_description || "");
     } catch (e) {
       toast.error((e as Error).message);
-      setAiOpen(false);
+      throw e;
     } finally {
       setAiLoading(false);
     }
   };
+
+  const openAiSuggest = async () => {
+    setAiOpen(true);
+    try { await runAnalysis(); } catch { setAiOpen(false); }
+  };
+
+  const reanalyze = async () => {
+    try { await runAnalysis(); toast.success("Análise atualizada"); } catch { /* toast já exibido */ }
+  };
+
 
   const toggle = (set: Set<string>, val: string, setter: (s: Set<string>) => void) => {
     const next = new Set(set);
@@ -149,29 +180,46 @@ export function ProductForm({ productId }: { productId?: string }) {
   const addCustomColor = () => {
     const name = customColor.trim();
     if (!name) return;
-    if (!aiColors.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+    const key = norm(name);
+    const exists = aiColors.find((c) => norm(c.name) === key);
+    if (!exists) {
       setAiColors((c) => [...c, { name, hex: "" }]);
+      setSelColors((s) => new Set(s).add(name));
+    } else {
+      setSelColors((s) => new Set(s).add(exists.name));
+      toast.info("Cor já existe na lista");
     }
-    setSelColors((s) => new Set(s).add(name));
     setCustomColor("");
   };
 
   const addCustomSize = () => {
     const s = customSize.trim().toUpperCase();
     if (!s) return;
-    if (!aiSizesSuggested.includes(s)) setAiSizesSuggested((arr) => [...arr, s]);
-    setSelSizes((set) => new Set(set).add(s));
+    const key = norm(s);
+    const exists = aiSizesSuggested.find((x) => norm(x) === key);
+    if (!exists) {
+      setAiSizesSuggested((arr) => [...arr, s]);
+      setSelSizes((set) => new Set(set).add(s));
+    } else {
+      setSelSizes((set) => new Set(set).add(exists));
+      toast.info("Tamanho já existe na lista");
+    }
     setCustomSize("");
   };
 
   const applyAiVariants = () => {
-    const cols = [...selColors];
-    const szs = [...selSizes];
+    // Dedupe selections (case-insensitive)
+    const colsMap = new Map<string, string>();
+    [...selColors].forEach((c) => { const k = norm(c); if (k && !colsMap.has(k)) colsMap.set(k, c); });
+    const szsMap = new Map<string, string>();
+    [...selSizes].forEach((s) => { const k = norm(s); if (k && !szsMap.has(k)) szsMap.set(k, s); });
+    const cols = [...colsMap.values()];
+    const szs = [...szsMap.values()];
     if (cols.length === 0 || szs.length === 0) {
       toast.error("Selecione ao menos uma cor e um tamanho.");
       return;
     }
-    const hexByName = new Map(aiColors.map((c) => [c.name, c.hex]));
+    const hexByName = new Map(aiColors.map((c) => [norm(c.name), c.hex]));
     const variants: ProductVariant[] = [];
     cols.forEach((c) => {
       szs.forEach((s) => {
@@ -180,7 +228,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           product_id: productId ?? "new",
           size: s,
           color: c,
-          color_hex: hexByName.get(c) || null,
+          color_hex: hexByName.get(norm(c)) || null,
           stock: Math.max(0, Math.floor(perStock) || 0),
         });
       });
@@ -190,10 +238,13 @@ export function ProductForm({ productId }: { productId?: string }) {
       variants,
       category_id: aiCategory || d.category_id,
       name: d.name.trim() || aiPieceType.trim() || d.name,
+      meta_title: aiMetaTitle ? aiMetaTitle.slice(0, 60) : d.meta_title,
+      meta_description: aiMetaDescription ? aiMetaDescription.slice(0, 160) : d.meta_description,
     }));
     setAiOpen(false);
     toast.success(`${variants.length} variações criadas e aplicadas`);
   };
+
 
 
   // ---------- Save ----------
@@ -422,13 +473,28 @@ export function ProductForm({ productId }: { productId?: string }) {
       <Dialog open={aiOpen} onOpenChange={setAiOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" /> Cores e tamanhos
-            </DialogTitle>
-            <DialogDescription>
-              Confirme as cores detectadas e marque os tamanhos disponíveis. Ao aplicar, criamos as variações automaticamente.
-            </DialogDescription>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <DialogTitle className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" /> Cores e tamanhos
+                </DialogTitle>
+                <DialogDescription>
+                  Confirme as cores detectadas e marque os tamanhos disponíveis. Ao aplicar, criamos as variações automaticamente.
+                </DialogDescription>
+              </div>
+              <button
+                type="button"
+                onClick={reanalyze}
+                disabled={aiLoading || data.images.length === 0}
+                title="Reanalisar a imagem principal"
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-muted disabled:opacity-50"
+              >
+                {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                Reanalisar com IA
+              </button>
+            </div>
           </DialogHeader>
+
 
           {aiLoading ? (
             <div className="py-10 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -465,7 +531,33 @@ export function ProductForm({ productId }: { productId?: string }) {
                     />
                   </label>
                 </div>
+                <div className="mt-2 grid grid-cols-1 gap-2">
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+                      Meta title SEO <span className="text-muted-foreground/70">({aiMetaTitle.length}/60)</span>
+                    </span>
+                    <input
+                      value={aiMetaTitle}
+                      onChange={(e) => setAiMetaTitle(e.target.value)}
+                      maxLength={60}
+                      className={`${input} h-9 text-xs`}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+                      Meta description SEO <span className="text-muted-foreground/70">({aiMetaDescription.length}/160)</span>
+                    </span>
+                    <textarea
+                      value={aiMetaDescription}
+                      onChange={(e) => setAiMetaDescription(e.target.value)}
+                      rows={2}
+                      maxLength={160}
+                      className={`${input} text-xs`}
+                    />
+                  </label>
+                </div>
               </div>
+
 
               {/* Cores */}
               <div>
