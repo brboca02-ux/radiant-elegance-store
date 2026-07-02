@@ -94,6 +94,97 @@ export function ProductForm({ productId }: { productId?: string }) {
   }));
   const removeVariant = (id: string) => setData((d) => ({ ...d, variants: d.variants.filter((v) => v.id !== id) }));
 
+  // ---------- AI variant suggestion ----------
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiColors, setAiColors] = useState<DetectedColor[]>([]);
+  const [aiSizesSuggested, setAiSizesSuggested] = useState<string[]>([]);
+  const [selColors, setSelColors] = useState<Set<string>>(new Set());
+  const [selSizes, setSelSizes] = useState<Set<string>>(new Set());
+  const [customColor, setCustomColor] = useState("");
+  const [customSize, setCustomSize] = useState("");
+  const [perStock, setPerStock] = useState<number>(5);
+
+  const openAiSuggest = async () => {
+    const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
+    if (!primary) {
+      toast.error("Envie ao menos uma imagem antes de usar a IA.");
+      return;
+    }
+    setAiLoading(true);
+    setAiOpen(true);
+    try {
+      // Convert to data URL so any bucket (public or signed) works.
+      const resp = await fetch(primary.url);
+      const blob = await resp.blob();
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result ?? ""));
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+      });
+      const result = await analyzeProductImage({ data: { imageDataUrl: dataUrl } });
+      const colors = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      setAiColors(colors);
+      setAiSizesSuggested(result.sizes_suggested);
+      setSelColors(new Set(colors.map((c) => c.name)));
+      setSelSizes(new Set(result.sizes_suggested));
+    } catch (e) {
+      toast.error((e as Error).message);
+      setAiOpen(false);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const toggle = (set: Set<string>, val: string, setter: (s: Set<string>) => void) => {
+    const next = new Set(set);
+    if (next.has(val)) next.delete(val); else next.add(val);
+    setter(next);
+  };
+
+  const addCustomColor = () => {
+    const name = customColor.trim();
+    if (!name) return;
+    if (!aiColors.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+      setAiColors((c) => [...c, { name, hex: "" }]);
+    }
+    setSelColors((s) => new Set(s).add(name));
+    setCustomColor("");
+  };
+
+  const addCustomSize = () => {
+    const s = customSize.trim().toUpperCase();
+    if (!s) return;
+    if (!aiSizesSuggested.includes(s)) setAiSizesSuggested((arr) => [...arr, s]);
+    setSelSizes((set) => new Set(set).add(s));
+    setCustomSize("");
+  };
+
+  const applyAiVariants = () => {
+    const cols = [...selColors];
+    const szs = [...selSizes];
+    if (cols.length === 0 || szs.length === 0) {
+      toast.error("Selecione ao menos uma cor e um tamanho.");
+      return;
+    }
+    const variants: ProductVariant[] = [];
+    cols.forEach((c) => {
+      szs.forEach((s) => {
+        variants.push({
+          id: uid(),
+          product_id: productId ?? "new",
+          size: s,
+          color: c,
+          stock: Math.max(0, Math.floor(perStock) || 0),
+        });
+      });
+    });
+    setData((d) => ({ ...d, variants }));
+    setAiOpen(false);
+    toast.success(`${variants.length} variações criadas`);
+  };
+
   // ---------- Save ----------
   const save = async () => {
     if (!data.name.trim()) return toast.error("Informe o nome do produto.");
