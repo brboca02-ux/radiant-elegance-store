@@ -531,7 +531,33 @@ export function ProductForm({ productId }: { productId?: string }) {
                     />
                   </label>
                 </div>
+                <div className="mt-2 grid grid-cols-1 gap-2">
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+                      Meta title SEO <span className="text-muted-foreground/70">({aiMetaTitle.length}/60)</span>
+                    </span>
+                    <input
+                      value={aiMetaTitle}
+                      onChange={(e) => setAiMetaTitle(e.target.value)}
+                      maxLength={60}
+                      className={`${input} h-9 text-xs`}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+                      Meta description SEO <span className="text-muted-foreground/70">({aiMetaDescription.length}/160)</span>
+                    </span>
+                    <textarea
+                      value={aiMetaDescription}
+                      onChange={(e) => setAiMetaDescription(e.target.value)}
+                      rows={2}
+                      maxLength={160}
+                      className={`${input} text-xs`}
+                    />
+                  </label>
+                </div>
               </div>
+
 
               {/* Cores */}
               <div>
