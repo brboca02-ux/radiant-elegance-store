@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { z } from "zod";
-import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshCw, Copy } from "lucide-react";
 import { getOrderByNumber } from "@/lib/api/supaOrders";
 import { getOrderPublic, type PublicOrder } from "@/lib/api/orderTracking";
 import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
