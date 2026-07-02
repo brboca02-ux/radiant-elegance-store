@@ -113,6 +113,7 @@ Regras:
       name: (parsed.name ?? "").toString().slice(0, 80) || "Produto MD Modas",
       description: (parsed.description ?? "").toString(),
       category_id: category,
+      piece_type: ((parsed as { piece_type?: unknown }).piece_type ?? "").toString().slice(0, 40),
       color: (parsed.color ?? colors[0]?.name ?? "Único").toString().slice(0, 40) || "Único",
       colors,
       sizes_suggested: sizes_suggested.length ? sizes_suggested : ["PP", "P", "M", "G", "GG"],
