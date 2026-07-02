@@ -80,8 +80,8 @@ function OrdersListPage() {
         </div>
 
         {/* Filtros */}
-        <div className="rounded-xl border border-border bg-background p-4 mb-6 grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="relative md:col-span-2">
+        <div className="rounded-xl border border-border bg-background p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="relative sm:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               value={q} onChange={(e) => setQ(e.target.value)}
@@ -91,7 +91,7 @@ function OrdersListPage() {
           </div>
           <select
             value={status} onChange={(e) => setStatus(e.target.value as never)}
-            className="h-10 rounded-md border border-border bg-background text-sm px-3"
+            className="h-10 w-full rounded-md border border-border bg-background text-sm px-3"
           >
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -99,12 +99,12 @@ function OrdersListPage() {
               </option>
             ))}
           </select>
-          <div className="flex gap-2">
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
-              className="h-10 rounded-md border border-border bg-background text-sm px-2 w-full" />
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
-              className="h-10 rounded-md border border-border bg-background text-sm px-2 w-full" />
-          </div>
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
+            aria-label="Data inicial"
+            className="h-10 w-full rounded-md border border-border bg-background text-sm px-2 sm:col-start-1 lg:col-start-auto" />
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
+            aria-label="Data final"
+            className="h-10 w-full rounded-md border border-border bg-background text-sm px-2" />
         </div>
 
         {/* Tabela desktop */}
