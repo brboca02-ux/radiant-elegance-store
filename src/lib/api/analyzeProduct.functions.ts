@@ -34,6 +34,7 @@ Formato exato:
   "name": "Nome curto e comercial em português (máx 60 caracteres)",
   "description": "Descrição vendedora em português com tecido, caimento e ocasião de uso (2-3 frases)",
   "category_id": "uma de: ${CATEGORIES.join(", ")}",
+  "piece_type": "tipo específico da peça em português (ex: Vestido midi, Camiseta, Calça jeans, Blusa cropped, Tênis casual)",
   "color": "cor predominante em português (ex: Preto, Off-White, Verde-Militar)",
   "colors": [{"name": "nome da cor em português", "hex": "#rrggbb"}],
   "sizes_suggested": ["PP","P","M","G","GG"],
@@ -43,6 +44,7 @@ Formato exato:
 Regras:
 - "colors": inclua APENAS as cores realmente visíveis na peça (1 a 4 cores), com hex real e nome curto em português.
 - "sizes_suggested": tamanhos típicos para essa peça. Roupa adulta: ["PP","P","M","G","GG"]. Plus size: ["G","GG","XG","EXG"]. Infantil: ["2","4","6","8","10"]. Calçados femininos: ["34","35","36","37","38","39"]. Se for peça de tamanho único (bolsa, acessório), use ["Único"].
+- "piece_type": nome específico da peça (2-4 palavras), sem cor nem marca.
 - Categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/botas → "calcados"; vestidos femininos → "vestidos"; conjuntos coordenados → "conjuntos"; peças plus size explícitas → "plus-size"; demais femininas → "feminino"; masculinas → "masculino".`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
