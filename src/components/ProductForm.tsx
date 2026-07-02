@@ -341,12 +341,30 @@ export function ProductForm({ productId }: { productId?: string }) {
 
             {/* Variants */}
             <Card title="Variações" hint="Controle estoque por tamanho e cor.">
+              <div className="-mt-2 mb-3 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={openAiSuggest}
+                  disabled={aiLoading || data.images.length === 0}
+                  title={data.images.length === 0 ? "Envie uma imagem primeiro" : "Detectar cores e sugerir tamanhos com IA"}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/5 text-primary px-2.5 py-1.5 text-xs font-semibold hover:bg-primary/10 disabled:opacity-50"
+                >
+                  {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                  Detectar cores e tamanhos com IA
+                </button>
+                <span className="text-[11px] text-muted-foreground">
+                  Só clicar, marcar tamanhos e confirmar cores.
+                </span>
+              </div>
               <div className="space-y-2">
                 {data.variants.map((v) => (
                   <div key={v.id} className="grid grid-cols-12 gap-2 items-center">
                     <select value={v.size} onChange={(e) => updateVariant(v.id, { size: e.target.value })}
                       className={`${input} col-span-3`}>
                       {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+                      {!SIZES.includes(v.size as typeof SIZES[number]) && v.size && (
+                        <option value={v.size}>{v.size}</option>
+                      )}
                     </select>
                     <input placeholder="Cor (livre)" value={v.color} onChange={(e) => updateVariant(v.id, { color: e.target.value })}
                       className={`${input} col-span-5`} />
