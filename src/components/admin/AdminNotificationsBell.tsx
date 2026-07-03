@@ -56,8 +56,9 @@ export function AdminNotificationsBell() {
 
   useEffect(() => {
     load();
-    const channel = supabase
-      .channel("admin-orders-notif")
+    const channelName = `admin-orders-notif-${Math.random().toString(36).slice(2, 10)}`;
+    const channel = supabase.channel(channelName);
+    channel
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "orders" },
@@ -89,6 +90,7 @@ export function AdminNotificationsBell() {
       supabase.removeChannel(channel);
     };
   }, []);
+
 
   // Fecha ao clicar fora
   useEffect(() => {
