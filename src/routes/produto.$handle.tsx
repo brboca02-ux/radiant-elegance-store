@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 
@@ -222,16 +222,38 @@ function ProductPage() {
       "@type": "Offer",
       priceCurrency: selected?.price.currencyCode ?? "BRL",
       price: selected?.price.amount,
+      itemCondition: "https://schema.org/NewCondition",
       availability: selected?.availableForSale
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       url: productUrl,
+      seller: { "@type": "Organization", name: "MD Modas" },
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmodas.lovable.app/" },
+      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://mdmodas.lovable.app/colecao" },
+      { "@type": "ListItem", position: 3, name: data.title, item: `https://mdmodas.lovable.app/produto/${handle}` },
+    ],
   };
 
   return (
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <nav aria-label="breadcrumb" className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pt-4 text-xs text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-1.5">
+          <li><Link to="/" className="hover:text-foreground transition">Início</Link></li>
+          <li aria-hidden="true">/</li>
+          <li><Link to="/colecao" search={{}} className="hover:text-foreground transition">Coleção</Link></li>
+          <li aria-hidden="true">/</li>
+          <li className="text-foreground truncate max-w-[60vw]" aria-current="page">{data.title}</li>
+        </ol>
+      </nav>
       <div className="max-w-[1400px] mx-auto w-full overflow-x-hidden px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="relative -mx-4 sm:mx-0 min-w-0 group/carousel">
           <div

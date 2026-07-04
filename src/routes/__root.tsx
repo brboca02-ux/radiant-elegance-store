@@ -81,6 +81,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" },
+      { rel: "alternate", hrefLang: "pt-BR", href: "https://mdmodas.lovable.app/" },
+      { rel: "alternate", hrefLang: "x-default", href: "https://mdmodas.lovable.app/" },
     ],
   }),
   shellComponent: RootShell,
@@ -173,8 +175,9 @@ function AppShell() {
   useHydrateStores();
   return (
     <>
+      <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
       <Header />
-      <main className="min-h-[60vh] pb-24 lg:pb-0">
+      <main id="conteudo" tabIndex={-1} className="min-h-[60vh] pb-24 lg:pb-0">
         <Outlet />
       </main>
       <Footer />

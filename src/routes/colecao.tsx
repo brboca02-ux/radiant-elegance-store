@@ -39,8 +39,25 @@ function ColecaoPage() {
         : "bg-background text-foreground border-border hover:border-foreground"
     }`;
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmodas.lovable.app/" },
+      { "@type": "ListItem", position: 2, name: title, item: `https://mdmodas.lovable.app/colecao${safe ? `?c=${safe}` : ""}` },
+    ],
+  };
+
   return (
     <div className="bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <nav aria-label="breadcrumb" className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-4 text-xs text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-1.5">
+          <li><Link to="/" className="hover:text-foreground transition">Início</Link></li>
+          <li aria-hidden="true">/</li>
+          <li className="text-foreground" aria-current="page">{title}</li>
+        </ol>
+      </nav>
       <div className="bg-offwhite py-16 border-b border-border">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
           <span className="eyebrow">Coleção</span>
