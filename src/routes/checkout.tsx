@@ -587,7 +587,12 @@ function CheckoutPage() {
                 ))}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                Pagamento processado com segurança pelo Mercado Pago. Você será redirecionado para concluir.
+                Pagamento processado com segurança pelo Mercado Pago.{" "}
+                {paymentMethod === "pix"
+                  ? "O QR Code é gerado aqui mesmo, sem sair do site."
+                  : paymentMethod === "cartao"
+                    ? "Você digita os dados do cartão diretamente nesta página."
+                    : "Você será redirecionado para concluir o pagamento do boleto."}
               </p>
             </Section>
           </div>
