@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck, Check } from "lucide-react";
+import { z } from "zod";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPrice } from "@/lib/shopify";
@@ -10,6 +11,23 @@ import { payment, type PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
 import { supabase } from "@/lib/supabaseClient";
+
+const DRAFT_KEY = "md_checkout_draft_v1";
+
+const checkoutSchema = z.object({
+  name: z.string().trim().min(2, "Informe seu nome completo").max(100),
+  email: z.string().trim().toLowerCase().email("E-mail inválido").max(255),
+  phone: z.string().max(20).optional(),
+  cpf: z.string().max(14).optional(),
+  cep: z.string().regex(/^\d{8}$/, "CEP inválido"),
+  street: z.string().trim().min(2, "Informe a rua").max(120),
+  number: z.string().trim().min(1, "Informe o número").max(15),
+  complement: z.string().max(60).optional(),
+  district: z.string().trim().min(2, "Informe o bairro").max(80),
+  city: z.string().trim().min(2, "Informe a cidade").max(80),
+  stateUf: z.string().trim().length(2, "UF deve ter 2 letras").toUpperCase(),
+  shippingCode: z.string().min(1, "Selecione uma opção de frete"),
+});
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
