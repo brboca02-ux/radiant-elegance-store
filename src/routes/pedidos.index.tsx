@@ -172,32 +172,141 @@ function OrdersListPage() {
         </div>
 
         {/* Filtros */}
-        <div className="rounded-xl border border-border bg-background p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="relative sm:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              value={q} onChange={(e) => setQ(e.target.value)}
-              placeholder="Número, cliente ou e-mail…"
-              className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-sm"
-            />
+        <div className="rounded-xl border border-border bg-background p-4 mb-6 space-y-3">
+          {/* Linha 1: busca + status + sort + toggle avançado */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+            <div className="relative lg:col-span-5">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                value={q} onChange={(e) => setQ(e.target.value)}
+                placeholder="Número do pedido, cliente ou e-mail…"
+                className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-sm"
+              />
+            </div>
+            <select
+              value={status} onChange={(e) => setStatus(e.target.value as never)}
+              aria-label="Status do pedido"
+              className="h-10 w-full rounded-md border border-border bg-background text-sm px-3 lg:col-span-3"
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s === "todos" ? "Todos status" : ORDER_STATUS_LABEL[s as OrderStatus]}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sort} onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Ordenar"
+              className="h-10 w-full rounded-md border border-border bg-background text-sm px-3 lg:col-span-2"
+            >
+              {(Object.keys(SORT_LABEL) as SortKey[]).map((k) => (
+                <option key={k} value={k}>{SORT_LABEL[k]}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              className="h-10 inline-flex items-center justify-center gap-1.5 rounded-md border border-border bg-background text-xs font-medium hover:bg-muted lg:col-span-2"
+              aria-expanded={showAdvanced}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Avançado
+              {activeFilters > 0 && (
+                <span className="ml-1 rounded-full bg-primary/10 text-primary px-1.5 text-[10px] font-semibold">
+                  {activeFilters}
+                </span>
+              )}
+            </button>
           </div>
-          <select
-            value={status} onChange={(e) => setStatus(e.target.value as never)}
-            className="h-10 w-full rounded-md border border-border bg-background text-sm px-3"
-          >
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {s === "todos" ? "Todos status" : ORDER_STATUS_LABEL[s as OrderStatus]}
-              </option>
+
+          {/* Presets rápidos de data */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Período:</span>
+            {([
+              ["hoje", "Hoje"], ["7d", "7 dias"], ["30d", "30 dias"], ["mes", "Este mês"],
+            ] as const).map(([k, label]) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => applyPreset(k)}
+                className="text-xs rounded-full border border-border px-2.5 py-1 hover:bg-muted"
+              >
+                {label}
+              </button>
             ))}
-          </select>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
-            aria-label="Data inicial"
-            className="h-10 w-full rounded-md border border-border bg-background text-sm px-2 sm:col-start-1 lg:col-start-auto" />
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
-            aria-label="Data final"
-            className="h-10 w-full rounded-md border border-border bg-background text-sm px-2" />
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
+              aria-label="Data inicial"
+              className="h-8 rounded-md border border-border bg-background text-xs px-2" />
+            <span className="text-xs text-muted-foreground">até</span>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
+              aria-label="Data final"
+              className="h-8 rounded-md border border-border bg-background text-xs px-2" />
+          </div>
+
+          {/* Linha avançada */}
+          {showAdvanced && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-border">
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Forma de pagamento</label>
+                <select
+                  value={method} onChange={(e) => setMethod(e.target.value as never)}
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                >
+                  {METHOD_OPTIONS.map((m) => (
+                    <option key={m} value={m}>{m === "todos" ? "Todas" : METHOD_LABEL[m as PaymentMethod]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Status do pagamento</label>
+                <select
+                  value={payStatus} onChange={(e) => setPayStatus(e.target.value as never)}
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                >
+                  {PAYSTATUS_OPTIONS.map((p) => (
+                    <option key={p} value={p}>{p === "todos" ? "Todos" : PAYSTATUS_LABEL[p as PaymentStatus]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Valor mínimo (R$)</label>
+                <input
+                  inputMode="decimal" value={minTotal}
+                  onChange={(e) => setMinTotal(e.target.value)}
+                  placeholder="0,00"
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Valor máximo (R$)</label>
+                <input
+                  inputMode="decimal" value={maxTotal}
+                  onChange={(e) => setMaxTotal(e.target.value)}
+                  placeholder="0,00"
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Rodapé filtros: contagem + limpar */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border">
+            <p className="text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">{filtered.length}</span> {filtered.length === 1 ? "pedido" : "pedidos"}
+              {" · "}Total filtrado: <span className="font-medium text-foreground">{fmtBRL(filteredTotal)}</span>
+            </p>
+            {activeFilters > 0 && (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" /> Limpar filtros ({activeFilters})
+              </button>
+            )}
+          </div>
         </div>
+
 
         {/* Tabela desktop */}
         <div className="hidden md:block rounded-xl border border-border bg-background overflow-hidden">
