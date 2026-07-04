@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,8 @@ function ProductPage() {
   const addItem = useCartStore((s) => s.addItem);
   const isAdding = useCartStore((s) => s.isLoading);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const [carouselIdx, setCarouselIdx] = useState(0);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
 
   const variants = useMemo(() => data?.variants.edges.map((e) => e.node) ?? [], [data]);
   const allImages = useMemo(() => data?.images.edges.map((e) => e.node) ?? [], [data]);
@@ -210,15 +212,23 @@ function ProductPage() {
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="-mx-4 sm:mx-0">
-          <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth px-4 sm:px-0 pb-2 [scrollbar-width:thin]">
+        <div className="relative -mx-4 sm:mx-0 group/carousel">
+          <div
+            ref={scrollerRef}
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              const w = el.clientWidth;
+              if (w > 0) setCarouselIdx(Math.round(el.scrollLeft / w));
+            }}
+            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {images.map((img, i) => (
               <button
                 type="button"
                 key={`${color ?? "x"}-${i}`}
                 onClick={() => setLightboxIdx(i)}
                 aria-label={`Ampliar imagem ${i + 1}`}
-                className="relative bg-secondary overflow-hidden rounded-md group aspect-[4/5] shrink-0 w-[85%] sm:w-[70%] lg:w-full snap-center"
+                className="relative bg-secondary overflow-hidden rounded-md aspect-[4/5] shrink-0 w-full snap-center"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
                 <img
@@ -231,17 +241,60 @@ function ProductPage() {
                   fetchPriority={i === 0 ? "high" : "auto"}
                   style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
                   onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
-                  className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="relative w-full h-full object-cover"
                 />
               </button>
             ))}
           </div>
+
           {images.length > 1 && (
-            <p className="text-center text-xs text-muted-foreground mt-1">
-              Arraste para ver mais fotos →
-            </p>
+            <>
+              <button
+                type="button"
+                aria-label="Imagem anterior"
+                onClick={() => {
+                  const el = scrollerRef.current;
+                  if (!el) return;
+                  el.scrollTo({ left: Math.max(0, (carouselIdx - 1)) * el.clientWidth, behavior: "smooth" });
+                }}
+                disabled={carouselIdx === 0}
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/85 hover:bg-white text-foreground shadow-md flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed backdrop-blur-sm transition"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                aria-label="Próxima imagem"
+                onClick={() => {
+                  const el = scrollerRef.current;
+                  if (!el) return;
+                  el.scrollTo({ left: Math.min(images.length - 1, carouselIdx + 1) * el.clientWidth, behavior: "smooth" });
+                }}
+                disabled={carouselIdx >= images.length - 1}
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/85 hover:bg-white text-foreground shadow-md flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed backdrop-blur-sm transition"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+
+              <div className="absolute bottom-3 right-3 flex gap-1 px-2 py-1.5 rounded-full bg-black/40 backdrop-blur-sm">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    aria-label={`Ir para imagem ${i + 1}`}
+                    onClick={() => {
+                      const el = scrollerRef.current;
+                      if (!el) return;
+                      el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+                    }}
+                    className={`h-1 rounded-full transition-all ${i === carouselIdx ? "w-6 bg-white" : "w-2 bg-white/60"}`}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </div>
+
 
 
         <div className="lg:sticky lg:top-32 lg:self-start">
