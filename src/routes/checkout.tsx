@@ -474,7 +474,7 @@ function CheckoutPage() {
                 ))}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                Gateway de pagamento em integração — o pedido será criado e você receberá instruções por e-mail/WhatsApp.
+                Pagamento processado com segurança pelo Mercado Pago. Você será redirecionado para concluir.
               </p>
             </Section>
           </div>
