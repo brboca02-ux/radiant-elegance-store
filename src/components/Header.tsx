@@ -313,9 +313,9 @@ export function Header() {
               <div className="bg-background border border-border rounded-2xl shadow-2xl p-8 grid grid-cols-12 gap-8">
                 {MENUS.find((m) => m.key === activeMenu)!.content.columns.map((col) => (
                   <div key={col.title} className="col-span-12 sm:col-span-4 lg:col-span-3">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
                       {col.title}
-                    </h3>
+                    </h2>
                     <ul className="space-y-2">
                       {col.items.map((it) => (
                         <li key={it.label}>
