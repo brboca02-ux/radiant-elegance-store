@@ -110,11 +110,13 @@ function CheckoutPage() {
   // cotação de frete sempre que CEP/cidade/subtotal mudam
   useEffect(() => {
     const c = onlyDigits(cep);
-    if (c.length !== 8) { setQuotes([]); setShippingCode(""); return; }
+    if (c.length !== 8) { setQuotes([]); setShippingCode(""); setQuotesLoading(false); return; }
     let cancelled = false;
+    setQuotesLoading(true);
     (async () => {
       const q = await shipping.quote({ cep: c, subtotal, itemsCount, city, state: stateUf });
       if (cancelled) return;
+      setQuotesLoading(false);
       setQuotes(q);
       if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
     })();
