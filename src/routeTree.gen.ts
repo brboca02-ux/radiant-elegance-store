@@ -32,6 +32,7 @@ import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 import { Route as PedidosIdRouteImport } from './routes/pedidos.$id'
 import { Route as PedidoAcompanharRouteImport } from './routes/pedido.acompanhar'
+import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as EstoqueHistoricoRouteImport } from './routes/estoque.historico'
 import { Route as ClientesIdRouteImport } from './routes/clientes.$id'
 import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
@@ -157,6 +158,11 @@ const PedidoAcompanharRoute = PedidoAcompanharRouteImport.update({
   path: '/pedido/acompanhar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidoIdRoute = PedidoIdRouteImport.update({
+  id: '/pedido/$id',
+  path: '/pedido/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EstoqueHistoricoRoute = EstoqueHistoricoRouteImport.update({
   id: '/estoque/historico',
   path: '/estoque/historico',
@@ -225,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/categorias/novo': typeof CategoriasNovoRoute
   '/clientes/$id': typeof ClientesIdRoute
   '/estoque/historico': typeof EstoqueHistoricoRoute
+  '/pedido/$id': typeof PedidoIdRoute
   '/pedido/acompanhar': typeof PedidoAcompanharRoute
   '/pedidos/$id': typeof PedidosIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/categorias/novo': typeof CategoriasNovoRoute
   '/clientes/$id': typeof ClientesIdRoute
   '/estoque/historico': typeof EstoqueHistoricoRoute
+  '/pedido/$id': typeof PedidoIdRoute
   '/pedido/acompanhar': typeof PedidoAcompanharRoute
   '/pedidos/$id': typeof PedidosIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
@@ -295,6 +303,7 @@ export interface FileRoutesById {
   '/categorias/novo': typeof CategoriasNovoRoute
   '/clientes/$id': typeof ClientesIdRoute
   '/estoque/historico': typeof EstoqueHistoricoRoute
+  '/pedido/$id': typeof PedidoIdRoute
   '/pedido/acompanhar': typeof PedidoAcompanharRoute
   '/pedidos/$id': typeof PedidosIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/categorias/novo'
     | '/clientes/$id'
     | '/estoque/historico'
+    | '/pedido/$id'
     | '/pedido/acompanhar'
     | '/pedidos/$id'
     | '/produto/$handle'
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/categorias/novo'
     | '/clientes/$id'
     | '/estoque/historico'
+    | '/pedido/$id'
     | '/pedido/acompanhar'
     | '/pedidos/$id'
     | '/produto/$handle'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/categorias/novo'
     | '/clientes/$id'
     | '/estoque/historico'
+    | '/pedido/$id'
     | '/pedido/acompanhar'
     | '/pedidos/$id'
     | '/produto/$handle'
@@ -435,6 +447,7 @@ export interface RootRouteChildren {
   CategoriasNovoRoute: typeof CategoriasNovoRoute
   ClientesIdRoute: typeof ClientesIdRoute
   EstoqueHistoricoRoute: typeof EstoqueHistoricoRoute
+  PedidoIdRoute: typeof PedidoIdRoute
   PedidoAcompanharRoute: typeof PedidoAcompanharRoute
   PedidosIdRoute: typeof PedidosIdRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
@@ -617,6 +630,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedidoAcompanharRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedido/$id': {
+      id: '/pedido/$id'
+      path: '/pedido/$id'
+      fullPath: '/pedido/$id'
+      preLoaderRoute: typeof PedidoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/estoque/historico': {
       id: '/estoque/historico'
       path: '/estoque/historico'
@@ -717,6 +737,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriasNovoRoute: CategoriasNovoRoute,
   ClientesIdRoute: ClientesIdRoute,
   EstoqueHistoricoRoute: EstoqueHistoricoRoute,
+  PedidoIdRoute: PedidoIdRoute,
   PedidoAcompanharRoute: PedidoAcompanharRoute,
   PedidosIdRoute: PedidosIdRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,

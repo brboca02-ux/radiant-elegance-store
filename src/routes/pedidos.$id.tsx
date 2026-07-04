@@ -9,10 +9,10 @@ import {
   fmtBRL, fmtDate, type OrderStatus,
 } from "@/stores/ordersStore";
 import {
-  FULFILLMENT_FLOW, FULFILLMENT_LABEL, setOrderFulfillment,
+  FULFILLMENT_FLOW, FULFILLMENT_LABEL, FULFILLMENT_DESCRIPTION, setOrderFulfillment,
   getOrderPublic, type FulfillmentStage,
 } from "@/lib/api/orderTracking";
-import { buildCustomerWhatsAppLink, buildOrderPaidMessage } from "@/lib/shopify";
+import { buildCustomerWhatsAppLink, buildOrderPaidMessage, buildStageMessage } from "@/lib/shopify";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedidos/$id")({
@@ -47,7 +47,25 @@ function OrderDetailPage() {
 
   const paid = order?.payment_status === "pago";
 
-  const advanceFulfillment = async (stage: FulfillmentStage) => {
+  const trackingUrl = order
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/pedido/${order.number}${
+        order?.customer?.email ? `?email=${encodeURIComponent(order.customer.email)}` : ""
+      }`
+    : "";
+
+  const notifyStageWhatsApp = (stage: FulfillmentStage) => {
+    if (!order?.customer?.phone) return;
+    const msg = buildStageMessage({
+      customerName: order.customer.name,
+      orderNumber: order.number,
+      stageLabel: FULFILLMENT_LABEL[stage],
+      stageDescription: FULFILLMENT_DESCRIPTION[stage],
+      trackingUrl,
+    });
+    window.open(buildCustomerWhatsAppLink(order.customer.phone, msg), "_blank", "noopener");
+  };
+
+  const advanceFulfillment = async (stage: FulfillmentStage, opts?: { notify?: boolean }) => {
     if (!order) return;
     if (!paid) {
       toast.error("Confirme o pagamento antes de avançar as etapas de envio.");
@@ -59,6 +77,7 @@ function OrderDetailPage() {
       setFulfillment(stage);
       toast.success(`Etapa atualizada: ${FULFILLMENT_LABEL[stage]}`);
       void hydrate();
+      if (opts?.notify) notifyStageWhatsApp(stage);
     } catch (e) {
       toast.error("Falha ao atualizar etapa", { description: e instanceof Error ? e.message : String(e) });
     } finally {
