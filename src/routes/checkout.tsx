@@ -270,6 +270,7 @@ function CheckoutPage() {
 
       setSubmitStage("redirecting");
       clearCart();
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       toast.success("Pedido criado!", { description: order.order_number });
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
     } catch (e) {
