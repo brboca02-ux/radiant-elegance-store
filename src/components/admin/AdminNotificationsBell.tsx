@@ -74,12 +74,21 @@ export function AdminNotificationsBell() {
   async function load() {
     const { data } = await supabase
       .from("orders")
-      .select("id, order_number, status, total, paid_at, created_at, customer:customers(name)")
+      .select("id, order_number, status, total, paid_at, created_at, customer:customers(name, phone, email)")
       .order("created_at", { ascending: false })
       .limit(25);
     const list = (data ?? []) as unknown as NotifRow[];
     setRows(list);
     list.forEach((r) => seenIdsRef.current.add(r.id));
+  }
+
+  async function fetchRow(id: string): Promise<NotifRow | null> {
+    const { data } = await supabase
+      .from("orders")
+      .select("id, order_number, status, total, paid_at, created_at, customer:customers(name, phone, email)")
+      .eq("id", id)
+      .maybeSingle();
+    return (data as unknown as NotifRow | null) ?? null;
   }
 
   useEffect(() => {
@@ -106,9 +115,26 @@ export function AdminNotificationsBell() {
           const prev = payload.old as { status?: string };
           if (prev?.status !== r.status) {
             const m = statusMeta(r.status);
-            if (r.status === "pago") toast.success(`Pedido ${r.order_number} pago`);
-            else if (["cancelado", "estornado", "falhou"].includes(r.status))
+            if (r.status === "pago") {
+              // Toast persistente com ação de WhatsApp — o payload do postgres_changes
+              // não traz o join com customer, então buscamos a linha completa.
+              void fetchRow(r.id).then((full) => {
+                toast.success(`Pedido ${r.order_number} pago!`, {
+                  description: full?.customer?.name
+                    ? `Cliente: ${full.customer.name} · ${formatPrice(r.total, "BRL")}`
+                    : `Total ${formatPrice(r.total, "BRL")}`,
+                  duration: 20000,
+                  action: full?.customer?.phone
+                    ? {
+                        label: "Enviar WhatsApp",
+                        onClick: () => openPaidWhatsApp(full),
+                      }
+                    : undefined,
+                });
+              });
+            } else if (["cancelado", "estornado", "falhou"].includes(r.status)) {
               toast.error(`Pedido ${r.order_number}: ${m.label}`);
+            }
           }
           load();
         },
