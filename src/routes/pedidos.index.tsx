@@ -130,16 +130,6 @@ function OrdersListPage() {
 
   const filteredTotal = useMemo(() => filtered.reduce((a, o) => a + o.total, 0), [filtered]);
 
-  const kpis = useMemo(() => {
-    const todayStr = new Date().toDateString();
-    const todayOrders = orders.filter((o) => new Date(o.created_at).toDateString() === todayStr);
-    return {
-      total: orders.length,
-      hoje: todayOrders.length,
-      aguardando: orders.filter((o) => o.status === "pago" || o.status === "separando").length,
-      faturamento: todayOrders.filter((o) => o.status !== "cancelado").reduce((a, o) => a + o.total, 0),
-    };
-  }, [orders]);
 
   return (
     <AdminShell active="pedidos">
