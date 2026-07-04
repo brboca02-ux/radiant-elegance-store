@@ -216,17 +216,21 @@ function mapDbToLocal(o: OrderFull): Order {
 
 interface OrdersState {
   orders: Order[];
+  hydrated: boolean;
   list: () => Order[];
   get: (id: string) => Order | undefined;
   setStatus: (id: string, status: OrderStatus, user_id?: string, note?: string) => void;
   cancel: (id: string, user_id?: string, note?: string) => void;
   remove: (id: string) => void;
+  hydrate: () => Promise<void>;
+  subscribeRealtime: () => () => void;
 }
 
 export const useOrdersStore = create<OrdersState>()(
   persist(
     (set, get) => ({
       orders: seed,
+      hydrated: false,
       list: () => get().orders,
       get: (id) => get().orders.find((o) => o.id === id),
       setStatus: (id, status, user_id = "admin", note) =>
@@ -246,8 +250,34 @@ export const useOrdersStore = create<OrdersState>()(
         })),
       cancel: (id, user_id = "admin", note) => get().setStatus(id, "cancelado", user_id, note),
       remove: (id) => set((s) => ({ orders: s.orders.filter((o) => o.id !== id) })),
+
+      // Puxa pedidos reais do Supabase (respeitando RLS do admin logado).
+      hydrate: async () => {
+        try {
+          const rows = await listMyOrders();
+          const orders = rows.map(mapDbToLocal);
+          set({ orders, hydrated: true });
+        } catch (e) {
+          console.warn("orders hydrate:", e);
+        }
+      },
+
+      // Realtime: qualquer INSERT/UPDATE em orders recarrega a lista.
+      // Isso garante que o webhook do MP refletir mudanças no admin
+      // sem precisar dar refresh na página.
+      subscribeRealtime: () => {
+        const channel = supabase
+          .channel("orders-admin")
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "orders" },
+            () => { void get().hydrate(); },
+          )
+          .subscribe();
+        return () => { supabase.removeChannel(channel); };
+      },
     }),
-    { name: "md_orders_v2", storage: createJSONStorage(() => localStorage) },
+    { name: "md_orders_v2", storage: createJSONStorage(() => localStorage), partialize: (s) => ({ orders: s.orders }) },
   ),
 );
 
