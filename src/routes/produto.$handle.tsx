@@ -534,7 +534,12 @@ function ProductPage() {
           )}
           <img
             src={images[lightboxIdx].url}
+            srcSet={buildSrcSet(images[lightboxIdx].url, [800, 1200, 1600, 1920])}
+            sizes="90vw"
             alt={images[lightboxIdx].altText ?? data.title}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             className="max-h-[90vh] max-w-[90vw] object-contain"
             onClick={(e) => e.stopPropagation()}
           />
