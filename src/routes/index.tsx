@@ -9,6 +9,8 @@ import {
   InstagramSection,
 } from "@/components/HomeSections";
 import { NewsletterSection } from "@/components/NewsletterCapture";
+import heroDesktop from "@/assets/hero.jpg?url";
+import heroMobile from "@/assets/hero-mobile.jpg?url";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,7 +28,12 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://mdmodas.lovable.app/" },
       { property: "og:locale", content: "pt_BR" },
     ],
-    links: [{ rel: "canonical", href: "https://mdmodas.lovable.app/" }],
+    links: [
+      { rel: "canonical", href: "https://mdmodas.lovable.app/" },
+      // Preload LCP hero — variante por viewport
+      { rel: "preload", as: "image", href: heroMobile, fetchpriority: "high", media: "(max-width: 1023px)" },
+      { rel: "preload", as: "image", href: heroDesktop, fetchpriority: "high", media: "(min-width: 1024px)" },
+    ],
   }),
   component: Index,
 });
