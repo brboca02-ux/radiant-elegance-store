@@ -1,13 +1,18 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
-  Clock, Send,
+  Clock, Send, Truck,
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
   fmtBRL, fmtDate, type OrderStatus,
 } from "@/stores/ordersStore";
+import {
+  FULFILLMENT_FLOW, FULFILLMENT_LABEL, setOrderFulfillment,
+  getOrderPublic, type FulfillmentStage,
+} from "@/lib/api/orderTracking";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedidos/$id")({
   head: () => ({
