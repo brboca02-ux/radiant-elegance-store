@@ -12,6 +12,8 @@ import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
 import { supabase } from "@/lib/supabaseClient";
 import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
+import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
+import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
 
 const DRAFT_KEY = "md_checkout_draft_v1";
 
