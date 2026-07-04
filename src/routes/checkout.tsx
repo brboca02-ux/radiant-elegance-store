@@ -248,7 +248,34 @@ function CheckoutPage() {
         <h1 className="font-display text-3xl md:text-4xl tracking-tight">Finalizar Compra</h1>
         <p className="text-sm text-muted-foreground mt-1">Preencha seus dados para concluir o pedido.</p>
 
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8 mt-8">
+        {/* Progresso do checkout */}
+        <ol
+          aria-label="Etapas do checkout"
+          className="mt-6 grid grid-cols-4 gap-2 sm:gap-3"
+        >
+          {[
+            { label: "Identificação", done: stepIdentDone },
+            { label: "Endereço", done: stepAddrDone },
+            { label: "Frete", done: stepShipDone },
+            { label: "Pagamento", done: stepPayDone },
+          ].map((s, i) => (
+            <li key={s.label} className="flex items-center gap-2 min-w-0">
+              <span
+                aria-hidden="true"
+                className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                  s.done ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                }`}
+              >
+                {s.done ? <Check className="h-3.5 w-3.5" /> : i + 1}
+              </span>
+              <span className={`text-[11px] sm:text-xs truncate ${s.done ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                {s.label}
+              </span>
+            </li>
+          ))}
+        </ol>
+
+        <fieldset disabled={submitting} className="grid lg:grid-cols-[1fr_380px] gap-8 mt-8 disabled:opacity-70 border-0 p-0 m-0">
           <div className="space-y-8">
             {/* Identificação */}
             <Section icon={<User className="h-4 w-4" />} title="Seus dados">
