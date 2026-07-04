@@ -98,6 +98,41 @@ export const getMpPaymentStatus = createServerFn({ method: "POST" })
       { headers: { Authorization: `Bearer ${token}` } },
     );
     if (!res.ok) throw new Error(`MP status ${res.status}`);
-    const json = (await res.json()) as { id: number | string; status: string };
+    const json = (await res.json()) as {
+      id: number | string;
+      status: string;
+      external_reference?: string;
+    };
+
+    // Reconciliação: se aprovado, garante que o pedido seja marcado como "pago"
+    // mesmo que o webhook do MP não tenha chegado (secret ausente, URL não
+    // configurada no painel, etc.). Idempotente — só atualiza se ainda
+    // estiver aguardando_pagamento.
+    const orderNumber = json.external_reference;
+    if (json.status === "approved" && orderNumber) {
+      const supaUrl = process.env.SUPABASE_URL;
+      const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (supaUrl && supaKey) {
+        try {
+          const { createClient } = await import("@supabase/supabase-js");
+          const admin = createClient(supaUrl, supaKey, {
+            auth: { persistSession: false, autoRefreshToken: false },
+          });
+          await admin
+            .from("orders")
+            .update({
+              status: "pago",
+              payment_provider: "mercadopago",
+              payment_id: String(json.id),
+              paid_at: new Date().toISOString(),
+            })
+            .eq("order_number", orderNumber)
+            .eq("status", "aguardando_pagamento");
+        } catch (e) {
+          console.warn("pix reconcile update failed:", e);
+        }
+      }
+    }
+
     return { paymentId: String(json.id), status: json.status };
   });
