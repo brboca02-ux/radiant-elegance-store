@@ -221,7 +221,40 @@ function OrderDetailPage() {
               </div>
             </Card>
 
-            <Card title="Alterar status">
+            <Card title="Etapas de envio (cliente vê)" icon={<Truck className="h-4 w-4" />}>
+              {!paid && (
+                <p className="text-xs text-amber-600 mb-3">
+                  Confirme o pagamento para liberar as etapas.
+                </p>
+              )}
+              <div className="space-y-2">
+                {FULFILLMENT_FLOW.map((s, i) => {
+                  const currentIdx = fulfillment ? FULFILLMENT_FLOW.indexOf(fulfillment) : -1;
+                  const done = currentIdx >= i;
+                  const isCurrent = currentIdx === i;
+                  return (
+                    <button
+                      key={s}
+                      disabled={!paid || savingStage !== null || isCurrent}
+                      onClick={() => advanceFulfillment(s)}
+                      className={`w-full flex items-center justify-between h-9 px-3 rounded-md border text-xs transition
+                        ${done ? "border-primary/40 bg-primary/5 text-foreground" : "border-border text-muted-foreground"}
+                        ${isCurrent ? "ring-2 ring-primary/30" : ""}
+                        hover:bg-muted disabled:cursor-not-allowed disabled:opacity-70`}
+                    >
+                      <span className="font-medium">{i + 1}. {FULFILLMENT_LABEL[s]}</span>
+                      {savingStage === s ? (
+                        <span className="text-[10px]">salvando…</span>
+                      ) : done ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+            </Card>
+
+            <Card title="Status interno (admin)">
               <div className="grid grid-cols-2 gap-2">
                 {ORDER_STATUS_FLOW.map((s) => (
                   <button
