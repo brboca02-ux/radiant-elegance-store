@@ -85,7 +85,25 @@ export function CardBrickPayment({ amount, payerEmail, onSubmit, disabled }: Pro
             payer: payerEmail ? { email: payerEmail } : undefined,
           },
           customization: {
-            visual: { style: { theme: "default" as const } },
+            visual: {
+              style: {
+                theme: "default" as const,
+                customVariables: {
+                  formPadding: "0px",
+                  formInputsTextSize: "15px",
+                  inputVerticalPadding: "10px",
+                  inputHorizontalPadding: "12px",
+                  textPrimaryWeight: "500",
+                  fontSizeExtraSmall: "11px",
+                  fontSizeSmall: "12px",
+                  fontSizeMedium: "14px",
+                  fontSizeLarge: "16px",
+                  borderRadiusMedium: "8px",
+                  borderRadiusLarge: "10px",
+                },
+              },
+              hidePaymentButton: false,
+            },
             paymentMethods: { maxInstallments: 12 },
           },
           callbacks: {
