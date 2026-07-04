@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import {
   Store, MapPin, Clock, IdCard, Package, MessageCircle, Copy,
-  CheckCircle2, Loader2, ArrowLeft,
+  CheckCircle2, Loader2, ArrowLeft, CreditCard, PackageCheck, Home, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getOrderPublic } from "@/lib/api/orderTracking";
@@ -103,6 +103,14 @@ function PickupInstructionsPage() {
           </p>
         )}
       </div>
+
+      {/* Timeline de retirada */}
+      <PickupStepper
+        paid={order.status === "pago"}
+        fulfillment={order.fulfillment_status ?? null}
+      />
+
+
 
       {/* Código do pedido */}
       <div className="mt-6 border-2 border-dashed border-primary/40 rounded-md p-5 bg-primary/5">
@@ -223,5 +231,71 @@ function PickupInstructionsPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Stepper compacto: Aguardando pagto → Separado → Pronto p/ retirar → Concluída
+// ---------------------------------------------------------------------
+type PickupStep = { key: string; label: string; Icon: typeof Package };
+const PICKUP_STEPS: PickupStep[] = [
+  { key: "pagto", label: "Aguardando pagamento", Icon: CreditCard },
+  { key: "separado", label: "Separado", Icon: PackageCheck },
+  { key: "pronto", label: "Pronto para retirar", Icon: Store },
+  { key: "concluida", label: "Concluída", Icon: Home },
+];
+
+function pickupStepIndex(paid: boolean, fulfillment: string | null): number {
+  if (fulfillment === "entregue") return 3;
+  if (
+    fulfillment === "pronto_retirada" ||
+    fulfillment === "coletado" ||
+    fulfillment === "enviado" ||
+    fulfillment === "em_transito"
+  ) return 2;
+  if (fulfillment === "embalado" || fulfillment === "recebido") return 1;
+  if (paid) return 1; // pago mas sem etapa registrada ainda → já saiu de "aguardando"
+  return 0;
+}
+
+function PickupStepper({ paid, fulfillment }: { paid: boolean; fulfillment: string | null }) {
+  const currentIdx = pickupStepIndex(paid, fulfillment);
+  return (
+    <section aria-label="Progresso da retirada" className="mt-6 rounded-md border border-border bg-background p-5">
+      <h2 className="text-sm font-semibold mb-4">Progresso da retirada</h2>
+      <ol className="grid grid-cols-4 gap-1 sm:gap-3">
+        {PICKUP_STEPS.map((s, i) => {
+          const done = currentIdx > i;
+          const isCurrent = currentIdx === i;
+          const Icon = s.Icon;
+          return (
+            <li key={s.key} className="flex flex-col items-center text-center">
+              <div
+                className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full flex items-center justify-center border-2 transition ${
+                  done || isCurrent
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-muted-foreground border-border"
+                } ${isCurrent ? "ring-4 ring-primary/20" : ""}`}
+              >
+                {done ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+              </div>
+              <span
+                className={`mt-2 text-[10px] sm:text-xs font-medium leading-tight ${
+                  done || isCurrent ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                {s.label}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="mt-4 text-[11px] text-center text-muted-foreground">
+        {currentIdx === 0 && "Assim que o pagamento for aprovado, começamos a separar seu pedido."}
+        {currentIdx === 1 && "Estamos separando e embalando seus itens."}
+        {currentIdx === 2 && "Seu pedido está aguardando você na loja. Traga o código e um documento."}
+        {currentIdx === 3 && "Retirada concluída. Obrigada pela preferência! 💛"}
+      </p>
+    </section>
   );
 }
