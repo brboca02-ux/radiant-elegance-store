@@ -98,6 +98,12 @@ function CheckoutPage() {
     qrCodeBase64: string | null;
     status: "aguardando" | "pago" | "expirado" | "erro";
   } | null>(null);
+  const [card, setCard] = useState<{
+    orderId: string;
+    orderNumber: string;
+    amount: number;
+    email: string;
+  } | null>(null);
   const pollRef = useRef<number | null>(null);
 
   const subtotal = useMemo(
