@@ -147,6 +147,73 @@ const mkOrder = (
 
 const seed: Order[] = [];
 
+// ---- Mapeamento DB -> shape local usado pelo admin ---------------------
+type DbFulfillment = "novo" | "separando" | "enviado" | "entregue" | null | undefined;
+
+function mapDbToLocal(o: OrderFull): Order {
+  const fulfillment = (o as unknown as { fulfillment_status?: DbFulfillment }).fulfillment_status;
+  const status: OrderStatus =
+    o.status === "cancelado"
+      ? "cancelado"
+      : o.status === "pago"
+        ? (fulfillment && ["separando", "enviado", "entregue"].includes(fulfillment)
+            ? (fulfillment as OrderStatus)
+            : "pago")
+        : "novo";
+  const payment_status: PaymentStatus =
+    o.status === "pago" || fulfillment === "separando" || fulfillment === "enviado" || fulfillment === "entregue"
+      ? "pago"
+      : o.status === "cancelado"
+        ? "estornado"
+        : "pendente";
+  const pm = (o.payment_method ?? "manual") as PaymentMethod;
+  return {
+    id: o.id,
+    store_id: STORE_ID,
+    number: o.order_number,
+    customer: {
+      id: o.customer?.id ?? "",
+      name: o.customer?.name ?? "",
+      email: o.customer?.email ?? "",
+      phone: o.customer?.phone ?? "",
+      doc: o.customer?.cpf ?? undefined,
+    },
+    address: {
+      name: o.customer?.name ?? "",
+      zip: o.address?.cep ?? "",
+      street: o.address?.street ?? "",
+      number: o.address?.number ?? "",
+      complement: o.address?.complement ?? undefined,
+      district: o.address?.district ?? "",
+      city: o.address?.city ?? "",
+      state: o.address?.state ?? "",
+    },
+    status,
+    payment_status,
+    payment_method: pm,
+    subtotal: o.subtotal,
+    shipping: o.shipping_cost,
+    discount: o.discount,
+    total: o.total,
+    items: o.items.map((i) => ({
+      id: i.id,
+      order_id: o.id,
+      product_id: "",
+      variant_id: null,
+      name: i.product_name,
+      sku: "",
+      size: i.variant_size ?? undefined,
+      color: i.variant_color ?? undefined,
+      quantity: i.quantity,
+      price: i.unit_price,
+    })),
+    history: [],
+    notes: o.notes ?? undefined,
+    created_at: o.created_at,
+  };
+}
+
+
 interface OrdersState {
   orders: Order[];
   list: () => Order[];
