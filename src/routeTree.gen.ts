@@ -39,6 +39,7 @@ import { Route as AuthenticatedMeusPedidosRouteImport } from './routes/_authenti
 import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
 import { Route as PedidosRastreioIdRouteImport } from './routes/pedidos.rastreio.$id'
 import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
+import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retirada.$numero'
 import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
 import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
 
@@ -192,6 +193,11 @@ const PedidoSucessoNumeroRoute = PedidoSucessoNumeroRouteImport.update({
   path: '/pedido/sucesso/$numero',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidoRetiradaNumeroRoute = PedidoRetiradaNumeroRouteImport.update({
+  id: '/pedido/retirada/$numero',
+  path: '/pedido/retirada/$numero',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
   id: '/categorias/$id/editar',
   path: '/categorias/$id/editar',
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/produtos/': typeof ProdutosIndexRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
+  '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof ProdutosIndexRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
+  '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
@@ -300,6 +308,7 @@ export interface FileRoutesById {
   '/produtos/': typeof ProdutosIndexRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
+  '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
@@ -335,6 +344,7 @@ export interface FileRouteTypes {
     | '/produtos/'
     | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
+    | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
     | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
+    | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
     | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
@@ -402,6 +413,7 @@ export interface FileRouteTypes {
     | '/produtos/'
     | '/api/public/payment-webhook'
     | '/categorias/$id/editar'
+    | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
     | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
@@ -436,6 +448,7 @@ export interface RootRouteChildren {
   ProdutosIndexRoute: typeof ProdutosIndexRoute
   ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
+  PedidoRetiradaNumeroRoute: typeof PedidoRetiradaNumeroRoute
   PedidoSucessoNumeroRoute: typeof PedidoSucessoNumeroRoute
   PedidosRastreioIdRoute: typeof PedidosRastreioIdRoute
   ProdutosIdEditarRoute: typeof ProdutosIdEditarRoute
@@ -653,6 +666,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedidoSucessoNumeroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedido/retirada/$numero': {
+      id: '/pedido/retirada/$numero'
+      path: '/pedido/retirada/$numero'
+      fullPath: '/pedido/retirada/$numero'
+      preLoaderRoute: typeof PedidoRetiradaNumeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/categorias/$id/editar': {
       id: '/categorias/$id/editar'
       path: '/categorias/$id/editar'
@@ -710,6 +730,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosIndexRoute: ProdutosIndexRoute,
   ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
+  PedidoRetiradaNumeroRoute: PedidoRetiradaNumeroRoute,
   PedidoSucessoNumeroRoute: PedidoSucessoNumeroRoute,
   PedidosRastreioIdRoute: PedidosRastreioIdRoute,
   ProdutosIdEditarRoute: ProdutosIdEditarRoute,
