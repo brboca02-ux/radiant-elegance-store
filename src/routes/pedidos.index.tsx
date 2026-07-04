@@ -59,25 +59,76 @@ function OrdersListPage() {
 
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"todos" | OrderStatus>("todos");
+  const [method, setMethod] = useState<"todos" | PaymentMethod>("todos");
+  const [payStatus, setPayStatus] = useState<"todos" | PaymentStatus>("todos");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [minTotal, setMinTotal] = useState("");
+  const [maxTotal, setMaxTotal] = useState("");
+  const [sort, setSort] = useState<SortKey>("recent");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const clearAll = () => {
+    setQ(""); setStatus("todos"); setMethod("todos"); setPayStatus("todos");
+    setFrom(""); setTo(""); setMinTotal(""); setMaxTotal(""); setSort("recent");
+  };
+
+  const applyPreset = (preset: "hoje" | "7d" | "30d" | "mes") => {
+    const today = new Date();
+    let start = new Date(today);
+    if (preset === "hoje") start = today;
+    else if (preset === "7d") start.setDate(today.getDate() - 6);
+    else if (preset === "30d") start.setDate(today.getDate() - 29);
+    else if (preset === "mes") start = new Date(today.getFullYear(), today.getMonth(), 1);
+    setFrom(toISODate(start));
+    setTo(toISODate(today));
+  };
+
+  const activeFilters =
+    (q ? 1 : 0) + (status !== "todos" ? 1 : 0) + (method !== "todos" ? 1 : 0) +
+    (payStatus !== "todos" ? 1 : 0) + (from ? 1 : 0) + (to ? 1 : 0) +
+    (minTotal ? 1 : 0) + (maxTotal ? 1 : 0);
 
   const filtered = useMemo(() => {
+    const min = minTotal ? parseFloat(minTotal.replace(",", ".")) : null;
+    const max = maxTotal ? parseFloat(maxTotal.replace(",", ".")) : null;
     return orders
       .filter((o) => {
         if (status !== "todos" && o.status !== status) return false;
+        if (method !== "todos" && o.payment_method !== method) return false;
+        if (payStatus !== "todos" && o.payment_status !== payStatus) return false;
         if (q) {
-          const s = q.toLowerCase();
+          const s = q.toLowerCase().trim();
           if (!o.number.toLowerCase().includes(s) &&
               !o.customer.name.toLowerCase().includes(s) &&
               !o.customer.email.toLowerCase().includes(s)) return false;
         }
         if (from && new Date(o.created_at) < new Date(from)) return false;
         if (to && new Date(o.created_at) > new Date(to + "T23:59:59")) return false;
+        if (min != null && !Number.isNaN(min) && o.total < min) return false;
+        if (max != null && !Number.isNaN(max) && o.total > max) return false;
         return true;
       })
-      .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-  }, [orders, q, status, from, to]);
+      .sort((a, b) => {
+        if (sort === "recent") return +new Date(b.created_at) - +new Date(a.created_at);
+        if (sort === "old") return +new Date(a.created_at) - +new Date(b.created_at);
+        if (sort === "high") return b.total - a.total;
+        return a.total - b.total;
+      });
+  }, [orders, q, status, method, payStatus, from, to, minTotal, maxTotal, sort]);
+
+  const kpis = useMemo(() => {
+    const todayStr = new Date().toDateString();
+    const todayOrders = orders.filter((o) => new Date(o.created_at).toDateString() === todayStr);
+    return {
+      total: orders.length,
+      hoje: todayOrders.length,
+      aguardando: orders.filter((o) => o.status === "pago" || o.status === "separando").length,
+      faturamento: todayOrders.filter((o) => o.status !== "cancelado").reduce((a, o) => a + o.total, 0),
+    };
+  }, [orders]);
+
+  const filteredTotal = useMemo(() => filtered.reduce((a, o) => a + o.total, 0), [filtered]);
 
   const kpis = useMemo(() => {
     const todayStr = new Date().toDateString();
