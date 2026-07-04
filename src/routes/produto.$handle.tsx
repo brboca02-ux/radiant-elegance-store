@@ -56,6 +56,8 @@ function ProductPage() {
   const addItem = useCartStore((s) => s.addItem);
   const isAdding = useCartStore((s) => s.isLoading);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const [carouselIdx, setCarouselIdx] = useState(0);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
 
   const variants = useMemo(() => data?.variants.edges.map((e) => e.node) ?? [], [data]);
   const allImages = useMemo(() => data?.images.edges.map((e) => e.node) ?? [], [data]);
