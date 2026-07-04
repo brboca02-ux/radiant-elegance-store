@@ -638,6 +638,115 @@ function CheckoutPage() {
           </aside>
         </fieldset>
       </div>
+
+      {pix && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pix-title"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+        >
+          <div className="bg-background rounded-lg max-w-md w-full p-6 shadow-xl">
+            <div className="flex items-center gap-2 mb-1">
+              <QrCode className="h-5 w-5 text-primary" />
+              <h2 id="pix-title" className="font-display text-xl">Pague com PIX</h2>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Pedido <span className="font-medium text-foreground">{pix.orderNumber}</span> · Total {formatPrice(total, "BRL")}
+            </p>
+
+            {pix.status === "aguardando" && (
+              <>
+                {pix.qrCodeBase64 ? (
+                  <div className="flex justify-center bg-white rounded-md p-3 border border-border">
+                    <img
+                      src={`data:image/png;base64,${pix.qrCodeBase64}`}
+                      alt="QR Code PIX"
+                      className="h-56 w-56 object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-56 flex items-center justify-center text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Gerando QR Code…
+                  </div>
+                )}
+
+                {pix.qrCode && (
+                  <div className="mt-4">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">PIX copia e cola</label>
+                    <div className="flex gap-2">
+                      <input
+                        readOnly
+                        value={pix.qrCode}
+                        className="flex-1 h-10 px-3 rounded-md border border-border bg-secondary/30 text-xs font-mono truncate"
+                        onFocus={(e) => e.currentTarget.select()}
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(pix.qrCode!);
+                            toast.success("Código copiado!");
+                          } catch {
+                            toast.error("Não foi possível copiar");
+                          }
+                        }}
+                        className="h-10 px-3 rounded-md bg-foreground text-background text-xs font-medium inline-flex items-center gap-1"
+                      >
+                        <Copy className="h-3.5 w-3.5" /> Copiar
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <p className="mt-4 text-xs text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Aguardando confirmação do pagamento… você será redirecionado automaticamente.
+                </p>
+                <p className="mt-1 text-[10px] text-muted-foreground">
+                  O código expira em 30 minutos.
+                </p>
+              </>
+            )}
+
+            {pix.status === "pago" && (
+              <div className="py-6 text-center">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-3">
+                  <Check className="h-6 w-6" />
+                </div>
+                <p className="font-medium">Pagamento confirmado!</p>
+                <p className="text-xs text-muted-foreground mt-1">Redirecionando para o resumo do pedido…</p>
+              </div>
+            )}
+
+            {(pix.status === "expirado" || pix.status === "erro") && (
+              <div className="py-6 text-center">
+                <p className="font-medium">
+                  {pix.status === "expirado" ? "O código PIX expirou." : "O pagamento não foi concluído."}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Você pode acompanhar ou refazer pela página do pedido.
+                </p>
+                <button
+                  onClick={() => navigate({ to: "/pedido/sucesso/$numero", params: { numero: pix.orderNumber } })}
+                  className="mt-4 h-10 px-4 rounded-md bg-foreground text-background text-xs uppercase tracking-widest"
+                >
+                  Ver meu pedido
+                </button>
+              </div>
+            )}
+
+            {pix.status !== "pago" && (
+              <button
+                onClick={() => setPix(null)}
+                className="mt-4 w-full text-[11px] text-muted-foreground hover:text-foreground"
+              >
+                Fechar
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
