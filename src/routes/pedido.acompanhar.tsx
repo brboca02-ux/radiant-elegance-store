@@ -101,8 +101,8 @@ function TrackPage() {
         </button>
       </form>
 
-      <p className="text-center text-xs text-muted-foreground mt-6">
-        <Link to="/" className="text-primary hover:underline">← Voltar para a loja</Link>
+      <p className="text-center mt-6">
+        <Link to="/" className="inline-flex items-center min-h-11 px-3 text-xs text-primary hover:underline">← Voltar para a loja</Link>
       </p>
     </div>
   );
