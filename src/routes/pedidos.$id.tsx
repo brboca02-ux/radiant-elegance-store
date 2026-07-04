@@ -318,6 +318,49 @@ function OrderDetailPage() {
               </div>
             </Card>
 
+            <Card title="Retirada na loja" icon={<Store className="h-4 w-4" />}>
+              <p className="text-xs text-muted-foreground mb-3">
+                Se o cliente vai buscar o pedido na loja, use os atalhos abaixo.
+              </p>
+              <button
+                onClick={confirmPickup}
+                disabled={!paid || savingStage !== null || fulfillment === "entregue"}
+                className="w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-foreground/85 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                {fulfillment === "entregue" ? "Retirada concluída" : "Confirmar retirada (marca como Entregue)"}
+              </button>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <a
+                  href={pickupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 h-8 rounded-md border border-border text-xs hover:bg-muted"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" /> Abrir instruções
+                </a>
+                <button
+                  onClick={copyPickupLink}
+                  className="inline-flex items-center justify-center gap-1.5 h-8 rounded-md border border-border text-xs hover:bg-muted"
+                >
+                  <Copy className="h-3.5 w-3.5" /> Copiar link
+                </button>
+              </div>
+              {order.customer.phone && (
+                <button
+                  onClick={sendPickupWhatsapp}
+                  disabled={!paid}
+                  className="mt-2 w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-md bg-[#25D366] text-white text-xs font-medium hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" /> Avisar cliente no WhatsApp
+                </button>
+              )}
+              <p className="mt-3 text-[11px] text-muted-foreground break-all">
+                {pickupUrl || "—"}
+              </p>
+            </Card>
+
+
             <Card title="Status interno (admin)">
               <div className="grid grid-cols-2 gap-2">
                 {ORDER_STATUS_FLOW.map((s) => (
