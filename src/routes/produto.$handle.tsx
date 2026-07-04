@@ -295,6 +295,42 @@ function ProductPage() {
           )}
         </div>
 
+        {images.length > 1 && (
+          <div className="lg:col-start-1 -mt-4 lg:-mt-6 px-4 sm:px-0">
+            <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {images.map((img, i) => {
+                const active = i === carouselIdx;
+                return (
+                  <button
+                    key={`thumb-${color ?? "x"}-${i}`}
+                    type="button"
+                    aria-label={`Ver imagem ${i + 1}`}
+                    aria-current={active}
+                    onClick={() => {
+                      const el = scrollerRef.current;
+                      if (!el) return;
+                      el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+                    }}
+                    className={`relative shrink-0 h-16 w-16 sm:h-20 sm:w-20 rounded-md overflow-hidden bg-secondary border-2 transition ${active ? "border-primary ring-1 ring-primary" : "border-transparent opacity-70 hover:opacity-100"}`}
+                  >
+                    <img
+                      src={img.url}
+                      srcSet={buildSrcSet(img.url, [120, 200])}
+                      sizes="80px"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+
+
 
 
         <div className="lg:sticky lg:top-32 lg:self-start">
