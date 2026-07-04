@@ -67,9 +67,14 @@ export const createMpPreference = createServerFn({ method: "POST" })
       payment_methods: {
         excluded_payment_types: excludedTypes,
         installments: 12,
+        ...(data.method === "pix" ? { default_payment_method_id: "pix" } : {}),
       },
+      ...(data.method === "pix"
+        ? { date_of_expiration: new Date(Date.now() + 30 * 60 * 1000).toISOString().replace("Z", "-03:00") }
+        : {}),
       metadata: { order_id: data.orderId, order_number: data.orderNumber },
     };
+
 
     const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
       method: "POST",
