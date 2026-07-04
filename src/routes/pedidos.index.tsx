@@ -1,10 +1,10 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Eye, Printer, XCircle, RefreshCw } from "lucide-react";
+import { Search, Eye, Printer, XCircle, RefreshCw, X, SlidersHorizontal } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, statusTone, fmtBRL, fmtDate,
-  type OrderStatus,
+  type OrderStatus, type PaymentMethod, type PaymentStatus,
 } from "@/stores/ordersStore";
 
 export const Route = createFileRoute("/pedidos/")({
@@ -20,6 +20,27 @@ export const Route = createFileRoute("/pedidos/")({
 const STATUS_OPTIONS: ("todos" | OrderStatus)[] = [
   "todos", "novo", "pago", "separando", "enviado", "entregue", "cancelado",
 ];
+const METHOD_OPTIONS: ("todos" | PaymentMethod)[] = [
+  "todos", "pix", "cartao", "boleto", "whatsapp", "manual",
+];
+const METHOD_LABEL: Record<PaymentMethod, string> = {
+  pix: "PIX", cartao: "Cartão", boleto: "Boleto", whatsapp: "WhatsApp", manual: "Manual",
+};
+const PAYSTATUS_OPTIONS: ("todos" | PaymentStatus)[] = [
+  "todos", "pendente", "pago", "estornado", "falhou",
+];
+const PAYSTATUS_LABEL: Record<PaymentStatus, string> = {
+  pendente: "Pendente", pago: "Pago", estornado: "Estornado", falhou: "Falhou",
+};
+type SortKey = "recent" | "old" | "high" | "low";
+const SORT_LABEL: Record<SortKey, string> = {
+  recent: "Mais recentes", old: "Mais antigos", high: "Maior valor", low: "Menor valor",
+};
+
+function toISODate(d: Date) {
+  const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return z.toISOString().slice(0, 10);
+}
 
 function OrdersListPage() {
   const orders = useOrdersStore((s) => s.orders);
