@@ -23,7 +23,9 @@ export const Route = createFileRoute("/pedido/sucesso/$numero")({
   component: SuccessPage,
 });
 
-interface OrderView extends PublicOrder {}
+interface OrderView extends PublicOrder {
+  customer?: { name: string; email: string; phone: string | null; cpf: string | null } | null;
+}
 
 function toView(o: Awaited<ReturnType<typeof getOrderByNumber>>): OrderView | null {
   if (!o) return null;
@@ -45,6 +47,9 @@ function toView(o: Awaited<ReturnType<typeof getOrderByNumber>>): OrderView | nu
     paid_at: o.paid_at,
     address: o.address,
     items: o.items,
+    customer: o.customer
+      ? { name: o.customer.name, email: o.customer.email, phone: o.customer.phone, cpf: o.customer.cpf }
+      : null,
   };
 }
 
