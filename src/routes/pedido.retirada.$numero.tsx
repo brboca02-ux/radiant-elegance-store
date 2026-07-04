@@ -86,7 +86,7 @@ function PickupInstructionsPage() {
         <h1 className="font-display text-3xl">Retirar na loja</h1>
         <p className="text-sm text-muted-foreground mt-2">
           Pedido <span className="font-semibold text-foreground">{order.order_number}</span>
-          {order.customer?.name ? ` · ${order.customer.name}` : ""}
+          {"customer" in order && order.customer?.name ? ` · ${order.customer.name}` : ""}
         </p>
 
         {isDone ? (
