@@ -31,7 +31,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className={COL_TITLE}>Institucional</h4>
+          <h3 className={COL_TITLE}>Institucional</h3>
           <ul className="space-y-3">
             <li><Link to="/sobre" className={LINK}>Sobre Nós</Link></li>
             <li><a href="#loja" className={LINK}>Nossa Loja</a></li>
