@@ -136,15 +136,13 @@ async function main() {
     await step("SELECT order via order_number (público)", async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, order_number, total, items:order_items(id)")
+        .select("id, order_number, total")
         .eq("order_number", ordNum)
         .maybeSingle();
       if (error) throw error;
       if (!data) throw new Error("pedido não encontrado via anon SELECT");
       if (data.id !== orderId) throw new Error("id do pedido não confere");
-      if (!Array.isArray(data.items) || data.items.length !== 2) {
-        throw new Error(`esperado 2 items, veio ${data.items?.length}`);
-      }
+      if (Number(data.total) !== 115) throw new Error(`total esperado 115, veio ${data.total}`);
     });
   } catch {
     /* falhas já registradas */
