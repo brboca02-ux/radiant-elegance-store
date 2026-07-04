@@ -165,7 +165,7 @@ export function CardBrickPayment({ amount, payerEmail, onSubmit, disabled }: Pro
           {error}. Recarregue a página e tente novamente.
         </div>
       )}
-      <div id={containerId} />
+      <div id={containerId} className="w-full max-w-full overflow-x-hidden [&_iframe]:!w-full [&_iframe]:max-w-full" />
     </div>
   );
 }
