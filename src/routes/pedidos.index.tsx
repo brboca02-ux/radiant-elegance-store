@@ -1,7 +1,7 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Search, Eye, Printer, XCircle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, Eye, Printer, XCircle, RefreshCw } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, statusTone, fmtBRL, fmtDate,
   type OrderStatus,
@@ -24,6 +24,17 @@ const STATUS_OPTIONS: ("todos" | OrderStatus)[] = [
 function OrdersListPage() {
   const orders = useOrdersStore((s) => s.orders);
   const cancel = useOrdersStore((s) => s.cancel);
+  const hydrate = useOrdersStore((s) => s.hydrate);
+  const subscribeRealtime = useOrdersStore((s) => s.subscribeRealtime);
+  const hydrated = useOrdersStore((s) => s.hydrated);
+
+  // Hidrata do Supabase no mount e assina realtime pra refletir
+  // webhooks do MP automaticamente (status: pago, cancelado, etc.).
+  useEffect(() => {
+    void hydrate();
+    const unsub = subscribeRealtime();
+    return () => { unsub(); };
+  }, [hydrate, subscribeRealtime]);
 
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"todos" | OrderStatus>("todos");
