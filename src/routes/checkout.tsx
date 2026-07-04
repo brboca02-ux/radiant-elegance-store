@@ -258,8 +258,52 @@ function CheckoutPage() {
         payment_method: paymentMethod,
       });
 
-      // cria preference no gateway (Mercado Pago)
+      // Pagamento
       setSubmitStage("processing");
+
+      if (paymentMethod === "pix") {
+        // PIX inline: cria pagamento direto e exibe QR Code no próprio checkout.
+        try {
+          const pixRes = await createMpPixPayment({
+            data: {
+              orderId: order.id,
+              orderNumber: order.order_number,
+              amount: order.total,
+              siteUrl: window.location.origin,
+              customer: {
+                name: v.name,
+                email: v.email,
+                cpf: onlyDigits(v.cpf ?? "") || undefined,
+                phone: onlyDigits(v.phone ?? "") || undefined,
+              },
+            },
+          });
+          await supabase.from("orders").update({
+            payment_provider: pixRes.provider,
+            payment_id: pixRes.paymentId,
+          }).eq("id", order.id);
+          setPix({
+            orderNumber: order.order_number,
+            paymentId: pixRes.paymentId,
+            qrCode: pixRes.qrCode,
+            qrCodeBase64: pixRes.qrCodeBase64,
+            status: "aguardando",
+          });
+          try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+          toast.success("PIX gerado — escaneie ou copie o código.");
+          setSubmitStage("idle");
+          setSubmitting(false);
+          return;
+        } catch (e) {
+          console.error(e);
+          toast.error("Não foi possível gerar o PIX", { description: (e as Error).message });
+          setSubmitStage("idle");
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // Cartão / Boleto: continua via Checkout Pro (redirect)
       let paymentUrl: string | undefined;
       try {
         const pay = await payment.createPayment({
@@ -288,21 +332,10 @@ function CheckoutPage() {
       toast.success("Pedido criado!", { description: order.order_number });
 
       if (paymentUrl) {
-        // Redireciona para o Checkout Pro do Mercado Pago
         window.location.href = paymentUrl;
         return;
       }
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
-    } catch (e) {
-      console.error(e);
-      toast.error("Não foi possível finalizar o pedido", {
-        description: (e as Error).message,
-      });
-      setSubmitStage("idle");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   const stageMessage =
     submitStage === "creating" ? "Criando seu pedido…"
