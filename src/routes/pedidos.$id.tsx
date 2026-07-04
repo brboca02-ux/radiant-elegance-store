@@ -1,13 +1,18 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
-  Clock, Send,
+  Clock, Send, Truck,
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
   fmtBRL, fmtDate, type OrderStatus,
 } from "@/stores/ordersStore";
+import {
+  FULFILLMENT_FLOW, FULFILLMENT_LABEL, setOrderFulfillment,
+  getOrderPublic, type FulfillmentStage,
+} from "@/lib/api/orderTracking";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedidos/$id")({
   head: () => ({
@@ -22,8 +27,43 @@ export const Route = createFileRoute("/pedidos/$id")({
 function OrderDetailPage() {
   const { id } = useParams({ from: "/pedidos/$id" });
   const order = useOrdersStore((s) => s.orders.find((o) => o.id === id));
+  const hydrate = useOrdersStore((s) => s.hydrate);
   const setStatus = useOrdersStore((s) => s.setStatus);
   const cancel = useOrdersStore((s) => s.cancel);
+
+  const [fulfillment, setFulfillment] = useState<FulfillmentStage | null>(null);
+  const [savingStage, setSavingStage] = useState<FulfillmentStage | null>(null);
+
+  // Carrega fulfillment atual do banco (o store local não guarda essa coluna).
+  useEffect(() => {
+    if (!order?.customer?.email) return;
+    let cancelled = false;
+    getOrderPublic(order.number, order.customer.email)
+      .then((o) => { if (!cancelled) setFulfillment(o?.fulfillment_status ?? null); })
+      .catch(() => { /* ignore */ });
+    return () => { cancelled = true; };
+  }, [order?.number, order?.customer?.email]);
+
+  const paid = order?.payment_status === "pago";
+
+  const advanceFulfillment = async (stage: FulfillmentStage) => {
+    if (!order) return;
+    if (!paid) {
+      toast.error("Confirme o pagamento antes de avançar as etapas de envio.");
+      return;
+    }
+    setSavingStage(stage);
+    try {
+      await setOrderFulfillment(order.id, stage);
+      setFulfillment(stage);
+      toast.success(`Etapa atualizada: ${FULFILLMENT_LABEL[stage]}`);
+      void hydrate();
+    } catch (e) {
+      toast.error("Falha ao atualizar etapa", { description: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setSavingStage(null);
+    }
+  };
 
   const nextStatus = useMemo<OrderStatus | null>(() => {
     if (!order || order.status === "cancelado" || order.status === "entregue") return null;
@@ -181,7 +221,40 @@ function OrderDetailPage() {
               </div>
             </Card>
 
-            <Card title="Alterar status">
+            <Card title="Etapas de envio (cliente vê)" icon={<Truck className="h-4 w-4" />}>
+              {!paid && (
+                <p className="text-xs text-amber-600 mb-3">
+                  Confirme o pagamento para liberar as etapas.
+                </p>
+              )}
+              <div className="space-y-2">
+                {FULFILLMENT_FLOW.map((s, i) => {
+                  const currentIdx = fulfillment ? FULFILLMENT_FLOW.indexOf(fulfillment) : -1;
+                  const done = currentIdx >= i;
+                  const isCurrent = currentIdx === i;
+                  return (
+                    <button
+                      key={s}
+                      disabled={!paid || savingStage !== null || isCurrent}
+                      onClick={() => advanceFulfillment(s)}
+                      className={`w-full flex items-center justify-between h-9 px-3 rounded-md border text-xs transition
+                        ${done ? "border-primary/40 bg-primary/5 text-foreground" : "border-border text-muted-foreground"}
+                        ${isCurrent ? "ring-2 ring-primary/30" : ""}
+                        hover:bg-muted disabled:cursor-not-allowed disabled:opacity-70`}
+                    >
+                      <span className="font-medium">{i + 1}. {FULFILLMENT_LABEL[s]}</span>
+                      {savingStage === s ? (
+                        <span className="text-[10px]">salvando…</span>
+                      ) : done ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+            </Card>
+
+            <Card title="Status interno (admin)">
               <div className="grid grid-cols-2 gap-2">
                 {ORDER_STATUS_FLOW.map((s) => (
                   <button
