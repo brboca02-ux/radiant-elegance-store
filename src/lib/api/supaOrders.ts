@@ -42,35 +42,50 @@ export interface CreatedOrder {
   status: string;
 }
 
+function createCheckoutId() {
+  return crypto.randomUUID();
+}
+
+function createCheckoutOrderNumber() {
+  const year = new Date().getFullYear();
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `MD-${year}-${timestamp}${suffix}`;
+}
+
 export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
   // 1) upsert do customer (por email + user_id quando disponível)
-  const { data: existing } = await supabase
-    .from("customers")
-    .select("id")
-    .eq("email", input.customer.email.toLowerCase())
-    .maybeSingle();
+  const isSignedIn = Boolean(input.customer.user_id);
+  const { data: existing } = isSignedIn
+    ? await supabase
+        .from("customers")
+        .select("id")
+        .eq("email", input.customer.email.toLowerCase())
+        .maybeSingle()
+    : { data: null };
 
   let customerId = existing?.id as string | undefined;
   if (!customerId) {
-    const { data: ins, error } = await supabase
+    customerId = createCheckoutId();
+    const { error } = await supabase
       .from("customers")
       .insert({
+        id: customerId,
         name: input.customer.name,
         email: input.customer.email.toLowerCase(),
         phone: input.customer.phone ?? null,
         cpf: input.customer.cpf ?? null,
         user_id: input.customer.user_id ?? null,
-      })
-      .select("id")
-      .single();
+      });
     if (error) throw error;
-    customerId = ins.id;
   }
 
   // 2) endereço
-  const { data: addr, error: addrErr } = await supabase
+  const addressId = createCheckoutId();
+  const { error: addrErr } = await supabase
     .from("addresses")
     .insert({
+      id: addressId,
       customer_id: customerId,
       cep: input.address.cep.replace(/\D/g, ""),
       street: input.address.street,
@@ -79,17 +94,23 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
       district: input.address.district,
       city: input.address.city,
       state: input.address.state,
-    })
-    .select("id")
-    .single();
+    });
   if (addrErr) throw addrErr;
 
   // 3) order
-  const { data: order, error: ordErr } = await supabase
+  const order: CreatedOrder = {
+    id: createCheckoutId(),
+    order_number: createCheckoutOrderNumber(),
+    total: input.total,
+    status: "aguardando_pagamento",
+  };
+  const { error: ordErr } = await supabase
     .from("orders")
     .insert({
+      id: order.id,
+      order_number: order.order_number,
       customer_id: customerId,
-      address_id: addr.id,
+      address_id: addressId,
       subtotal: input.subtotal,
       shipping_cost: input.shipping_cost,
       shipping_method: input.shipping_method,
@@ -98,9 +119,7 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
       payment_method: input.payment_method,
       notes: input.notes ?? null,
       status: "aguardando_pagamento",
-    })
-    .select("id, order_number, total, status")
-    .single();
+    });
   if (ordErr) throw ordErr;
 
   // 4) items
@@ -117,7 +136,7 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
   const { error: itemsErr } = await supabase.from("order_items").insert(itemsRows);
   if (itemsErr) throw itemsErr;
 
-  return order as CreatedOrder;
+  return order;
 }
 
 export interface OrderFull {
