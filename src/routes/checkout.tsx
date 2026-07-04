@@ -339,8 +339,24 @@ function CheckoutPage() {
             <Section icon={<Truck className="h-4 w-4" />} title="Frete">
               {onlyDigits(cep).length !== 8 ? (
                 <p className="text-sm text-muted-foreground">Informe o CEP para ver as opções de entrega.</p>
-              ) : quotes.length === 0 ? (
-                <p className="text-sm text-muted-foreground flex items-center gap-2"><Loader2 className="h-3 w-3 animate-spin" /> Calculando…</p>
+              ) : quotesLoading || quotes.length === 0 ? (
+                <div className="space-y-2" aria-live="polite" aria-busy="true">
+                  <p className="text-xs text-muted-foreground flex items-center gap-2">
+                    <Loader2 className="h-3 w-3 animate-spin" /> Calculando opções de entrega…
+                  </p>
+                  {[0, 1, 2].map((k) => (
+                    <div key={k} className="flex items-center justify-between border border-border rounded-md p-3">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="h-4 w-4 rounded-full bg-secondary animate-pulse" />
+                        <div className="flex-1 space-y-1.5">
+                          <div className="h-3 w-32 bg-secondary rounded animate-pulse" />
+                          <div className="h-2.5 w-48 bg-secondary/70 rounded animate-pulse" />
+                        </div>
+                      </div>
+                      <div className="h-4 w-14 bg-secondary rounded animate-pulse" />
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div className="space-y-2">
                   {quotes.map((q) => (
