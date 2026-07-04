@@ -79,7 +79,26 @@ function OrdersListPage() {
             <h1 className="font-display text-3xl md:text-4xl tracking-tight mt-1">Pedidos</h1>
             <p className="text-sm text-muted-foreground mt-1">Gestão completa de vendas da loja</p>
           </div>
-          <Link to="/dashboard" className="text-xs font-medium text-primary hover:underline">← Dashboard</Link>
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-flex items-center gap-1.5 text-[11px] text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200 rounded-full px-2.5 py-1"
+              title="Atualiza automaticamente quando o Mercado Pago confirma o pagamento"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              Sincronizado ao vivo
+            </span>
+            <button
+              onClick={() => void hydrate()}
+              className="inline-flex items-center gap-1.5 text-xs border border-border rounded-md px-2.5 py-1.5 hover:bg-muted"
+              aria-label="Atualizar lista de pedidos"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${!hydrated ? "animate-spin" : ""}`} /> Atualizar
+            </button>
+            <Link to="/dashboard" className="text-xs font-medium text-primary hover:underline">← Dashboard</Link>
+          </div>
         </div>
 
         {/* KPIs */}
