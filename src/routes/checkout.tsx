@@ -781,14 +781,14 @@ function CheckoutPage() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="card-title"
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 overflow-y-auto overscroll-contain"
         >
-          <div className="bg-background rounded-lg max-w-lg w-full p-6 shadow-xl my-8">
+          <div className="bg-background w-full sm:max-w-lg rounded-t-2xl sm:rounded-lg p-4 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl sm:my-8 max-h-[95vh] overflow-y-auto">
             <div className="flex items-center gap-2 mb-1">
-              <CreditCard className="h-5 w-5 text-primary" />
-              <h2 id="card-title" className="font-display text-xl">Pagamento com cartão</h2>
+              <CreditCard className="h-5 w-5 text-primary shrink-0" />
+              <h2 id="card-title" className="font-display text-lg sm:text-xl">Pagamento com cartão</h2>
             </div>
-            <p className="text-xs text-muted-foreground mb-4">
+            <p className="text-xs text-muted-foreground mb-4 break-words">
               Pedido <span className="font-medium text-foreground">{card.orderNumber}</span> · Total {formatPrice(card.amount, "BRL")}
             </p>
 
