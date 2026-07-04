@@ -3,24 +3,40 @@ import { supabase } from "@/lib/supabaseClient";
 export type FulfillmentStage =
   | "recebido"
   | "embalado"
+  | "pronto_retirada"
   | "coletado"
   | "enviado"
+  | "em_transito"
   | "entregue";
 
+/** Fluxo linear canônico exibido ao cliente (unificado retirada + entrega). */
 export const FULFILLMENT_FLOW: FulfillmentStage[] = [
   "recebido",
   "embalado",
-  "coletado",
-  "enviado",
+  "pronto_retirada",
+  "em_transito",
   "entregue",
 ];
 
 export const FULFILLMENT_LABEL: Record<FulfillmentStage, string> = {
   recebido: "Recebido",
   embalado: "Embalado",
+  pronto_retirada: "Pronto p/ retirada",
   coletado: "Coletado",
   enviado: "Enviado",
+  em_transito: "Em trânsito",
   entregue: "Entregue",
+};
+
+/** Descrição amigável para exibir na timeline pública. */
+export const FULFILLMENT_DESCRIPTION: Record<FulfillmentStage, string> = {
+  recebido: "Recebemos seu pedido e a produção foi iniciada.",
+  embalado: "Seu pedido foi conferido e embalado com carinho.",
+  pronto_retirada: "Está pronto para retirar na loja. Leve um documento com foto.",
+  coletado: "Coletado pela transportadora.",
+  enviado: "Postado nos Correios/transportadora.",
+  em_transito: "A caminho do endereço de entrega.",
+  entregue: "Pedido entregue. Obrigada pela preferência! 💛",
 };
 
 export interface FulfillmentHistoryEntry {
