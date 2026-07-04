@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
-  Clock, Send, Truck,
+  Clock, Send, Truck, MessageCircle,
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
@@ -12,6 +12,7 @@ import {
   FULFILLMENT_FLOW, FULFILLMENT_LABEL, setOrderFulfillment,
   getOrderPublic, type FulfillmentStage,
 } from "@/lib/api/orderTracking";
+import { buildCustomerWhatsAppLink, buildOrderPaidMessage } from "@/lib/shopify";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedidos/$id")({
