@@ -153,6 +153,26 @@ function ProductPage() {
     }
   }, [data?.id, selected?.id]); // eslint-disable-line
 
+  // Pré-carrega as próximas imagens da galeria (após a atual) assim que a página abre,
+  // para que o swipe/setas mostrem a foto instantaneamente.
+  useEffect(() => {
+    if (typeof window === "undefined" || images.length <= 1) return;
+    const timers: number[] = [];
+    images.forEach((img, i) => {
+      if (i === 0) return; // a primeira já vem eager
+      const t = window.setTimeout(() => {
+        const el = new window.Image();
+        el.decoding = "async";
+        el.srcset = buildSrcSet(img.url, [480, 800, 1200]);
+        el.sizes = PDP_SIZES;
+        el.src = img.url;
+      }, i * 120); // pequeno stagger p/ não brigar com o LCP
+      timers.push(t);
+    });
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [images]);
+
+
   if (loading || (!loaded && !product)) {
     return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
   }
@@ -234,11 +254,16 @@ function ProductPage() {
                   aria-label={`Ampliar imagem ${i + 1}`}
                   className="relative bg-secondary overflow-hidden rounded-md aspect-[4/5] shrink-0 w-full snap-center"
                 >
-                  {/* Skeleton shimmer — só removido no onLoad da imagem */}
+                  {/* Placeholder blur: mini versão (32px) ampliada + blur, removido no onLoad */}
+                  <img
+                    aria-hidden="true"
+                    src={`${img.url}${img.url.includes("?") ? "&" : "?"}width=32`}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl transition-opacity duration-500"
+                  />
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-[linear-gradient(110deg,hsl(var(--muted))_8%,hsl(var(--secondary))_18%,hsl(var(--muted))_33%)] bg-[length:200%_100%] animate-[shimmer_1.6s_linear_infinite]"
-                    style={{ ['--tw-bg-opacity' as string]: 1 }}
+                    className="absolute inset-0 bg-[linear-gradient(110deg,hsl(var(--muted))_8%,hsl(var(--secondary))_18%,hsl(var(--muted))_33%)] bg-[length:200%_100%] animate-[shimmer_1.6s_linear_infinite] opacity-40"
                   />
                   <img
                     src={img.url}
@@ -250,9 +275,20 @@ function ProductPage() {
                     draggable={false}
                     fetchPriority={i === carouselIdx ? "high" : "auto"}
                     style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
-                    onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
+                    onLoad={(e) => {
+                      const el = e.currentTarget;
+                      // remove skeleton + blur placeholder ao carregar a imagem final
+                      let prev = el.previousSibling as HTMLElement | null;
+                      while (prev) {
+                        const next = prev.previousSibling as HTMLElement | null;
+                        prev.style.opacity = "0";
+                        setTimeout(() => prev?.remove(), 400);
+                        prev = next;
+                      }
+                    }}
                     className="relative w-full h-full object-cover select-none"
                   />
+
                 </button>
               );
             })}
