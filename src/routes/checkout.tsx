@@ -89,6 +89,14 @@ function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [submitting, setSubmitting] = useState(false);
   const [submitStage, setSubmitStage] = useState<"idle" | "creating" | "processing" | "redirecting">("idle");
+  const [pix, setPix] = useState<{
+    orderNumber: string;
+    paymentId: string;
+    qrCode: string | null;
+    qrCodeBase64: string | null;
+    status: "aguardando" | "pago" | "expirado" | "erro";
+  } | null>(null);
+  const pollRef = useRef<number | null>(null);
 
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0),
