@@ -1,10 +1,10 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Eye, Printer, XCircle, RefreshCw } from "lucide-react";
+import { Search, Eye, Printer, XCircle, RefreshCw, X, SlidersHorizontal } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, statusTone, fmtBRL, fmtDate,
-  type OrderStatus,
+  type OrderStatus, type PaymentMethod, type PaymentStatus,
 } from "@/stores/ordersStore";
 
 export const Route = createFileRoute("/pedidos/")({
@@ -20,6 +20,27 @@ export const Route = createFileRoute("/pedidos/")({
 const STATUS_OPTIONS: ("todos" | OrderStatus)[] = [
   "todos", "novo", "pago", "separando", "enviado", "entregue", "cancelado",
 ];
+const METHOD_OPTIONS: ("todos" | PaymentMethod)[] = [
+  "todos", "pix", "cartao", "boleto", "whatsapp", "manual",
+];
+const METHOD_LABEL: Record<PaymentMethod, string> = {
+  pix: "PIX", cartao: "Cartão", boleto: "Boleto", whatsapp: "WhatsApp", manual: "Manual",
+};
+const PAYSTATUS_OPTIONS: ("todos" | PaymentStatus)[] = [
+  "todos", "pendente", "pago", "estornado", "falhou",
+];
+const PAYSTATUS_LABEL: Record<PaymentStatus, string> = {
+  pendente: "Pendente", pago: "Pago", estornado: "Estornado", falhou: "Falhou",
+};
+type SortKey = "recent" | "old" | "high" | "low";
+const SORT_LABEL: Record<SortKey, string> = {
+  recent: "Mais recentes", old: "Mais antigos", high: "Maior valor", low: "Menor valor",
+};
+
+function toISODate(d: Date) {
+  const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return z.toISOString().slice(0, 10);
+}
 
 function OrdersListPage() {
   const orders = useOrdersStore((s) => s.orders);
@@ -38,25 +59,63 @@ function OrdersListPage() {
 
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"todos" | OrderStatus>("todos");
+  const [method, setMethod] = useState<"todos" | PaymentMethod>("todos");
+  const [payStatus, setPayStatus] = useState<"todos" | PaymentStatus>("todos");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [minTotal, setMinTotal] = useState("");
+  const [maxTotal, setMaxTotal] = useState("");
+  const [sort, setSort] = useState<SortKey>("recent");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const clearAll = () => {
+    setQ(""); setStatus("todos"); setMethod("todos"); setPayStatus("todos");
+    setFrom(""); setTo(""); setMinTotal(""); setMaxTotal(""); setSort("recent");
+  };
+
+  const applyPreset = (preset: "hoje" | "7d" | "30d" | "mes") => {
+    const today = new Date();
+    let start = new Date(today);
+    if (preset === "hoje") start = today;
+    else if (preset === "7d") start.setDate(today.getDate() - 6);
+    else if (preset === "30d") start.setDate(today.getDate() - 29);
+    else if (preset === "mes") start = new Date(today.getFullYear(), today.getMonth(), 1);
+    setFrom(toISODate(start));
+    setTo(toISODate(today));
+  };
+
+  const activeFilters =
+    (q ? 1 : 0) + (status !== "todos" ? 1 : 0) + (method !== "todos" ? 1 : 0) +
+    (payStatus !== "todos" ? 1 : 0) + (from ? 1 : 0) + (to ? 1 : 0) +
+    (minTotal ? 1 : 0) + (maxTotal ? 1 : 0);
 
   const filtered = useMemo(() => {
+    const min = minTotal ? parseFloat(minTotal.replace(",", ".")) : null;
+    const max = maxTotal ? parseFloat(maxTotal.replace(",", ".")) : null;
     return orders
       .filter((o) => {
         if (status !== "todos" && o.status !== status) return false;
+        if (method !== "todos" && o.payment_method !== method) return false;
+        if (payStatus !== "todos" && o.payment_status !== payStatus) return false;
         if (q) {
-          const s = q.toLowerCase();
+          const s = q.toLowerCase().trim();
           if (!o.number.toLowerCase().includes(s) &&
               !o.customer.name.toLowerCase().includes(s) &&
               !o.customer.email.toLowerCase().includes(s)) return false;
         }
         if (from && new Date(o.created_at) < new Date(from)) return false;
         if (to && new Date(o.created_at) > new Date(to + "T23:59:59")) return false;
+        if (min != null && !Number.isNaN(min) && o.total < min) return false;
+        if (max != null && !Number.isNaN(max) && o.total > max) return false;
         return true;
       })
-      .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-  }, [orders, q, status, from, to]);
+      .sort((a, b) => {
+        if (sort === "recent") return +new Date(b.created_at) - +new Date(a.created_at);
+        if (sort === "old") return +new Date(a.created_at) - +new Date(b.created_at);
+        if (sort === "high") return b.total - a.total;
+        return a.total - b.total;
+      });
+  }, [orders, q, status, method, payStatus, from, to, minTotal, maxTotal, sort]);
 
   const kpis = useMemo(() => {
     const todayStr = new Date().toDateString();
@@ -68,6 +127,9 @@ function OrdersListPage() {
       faturamento: todayOrders.filter((o) => o.status !== "cancelado").reduce((a, o) => a + o.total, 0),
     };
   }, [orders]);
+
+  const filteredTotal = useMemo(() => filtered.reduce((a, o) => a + o.total, 0), [filtered]);
+
 
   return (
     <AdminShell active="pedidos">
@@ -110,32 +172,141 @@ function OrdersListPage() {
         </div>
 
         {/* Filtros */}
-        <div className="rounded-xl border border-border bg-background p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="relative sm:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              value={q} onChange={(e) => setQ(e.target.value)}
-              placeholder="Número, cliente ou e-mail…"
-              className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-sm"
-            />
+        <div className="rounded-xl border border-border bg-background p-4 mb-6 space-y-3">
+          {/* Linha 1: busca + status + sort + toggle avançado */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+            <div className="relative lg:col-span-5">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                value={q} onChange={(e) => setQ(e.target.value)}
+                placeholder="Número do pedido, cliente ou e-mail…"
+                className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-sm"
+              />
+            </div>
+            <select
+              value={status} onChange={(e) => setStatus(e.target.value as never)}
+              aria-label="Status do pedido"
+              className="h-10 w-full rounded-md border border-border bg-background text-sm px-3 lg:col-span-3"
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s === "todos" ? "Todos status" : ORDER_STATUS_LABEL[s as OrderStatus]}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sort} onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Ordenar"
+              className="h-10 w-full rounded-md border border-border bg-background text-sm px-3 lg:col-span-2"
+            >
+              {(Object.keys(SORT_LABEL) as SortKey[]).map((k) => (
+                <option key={k} value={k}>{SORT_LABEL[k]}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              className="h-10 inline-flex items-center justify-center gap-1.5 rounded-md border border-border bg-background text-xs font-medium hover:bg-muted lg:col-span-2"
+              aria-expanded={showAdvanced}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Avançado
+              {activeFilters > 0 && (
+                <span className="ml-1 rounded-full bg-primary/10 text-primary px-1.5 text-[10px] font-semibold">
+                  {activeFilters}
+                </span>
+              )}
+            </button>
           </div>
-          <select
-            value={status} onChange={(e) => setStatus(e.target.value as never)}
-            className="h-10 w-full rounded-md border border-border bg-background text-sm px-3"
-          >
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {s === "todos" ? "Todos status" : ORDER_STATUS_LABEL[s as OrderStatus]}
-              </option>
+
+          {/* Presets rápidos de data */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Período:</span>
+            {([
+              ["hoje", "Hoje"], ["7d", "7 dias"], ["30d", "30 dias"], ["mes", "Este mês"],
+            ] as const).map(([k, label]) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => applyPreset(k)}
+                className="text-xs rounded-full border border-border px-2.5 py-1 hover:bg-muted"
+              >
+                {label}
+              </button>
             ))}
-          </select>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
-            aria-label="Data inicial"
-            className="h-10 w-full rounded-md border border-border bg-background text-sm px-2 sm:col-start-1 lg:col-start-auto" />
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
-            aria-label="Data final"
-            className="h-10 w-full rounded-md border border-border bg-background text-sm px-2" />
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
+              aria-label="Data inicial"
+              className="h-8 rounded-md border border-border bg-background text-xs px-2" />
+            <span className="text-xs text-muted-foreground">até</span>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
+              aria-label="Data final"
+              className="h-8 rounded-md border border-border bg-background text-xs px-2" />
+          </div>
+
+          {/* Linha avançada */}
+          {showAdvanced && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-border">
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Forma de pagamento</label>
+                <select
+                  value={method} onChange={(e) => setMethod(e.target.value as never)}
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                >
+                  {METHOD_OPTIONS.map((m) => (
+                    <option key={m} value={m}>{m === "todos" ? "Todas" : METHOD_LABEL[m as PaymentMethod]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Status do pagamento</label>
+                <select
+                  value={payStatus} onChange={(e) => setPayStatus(e.target.value as never)}
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                >
+                  {PAYSTATUS_OPTIONS.map((p) => (
+                    <option key={p} value={p}>{p === "todos" ? "Todos" : PAYSTATUS_LABEL[p as PaymentStatus]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Valor mínimo (R$)</label>
+                <input
+                  inputMode="decimal" value={minTotal}
+                  onChange={(e) => setMinTotal(e.target.value)}
+                  placeholder="0,00"
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Valor máximo (R$)</label>
+                <input
+                  inputMode="decimal" value={maxTotal}
+                  onChange={(e) => setMaxTotal(e.target.value)}
+                  placeholder="0,00"
+                  className="mt-1 h-10 w-full rounded-md border border-border bg-background text-sm px-3"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Rodapé filtros: contagem + limpar */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border">
+            <p className="text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">{filtered.length}</span> {filtered.length === 1 ? "pedido" : "pedidos"}
+              {" · "}Total filtrado: <span className="font-medium text-foreground">{fmtBRL(filteredTotal)}</span>
+            </p>
+            {activeFilters > 0 && (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" /> Limpar filtros ({activeFilters})
+              </button>
+            )}
+          </div>
         </div>
+
 
         {/* Tabela desktop */}
         <div className="hidden md:block rounded-xl border border-border bg-background overflow-hidden">
