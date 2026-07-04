@@ -775,6 +775,73 @@ function CheckoutPage() {
           </div>
         </div>
       )}
+
+      {card && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="card-title"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+        >
+          <div className="bg-background rounded-lg max-w-lg w-full p-6 shadow-xl my-8">
+            <div className="flex items-center gap-2 mb-1">
+              <CreditCard className="h-5 w-5 text-primary" />
+              <h2 id="card-title" className="font-display text-xl">Pagamento com cartão</h2>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Pedido <span className="font-medium text-foreground">{card.orderNumber}</span> · Total {formatPrice(card.amount, "BRL")}
+            </p>
+
+            <CardBrickPayment
+              amount={card.amount}
+              payerEmail={card.email}
+              onSubmit={async (data: CardBrickFormData) => {
+                const pay = await createMpCardPayment({
+                  data: {
+                    orderId: card.orderId,
+                    orderNumber: card.orderNumber,
+                    amount: card.amount,
+                    siteUrl: window.location.origin,
+                    token: data.token,
+                    installments: data.installments,
+                    paymentMethodId: data.payment_method_id,
+                    issuerId: data.issuer_id,
+                    payer: {
+                      email: data.payer.email ?? card.email,
+                      identification: data.payer.identification,
+                    },
+                  },
+                });
+                await supabase.from("orders").update({
+                  payment_provider: pay.provider,
+                  payment_id: pay.paymentId,
+                }).eq("id", card.orderId);
+
+                if (pay.status === "approved") {
+                  clearCart();
+                  toast.success("Pagamento aprovado!");
+                  navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
+                  return;
+                }
+                if (pay.status === "in_process" || pay.status === "pending") {
+                  clearCart();
+                  toast.info("Pagamento em análise — acompanhe pelo pedido.");
+                  navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
+                  return;
+                }
+                throw new Error(pay.statusDetail ?? "Pagamento não autorizado. Tente outro cartão.");
+              }}
+            />
+
+            <button
+              onClick={() => setCard(null)}
+              className="mt-4 w-full text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              Cancelar e voltar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
