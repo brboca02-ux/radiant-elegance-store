@@ -203,6 +203,45 @@ function CheckoutPage() {
     setStateUf(data.uf || stateUf);
   };
 
+  // Polling do status do PIX enquanto o modal está aberto (a cada 4s, até 15 min).
+  useEffect(() => {
+    if (!pix || pix.status !== "aguardando") return;
+    let cancelled = false;
+    const start = Date.now();
+    const tick = async () => {
+      if (cancelled) return;
+      if (Date.now() - start > 15 * 60 * 1000) {
+        setPix((p) => (p ? { ...p, status: "expirado" } : p));
+        return;
+      }
+      try {
+        const r = await getMpPaymentStatus({ data: { paymentId: pix.paymentId } });
+        if (cancelled) return;
+        if (r.status === "approved") {
+          setPix((p) => (p ? { ...p, status: "pago" } : p));
+          clearCart();
+          toast.success("Pagamento confirmado!");
+          setTimeout(() => {
+            navigate({ to: "/pedido/sucesso/$numero", params: { numero: pix.orderNumber } });
+          }, 1200);
+          return;
+        }
+        if (["rejected", "cancelled", "refunded"].includes(r.status)) {
+          setPix((p) => (p ? { ...p, status: "erro" } : p));
+          return;
+        }
+      } catch (e) {
+        console.warn("polling pix:", e);
+      }
+      pollRef.current = window.setTimeout(tick, 4000);
+    };
+    pollRef.current = window.setTimeout(tick, 4000);
+    return () => {
+      cancelled = true;
+      if (pollRef.current) window.clearTimeout(pollRef.current);
+    };
+  }, [pix?.paymentId, pix?.status]); // eslint-disable-line
+
   const canSubmit =
     items.length > 0 &&
     name.trim().length >= 2 &&
