@@ -71,7 +71,7 @@ export function CartDrawer() {
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
-                        <h4 className="font-display text-base leading-tight truncate">{item.product.node.title}</h4>
+                        <h3 className="font-display text-base leading-tight truncate">{item.product.node.title}</h3>
                         <p className="text-xs text-muted-foreground mt-1">{item.selectedOptions.map((o) => o.value).join(" · ")}</p>
                         <p className="text-sm mt-2">{formatPrice(item.price.amount, item.price.currencyCode)}</p>
                       </div>
