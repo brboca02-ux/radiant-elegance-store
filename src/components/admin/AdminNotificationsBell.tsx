@@ -217,33 +217,50 @@ export function AdminNotificationsBell() {
               const isNew = eventTime(r) > lastRead;
               const when = new Date(eventTime(r));
               return (
-                <Link
+                <div
                   key={r.id}
-                  to="/pedidos/rastreio/$id"
-                  params={{ id: r.id }}
-                  onClick={() => setOpen(false)}
                   className={`flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition ${isNew ? "bg-primary/5" : ""}`}
                 >
-                  <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${m.bg}`}>
-                    <m.Icon className={`h-4 w-4 ${m.color}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold truncate">
-                        Pedido {r.order_number}
-                      </p>
-                      {isNew && <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
+                  <Link
+                    to="/pedidos/rastreio/$id"
+                    params={{ id: r.id }}
+                    onClick={() => setOpen(false)}
+                    className="flex items-start gap-3 flex-1 min-w-0"
+                  >
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${m.bg}`}>
+                      <m.Icon className={`h-4 w-4 ${m.color}`} />
                     </div>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {m.label}
-                      {r.customer?.name ? ` · ${r.customer.name}` : ""}
-                      {` · ${formatPrice(r.total, "BRL")}`}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground/70 mt-0.5">
-                      {when.toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
-                    </p>
-                  </div>
-                </Link>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold truncate">
+                          Pedido {r.order_number}
+                        </p>
+                        {isNew && <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {m.label}
+                        {r.customer?.name ? ` · ${r.customer.name}` : ""}
+                        {` · ${formatPrice(r.total, "BRL")}`}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+                        {when.toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
+                  </Link>
+                  {r.status === "pago" && r.customer?.phone && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openPaidWhatsApp(r);
+                      }}
+                      title="Enviar confirmação por WhatsApp"
+                      className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md bg-[#25D366] text-white hover:opacity-90 transition"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               );
             })}
           </div>
