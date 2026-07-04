@@ -232,8 +232,8 @@ function ProductPage() {
   return (
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="relative -mx-4 sm:mx-0 group/carousel">
+      <div className="max-w-[1400px] mx-auto w-full overflow-x-hidden px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="relative -mx-4 sm:mx-0 min-w-0 group/carousel">
           <div
             ref={scrollerRef}
             onScroll={(e) => {
@@ -381,7 +381,7 @@ function ProductPage() {
 
 
 
-        <div className="lg:sticky lg:top-32 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">MD Modas</span>
           <h1 className="font-display font-extrabold text-3xl md:text-4xl mt-3">{data.title}</h1>
           <div className="mt-4">
@@ -468,13 +468,14 @@ function ProductPage() {
             </div>
           )}
 
-          <div className="mt-6 space-y-2.5">
-            <Button onClick={handleAdd} disabled={isAdding || soldOut || !selected} size="xl" className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-base">
+          <div className="mt-6 space-y-2.5 w-full">
+            <Button onClick={handleAdd} disabled={isAdding || soldOut || !selected} size="xl" className="w-full min-w-0 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-sm sm:text-base whitespace-normal">
               {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : soldOut ? "Indisponível" : "🛒 Adicionar à Sacola"}
             </Button>
-            <Button asChild size="xl" className="w-full rounded-full bg-[#25D366] hover:bg-[#25D366]/90 text-white h-14 text-base">
-              <a href={waLink} target="_blank" rel="noopener noreferrer" onClick={() => track.whatsappClick("product")}>
-                <MessageCircle className="w-5 h-5 mr-2" /> Comprar pelo WhatsApp
+            <Button asChild size="xl" className="w-full min-w-0 rounded-full bg-[#25D366] hover:bg-[#25D366]/90 text-white h-14 text-sm sm:text-base whitespace-normal">
+              <a href={waLink} target="_blank" rel="noopener noreferrer" onClick={() => track.whatsappClick("product")} className="flex items-center justify-center gap-2 px-3">
+                <MessageCircle className="w-5 h-5 shrink-0" />
+                <span className="truncate">Comprar pelo WhatsApp</span>
               </a>
             </Button>
           </div>
