@@ -97,7 +97,7 @@ export function RelatedProducts({
             {recommended.map((p) => (
               <div
                 key={p.node.id}
-                className="shrink-0 snap-start flex basis-[calc((100%-1rem)/2)] sm:basis-[calc((100%-3rem)/3)] lg:basis-[calc((100%-4.5rem)/4)]"
+                className="shrink-0 snap-start flex basis-[70%] sm:basis-[calc((100%-3rem)/3)]"
               >
                 <ProductCard product={p} />
               </div>
