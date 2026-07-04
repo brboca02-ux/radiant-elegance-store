@@ -65,9 +65,11 @@ function CheckoutPage() {
 
   // frete e pagamento
   const [quotes, setQuotes] = useState<ShippingQuote[]>([]);
+  const [quotesLoading, setQuotesLoading] = useState(false);
   const [shippingCode, setShippingCode] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [submitting, setSubmitting] = useState(false);
+  const [submitStage, setSubmitStage] = useState<"idle" | "creating" | "processing" | "redirecting">("idle");
 
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0),
