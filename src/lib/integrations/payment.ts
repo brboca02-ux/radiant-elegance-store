@@ -1,13 +1,15 @@
-// Adapter de pagamento. Implementação atual é mock (gera ID fake e
-// mantém o pedido como `aguardando_pagamento`). Quando você escolher
-// Mercado Pago / Asaas / Pagar.me, troque a implementação ativa abaixo.
+// Adapter de pagamento. Implementação ativa: Mercado Pago (Checkout Pro).
+// A criação da preference roda no server (server function), mantendo o
+// MP_ACCESS_TOKEN fora do bundle do client.
+
+import { createMpPreference } from "./mercadopago.functions";
 
 export type PaymentMethod = "pix" | "cartao" | "boleto";
 
 export interface CreatePaymentInput {
   orderId: string;
   orderNumber: string;
-  amount: number;     // R$
+  amount: number;
   method: PaymentMethod;
   customer: { name: string; email: string; cpf?: string; phone?: string };
 }
@@ -27,16 +29,32 @@ export interface PaymentProvider {
   createPayment(input: CreatePaymentInput): Promise<CreatePaymentResult>;
 }
 
-export const MockPaymentProvider: PaymentProvider = {
-  name: "mock",
-  async createPayment({ orderId, method }) {
+function currentSiteUrl(): string {
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin;
+  }
+  return "https://mdmodas.lovable.app";
+}
+
+export const MercadoPagoProvider: PaymentProvider = {
+  name: "mercadopago",
+  async createPayment(input) {
+    const result = await createMpPreference({
+      data: {
+        orderId: input.orderId,
+        orderNumber: input.orderNumber,
+        amount: input.amount,
+        method: input.method,
+        siteUrl: currentSiteUrl(),
+        customer: input.customer,
+      },
+    });
     return {
-      provider: "mock",
-      paymentId: `mock_${orderId.slice(0, 8)}_${Date.now()}`,
-      // sem URL — UI mostra "aguardando integração de gateway"
-      ...(method === "pix" ? { pixCopyPaste: "" } : {}),
+      provider: result.provider,
+      paymentId: result.paymentId,
+      paymentUrl: result.paymentUrl,
     };
   },
 };
 
-export const payment: PaymentProvider = MockPaymentProvider;
+export const payment: PaymentProvider = MercadoPagoProvider;
