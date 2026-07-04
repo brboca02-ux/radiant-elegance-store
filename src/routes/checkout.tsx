@@ -429,16 +429,29 @@ function CheckoutPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
+                aria-live="polite"
                 className="w-full mt-5 bg-foreground text-background h-12 text-[11px] tracking-[0.25em] uppercase font-medium hover:bg-foreground/90 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Finalizar pedido <ChevronRight className="h-4 w-4" /></>}
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="tracking-normal normal-case text-xs">{stageMessage}</span>
+                  </>
+                ) : (
+                  <>Finalizar pedido <ChevronRight className="h-4 w-4" /></>
+                )}
               </button>
+              {submitting && (
+                <p aria-live="polite" className="mt-2 text-[11px] text-muted-foreground text-center">
+                  Não feche esta janela — estamos processando seu pedido.
+                </p>
+              )}
               <p className="mt-3 text-[10px] text-muted-foreground text-center">
                 Ao finalizar você concorda com nossos termos e política de privacidade.
               </p>
             </div>
           </aside>
-        </div>
+        </fieldset>
       </div>
     </div>
   );
