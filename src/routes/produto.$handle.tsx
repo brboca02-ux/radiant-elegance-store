@@ -153,6 +153,26 @@ function ProductPage() {
     }
   }, [data?.id, selected?.id]); // eslint-disable-line
 
+  // Pré-carrega as próximas imagens da galeria (após a atual) assim que a página abre,
+  // para que o swipe/setas mostrem a foto instantaneamente.
+  useEffect(() => {
+    if (typeof window === "undefined" || images.length <= 1) return;
+    const timers: number[] = [];
+    images.forEach((img, i) => {
+      if (i === 0) return; // a primeira já vem eager
+      const t = window.setTimeout(() => {
+        const el = new window.Image();
+        el.decoding = "async";
+        el.srcset = buildSrcSet(img.url, [480, 800, 1200]);
+        el.sizes = PDP_SIZES;
+        el.src = img.url;
+      }, i * 120); // pequeno stagger p/ não brigar com o LCP
+      timers.push(t);
+    });
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [images]);
+
+
   if (loading || (!loaded && !product)) {
     return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
   }
