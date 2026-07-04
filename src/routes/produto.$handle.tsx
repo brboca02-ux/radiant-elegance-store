@@ -210,30 +210,37 @@ function ProductPage() {
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="flex flex-col gap-3">
-          {images.map((img, i) => (
-            <button
-              type="button"
-              key={`${color ?? "x"}-${i}`}
-              onClick={() => setLightboxIdx(i)}
-              aria-label={`Ampliar imagem ${i + 1}`}
-              className="relative bg-secondary overflow-hidden rounded-md group aspect-[4/5] w-full"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
-              <img
-                src={img.url}
-                srcSet={buildSrcSet(img.url, [480, 800, 1200, 1600])}
-                sizes={PDP_SIZES}
-                alt={img.altText ?? data.title}
-                loading={i === 0 ? "eager" : "lazy"}
-                decoding="async"
-                fetchPriority={i === 0 ? "high" : "auto"}
-                style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
-                onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
-                className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </button>
-          ))}
+        <div className="-mx-4 sm:mx-0">
+          <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth px-4 sm:px-0 pb-2 [scrollbar-width:thin]">
+            {images.map((img, i) => (
+              <button
+                type="button"
+                key={`${color ?? "x"}-${i}`}
+                onClick={() => setLightboxIdx(i)}
+                aria-label={`Ampliar imagem ${i + 1}`}
+                className="relative bg-secondary overflow-hidden rounded-md group aspect-[4/5] shrink-0 w-[85%] sm:w-[70%] lg:w-full snap-center"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
+                <img
+                  src={img.url}
+                  srcSet={buildSrcSet(img.url, [480, 800, 1200, 1600])}
+                  sizes={PDP_SIZES}
+                  alt={img.altText ?? data.title}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={i === 0 ? "high" : "auto"}
+                  style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
+                  onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
+                  className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </button>
+            ))}
+          </div>
+          {images.length > 1 && (
+            <p className="text-center text-xs text-muted-foreground mt-1">
+              Arraste para ver mais fotos →
+            </p>
+          )}
         </div>
 
 
