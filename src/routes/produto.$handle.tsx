@@ -459,6 +459,9 @@ function ProductPage() {
         </div>
       </div>
 
+      {product && <RelatedProducts currentProduct={product} />}
+
+
       {lightboxIdx !== null && images[lightboxIdx] && (
         <div
           className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
