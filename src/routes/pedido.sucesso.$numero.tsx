@@ -23,7 +23,9 @@ export const Route = createFileRoute("/pedido/sucesso/$numero")({
   component: SuccessPage,
 });
 
-interface OrderView extends PublicOrder {}
+interface OrderView extends PublicOrder {
+  customer?: { name: string; email: string; phone: string | null; cpf: string | null } | null;
+}
 
 function toView(o: Awaited<ReturnType<typeof getOrderByNumber>>): OrderView | null {
   if (!o) return null;
@@ -45,6 +47,9 @@ function toView(o: Awaited<ReturnType<typeof getOrderByNumber>>): OrderView | nu
     paid_at: o.paid_at,
     address: o.address,
     items: o.items,
+    customer: o.customer
+      ? { name: o.customer.name, email: o.customer.email, phone: o.customer.phone, cpf: o.customer.cpf }
+      : null,
   };
 }
 
@@ -259,6 +264,36 @@ function SuccessPage() {
           </p>
         )}
       </div>
+
+      {order.customer && (
+        <div className="mt-6 border border-border rounded-md p-6 space-y-2">
+          <h2 className="font-display text-xl flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-primary" /> Dados do cliente
+          </h2>
+          <dl className="text-sm grid grid-cols-1 sm:grid-cols-2 gap-y-1 gap-x-6">
+            <div className="flex justify-between sm:block">
+              <dt className="text-muted-foreground">Nome</dt>
+              <dd className="font-medium text-foreground sm:mt-0.5">{order.customer.name}</dd>
+            </div>
+            <div className="flex justify-between sm:block">
+              <dt className="text-muted-foreground">E-mail</dt>
+              <dd className="font-medium text-foreground sm:mt-0.5 break-all">{order.customer.email}</dd>
+            </div>
+            {order.customer.phone && (
+              <div className="flex justify-between sm:block">
+                <dt className="text-muted-foreground">Telefone</dt>
+                <dd className="font-medium text-foreground sm:mt-0.5">{order.customer.phone}</dd>
+              </div>
+            )}
+            {order.customer.cpf && (
+              <div className="flex justify-between sm:block">
+                <dt className="text-muted-foreground">CPF</dt>
+                <dd className="font-medium text-foreground sm:mt-0.5">{order.customer.cpf}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      )}
 
       <div className="mt-6 border border-border rounded-md p-6 space-y-4">
         <h2 className="font-display text-xl flex items-center gap-2">
