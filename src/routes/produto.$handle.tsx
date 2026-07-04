@@ -255,7 +255,7 @@ function ProductPage() {
         </ol>
       </nav>
       <div className="max-w-[1400px] mx-auto w-full overflow-x-hidden px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="relative -mx-4 sm:mx-0 min-w-0 group/carousel">
+        <div className="relative -mx-4 sm:mx-0 min-w-0 group/carousel lg:col-start-1 lg:row-start-1">
           <div
             ref={scrollerRef}
             onScroll={(e) => {
