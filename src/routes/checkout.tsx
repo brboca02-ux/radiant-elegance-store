@@ -249,8 +249,9 @@ function CheckoutPage() {
         payment_method: paymentMethod,
       });
 
-      // cria pagamento (mock por enquanto)
+      // cria preference no gateway (Mercado Pago)
       setSubmitStage("processing");
+      let paymentUrl: string | undefined;
       try {
         const pay = await payment.createPayment({
           orderId: order.id,
@@ -259,6 +260,7 @@ function CheckoutPage() {
           method: paymentMethod,
           customer: { name, email, cpf: onlyDigits(cpf) || undefined, phone: onlyDigits(phone) || undefined },
         });
+        paymentUrl = pay.paymentUrl;
         await supabase.from("orders").update({
           payment_provider: pay.provider,
           payment_id: pay.paymentId,
@@ -266,12 +268,21 @@ function CheckoutPage() {
         }).eq("id", order.id);
       } catch (e) {
         console.warn("Pagamento não pôde ser criado:", e);
+        toast.warning("Pedido criado, mas o pagamento não pôde ser iniciado agora.", {
+          description: "Você poderá pagar pela página do pedido.",
+        });
       }
 
       setSubmitStage("redirecting");
       clearCart();
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       toast.success("Pedido criado!", { description: order.order_number });
+
+      if (paymentUrl) {
+        // Redireciona para o Checkout Pro do Mercado Pago
+        window.location.href = paymentUrl;
+        return;
+      }
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
     } catch (e) {
       console.error(e);
@@ -463,7 +474,7 @@ function CheckoutPage() {
                 ))}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                Gateway de pagamento em integração — o pedido será criado e você receberá instruções por e-mail/WhatsApp.
+                Pagamento processado com segurança pelo Mercado Pago. Você será redirecionado para concluir.
               </p>
             </Section>
           </div>
