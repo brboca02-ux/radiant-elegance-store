@@ -341,7 +341,7 @@ export function Header() {
                       return (
                         <div className="h-full bg-primary/10 border border-primary/20 rounded-xl p-6 flex flex-col justify-between">
                           <div>
-                            <h4 className="font-display text-lg font-bold text-primary mb-1">{p.title}</h4>
+                            <h3 className="font-display text-lg font-bold text-primary mb-1">{p.title}</h3>
                             {p.subtitle && <p className="text-sm text-foreground/70">{p.subtitle}</p>}
                           </div>
                           <Link
