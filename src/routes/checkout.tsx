@@ -350,7 +350,22 @@ function CheckoutPage() {
         }
       }
 
-      // Cartão / Boleto: continua via Checkout Pro (redirect)
+      // Cartão: abre Card Payment Brick inline (checkout transparente).
+      if (paymentMethod === "cartao") {
+        setCard({
+          orderId: order.id,
+          orderNumber: order.order_number,
+          amount: order.total,
+          email: v.email,
+        });
+        try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+        toast.success("Pedido criado — preencha os dados do cartão.");
+        setSubmitStage("idle");
+        setSubmitting(false);
+        return;
+      }
+
+      // Boleto: continua via Checkout Pro (redirect).
       let paymentUrl: string | undefined;
       try {
         const pay = await payment.createPayment({
