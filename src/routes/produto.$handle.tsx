@@ -366,7 +366,7 @@ function ProductPage() {
         </div>
 
         {images.length > 1 && (
-          <div className="lg:col-start-1 -mt-4 lg:-mt-6 px-4 sm:px-0">
+          <div className="lg:col-start-1 lg:row-start-2 -mt-4 lg:-mt-6 px-4 sm:px-0">
             <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {images.map((img, i) => {
                 const active = i === carouselIdx;
