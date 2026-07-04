@@ -66,6 +66,47 @@ function OrderDetailPage() {
     }
   };
 
+  const pickupUrl = order
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/pedido/retirada/${order.number}${
+        order.customer?.email ? `?email=${encodeURIComponent(order.customer.email)}` : ""
+      }`
+    : "";
+
+  const confirmPickup = async () => {
+    if (!order) return;
+    if (!paid) {
+      toast.error("Confirme o pagamento antes de registrar a retirada.");
+      return;
+    }
+    if (!confirm(`Confirmar retirada na loja do pedido ${order.number}?`)) return;
+    setSavingStage("entregue");
+    try {
+      await setOrderFulfillment(order.id, "entregue");
+      setFulfillment("entregue");
+      setStatus(order.id, "entregue");
+      toast.success("Retirada registrada como Entregue.");
+      void hydrate();
+    } catch (e) {
+      toast.error("Falha ao registrar retirada", { description: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setSavingStage(null);
+    }
+  };
+
+  const sendPickupWhatsapp = () => {
+    if (!order?.customer.phone) return;
+    const msg = `Olá ${order.customer.name}! Seu pedido *${order.number}* está pronto para retirada na loja MD Modas. Instruções e endereço: ${pickupUrl}`;
+    window.open(buildCustomerWhatsAppLink(order.customer.phone, msg), "_blank", "noopener");
+  };
+
+  const copyPickupLink = async () => {
+    try {
+      await navigator.clipboard.writeText(pickupUrl);
+      toast.success("Link de retirada copiado!");
+    } catch {
+      toast.error("Não foi possível copiar o link.");
+    }
+
   const nextStatus = useMemo<OrderStatus | null>(() => {
     if (!order || order.status === "cancelado" || order.status === "entregue") return null;
     const idx = ORDER_STATUS_FLOW.indexOf(order.status);
