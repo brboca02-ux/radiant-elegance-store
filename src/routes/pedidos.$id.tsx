@@ -9,10 +9,10 @@ import {
   fmtBRL, fmtDate, type OrderStatus,
 } from "@/stores/ordersStore";
 import {
-  FULFILLMENT_FLOW, FULFILLMENT_LABEL, setOrderFulfillment,
+  FULFILLMENT_FLOW, FULFILLMENT_LABEL, FULFILLMENT_DESCRIPTION, setOrderFulfillment,
   getOrderPublic, type FulfillmentStage,
 } from "@/lib/api/orderTracking";
-import { buildCustomerWhatsAppLink, buildOrderPaidMessage } from "@/lib/shopify";
+import { buildCustomerWhatsAppLink, buildOrderPaidMessage, buildStageMessage } from "@/lib/shopify";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedidos/$id")({
@@ -47,7 +47,25 @@ function OrderDetailPage() {
 
   const paid = order?.payment_status === "pago";
 
-  const advanceFulfillment = async (stage: FulfillmentStage) => {
+  const trackingUrl = order
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/pedido/${order.number}${
+        order?.customer?.email ? `?email=${encodeURIComponent(order.customer.email)}` : ""
+      }`
+    : "";
+
+  const notifyStageWhatsApp = (stage: FulfillmentStage) => {
+    if (!order?.customer?.phone) return;
+    const msg = buildStageMessage({
+      customerName: order.customer.name,
+      orderNumber: order.number,
+      stageLabel: FULFILLMENT_LABEL[stage],
+      stageDescription: FULFILLMENT_DESCRIPTION[stage],
+      trackingUrl,
+    });
+    window.open(buildCustomerWhatsAppLink(order.customer.phone, msg), "_blank", "noopener");
+  };
+
+  const advanceFulfillment = async (stage: FulfillmentStage, opts?: { notify?: boolean }) => {
     if (!order) return;
     if (!paid) {
       toast.error("Confirme o pagamento antes de avançar as etapas de envio.");
@@ -59,6 +77,7 @@ function OrderDetailPage() {
       setFulfillment(stage);
       toast.success(`Etapa atualizada: ${FULFILLMENT_LABEL[stage]}`);
       void hydrate();
+      if (opts?.notify) notifyStageWhatsApp(stage);
     } catch (e) {
       toast.error("Falha ao atualizar etapa", { description: e instanceof Error ? e.message : String(e) });
     } finally {
@@ -297,26 +316,89 @@ function OrderDetailPage() {
                   const done = currentIdx >= i;
                   const isCurrent = currentIdx === i;
                   return (
-                    <button
-                      key={s}
-                      disabled={!paid || savingStage !== null || isCurrent}
-                      onClick={() => advanceFulfillment(s)}
-                      className={`w-full flex items-center justify-between h-9 px-3 rounded-md border text-xs transition
-                        ${done ? "border-primary/40 bg-primary/5 text-foreground" : "border-border text-muted-foreground"}
-                        ${isCurrent ? "ring-2 ring-primary/30" : ""}
-                        hover:bg-muted disabled:cursor-not-allowed disabled:opacity-70`}
-                    >
-                      <span className="font-medium">{i + 1}. {FULFILLMENT_LABEL[s]}</span>
-                      {savingStage === s ? (
-                        <span className="text-[10px]">salvando…</span>
-                      ) : done ? (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-                      ) : null}
-                    </button>
+                    <div key={s} className="flex items-center gap-1.5">
+                      <button
+                        disabled={!paid || savingStage !== null || isCurrent}
+                        onClick={() => advanceFulfillment(s)}
+                        className={`flex-1 flex items-center justify-between h-9 px-3 rounded-md border text-xs transition
+                          ${done ? "border-primary/40 bg-primary/5 text-foreground" : "border-border text-muted-foreground"}
+                          ${isCurrent ? "ring-2 ring-primary/30" : ""}
+                          hover:bg-muted disabled:cursor-not-allowed disabled:opacity-70`}
+                      >
+                        <span className="font-medium">{i + 1}. {FULFILLMENT_LABEL[s]}</span>
+                        {savingStage === s ? (
+                          <span className="text-[10px]">salvando…</span>
+                        ) : done ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                        ) : null}
+                      </button>
+                      {paid && order.customer.phone && (
+                        <button
+                          title="Marcar e avisar cliente no WhatsApp"
+                          disabled={savingStage !== null || isCurrent}
+                          onClick={() => advanceFulfillment(s, { notify: true })}
+                          className="h-9 w-9 inline-flex items-center justify-center rounded-md bg-[#25D366] text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>
+              {paid && order.customer.phone && (
+                <p className="mt-3 text-[11px] text-muted-foreground">
+                  Clique no ícone verde para atualizar a etapa <strong>e</strong> abrir o WhatsApp já com a mensagem pronta.
+                </p>
+              )}
             </Card>
+
+            {/* Atalhos 1-clique para etapas de retirada/entrega */}
+            {paid && (
+              <Card title="Avisos rápidos" icon={<MessageCircle className="h-4 w-4" />}>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Atualiza a etapa e abre o WhatsApp do cliente com a mensagem pronta.
+                </p>
+                <div className="grid grid-cols-1 gap-2">
+                  <button
+                    onClick={() => advanceFulfillment("pronto_retirada", { notify: true })}
+                    disabled={savingStage !== null || !order.customer.phone}
+                    className="w-full inline-flex items-center justify-between h-10 px-3 rounded-md bg-primary/10 text-primary border border-primary/30 text-xs font-medium hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Store className="h-3.5 w-3.5" /> Pronto p/ retirada
+                    </span>
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => advanceFulfillment("em_transito", { notify: true })}
+                    disabled={savingStage !== null || !order.customer.phone}
+                    className="w-full inline-flex items-center justify-between h-10 px-3 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Truck className="h-3.5 w-3.5" /> Em trânsito
+                    </span>
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => advanceFulfillment("entregue", { notify: true })}
+                    disabled={savingStage !== null || !order.customer.phone}
+                    className="w-full inline-flex items-center justify-between h-10 px-3 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium hover:bg-emerald-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Entregue
+                    </span>
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                {!order.customer.phone && (
+                  <p className="mt-2 text-[11px] text-amber-600">Cliente sem telefone — não é possível avisar no WhatsApp.</p>
+                )}
+                <p className="mt-3 text-[11px] text-muted-foreground break-all">
+                  Link público: {trackingUrl || "—"}
+                </p>
+              </Card>
+            )}
 
             <Card title="Retirada na loja" icon={<Store className="h-4 w-4" />}>
               <p className="text-xs text-muted-foreground mb-3">

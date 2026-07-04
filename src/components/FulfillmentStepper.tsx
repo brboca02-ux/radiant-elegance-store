@@ -1,4 +1,4 @@
-import { Check, Package, PackageCheck, Truck, MapPin, Home } from "lucide-react";
+import { Check, Package, PackageCheck, Truck, MapPin, Home, Store, Send } from "lucide-react";
 import {
   FULFILLMENT_FLOW,
   FULFILLMENT_LABEL,
@@ -8,8 +8,10 @@ import {
 const ICONS: Record<FulfillmentStage, typeof Package> = {
   recebido: Package,
   embalado: PackageCheck,
+  pronto_retirada: Store,
   coletado: MapPin,
-  enviado: Truck,
+  enviado: Send,
+  em_transito: Truck,
   entregue: Home,
 };
 
@@ -25,7 +27,7 @@ export function FulfillmentStepper({
   const currentIdx = current ? FULFILLMENT_FLOW.indexOf(current) : -1;
 
   return (
-    <ol className="grid grid-cols-5 gap-2 sm:gap-4">
+    <ol className={`grid gap-2 sm:gap-4 grid-cols-${FULFILLMENT_FLOW.length}`} style={{ gridTemplateColumns: `repeat(${FULFILLMENT_FLOW.length}, minmax(0, 1fr))` }}>
       {FULFILLMENT_FLOW.map((stage, i) => {
         const done = paid && currentIdx >= i;
         const isCurrent = paid && currentIdx === i;

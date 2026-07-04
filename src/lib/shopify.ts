@@ -159,3 +159,22 @@ export function buildOrderPaidMessage(params: {
     `Qualquer dúvida, é só responder essa mensagem. Obrigada pela confiança! 🌸`
   );
 }
+
+/** Mensagem para avisar avanço de etapa (retirada/entrega) via WhatsApp. */
+export function buildStageMessage(params: {
+  customerName?: string | null;
+  orderNumber: string;
+  stageLabel: string;
+  stageDescription?: string;
+  trackingUrl: string;
+}) {
+  const nome = params.customerName?.split(" ")[0] ?? "Cliente";
+  return (
+    `Oi ${nome}! 💛\n\n` +
+    `Atualização do seu pedido *${params.orderNumber}*:\n` +
+    `➡️ *${params.stageLabel}*\n` +
+    (params.stageDescription ? `${params.stageDescription}\n` : "") +
+    `\nAcompanhe em tempo real:\n${params.trackingUrl}\n\n` +
+    `— MD Modas`
+  );
+}
