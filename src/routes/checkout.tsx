@@ -105,6 +105,45 @@ function CheckoutPage() {
     if ((meta.full_name || meta.name) && !name) setName(meta.full_name || meta.name || "");
   }, [user]); // eslint-disable-line
 
+  // hidrata rascunho salvo (uma vez)
+  useEffect(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem(DRAFT_KEY) : null;
+      if (!raw) return;
+      const d = JSON.parse(raw) as Partial<Record<string, string>>;
+      if (d.name) setName((v) => v || d.name!);
+      if (d.email) setEmail((v) => v || d.email!);
+      if (d.phone) setPhone((v) => v || d.phone!);
+      if (d.cpf) setCpf((v) => v || d.cpf!);
+      if (d.cep) setCep((v) => v || d.cep!);
+      if (d.street) setStreet((v) => v || d.street!);
+      if (d.number) setNumber((v) => v || d.number!);
+      if (d.complement) setComplement((v) => v || d.complement!);
+      if (d.district) setDistrict((v) => v || d.district!);
+      if (d.city) setCity((v) => v || d.city!);
+      if (d.stateUf) setStateUf((v) => v || d.stateUf!);
+    } catch {
+      // ignora rascunho corrompido
+    }
+  }, []); // eslint-disable-line
+
+  // persiste rascunho a cada mudança (debounced simples)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const t = window.setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ name, email, phone, cpf, cep, street, number, complement, district, city, stateUf }),
+        );
+      } catch {
+        // quota / privacidade: silencia
+      }
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [name, email, phone, cpf, cep, street, number, complement, district, city, stateUf]);
+
+
   // auto-preenche endereço assim que o CEP fica completo (8 dígitos)
   useEffect(() => {
     const c = onlyDigits(cep);
