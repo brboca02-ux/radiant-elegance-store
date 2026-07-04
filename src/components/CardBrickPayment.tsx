@@ -93,9 +93,18 @@ export function CardBrickPayment({ amount, payerEmail, onSubmit, disabled }: Pro
             onError: (err: unknown) => {
               console.warn("brick error:", err);
             },
-            onSubmit: (data: { formData: CardBrickFormData }) => {
+            onSubmit: (arg: CardBrickFormData | { formData: CardBrickFormData }) => {
+              // Card Payment Brick entrega formData direto; Payment Brick envolve em { formData }.
+              const formData =
+                (arg as { formData?: CardBrickFormData })?.formData ?? (arg as CardBrickFormData);
               return new Promise<void>((resolve, reject) => {
-                onSubmitRef.current(data.formData)
+                if (!formData?.token) {
+                  const err = new Error("Dados do cartão incompletos");
+                  toast.error(err.message);
+                  reject(err);
+                  return;
+                }
+                onSubmitRef.current(formData)
                   .then(() => resolve())
                   .catch((e) => {
                     toast.error((e as Error).message || "Falha ao processar o cartão");
