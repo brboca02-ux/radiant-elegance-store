@@ -12,6 +12,8 @@ import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
 import { supabase } from "@/lib/supabaseClient";
 import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
+import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
+import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
 
 const DRAFT_KEY = "md_checkout_draft_v1";
 
@@ -95,6 +97,12 @@ function CheckoutPage() {
     qrCode: string | null;
     qrCodeBase64: string | null;
     status: "aguardando" | "pago" | "expirado" | "erro";
+  } | null>(null);
+  const [card, setCard] = useState<{
+    orderId: string;
+    orderNumber: string;
+    amount: number;
+    email: string;
   } | null>(null);
   const pollRef = useRef<number | null>(null);
 
@@ -342,7 +350,22 @@ function CheckoutPage() {
         }
       }
 
-      // Cartão / Boleto: continua via Checkout Pro (redirect)
+      // Cartão: abre Card Payment Brick inline (checkout transparente).
+      if (paymentMethod === "cartao") {
+        setCard({
+          orderId: order.id,
+          orderNumber: order.order_number,
+          amount: order.total,
+          email: v.email,
+        });
+        try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+        toast.success("Pedido criado — preencha os dados do cartão.");
+        setSubmitStage("idle");
+        setSubmitting(false);
+        return;
+      }
+
+      // Boleto: continua via Checkout Pro (redirect).
       let paymentUrl: string | undefined;
       try {
         const pay = await payment.createPayment({
@@ -564,7 +587,12 @@ function CheckoutPage() {
                 ))}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                Pagamento processado com segurança pelo Mercado Pago. Você será redirecionado para concluir.
+                Pagamento processado com segurança pelo Mercado Pago.{" "}
+                {paymentMethod === "pix"
+                  ? "O QR Code é gerado aqui mesmo, sem sair do site."
+                  : paymentMethod === "cartao"
+                    ? "Você digita os dados do cartão diretamente nesta página."
+                    : "Você será redirecionado para concluir o pagamento do boleto."}
               </p>
             </Section>
           </div>
@@ -744,6 +772,73 @@ function CheckoutPage() {
                 Fechar
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {card && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="card-title"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+        >
+          <div className="bg-background rounded-lg max-w-lg w-full p-6 shadow-xl my-8">
+            <div className="flex items-center gap-2 mb-1">
+              <CreditCard className="h-5 w-5 text-primary" />
+              <h2 id="card-title" className="font-display text-xl">Pagamento com cartão</h2>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Pedido <span className="font-medium text-foreground">{card.orderNumber}</span> · Total {formatPrice(card.amount, "BRL")}
+            </p>
+
+            <CardBrickPayment
+              amount={card.amount}
+              payerEmail={card.email}
+              onSubmit={async (data: CardBrickFormData) => {
+                const pay = await createMpCardPayment({
+                  data: {
+                    orderId: card.orderId,
+                    orderNumber: card.orderNumber,
+                    amount: card.amount,
+                    siteUrl: window.location.origin,
+                    token: data.token,
+                    installments: data.installments,
+                    paymentMethodId: data.payment_method_id,
+                    issuerId: data.issuer_id,
+                    payer: {
+                      email: data.payer.email ?? card.email,
+                      identification: data.payer.identification,
+                    },
+                  },
+                });
+                await supabase.from("orders").update({
+                  payment_provider: pay.provider,
+                  payment_id: pay.paymentId,
+                }).eq("id", card.orderId);
+
+                if (pay.status === "approved") {
+                  clearCart();
+                  toast.success("Pagamento aprovado!");
+                  navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
+                  return;
+                }
+                if (pay.status === "in_process" || pay.status === "pending") {
+                  clearCart();
+                  toast.info("Pagamento em análise — acompanhe pelo pedido.");
+                  navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
+                  return;
+                }
+                throw new Error(pay.statusDetail ?? "Pagamento não autorizado. Tente outro cartão.");
+              }}
+            />
+
+            <button
+              onClick={() => setCard(null)}
+              className="mt-4 w-full text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              Cancelar e voltar
+            </button>
           </div>
         </div>
       )}
