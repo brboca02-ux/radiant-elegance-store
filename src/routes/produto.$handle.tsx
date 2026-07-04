@@ -210,14 +210,14 @@ function ProductPage() {
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           {images.map((img, i) => (
             <button
               type="button"
               key={`${color ?? "x"}-${i}`}
               onClick={() => setLightboxIdx(i)}
               aria-label={`Ampliar imagem ${i + 1}`}
-              className={`relative bg-secondary overflow-hidden rounded-md group ${i === 0 ? "md:col-span-2 aspect-[4/5]" : "aspect-square"}`}
+              className="relative bg-secondary overflow-hidden rounded-md group aspect-[4/5] w-full"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
               <img
