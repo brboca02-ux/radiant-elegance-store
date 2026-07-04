@@ -220,32 +220,43 @@ function ProductPage() {
               const w = el.clientWidth;
               if (w > 0) setCarouselIdx(Math.round(el.scrollLeft / w));
             }}
-            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth touch-pan-x overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {images.map((img, i) => (
-              <button
-                type="button"
-                key={`${color ?? "x"}-${i}`}
-                onClick={() => setLightboxIdx(i)}
-                aria-label={`Ampliar imagem ${i + 1}`}
-                className="relative bg-secondary overflow-hidden rounded-md aspect-[4/5] shrink-0 w-full snap-center"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-secondary via-muted to-secondary animate-pulse" />
-                <img
-                  src={img.url}
-                  srcSet={buildSrcSet(img.url, [480, 800, 1200, 1600])}
-                  sizes={PDP_SIZES}
-                  alt={img.altText ?? data.title}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  fetchPriority={i === 0 ? "high" : "auto"}
-                  style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
-                  onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
-                  className="relative w-full h-full object-cover"
-                />
-              </button>
-            ))}
+            {images.map((img, i) => {
+              // Carrega a atual, a anterior e a próxima imediatamente; demais entram como lazy.
+              const near = Math.abs(i - carouselIdx) <= 1;
+              return (
+                <button
+                  type="button"
+                  key={`${color ?? "x"}-${i}`}
+                  onClick={() => setLightboxIdx(i)}
+                  aria-label={`Ampliar imagem ${i + 1}`}
+                  className="relative bg-secondary overflow-hidden rounded-md aspect-[4/5] shrink-0 w-full snap-center"
+                >
+                  {/* Skeleton shimmer — só removido no onLoad da imagem */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-[linear-gradient(110deg,hsl(var(--muted))_8%,hsl(var(--secondary))_18%,hsl(var(--muted))_33%)] bg-[length:200%_100%] animate-[shimmer_1.6s_linear_infinite]"
+                    style={{ ['--tw-bg-opacity' as string]: 1 }}
+                  />
+                  <img
+                    src={img.url}
+                    srcSet={buildSrcSet(img.url, [480, 800, 1200, 1600])}
+                    sizes={PDP_SIZES}
+                    alt={img.altText ?? data.title}
+                    loading={i === 0 || near ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                    fetchPriority={i === carouselIdx ? "high" : "auto"}
+                    style={{ backgroundImage: `url('${BLUR_PLACEHOLDER}')`, backgroundSize: "cover" }}
+                    onLoad={(e) => { (e.currentTarget.previousSibling as HTMLElement)?.remove(); }}
+                    className="relative w-full h-full object-cover select-none"
+                  />
+                </button>
+              );
+            })}
           </div>
+
 
           {images.length > 1 && (
             <>
