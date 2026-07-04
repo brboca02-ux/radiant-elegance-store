@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { supabase } from "@/lib/supabaseClient";
+import { listMyOrders, type OrderFull } from "@/lib/api/supaOrders";
 
 export const STORE_ID = "store_md_modas";
 
@@ -145,19 +147,90 @@ const mkOrder = (
 
 const seed: Order[] = [];
 
+// ---- Mapeamento DB -> shape local usado pelo admin ---------------------
+type DbFulfillment = "novo" | "separando" | "enviado" | "entregue" | null | undefined;
+
+function mapDbToLocal(o: OrderFull): Order {
+  const fulfillment = (o as unknown as { fulfillment_status?: DbFulfillment }).fulfillment_status;
+  const status: OrderStatus =
+    o.status === "cancelado"
+      ? "cancelado"
+      : o.status === "pago"
+        ? (fulfillment && ["separando", "enviado", "entregue"].includes(fulfillment)
+            ? (fulfillment as OrderStatus)
+            : "pago")
+        : "novo";
+  const payment_status: PaymentStatus =
+    o.status === "pago" || fulfillment === "separando" || fulfillment === "enviado" || fulfillment === "entregue"
+      ? "pago"
+      : o.status === "cancelado"
+        ? "estornado"
+        : "pendente";
+  const pm = (o.payment_method ?? "manual") as PaymentMethod;
+  return {
+    id: o.id,
+    store_id: STORE_ID,
+    number: o.order_number,
+    customer: {
+      id: o.customer?.id ?? "",
+      name: o.customer?.name ?? "",
+      email: o.customer?.email ?? "",
+      phone: o.customer?.phone ?? "",
+      doc: o.customer?.cpf ?? undefined,
+    },
+    address: {
+      name: o.customer?.name ?? "",
+      zip: o.address?.cep ?? "",
+      street: o.address?.street ?? "",
+      number: o.address?.number ?? "",
+      complement: o.address?.complement ?? undefined,
+      district: o.address?.district ?? "",
+      city: o.address?.city ?? "",
+      state: o.address?.state ?? "",
+    },
+    status,
+    payment_status,
+    payment_method: pm,
+    subtotal: o.subtotal,
+    shipping: o.shipping_cost,
+    discount: o.discount,
+    total: o.total,
+    items: o.items.map((i) => ({
+      id: i.id,
+      order_id: o.id,
+      product_id: "",
+      variant_id: null,
+      name: i.product_name,
+      sku: "",
+      size: i.variant_size ?? undefined,
+      color: i.variant_color ?? undefined,
+      quantity: i.quantity,
+      price: i.unit_price,
+    })),
+    history: [],
+    notes: o.notes ?? undefined,
+    created_at: o.created_at,
+  };
+}
+
+
 interface OrdersState {
   orders: Order[];
+  hydrated: boolean;
   list: () => Order[];
   get: (id: string) => Order | undefined;
   setStatus: (id: string, status: OrderStatus, user_id?: string, note?: string) => void;
   cancel: (id: string, user_id?: string, note?: string) => void;
   remove: (id: string) => void;
+  hydrate: () => Promise<void>;
+  subscribeRealtime: () => () => void;
 }
 
 export const useOrdersStore = create<OrdersState>()(
   persist(
     (set, get) => ({
       orders: seed,
+      hydrated: false,
       list: () => get().orders,
       get: (id) => get().orders.find((o) => o.id === id),
       setStatus: (id, status, user_id = "admin", note) =>
@@ -177,8 +250,34 @@ export const useOrdersStore = create<OrdersState>()(
         })),
       cancel: (id, user_id = "admin", note) => get().setStatus(id, "cancelado", user_id, note),
       remove: (id) => set((s) => ({ orders: s.orders.filter((o) => o.id !== id) })),
+
+      // Puxa pedidos reais do Supabase (respeitando RLS do admin logado).
+      hydrate: async () => {
+        try {
+          const rows = await listMyOrders();
+          const orders = rows.map(mapDbToLocal);
+          set({ orders, hydrated: true });
+        } catch (e) {
+          console.warn("orders hydrate:", e);
+        }
+      },
+
+      // Realtime: qualquer INSERT/UPDATE em orders recarrega a lista.
+      // Isso garante que o webhook do MP refletir mudanças no admin
+      // sem precisar dar refresh na página.
+      subscribeRealtime: () => {
+        const channel = supabase
+          .channel("orders-admin")
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "orders" },
+            () => { void get().hydrate(); },
+          )
+          .subscribe();
+        return () => { supabase.removeChannel(channel); };
+      },
     }),
-    { name: "md_orders_v2", storage: createJSONStorage(() => localStorage) },
+    { name: "md_orders_v2", storage: createJSONStorage(() => localStorage), partialize: (s) => ({ orders: s.orders }) },
   ),
 );
 
