@@ -336,6 +336,15 @@ function CheckoutPage() {
         return;
       }
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
+    } catch (e) {
+      console.error(e);
+      toast.error("Não foi possível finalizar o pedido", { description: (e as Error).message });
+      setSubmitStage("idle");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
 
   const stageMessage =
     submitStage === "creating" ? "Criando seu pedido…"
