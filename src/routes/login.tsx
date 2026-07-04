@@ -93,10 +93,11 @@ function LoginPage() {
 
         <form onSubmit={forgot ? handleForgot : handleLogin} className="space-y-4">
           <div>
-            <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <label htmlFor="login-email" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               E-mail
             </label>
             <Input
+              id="login-email"
               type="email"
               required
               value={email}
@@ -108,10 +109,11 @@ function LoginPage() {
           </div>
           {!forgot && (
             <div>
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label htmlFor="login-password" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Senha
               </label>
               <Input
+                id="login-password"
                 type="password"
                 required
                 value={password}
@@ -128,7 +130,7 @@ function LoginPage() {
           <button
             type="button"
             onClick={() => setForgot((v) => !v)}
-            className="w-full text-xs text-muted-foreground hover:text-foreground transition"
+            className="w-full min-h-11 py-2 text-xs text-muted-foreground hover:text-foreground transition"
           >
             {forgot ? "← Voltar ao login" : "Esqueci minha senha"}
           </button>
