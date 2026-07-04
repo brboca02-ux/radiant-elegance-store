@@ -232,8 +232,8 @@ function ProductPage() {
   return (
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="relative -mx-4 sm:mx-0 group/carousel">
+      <div className="max-w-[1400px] mx-auto w-full overflow-x-hidden px-4 sm:px-6 lg:px-10 py-8 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="relative -mx-4 sm:mx-0 min-w-0 group/carousel">
           <div
             ref={scrollerRef}
             onScroll={(e) => {
