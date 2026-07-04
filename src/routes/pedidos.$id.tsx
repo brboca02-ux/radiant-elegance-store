@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
-  Clock, Send, Truck, MessageCircle,
+  Clock, Send, Truck, MessageCircle, Store, Copy, ExternalLink,
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
