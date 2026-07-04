@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import {
   Store, MapPin, Clock, IdCard, Package, MessageCircle, Copy,
-  CheckCircle2, Loader2, ArrowLeft,
+  CheckCircle2, Loader2, ArrowLeft, CreditCard, PackageCheck, Home, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getOrderPublic } from "@/lib/api/orderTracking";
@@ -103,6 +103,14 @@ function PickupInstructionsPage() {
           </p>
         )}
       </div>
+
+      {/* Timeline de retirada */}
+      <PickupStepper
+        paid={order.status === "pago"}
+        fulfillment={order.fulfillment_status ?? null}
+      />
+
+
 
       {/* Código do pedido */}
       <div className="mt-6 border-2 border-dashed border-primary/40 rounded-md p-5 bg-primary/5">
