@@ -327,6 +327,14 @@ function SuccessPage() {
       </div>
 
       <div className="mt-8 text-center space-y-2">
+        <Link
+          to="/pedido/retirada/$numero"
+          params={{ numero: order.order_number }}
+          search={email ? { email } : {}}
+          className="block text-sm text-primary hover:underline font-medium"
+        >
+          🏬 Ver instruções para retirar na loja
+        </Link>
         <Link to="/pedido/acompanhar" className="block text-sm text-primary hover:underline">
           Consultar outro pedido
         </Link>
