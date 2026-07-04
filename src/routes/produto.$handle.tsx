@@ -381,7 +381,7 @@ function ProductPage() {
 
 
 
-        <div className="lg:sticky lg:top-32 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">MD Modas</span>
           <h1 className="font-display font-extrabold text-3xl md:text-4xl mt-3">{data.title}</h1>
           <div className="mt-4">
