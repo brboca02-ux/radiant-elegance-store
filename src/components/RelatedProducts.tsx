@@ -62,7 +62,7 @@ function scoreProduct(current: Product, candidate: Product): number {
 
 export function RelatedProducts({
   currentProduct,
-  limit = 4,
+  limit = 12,
 }: {
   currentProduct: Product;
   limit?: number;
@@ -88,14 +88,29 @@ export function RelatedProducts({
           <h2 className="font-display text-3xl md:text-4xl mt-2">Você também vai gostar</h2>
           <span className="gold-rule mt-4" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 items-stretch">
-          {recommended.map((p) => (
-            <div key={p.node.id} className="flex">
-              <ProductCard product={p} />
-            </div>
-          ))}
+
+        {/* Mostra 3 sugestões por vez; o restante fica acessível por rolagem horizontal (swipe/scroll). */}
+        <div className="-mx-4 sm:mx-0">
+          <div
+            className="flex gap-3 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth touch-pan-x px-4 sm:px-0 pb-3 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full"
+          >
+            {recommended.map((p) => (
+              <div
+                key={p.node.id}
+                className="shrink-0 snap-start flex basis-[70%] sm:basis-[calc((100%-3rem)/3)]"
+              >
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </div>
+          {recommended.length > 3 && (
+            <p className="text-center text-xs text-muted-foreground mt-2">
+              Arraste para o lado para ver mais →
+            </p>
+          )}
         </div>
       </div>
     </section>
   );
 }
+
