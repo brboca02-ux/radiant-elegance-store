@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, CheckCircle2, Clock, XCircle, ShoppingBag } from "lucide-react";
+import { Bell, CheckCircle2, Clock, XCircle, ShoppingBag, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-import { formatPrice } from "@/lib/shopify";
+import {
+  formatPrice,
+  buildCustomerWhatsAppLink,
+  buildOrderPaidMessage,
+} from "@/lib/shopify";
 
 interface NotifRow {
   id: string;
@@ -12,7 +16,31 @@ interface NotifRow {
   total: number;
   paid_at: string | null;
   created_at: string;
-  customer: { name: string | null } | null;
+  customer: { name: string | null; phone: string | null; email: string | null } | null;
+}
+
+/** Abre o WhatsApp pré-preenchido para avisar o cliente que o pagamento foi confirmado. */
+function openPaidWhatsApp(r: NotifRow) {
+  const phone = r.customer?.phone ?? "";
+  if (!phone) {
+    toast.error("Cliente sem telefone cadastrado.", {
+      description: "Não é possível enviar WhatsApp direto sem o número.",
+    });
+    return;
+  }
+  const trackingUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/pedido/sucesso/${r.order_number}${
+          r.customer?.email ? `?email=${encodeURIComponent(r.customer.email)}` : ""
+        }`
+      : `/pedido/sucesso/${r.order_number}`;
+  const msg = buildOrderPaidMessage({
+    customerName: r.customer?.name,
+    orderNumber: r.order_number,
+    total: r.total,
+    trackingUrl,
+  });
+  window.open(buildCustomerWhatsAppLink(phone, msg), "_blank", "noopener");
 }
 
 const LS_KEY = "mdm_admin_notif_lastread";
