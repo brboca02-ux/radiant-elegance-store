@@ -106,6 +106,9 @@ function OrderDetailPage() {
     } catch {
       toast.error("Não foi possível copiar o link.");
     }
+  };
+
+
 
   const nextStatus = useMemo<OrderStatus | null>(() => {
     if (!order || order.status === "cancelado" || order.status === "entregue") return null;
