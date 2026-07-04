@@ -207,21 +207,31 @@ function CheckoutPage() {
       toast.error("Preencha todos os campos obrigatórios");
       return;
     }
+    const parsed = checkoutSchema.safeParse({
+      name, email, phone, cpf,
+      cep: onlyDigits(cep), street, number, complement,
+      district, city, stateUf, shippingCode,
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Dados inválidos");
+      return;
+    }
+    const v = parsed.data;
     setSubmitting(true);
     setSubmitStage("creating");
     try {
       const order = await createOrder({
         customer: {
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          phone: onlyDigits(phone) || undefined,
-          cpf: onlyDigits(cpf) || undefined,
+          name: v.name,
+          email: v.email,
+          phone: onlyDigits(v.phone ?? "") || undefined,
+          cpf: onlyDigits(v.cpf ?? "") || undefined,
           user_id: user?.id ?? null,
         },
         address: {
-          cep: onlyDigits(cep),
-          street, number, complement: complement || undefined,
-          district, city, state: stateUf,
+          cep: v.cep,
+          street: v.street, number: v.number, complement: v.complement || undefined,
+          district: v.district, city: v.city, state: v.stateUf,
         },
         items: items.map((i) => ({
           product_id: null, // mapping para uuid real (opcional)
