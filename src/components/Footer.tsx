@@ -54,7 +54,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className={COL_TITLE}>Contato</h4>
+          <h3 className={COL_TITLE}>Contato</h3>
           <ul className="space-y-3">
             <li>
               <a href={buildWhatsAppLink("Olá MD Modas!")} target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
