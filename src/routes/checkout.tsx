@@ -151,6 +151,7 @@ function CheckoutPage() {
       return;
     }
     setSubmitting(true);
+    setSubmitStage("creating");
     try {
       const order = await createOrder({
         customer: {
@@ -182,6 +183,7 @@ function CheckoutPage() {
       });
 
       // cria pagamento (mock por enquanto)
+      setSubmitStage("processing");
       try {
         const pay = await payment.createPayment({
           orderId: order.id,
@@ -199,6 +201,7 @@ function CheckoutPage() {
         console.warn("Pagamento não pôde ser criado:", e);
       }
 
+      setSubmitStage("redirecting");
       clearCart();
       toast.success("Pedido criado!", { description: order.order_number });
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
@@ -207,10 +210,23 @@ function CheckoutPage() {
       toast.error("Não foi possível finalizar o pedido", {
         description: (e as Error).message,
       });
+      setSubmitStage("idle");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const stageMessage =
+    submitStage === "creating" ? "Criando seu pedido…"
+    : submitStage === "processing" ? "Processando pagamento…"
+    : submitStage === "redirecting" ? "Tudo pronto! Redirecionando…"
+    : "";
+
+  // progresso baseado no preenchimento
+  const stepIdentDone = name.trim().length >= 2 && /.+@.+\..+/.test(email);
+  const stepAddrDone = onlyDigits(cep).length === 8 && !!street && !!number && !!district && !!city && !!stateUf;
+  const stepShipDone = !!shippingCode;
+  const stepPayDone = stepShipDone; // sempre há um método selecionado
 
   if (items.length === 0) {
     return (
