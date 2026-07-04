@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
-  Clock, Send, Truck,
+  Clock, Send, Truck, MessageCircle,
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
@@ -12,6 +12,7 @@ import {
   FULFILLMENT_FLOW, FULFILLMENT_LABEL, setOrderFulfillment,
   getOrderPublic, type FulfillmentStage,
 } from "@/lib/api/orderTracking";
+import { buildCustomerWhatsAppLink, buildOrderPaidMessage } from "@/lib/shopify";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedidos/$id")({
@@ -95,6 +96,25 @@ function OrderDetailPage() {
             <p className="text-sm text-muted-foreground mt-1">Criado em {fmtDate(order.created_at)}</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {paid && order.customer.phone && (
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/pedido/sucesso/${order.number}${
+                    order.customer.email ? `?email=${encodeURIComponent(order.customer.email)}` : ""
+                  }`;
+                  const msg = buildOrderPaidMessage({
+                    customerName: order.customer.name,
+                    orderNumber: order.number,
+                    total: order.total,
+                    trackingUrl: url,
+                  });
+                  window.open(buildCustomerWhatsAppLink(order.customer.phone, msg), "_blank", "noopener");
+                }}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-[#25D366] text-white text-sm font-medium hover:opacity-90"
+              >
+                <MessageCircle className="h-4 w-4" /> Notificar cliente (WhatsApp)
+              </button>
+            )}
             {nextStatus && (
               <button
                 onClick={() => setStatus(order.id, nextStatus)}

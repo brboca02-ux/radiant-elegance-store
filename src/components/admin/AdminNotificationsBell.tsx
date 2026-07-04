@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, CheckCircle2, Clock, XCircle, ShoppingBag } from "lucide-react";
+import { Bell, CheckCircle2, Clock, XCircle, ShoppingBag, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-import { formatPrice } from "@/lib/shopify";
+import {
+  formatPrice,
+  buildCustomerWhatsAppLink,
+  buildOrderPaidMessage,
+} from "@/lib/shopify";
 
 interface NotifRow {
   id: string;
@@ -12,7 +16,31 @@ interface NotifRow {
   total: number;
   paid_at: string | null;
   created_at: string;
-  customer: { name: string | null } | null;
+  customer: { name: string | null; phone: string | null; email: string | null } | null;
+}
+
+/** Abre o WhatsApp pré-preenchido para avisar o cliente que o pagamento foi confirmado. */
+function openPaidWhatsApp(r: NotifRow) {
+  const phone = r.customer?.phone ?? "";
+  if (!phone) {
+    toast.error("Cliente sem telefone cadastrado.", {
+      description: "Não é possível enviar WhatsApp direto sem o número.",
+    });
+    return;
+  }
+  const trackingUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/pedido/sucesso/${r.order_number}${
+          r.customer?.email ? `?email=${encodeURIComponent(r.customer.email)}` : ""
+        }`
+      : `/pedido/sucesso/${r.order_number}`;
+  const msg = buildOrderPaidMessage({
+    customerName: r.customer?.name,
+    orderNumber: r.order_number,
+    total: r.total,
+    trackingUrl,
+  });
+  window.open(buildCustomerWhatsAppLink(phone, msg), "_blank", "noopener");
 }
 
 const LS_KEY = "mdm_admin_notif_lastread";
@@ -46,12 +74,21 @@ export function AdminNotificationsBell() {
   async function load() {
     const { data } = await supabase
       .from("orders")
-      .select("id, order_number, status, total, paid_at, created_at, customer:customers(name)")
+      .select("id, order_number, status, total, paid_at, created_at, customer:customers(name, phone, email)")
       .order("created_at", { ascending: false })
       .limit(25);
     const list = (data ?? []) as unknown as NotifRow[];
     setRows(list);
     list.forEach((r) => seenIdsRef.current.add(r.id));
+  }
+
+  async function fetchRow(id: string): Promise<NotifRow | null> {
+    const { data } = await supabase
+      .from("orders")
+      .select("id, order_number, status, total, paid_at, created_at, customer:customers(name, phone, email)")
+      .eq("id", id)
+      .maybeSingle();
+    return (data as unknown as NotifRow | null) ?? null;
   }
 
   useEffect(() => {
@@ -78,9 +115,26 @@ export function AdminNotificationsBell() {
           const prev = payload.old as { status?: string };
           if (prev?.status !== r.status) {
             const m = statusMeta(r.status);
-            if (r.status === "pago") toast.success(`Pedido ${r.order_number} pago`);
-            else if (["cancelado", "estornado", "falhou"].includes(r.status))
+            if (r.status === "pago") {
+              // Toast persistente com ação de WhatsApp — o payload do postgres_changes
+              // não traz o join com customer, então buscamos a linha completa.
+              void fetchRow(r.id).then((full) => {
+                toast.success(`Pedido ${r.order_number} pago!`, {
+                  description: full?.customer?.name
+                    ? `Cliente: ${full.customer.name} · ${formatPrice(r.total, "BRL")}`
+                    : `Total ${formatPrice(r.total, "BRL")}`,
+                  duration: 20000,
+                  action: full?.customer?.phone
+                    ? {
+                        label: "Enviar WhatsApp",
+                        onClick: () => openPaidWhatsApp(full),
+                      }
+                    : undefined,
+                });
+              });
+            } else if (["cancelado", "estornado", "falhou"].includes(r.status)) {
               toast.error(`Pedido ${r.order_number}: ${m.label}`);
+            }
           }
           load();
         },
@@ -163,33 +217,50 @@ export function AdminNotificationsBell() {
               const isNew = eventTime(r) > lastRead;
               const when = new Date(eventTime(r));
               return (
-                <Link
+                <div
                   key={r.id}
-                  to="/pedidos/rastreio/$id"
-                  params={{ id: r.id }}
-                  onClick={() => setOpen(false)}
                   className={`flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition ${isNew ? "bg-primary/5" : ""}`}
                 >
-                  <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${m.bg}`}>
-                    <m.Icon className={`h-4 w-4 ${m.color}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold truncate">
-                        Pedido {r.order_number}
-                      </p>
-                      {isNew && <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
+                  <Link
+                    to="/pedidos/rastreio/$id"
+                    params={{ id: r.id }}
+                    onClick={() => setOpen(false)}
+                    className="flex items-start gap-3 flex-1 min-w-0"
+                  >
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${m.bg}`}>
+                      <m.Icon className={`h-4 w-4 ${m.color}`} />
                     </div>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {m.label}
-                      {r.customer?.name ? ` · ${r.customer.name}` : ""}
-                      {` · ${formatPrice(r.total, "BRL")}`}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground/70 mt-0.5">
-                      {when.toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
-                    </p>
-                  </div>
-                </Link>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold truncate">
+                          Pedido {r.order_number}
+                        </p>
+                        {isNew && <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {m.label}
+                        {r.customer?.name ? ` · ${r.customer.name}` : ""}
+                        {` · ${formatPrice(r.total, "BRL")}`}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+                        {when.toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
+                  </Link>
+                  {r.status === "pago" && r.customer?.phone && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openPaidWhatsApp(r);
+                      }}
+                      title="Enviar confirmação por WhatsApp"
+                      className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md bg-[#25D366] text-white hover:opacity-90 transition"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               );
             })}
           </div>
