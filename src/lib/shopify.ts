@@ -134,3 +134,28 @@ export function formatPrice(amount: string | number, currency = "BRL") {
 export function buildWhatsAppLink(message: string) {
   return `https://wa.me/${STORE_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
 }
+
+/** Deep-link para conversar com um cliente específico (número dele). */
+export function buildCustomerWhatsAppLink(phone: string, message: string) {
+  const digits = phone.replace(/\D/g, "");
+  // Adiciona 55 (Brasil) quando o número parece nacional sem DDI.
+  const withCountry = digits.length <= 11 ? `55${digits}` : digits;
+  return `https://wa.me/${withCountry}?text=${encodeURIComponent(message)}`;
+}
+
+/** Mensagem padrão de "pagamento confirmado" para enviar ao cliente. */
+export function buildOrderPaidMessage(params: {
+  customerName?: string | null;
+  orderNumber: string;
+  total: number;
+  trackingUrl: string;
+}) {
+  const nome = params.customerName?.split(" ")[0] ?? "Cliente";
+  const totalStr = formatPrice(params.total, "BRL");
+  return (
+    `Oi ${nome}! Aqui é a MD Modas 💛\n\n` +
+    `Seu pagamento do pedido *${params.orderNumber}* (${totalStr}) foi confirmado! ✅\n\n` +
+    `Já estamos preparando tudo com carinho. Você pode acompanhar cada etapa por aqui:\n${params.trackingUrl}\n\n` +
+    `Qualquer dúvida, é só responder essa mensagem. Obrigada pela confiança! 🌸`
+  );
+}
