@@ -175,8 +175,9 @@ function AppShell() {
   useHydrateStores();
   return (
     <>
+      <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
       <Header />
-      <main className="min-h-[60vh] pb-24 lg:pb-0">
+      <main id="conteudo" tabIndex={-1} className="min-h-[60vh] pb-24 lg:pb-0">
         <Outlet />
       </main>
       <Footer />
