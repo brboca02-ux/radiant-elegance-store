@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck } from "lucide-react";
+import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck, Check } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPrice } from "@/lib/shopify";
@@ -65,9 +65,11 @@ function CheckoutPage() {
 
   // frete e pagamento
   const [quotes, setQuotes] = useState<ShippingQuote[]>([]);
+  const [quotesLoading, setQuotesLoading] = useState(false);
   const [shippingCode, setShippingCode] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [submitting, setSubmitting] = useState(false);
+  const [submitStage, setSubmitStage] = useState<"idle" | "creating" | "processing" | "redirecting">("idle");
 
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0),
@@ -108,11 +110,13 @@ function CheckoutPage() {
   // cotação de frete sempre que CEP/cidade/subtotal mudam
   useEffect(() => {
     const c = onlyDigits(cep);
-    if (c.length !== 8) { setQuotes([]); setShippingCode(""); return; }
+    if (c.length !== 8) { setQuotes([]); setShippingCode(""); setQuotesLoading(false); return; }
     let cancelled = false;
+    setQuotesLoading(true);
     (async () => {
       const q = await shipping.quote({ cep: c, subtotal, itemsCount, city, state: stateUf });
       if (cancelled) return;
+      setQuotesLoading(false);
       setQuotes(q);
       if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
     })();
@@ -147,6 +151,7 @@ function CheckoutPage() {
       return;
     }
     setSubmitting(true);
+    setSubmitStage("creating");
     try {
       const order = await createOrder({
         customer: {
@@ -178,6 +183,7 @@ function CheckoutPage() {
       });
 
       // cria pagamento (mock por enquanto)
+      setSubmitStage("processing");
       try {
         const pay = await payment.createPayment({
           orderId: order.id,
@@ -195,6 +201,7 @@ function CheckoutPage() {
         console.warn("Pagamento não pôde ser criado:", e);
       }
 
+      setSubmitStage("redirecting");
       clearCart();
       toast.success("Pedido criado!", { description: order.order_number });
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
@@ -203,10 +210,23 @@ function CheckoutPage() {
       toast.error("Não foi possível finalizar o pedido", {
         description: (e as Error).message,
       });
+      setSubmitStage("idle");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const stageMessage =
+    submitStage === "creating" ? "Criando seu pedido…"
+    : submitStage === "processing" ? "Processando pagamento…"
+    : submitStage === "redirecting" ? "Tudo pronto! Redirecionando…"
+    : "";
+
+  // progresso baseado no preenchimento
+  const stepIdentDone = name.trim().length >= 2 && /.+@.+\..+/.test(email);
+  const stepAddrDone = onlyDigits(cep).length === 8 && !!street && !!number && !!district && !!city && !!stateUf;
+  const stepShipDone = !!shippingCode;
+  const stepPayDone = stepShipDone; // sempre há um método selecionado
 
   if (items.length === 0) {
     return (
@@ -228,7 +248,34 @@ function CheckoutPage() {
         <h1 className="font-display text-3xl md:text-4xl tracking-tight">Finalizar Compra</h1>
         <p className="text-sm text-muted-foreground mt-1">Preencha seus dados para concluir o pedido.</p>
 
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8 mt-8">
+        {/* Progresso do checkout */}
+        <ol
+          aria-label="Etapas do checkout"
+          className="mt-6 grid grid-cols-4 gap-2 sm:gap-3"
+        >
+          {[
+            { label: "Identificação", done: stepIdentDone },
+            { label: "Endereço", done: stepAddrDone },
+            { label: "Frete", done: stepShipDone },
+            { label: "Pagamento", done: stepPayDone },
+          ].map((s, i) => (
+            <li key={s.label} className="flex items-center gap-2 min-w-0">
+              <span
+                aria-hidden="true"
+                className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                  s.done ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                }`}
+              >
+                {s.done ? <Check className="h-3.5 w-3.5" /> : i + 1}
+              </span>
+              <span className={`text-[11px] sm:text-xs truncate ${s.done ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                {s.label}
+              </span>
+            </li>
+          ))}
+        </ol>
+
+        <fieldset disabled={submitting} className="grid lg:grid-cols-[1fr_380px] gap-8 mt-8 disabled:opacity-70 border-0 p-0 m-0">
           <div className="space-y-8">
             {/* Identificação */}
             <Section icon={<User className="h-4 w-4" />} title="Seus dados">
@@ -292,8 +339,24 @@ function CheckoutPage() {
             <Section icon={<Truck className="h-4 w-4" />} title="Frete">
               {onlyDigits(cep).length !== 8 ? (
                 <p className="text-sm text-muted-foreground">Informe o CEP para ver as opções de entrega.</p>
-              ) : quotes.length === 0 ? (
-                <p className="text-sm text-muted-foreground flex items-center gap-2"><Loader2 className="h-3 w-3 animate-spin" /> Calculando…</p>
+              ) : quotesLoading || quotes.length === 0 ? (
+                <div className="space-y-2" aria-live="polite" aria-busy="true">
+                  <p className="text-xs text-muted-foreground flex items-center gap-2">
+                    <Loader2 className="h-3 w-3 animate-spin" /> Calculando opções de entrega…
+                  </p>
+                  {[0, 1, 2].map((k) => (
+                    <div key={k} className="flex items-center justify-between border border-border rounded-md p-3">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="h-4 w-4 rounded-full bg-secondary animate-pulse" />
+                        <div className="flex-1 space-y-1.5">
+                          <div className="h-3 w-32 bg-secondary rounded animate-pulse" />
+                          <div className="h-2.5 w-48 bg-secondary/70 rounded animate-pulse" />
+                        </div>
+                      </div>
+                      <div className="h-4 w-14 bg-secondary rounded animate-pulse" />
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div className="space-y-2">
                   {quotes.map((q) => (
@@ -382,16 +445,29 @@ function CheckoutPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
+                aria-live="polite"
                 className="w-full mt-5 bg-foreground text-background h-12 text-[11px] tracking-[0.25em] uppercase font-medium hover:bg-foreground/90 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Finalizar pedido <ChevronRight className="h-4 w-4" /></>}
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="tracking-normal normal-case text-xs">{stageMessage}</span>
+                  </>
+                ) : (
+                  <>Finalizar pedido <ChevronRight className="h-4 w-4" /></>
+                )}
               </button>
+              {submitting && (
+                <p aria-live="polite" className="mt-2 text-[11px] text-muted-foreground text-center">
+                  Não feche esta janela — estamos processando seu pedido.
+                </p>
+              )}
               <p className="mt-3 text-[10px] text-muted-foreground text-center">
                 Ao finalizar você concorda com nossos termos e política de privacidade.
               </p>
             </div>
           </aside>
-        </div>
+        </fieldset>
       </div>
     </div>
   );

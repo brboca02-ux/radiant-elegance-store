@@ -40,7 +40,7 @@ function CategoriesListPage() {
 
         {/* Preview faixa horizontal */}
         <div className="mb-6 rounded-xl border border-border bg-background p-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Pré-visualização da home</p>
+          <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Pré-visualização da home</h2>
           <div className="flex md:grid md:grid-cols-5 gap-2 md:gap-3 overflow-x-auto -mx-1 px-1 scrollbar-none">
             {categories.filter((c) => c.show_home && c.status === "ativo").map((c) => (
               <div key={c.id} className="group relative shrink-0 w-[140px] md:w-auto h-[100px] md:h-[120px] overflow-hidden rounded-md bg-secondary">
