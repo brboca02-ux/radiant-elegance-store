@@ -68,6 +68,7 @@ function ColecaoPage() {
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12">
+        <h2 className="sr-only">Produtos</h2>
         <ProductGrid query={query} />
       </div>
     </div>
