@@ -27,8 +27,43 @@ export const Route = createFileRoute("/pedidos/$id")({
 function OrderDetailPage() {
   const { id } = useParams({ from: "/pedidos/$id" });
   const order = useOrdersStore((s) => s.orders.find((o) => o.id === id));
+  const hydrate = useOrdersStore((s) => s.hydrate);
   const setStatus = useOrdersStore((s) => s.setStatus);
   const cancel = useOrdersStore((s) => s.cancel);
+
+  const [fulfillment, setFulfillment] = useState<FulfillmentStage | null>(null);
+  const [savingStage, setSavingStage] = useState<FulfillmentStage | null>(null);
+
+  // Carrega fulfillment atual do banco (o store local não guarda essa coluna).
+  useEffect(() => {
+    if (!order?.customer?.email) return;
+    let cancelled = false;
+    getOrderPublic(order.number, order.customer.email)
+      .then((o) => { if (!cancelled) setFulfillment(o?.fulfillment_status ?? null); })
+      .catch(() => { /* ignore */ });
+    return () => { cancelled = true; };
+  }, [order?.number, order?.customer?.email]);
+
+  const paid = order?.payment_status === "pago";
+
+  const advanceFulfillment = async (stage: FulfillmentStage) => {
+    if (!order) return;
+    if (!paid) {
+      toast.error("Confirme o pagamento antes de avançar as etapas de envio.");
+      return;
+    }
+    setSavingStage(stage);
+    try {
+      await setOrderFulfillment(order.id, stage);
+      setFulfillment(stage);
+      toast.success(`Etapa atualizada: ${FULFILLMENT_LABEL[stage]}`);
+      void hydrate();
+    } catch (e) {
+      toast.error("Falha ao atualizar etapa", { description: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setSavingStage(null);
+    }
+  };
 
   const nextStatus = useMemo<OrderStatus | null>(() => {
     if (!order || order.status === "cancelado" || order.status === "entregue") return null;
