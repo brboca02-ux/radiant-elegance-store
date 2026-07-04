@@ -4,7 +4,7 @@ import { NewsletterCapture } from "@/components/NewsletterCapture";
 import { STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 
 const COL_TITLE = "text-[11px] tracking-[0.3em] uppercase mb-5 text-background/60";
-const LINK = "text-sm text-background/75 hover:text-background transition";
+const LINK = "inline-flex items-center min-h-11 py-2 text-sm text-background/75 hover:text-background transition";
 
 export function Footer() {
   return (

@@ -205,6 +205,8 @@ function LeadModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nome"
+            aria-label="Nome"
+            autoComplete="name"
             maxLength={80}
             className="w-full border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
@@ -213,6 +215,8 @@ function LeadModal({
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
             placeholder="WhatsApp"
+            aria-label="WhatsApp"
+            autoComplete="tel"
             maxLength={20}
             className="w-full border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
@@ -221,6 +225,8 @@ function LeadModal({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="E-mail"
+            aria-label="E-mail"
+            autoComplete="email"
             maxLength={254}
             className="w-full border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
