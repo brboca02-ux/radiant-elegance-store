@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-// TODO: substituir pelo domínio final após publicação / domínio customizado.
-const BASE_URL = "";
+const BASE_URL = "https://mdmodas.lovable.app";
 
 interface SitemapEntry {
   path: string;

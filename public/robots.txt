@@ -1,2 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /checkout
+Disallow: /login
+Disallow: /meus-pedidos
+Disallow: /pedido/
+Disallow: /pedidos/
+
+Sitemap: https://mdmodas.lovable.app/sitemap.xml

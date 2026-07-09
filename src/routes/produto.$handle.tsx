@@ -12,16 +12,21 @@ import { buildSrcSet, PDP_SIZES, BLUR_PLACEHOLDER } from "@/lib/image";
 import { RelatedProducts } from "@/components/RelatedProducts";
 
 export const Route = createFileRoute("/produto/$handle")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.handle} — MD Modas Joinville` },
-      { name: "description", content: `Compre ${params.handle} na MD Modas. Moda em Joinville, atendimento pelo WhatsApp e entrega para toda a região.` },
-      { property: "og:title", content: `${params.handle} — MD Modas` },
-      { property: "og:url", content: `/produto/${params.handle}` },
-      { property: "og:type", content: "product" },
-    ],
-    links: [{ rel: "canonical", href: `/produto/${params.handle}` }],
-  }),
+  head: ({ params }) => {
+    const desc = `Compre ${params.handle} na MD Modas: moda em Joinville, envio para todo o Brasil e atendimento pelo WhatsApp.`;
+    return {
+      meta: [
+        { title: `${params.handle} — MD Modas Joinville` },
+        { name: "description", content: desc },
+        { property: "og:title", content: `${params.handle} — MD Modas` },
+        { property: "og:description", content: desc },
+        { name: "twitter:description", content: desc },
+        { property: "og:url", content: `https://mdmodas.lovable.app/produto/${params.handle}` },
+        { property: "og:type", content: "product" },
+      ],
+      links: [{ rel: "canonical", href: `https://mdmodas.lovable.app/produto/${params.handle}` }],
+    };
+  },
   component: ProductPage,
 });
 

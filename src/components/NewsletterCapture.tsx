@@ -52,11 +52,15 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
     );
   }
 
+  const emailId = `nl-email-${compact ? "footer" : "main"}`;
+  const phoneId = `nl-phone-${compact ? "footer" : "main"}`;
   return (
     <form onSubmit={submit} className={compact ? "space-y-2" : "space-y-3"}>
       <div className="relative">
+        <label htmlFor={emailId} className="sr-only">E-mail</label>
         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <input
+          id={emailId}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -67,8 +71,10 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
         />
       </div>
       <div className="relative">
+        <label htmlFor={phoneId} className="sr-only">WhatsApp (opcional)</label>
         <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <input
+          id={phoneId}
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}

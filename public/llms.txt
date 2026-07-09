@@ -1,0 +1,18 @@
+# MD Modas
+
+> Loja de moda feminina e masculina em Joinville/SC (bairro Aventureiro). Vestidos, conjuntos, plus size, calçados e novidades toda semana. Compra online com entrega para todo o Brasil e atendimento pelo WhatsApp.
+
+A MD Modas é uma loja física e online sediada em Joinville, Santa Catarina. Trabalhamos com curadoria semanal de peças femininas e masculinas, incluindo plus size, calçados e acessórios, com atendimento humanizado pelo WhatsApp e envio para todo o Brasil.
+
+## Páginas
+
+- [Início](/): Página inicial com destaques, categorias e novidades.
+- [Coleção](/colecao): Catálogo completo com filtros por categoria, cor e tamanho.
+- [Sobre](/sobre): História da MD Modas, loja física em Joinville e diferenciais.
+- [Trocas e Devoluções](/trocas-e-devolucoes): Política de trocas e devoluções.
+- [Privacidade](/privacidade): Política de privacidade e uso de dados.
+- [Termos](/termos): Termos e condições de uso.
+
+## Opcional
+
+- [Acompanhar pedido](/pedido/acompanhar): Consulta pública de status de pedido.

@@ -25,7 +25,7 @@ function SobrePage() {
       <section className="bg-offwhite py-16 border-b border-border">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <span className="eyebrow">Nossa história</span>
-          <h1 className="font-display text-4xl md:text-6xl mt-3">MD Modas</h1>
+          <h1 className="font-display text-4xl md:text-6xl mt-3">Sobre a MD Modas — Moda em Joinville</h1>
           <span className="gold-rule mt-5" />
           <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Há anos vestindo Joinville com peças selecionadas com carinho. Acreditamos em moda
