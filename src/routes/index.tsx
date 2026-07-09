@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "MD Modas — Loja de Moda no Aventureiro, Joinville/SC" },
-      { name: "description", content: "MD Modas: loja de moda feminina e masculina em Joinville (Aventureiro). Vestidos, conjuntos, plus size, calçados e novidades toda semana. Compre online ou pelo WhatsApp." },
+      { name: "description", content: "MD Modas: moda feminina e masculina em Joinville (Aventureiro). Vestidos, plus size, calçados e novidades toda semana." },
       { name: "keywords", content: "moda em Joinville, loja de roupas Aventureiro, moda feminina Joinville, moda masculina Joinville, MD Modas, plus size Joinville" },
       { name: "geo.region", content: "BR-SC" },
       { name: "geo.placename", content: "Joinville" },

@@ -21,11 +21,11 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
 
 const categories = [
-  { label: "Feminino", img: vestidos, q: "feminino" },
-  { label: "Masculino", img: blazers, q: "masculino" },
-  { label: "Infantil", img: novidades, q: "infantil" },
-  { label: "Calçados", img: alfaiataria, q: "calcados" },
-  { label: "Plus Size", img: conjuntos, q: "plus-size" },
+  { label: "Feminino", alt: "Categoria Moda Feminina MD Modas", img: vestidos, q: "feminino" },
+  { label: "Masculino", alt: "Categoria Moda Masculina MD Modas", img: blazers, q: "masculino" },
+  { label: "Infantil", alt: "Categoria Moda Infantil MD Modas", img: novidades, q: "infantil" },
+  { label: "Calçados", alt: "Categoria Calçados femininos e masculinos", img: alfaiataria, q: "calcados" },
+  { label: "Plus Size", alt: "Categoria Moda Plus Size Feminina", img: conjuntos, q: "plus-size" },
 ];
 
 const diferenciais = [
@@ -120,7 +120,7 @@ export function CategoriesSection() {
             >
               <img
                 src={c.img}
-                alt={c.label}
+                alt={c.alt}
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
               />
