@@ -19,7 +19,14 @@ export const Route = createFileRoute("/privacidade")({
 
 function PrivacidadePage() {
   return (
-    <LegalPage eyebrow="Legal" title="Política de Privacidade">
+    <LegalPage
+      eyebrow="Legal"
+      title="Política de Privacidade"
+      breadcrumbs={[
+        { name: "Início", href: "/" },
+        { name: "Política de Privacidade", href: "/privacidade" },
+      ]}
+    >
       <p>A MD Modas respeita a sua privacidade. Esta política descreve como coletamos, usamos, armazenamos e protegemos seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD).</p>
 
       <h2>1. Dados que coletamos</h2>
