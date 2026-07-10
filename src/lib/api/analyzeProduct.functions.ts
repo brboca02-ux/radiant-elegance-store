@@ -109,14 +109,32 @@ Regras:
       .filter(Boolean)
       .slice(0, 10);
 
+    const pieceType = ((parsed as { piece_type?: unknown }).piece_type ?? "").toString().slice(0, 40);
+    const pieceLower = pieceType.toLowerCase();
+    const isBottom = /(cal[çc]a|short|bermuda|saia)/i.test(pieceLower);
+    const isPlus = category === "plus-size";
+    const isKids = category === "infantil";
+    const isShoes = category === "calcados";
+    const fallbackSizes = isShoes
+      ? ["34", "35", "36", "37", "38", "39"]
+      : isKids
+      ? ["2", "4", "6", "8", "10"]
+      : isBottom && isPlus
+      ? ["46", "48", "50", "52", "54"]
+      : isBottom
+      ? ["36", "38", "40", "42", "44", "46"]
+      : isPlus
+      ? ["G", "GG", "XG", "EXG"]
+      : ["PP", "P", "M", "G", "GG"];
+
     return {
       name: (parsed.name ?? "").toString().slice(0, 80) || "Produto MD Modas",
       description: (parsed.description ?? "").toString(),
       category_id: category,
-      piece_type: ((parsed as { piece_type?: unknown }).piece_type ?? "").toString().slice(0, 40),
+      piece_type: pieceType,
       color: (parsed.color ?? colors[0]?.name ?? "Único").toString().slice(0, 40) || "Único",
       colors,
-      sizes_suggested: sizes_suggested.length ? sizes_suggested : ["PP", "P", "M", "G", "GG"],
+      sizes_suggested: sizes_suggested.length ? sizes_suggested : fallbackSizes,
       meta_title: (parsed.meta_title ?? parsed.name ?? "").toString().slice(0, 70),
       meta_description: (parsed.meta_description ?? parsed.description ?? "").toString().slice(0, 170),
     };
