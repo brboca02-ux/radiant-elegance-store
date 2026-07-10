@@ -4,6 +4,15 @@ import { STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import lookbook1 from "@/assets/lookbook-1.jpg";
 import lookbook2 from "@/assets/lookbook-2.jpg";
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmoda.com.br/" },
+    { "@type": "ListItem", position: 2, name: "Sobre", item: "https://mdmoda.com.br/sobre" },
+  ],
+};
+
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
@@ -11,12 +20,16 @@ export const Route = createFileRoute("/sobre")({
       { name: "description", content: "Conheça a MD Modas, loja de moda feminina e masculina em Joinville/SC. Atendimento pelo WhatsApp e venda online para toda a região." },
       { property: "og:title", content: "Sobre a MD Modas — Joinville" },
       { property: "og:description", content: "Loja física em Joinville, atendimento humanizado e moda acessível." },
-      { property: "og:url", content: "/sobre" },
+      { property: "og:url", content: "https://mdmoda.com.br/sobre" },
     ],
-    links: [{ rel: "canonical", href: "/sobre" }],
+    links: [{ rel: "canonical", href: "https://mdmoda.com.br/sobre" }],
+    scripts: [
+      { type: "application/ld+json", children: JSON.stringify(breadcrumbJsonLd) },
+    ],
   }),
   component: SobrePage,
 });
+
 
 function SobrePage() {
   const wa = buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de tirar uma dúvida.");
