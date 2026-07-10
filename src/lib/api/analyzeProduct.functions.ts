@@ -43,7 +43,7 @@ Formato exato:
 }
 Regras:
 - "colors": inclua APENAS as cores realmente visíveis na peça (1 a 4 cores), com hex real e nome curto em português.
-- "sizes_suggested": tamanhos típicos para essa peça. Roupa adulta: ["PP","P","M","G","GG"]. Plus size: ["G","GG","XG","EXG"]. Infantil: ["2","4","6","8","10"]. Calçados femininos: ["34","35","36","37","38","39"]. Se for peça de tamanho único (bolsa, acessório), use ["Único"].
+- "sizes_suggested": tamanhos típicos para essa peça. Calças, shorts, bermudas e saias adultas (numeração): ["36","38","40","42","44","46"]. Calças/shorts plus size: ["46","48","50","52","54"]. Calças jeans masculinas: ["38","40","42","44","46","48"]. Demais roupas adultas (blusas, camisetas, vestidos, conjuntos): ["PP","P","M","G","GG"]. Plus size (não-calça): ["G","GG","XG","EXG"]. Infantil: ["2","4","6","8","10"]. Calçados femininos: ["34","35","36","37","38","39"]. Calçados masculinos: ["38","39","40","41","42","43","44"]. Peça de tamanho único (bolsa, acessório): ["Único"].
 - "piece_type": nome específico da peça (2-4 palavras), sem cor nem marca.
 - Categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/botas → "calcados"; vestidos femininos → "vestidos"; conjuntos coordenados → "conjuntos"; peças plus size explícitas → "plus-size"; demais femininas → "feminino"; masculinas → "masculino".`;
 
