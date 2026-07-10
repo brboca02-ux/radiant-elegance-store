@@ -1,17 +1,20 @@
 import { MessageCircle } from "lucide-react";
 import { buildWhatsAppLink } from "@/lib/shopify";
+import { Breadcrumbs, type BreadcrumbItem } from "@/components/Breadcrumbs";
 
 interface LegalPageProps {
   eyebrow: string;
   title: string;
   updatedAt?: string;
+  breadcrumbs?: BreadcrumbItem[];
   children: React.ReactNode;
 }
 
-export function LegalPage({ eyebrow, title, updatedAt = "Junho de 2026", children }: LegalPageProps) {
+export function LegalPage({ eyebrow, title, updatedAt = "Junho de 2026", breadcrumbs, children }: LegalPageProps) {
   const wa = buildWhatsAppLink(`Olá MD Modas, vim pela página ${title} e gostaria de ajuda.`);
   return (
     <div className="bg-background">
+      {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
       <section className="bg-offwhite border-b border-border py-14">
         <div className="max-w-[860px] mx-auto px-6">
           <span className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground">{eyebrow}</span>
@@ -19,6 +22,7 @@ export function LegalPage({ eyebrow, title, updatedAt = "Junho de 2026", childre
           <p className="mt-3 text-xs text-muted-foreground">Última atualização: {updatedAt}</p>
         </div>
       </section>
+
 
       <article className="max-w-[860px] mx-auto px-6 py-14 prose-legal">
         {children}

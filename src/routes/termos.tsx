@@ -19,7 +19,14 @@ export const Route = createFileRoute("/termos")({
 
 function TermosPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Termos de Uso">
+    <LegalPage
+      eyebrow="Legal"
+      title="Termos de Uso"
+      breadcrumbs={[
+        { name: "Início", href: "/" },
+        { name: "Termos de Uso", href: "/termos" },
+      ]}
+    >
       <p>Ao navegar ou comprar no site da MD Modas, você concorda com os termos abaixo. Recomendamos a leitura atenta antes de finalizar qualquer compra.</p>
 
       <h2>1. Condições de uso</h2>

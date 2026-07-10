@@ -3,15 +3,7 @@ import { MapPin, MessageCircle, Clock, Heart } from "lucide-react";
 import { STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import lookbook1 from "@/assets/lookbook-1.jpg";
 import lookbook2 from "@/assets/lookbook-2.jpg";
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmoda.com.br/" },
-    { "@type": "ListItem", position: 2, name: "Sobre", item: "https://mdmoda.com.br/sobre" },
-  ],
-};
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export const Route = createFileRoute("/sobre")({
   head: () => ({
@@ -23,9 +15,6 @@ export const Route = createFileRoute("/sobre")({
       { property: "og:url", content: "https://mdmoda.com.br/sobre" },
     ],
     links: [{ rel: "canonical", href: "https://mdmoda.com.br/sobre" }],
-    scripts: [
-      { type: "application/ld+json", children: JSON.stringify(breadcrumbJsonLd) },
-    ],
   }),
   component: SobrePage,
 });
@@ -35,7 +24,14 @@ function SobrePage() {
   const wa = buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de tirar uma dúvida.");
   return (
     <div className="bg-background">
+      <Breadcrumbs
+        items={[
+          { name: "Início", href: "/" },
+          { name: "Sobre", href: "/sobre" },
+        ]}
+      />
       <section className="bg-offwhite py-16 border-b border-border">
+
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <span className="eyebrow">Nossa história</span>
           <h1 className="font-display text-4xl md:text-6xl mt-3">Sobre a MD Modas — Moda em Joinville</h1>
