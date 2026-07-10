@@ -273,12 +273,13 @@ function QuickAddPage() {
   );
 }
 
-function buildVariants(mode: VariantMode, stockTotal: number, color: string) {
+function buildVariants(mode: VariantMode, stockTotal: number, color: string, suggested?: string[]) {
   const c = color || "Único";
   if (mode === "sizes") {
-    const each = Math.floor(stockTotal / SIZES.length);
-    const rem = stockTotal - each * SIZES.length;
-    return SIZES.map((s, i) => ({
+    const sizes = suggested && suggested.length ? suggested : (SIZES as readonly string[]);
+    const each = Math.floor(stockTotal / sizes.length);
+    const rem = stockTotal - each * sizes.length;
+    return sizes.map((s, i) => ({
       id: `tmp-${i}`,
       product_id: "temp",
       size: s,
