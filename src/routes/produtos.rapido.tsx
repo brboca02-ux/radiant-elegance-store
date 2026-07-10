@@ -281,21 +281,14 @@ function buildVariants(mode: VariantMode, stockTotal: number, color: string, sug
   const c = color || "Único";
   if (mode === "sizes") {
     const sizes = suggested && suggested.length ? suggested : (SIZES as readonly string[]);
-    const each = Math.floor(stockTotal / sizes.length);
-    const rem = stockTotal - each * sizes.length;
-    return sizes.map((s, i) => ({
-      id: `tmp-${i}`,
-      product_id: "temp",
-      size: s,
-      color: c,
-      stock: each + (i === 0 ? rem : 0),
-    }));
+    return buildSizeVariants(sizes, stockTotal, c);
   }
   if (mode === "color") {
     return [{ id: "tmp-0", product_id: "temp", size: "Único", color: c, stock: stockTotal }];
   }
   return [{ id: "tmp-0", product_id: "temp", size: "Único", color: "Único", stock: stockTotal }];
 }
+
 
 function Field({
   label,
