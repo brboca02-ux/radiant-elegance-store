@@ -85,7 +85,7 @@ function QuickAddPage() {
       const url = await uploadProductImage(file);
       const slug = slugify(analyzed.name) + "-" + Date.now().toString(36);
 
-      const variants = buildVariants(mode, stockNum, analyzed.color);
+      const variants = buildVariants(mode, stockNum, analyzed.color, analyzed.sizes_suggested);
 
       await createProduct({
         name: analyzed.name,
@@ -241,8 +241,12 @@ function QuickAddPage() {
               <ModeCard
                 active={mode === "sizes"}
                 onClick={() => setMode("sizes")}
-                title="Tamanhos PP–GG"
-                desc="Cria PP, P, M, G, GG com a cor detectada. Estoque dividido igualmente."
+                title="Tamanhos sugeridos"
+                desc={
+                  analyzed?.sizes_suggested?.length
+                    ? `Cria ${analyzed.sizes_suggested.join(", ")} com a cor detectada. Estoque dividido igualmente.`
+                    : "A IA sugere os tamanhos conforme o tipo da peça (ex: 38, 40, 42 para calças). Estoque dividido igualmente."
+                }
               />
               <ModeCard
                 active={mode === "color"}
@@ -273,12 +277,13 @@ function QuickAddPage() {
   );
 }
 
-function buildVariants(mode: VariantMode, stockTotal: number, color: string) {
+function buildVariants(mode: VariantMode, stockTotal: number, color: string, suggested?: string[]) {
   const c = color || "Único";
   if (mode === "sizes") {
-    const each = Math.floor(stockTotal / SIZES.length);
-    const rem = stockTotal - each * SIZES.length;
-    return SIZES.map((s, i) => ({
+    const sizes = suggested && suggested.length ? suggested : (SIZES as readonly string[]);
+    const each = Math.floor(stockTotal / sizes.length);
+    const rem = stockTotal - each * sizes.length;
+    return sizes.map((s, i) => ({
       id: `tmp-${i}`,
       product_id: "temp",
       size: s,
