@@ -19,7 +19,14 @@ export const Route = createFileRoute("/trocas-e-devolucoes")({
 
 function TrocasPage() {
   return (
-    <LegalPage eyebrow="Atendimento" title="Política de Troca e Devolução">
+    <LegalPage
+      eyebrow="Atendimento"
+      title="Política de Troca e Devolução"
+      breadcrumbs={[
+        { name: "Início", href: "/" },
+        { name: "Trocas e Devoluções", href: "/trocas-e-devolucoes" },
+      ]}
+    >
       <p>Queremos que você fique 100% satisfeita(o) com sua compra na MD Modas. Confira abaixo as condições, prazos e o passo a passo para solicitar troca ou devolução.</p>
 
       <h2>1. Arrependimento (compra online) — 7 dias corridos</h2>
