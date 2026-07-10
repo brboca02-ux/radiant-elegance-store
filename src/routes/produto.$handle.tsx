@@ -215,6 +215,7 @@ function ProductPage() {
   ].filter(Boolean).join(" ");
   const waLink = buildWhatsAppLink(waMessage);
 
+  const canonicalUrl = `https://mdmoda.com.br/produto/${handle}`;
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -223,6 +224,7 @@ function ProductPage() {
     image: allImages.map((i) => i.url),
     sku: selected?.id,
     brand: { "@type": "Brand", name: "MD Modas" },
+    url: canonicalUrl,
     offers: {
       "@type": "Offer",
       priceCurrency: selected?.price.currencyCode ?? "BRL",
@@ -231,8 +233,8 @@ function ProductPage() {
       availability: selected?.availableForSale
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      url: productUrl,
-      seller: { "@type": "Organization", name: "MD Modas" },
+      url: canonicalUrl,
+      seller: { "@type": "Organization", name: "MD Modas", "@id": "https://mdmoda.com.br/#organization" },
     },
   };
 
@@ -240,9 +242,9 @@ function ProductPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmodas.lovable.app/" },
-      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://mdmodas.lovable.app/colecao" },
-      { "@type": "ListItem", position: 3, name: data.title, item: `https://mdmodas.lovable.app/produto/${handle}` },
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmoda.com.br/" },
+      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://mdmoda.com.br/colecao" },
+      { "@type": "ListItem", position: 3, name: data.title, item: canonicalUrl },
     ],
   };
 
