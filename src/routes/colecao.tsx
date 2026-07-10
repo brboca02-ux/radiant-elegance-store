@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ProductGrid } from "@/components/ProductGrid";
 import { CATEGORIES } from "@/stores/productsStore";
+import { getCategorySeo } from "@/lib/categorySeo";
 
 interface ColecaoSearch { c?: string }
 
@@ -8,20 +9,50 @@ function sanitizeTerm(input: string) {
   return input.slice(0, 80).replace(/["\\():*?]/g, " ").replace(/\s+/g, " ").trim();
 }
 
+const DEFAULT_SEO = {
+  title: "Coleção MD Modas — Feminino, Masculino, Infantil e Plus Size em Joinville",
+  description:
+    "Explore toda a coleção MD Modas: vestidos, conjuntos, blusas, calçados, plus size, moda masculina e infantil. Loja em Joinville com envio para todo o Brasil.",
+  h1: "Toda a Coleção",
+  eyebrow: "Coleção",
+  intro:
+    "Toda a coleção MD Modas em um só lugar: moda feminina, masculina, infantil, calçados, vestidos, conjuntos e plus size. Curadoria feita na nossa loja em Joinville, com envio para todo o Brasil.",
+};
+
 export const Route = createFileRoute("/colecao")({
   validateSearch: (search: Record<string, unknown>): ColecaoSearch => ({
     c: typeof search.c === "string" ? search.c.slice(0, 80) : undefined,
   }),
-  head: () => ({
-    meta: [
-      { title: "Coleção — MD Modas" },
-      { name: "description", content: "Explore toda a coleção MD Modas: vestidos, conjuntos, blazers, plus size e novidades." },
-      { property: "og:title", content: "Coleção — MD Modas" },
-      { property: "og:description", content: "Explore toda a coleção MD Modas." },
-      { property: "og:url", content: "/colecao" },
-    ],
-    links: [{ rel: "canonical", href: "/colecao" }],
-  }),
+  loaderDeps: ({ search }) => ({ c: search.c }),
+  loader: ({ deps }) => {
+    const safe = deps.c ? sanitizeTerm(deps.c) : "";
+    const seo = getCategorySeo(safe);
+    return { c: safe, seo };
+  },
+  head: ({ loaderData }) => {
+    const safe = loaderData?.c ?? "";
+    const seo = loaderData?.seo ?? null;
+    const title = seo?.title ?? DEFAULT_SEO.title;
+    const description = seo?.description ?? DEFAULT_SEO.description;
+    const url = `https://mdmoda.com.br/colecao${safe ? `?c=${safe}` : ""}`;
+    const meta = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "website" },
+    ];
+    if (seo?.keywords?.length) {
+      meta.push({ name: "keywords", content: seo.keywords.join(", ") });
+    }
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: ColecaoPage,
 });
 
@@ -29,7 +60,10 @@ function ColecaoPage() {
   const { c } = Route.useSearch();
   const safe = c ? sanitizeTerm(c) : "";
   const activeCat = CATEGORIES.find((cat) => cat.id === safe);
-  const title = activeCat ? activeCat.name : safe ? safe.charAt(0).toUpperCase() + safe.slice(1) : "Toda a Coleção";
+  const seo = getCategorySeo(safe);
+  const h1 = seo?.h1 ?? (activeCat ? activeCat.name : safe ? safe.charAt(0).toUpperCase() + safe.slice(1) : DEFAULT_SEO.h1);
+  const eyebrow = seo?.eyebrow ?? DEFAULT_SEO.eyebrow;
+  const intro = seo?.intro ?? DEFAULT_SEO.intro;
   const query = safe || undefined;
 
   const chip = (active: boolean) =>
@@ -43,8 +77,11 @@ function ColecaoPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmodas.lovable.app/" },
-      { "@type": "ListItem", position: 2, name: title, item: `https://mdmodas.lovable.app/colecao${safe ? `?c=${safe}` : ""}` },
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmoda.com.br/" },
+      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://mdmoda.com.br/colecao" },
+      ...(seo
+        ? [{ "@type": "ListItem", position: 3, name: seo.name, item: `https://mdmoda.com.br/colecao?c=${seo.id}` }]
+        : []),
     ],
   };
 
@@ -55,14 +92,25 @@ function ColecaoPage() {
         <ol className="flex flex-wrap items-center gap-1.5">
           <li><Link to="/" className="hover:text-foreground transition">Início</Link></li>
           <li aria-hidden="true">/</li>
-          <li className="text-foreground" aria-current="page">{title}</li>
+          {seo ? (
+            <>
+              <li><Link to="/colecao" search={{}} className="hover:text-foreground transition">Coleção</Link></li>
+              <li aria-hidden="true">/</li>
+              <li className="text-foreground" aria-current="page">{seo.name}</li>
+            </>
+          ) : (
+            <li className="text-foreground" aria-current="page">Coleção</li>
+          )}
         </ol>
       </nav>
       <div className="bg-offwhite py-16 border-b border-border">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
-          <span className="eyebrow">Coleção</span>
-          <h1 className="font-display text-4xl md:text-6xl mt-3">{title}</h1>
+          <span className="eyebrow">{eyebrow}</span>
+          <h1 className="font-display text-4xl md:text-6xl mt-3">{h1}</h1>
           <span className="gold-rule mt-5" />
+          <p className="mt-6 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            {intro}
+          </p>
         </div>
       </div>
 
