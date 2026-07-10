@@ -1,5 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { computeFallbackSizes } from "@/lib/products/variantSizes";
+
 
 export type DetectedColor = { name: string; hex: string };
 
