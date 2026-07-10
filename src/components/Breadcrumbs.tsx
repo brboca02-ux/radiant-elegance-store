@@ -52,9 +52,9 @@ export function Breadcrumbs({ items, className }: Props) {
                   {last || !it.href ? (
                     <span>{it.name}</span>
                   ) : (
-                    <Link to={it.href} className="hover:text-foreground transition">
+                    <a href={it.href} className="hover:text-foreground transition">
                       {it.name}
-                    </Link>
+                    </a>
                   )}
                 </li>
                 {!last && <li aria-hidden="true">/</li>}
