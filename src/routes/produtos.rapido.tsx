@@ -241,8 +241,12 @@ function QuickAddPage() {
               <ModeCard
                 active={mode === "sizes"}
                 onClick={() => setMode("sizes")}
-                title="Tamanhos PP–GG"
-                desc="Cria PP, P, M, G, GG com a cor detectada. Estoque dividido igualmente."
+                title="Tamanhos sugeridos"
+                desc={
+                  analyzed?.sizes_suggested?.length
+                    ? `Cria ${analyzed.sizes_suggested.join(", ")} com a cor detectada. Estoque dividido igualmente.`
+                    : "A IA sugere os tamanhos conforme o tipo da peça (ex: 38, 40, 42 para calças). Estoque dividido igualmente."
+                }
               />
               <ModeCard
                 active={mode === "color"}
