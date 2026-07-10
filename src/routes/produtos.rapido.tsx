@@ -6,6 +6,7 @@ import { AdminShell, PRODUCTS_TABS } from "@/components/AdminShell";
 import { analyzeProductImage, type AnalyzedProduct } from "@/lib/api/analyzeProduct.functions";
 import { uploadProductImage } from "@/lib/api/supaProducts";
 import { useProductsStore, slugify, SIZES } from "@/stores/productsStore";
+import { buildSizeVariants } from "@/lib/products/variantSizes";
 
 export const Route = createFileRoute("/produtos/rapido")({
   head: () => ({
