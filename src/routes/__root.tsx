@@ -94,16 +94,59 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
 
+const SITE_URL = "https://mdmoda.com.br";
+const LOGO_URL = `${SITE_URL}/og-image.jpg`;
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${SITE_URL}/#organization`,
+  name: "MD Modas",
+  url: `${SITE_URL}/`,
+  logo: {
+    "@type": "ImageObject",
+    url: LOGO_URL,
+  },
+  description:
+    "MD Modas — moda feminina e masculina em Joinville/SC. Vestidos, conjuntos, plus size, calçados e novidades toda semana.",
+  telephone: "+55 47 98446-8103",
+  email: "contato@mdmoda.com.br",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Rua Santa Luzia, 672",
+    addressLocality: "Joinville",
+    addressRegion: "SC",
+    postalCode: "89225-100",
+    addressCountry: "BR",
+  },
+  sameAs: ["https://www.instagram.com/mdmodasfem_/"],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: `${SITE_URL}/`,
+  name: "MD Modas",
+  inLanguage: "pt-BR",
+  publisher: { "@id": `${SITE_URL}/#organization` },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/colecao?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
   "@type": "ClothingStore",
-  "@id": "https://mdmodas.lovable.app/#store",
+  "@id": `${SITE_URL}/#store`,
   name: "MD Modas",
   description:
     "Loja de moda feminina e masculina no bairro Aventureiro, em Joinville/SC. Vestidos, conjuntos, plus size, calçados e novidades toda semana.",
-  image: "https://mdmodas.lovable.app/og-image.jpg",
-  logo: "https://mdmodas.lovable.app/og-image.jpg",
-  url: "https://mdmodas.lovable.app/",
+  image: LOGO_URL,
+  logo: LOGO_URL,
+  url: `${SITE_URL}/`,
   telephone: "+55 47 98446-8103",
   priceRange: "$$",
   currenciesAccepted: "BRL",
@@ -115,7 +158,6 @@ const localBusinessJsonLd = {
     addressRegion: "SC",
     postalCode: "89225-100",
     addressCountry: "BR",
-    // bairro
     neighborhood: "Aventureiro",
   },
   geo: {
@@ -145,6 +187,7 @@ const localBusinessJsonLd = {
   ],
   sameAs: ["https://www.instagram.com/mdmodasfem_/"],
 };
+
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
