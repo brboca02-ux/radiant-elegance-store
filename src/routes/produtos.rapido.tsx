@@ -85,7 +85,7 @@ function QuickAddPage() {
       const url = await uploadProductImage(file);
       const slug = slugify(analyzed.name) + "-" + Date.now().toString(36);
 
-      const variants = buildVariants(mode, stockNum, analyzed.color);
+      const variants = buildVariants(mode, stockNum, analyzed.color, analyzed.sizes_suggested);
 
       await createProduct({
         name: analyzed.name,
