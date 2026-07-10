@@ -6,6 +6,7 @@ import { AdminShell, PRODUCTS_TABS } from "@/components/AdminShell";
 import { analyzeProductImage, type AnalyzedProduct } from "@/lib/api/analyzeProduct.functions";
 import { uploadProductImage } from "@/lib/api/supaProducts";
 import { useProductsStore, slugify, SIZES } from "@/stores/productsStore";
+import { buildSizeVariants } from "@/lib/products/variantSizes";
 
 export const Route = createFileRoute("/produtos/rapido")({
   head: () => ({
@@ -281,21 +282,14 @@ function buildVariants(mode: VariantMode, stockTotal: number, color: string, sug
   const c = color || "Único";
   if (mode === "sizes") {
     const sizes = suggested && suggested.length ? suggested : (SIZES as readonly string[]);
-    const each = Math.floor(stockTotal / sizes.length);
-    const rem = stockTotal - each * sizes.length;
-    return sizes.map((s, i) => ({
-      id: `tmp-${i}`,
-      product_id: "temp",
-      size: s,
-      color: c,
-      stock: each + (i === 0 ? rem : 0),
-    }));
+    return buildSizeVariants(sizes, stockTotal, c);
   }
   if (mode === "color") {
     return [{ id: "tmp-0", product_id: "temp", size: "Único", color: c, stock: stockTotal }];
   }
   return [{ id: "tmp-0", product_id: "temp", size: "Único", color: "Único", stock: stockTotal }];
 }
+
 
 function Field({
   label,
