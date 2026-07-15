@@ -31,8 +31,8 @@ export const Route = createFileRoute("/")({
     links: [
       { rel: "canonical", href: "https://mdmodas.lovable.app/" },
       // Preload LCP hero — variante por viewport
-      { rel: "preload", as: "image", href: heroMobile, fetchpriority: "high", media: "(max-width: 1023px)" },
-      { rel: "preload", as: "image", href: heroDesktop, fetchpriority: "high", media: "(min-width: 1024px)" },
+      { rel: "preload", as: "image", href: heroMobile, fetchPriority: "high", media: "(max-width: 1023px)" },
+      { rel: "preload", as: "image", href: heroDesktop, fetchPriority: "high", media: "(min-width: 1024px)" },
     ],
   }),
   component: Index,
