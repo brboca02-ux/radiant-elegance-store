@@ -133,6 +133,17 @@ async function reconcile(request: Request): Promise<Response> {
         continue;
       }
 
+      // Segurança: se aprovado, valida amount cobrado vs total do pedido
+      if (mapped === "pago") {
+        const expected = Number(order.total);
+        const paidAmt = Number(chosen.transaction_amount ?? NaN);
+        if (!Number.isFinite(paidAmt) || Math.abs(paidAmt - expected) > 0.01) {
+          console.error("reconcile amount mismatch:", { orderNumber: order.order_number, expected, paidAmt });
+          checked.push({ orderNumber: order.order_number, mpStatus: chosen.status, mapped, error: "amount_mismatch" });
+          continue;
+        }
+      }
+
       const update: Record<string, unknown> = {
         status: mapped,
         payment_provider: "mercadopago",
@@ -141,6 +152,7 @@ async function reconcile(request: Request): Promise<Response> {
       if (mapped === "pago") {
         update.paid_at = chosen.date_approved ?? new Date().toISOString();
       }
+
 
       const { error: updErr } = await admin
         .from("orders")
