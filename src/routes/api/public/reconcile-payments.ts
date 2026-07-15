@@ -55,8 +55,8 @@ interface MpSearchResult {
 async function reconcile(request: Request): Promise<Response> {
   const cronSecret = process.env.CRON_SECRET;
   const mpToken = process.env.MP_ACCESS_TOKEN;
-  const supaUrl = process.env.SUPABASE_URL;
-  const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supaUrl = (process.env.EXTERNAL_SUPABASE_URL ?? process.env.SUPABASE_URL);
+  const supaKey = (process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY);
 
   if (!cronSecret || !mpToken || !supaUrl || !supaKey) {
     return new Response(
