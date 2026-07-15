@@ -135,12 +135,25 @@ export const Route = createFileRoute("/api/public/payment-webhook")({
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
+        // Segurança: valida valor cobrado vs total do pedido antes de marcar "pago"
+        if (mapped === "pago") {
+          const { data: ord } = await admin
+            .from("orders").select("total").eq("order_number", orderNumber).maybeSingle();
+          const expected = Number(ord?.total ?? NaN);
+          const paidAmt = Number(pay.transaction_amount ?? NaN);
+          if (!ord || !Number.isFinite(expected) || !Number.isFinite(paidAmt) || Math.abs(paidAmt - expected) > 0.01) {
+            console.error("MP amount mismatch:", { orderNumber, expected, paidAmt });
+            return Response.json({ ok: true, ignored: "amount_mismatch", orderNumber });
+          }
+        }
+
         const update: Record<string, unknown> = {
           status: mapped,
           payment_provider: "mercadopago",
           payment_id: String(pay.id),
         };
         if (mapped === "pago") update.paid_at = new Date().toISOString();
+
 
         const { error } = await admin
           .from("orders")

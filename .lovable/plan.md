@@ -1,75 +1,57 @@
-# Plano: Checkout completo no site (pronto para plugar gateway e frete)
+# Hardening de segurança — checkout, RLS e estoque
 
-Objetivo: cliente conclui a compra dentro do site (sem WhatsApp), o pedido é gravado no Supabase, e existe um webhook genérico esperando a confirmação do gateway. Quando você tiver as chaves do gateway/frete, é só plugar — toda a estrutura já estará pronta.
+## O que muda no fluxo
+Hoje o navegador insere `customers`, `addresses`, `orders` e `order_items` direto no banco, com preços vindos do cliente. Passa a existir uma única RPC `place_order` no Postgres que:
+- Recebe apenas: dados do cliente, endereço, lista de `{product_id, variant_size, variant_color, quantity}`, `shipping_method`, `shipping_cost`, `payment_method`, `notes`.
+- Busca preços em `public.products` (usando `sale_price` quando ativo).
+- Recalcula `subtotal`, `total`, `unit_price` de cada item.
+- Valida estoque disponível (`stock - reserved_stock >= quantity`).
+- Cria/atualiza customer e address dentro da mesma transação.
+- Incrementa `reserved_stock`.
+- Retorna `{ id, order_number, total }`.
 
-## 1. Banco de dados (Supabase)
+Nada de preço, total ou order_number vindo do cliente é gravado.
 
-Criar 4 tabelas via migration:
+## Migrações (SQL)
 
-- **`customers`** — `id, user_id (nullable), name, email, phone, cpf, created_at`
-- **`addresses`** — `id, customer_id, cep, street, number, complement, district, city, state, created_at`
-- **`orders`** — `id, order_number (humano: MD-2026-0001), customer_id, address_id, status (pendente|aguardando_pagamento|pago|enviado|entregue|cancelado), subtotal, shipping_cost, discount, total, payment_method (pix|cartao|boleto), payment_provider (mercadopago|asaas|...), payment_id (id externo), shipping_method, tracking_code, notes, created_at, updated_at, paid_at`
-- **`order_items`** — `id, order_id, product_id, product_name, variant_size, variant_color, unit_price, quantity, subtotal`
+1. **RPC `place_order(payload jsonb)` `SECURITY DEFINER`** com o comportamento acima. `GRANT EXECUTE TO anon, authenticated`. `SET search_path = public`.
+2. **RPC `get_order_public(p_order_number text, p_email text)`** `SECURITY DEFINER` — retorna o pedido apenas quando `order_number + email` batem. Substitui leitura direta anônima na tela de sucesso.
+3. **Revoke inserts diretos**:
+   ```
+   REVOKE INSERT ON public.customers, public.addresses,
+                    public.orders,    public.order_items
+     FROM anon, authenticated;
+   ```
+   Mantém SELECT/UPDATE conforme policies atuais.
+4. **Drop policies `*_insert_any`** (customers/addresses/orders/order_items) — não são mais necessárias; RPC roda como definer.
+5. **Trigger de reserva de estoque** em `orders`:
+   - `AFTER INSERT` já foi coberto pela RPC (incrementa `reserved_stock`).
+   - `AFTER UPDATE OF status`: quando vai para `pago`/`separando`/`enviado`/`entregue` → move de `reserved_stock` para consumo (`stock -= qty`, `reserved_stock -= qty`); quando vai para `cancelado` → devolve (`reserved_stock -= qty`).
+6. **Índices**:
+   - `CREATE INDEX IF NOT EXISTS orders_status_created_idx ON orders(status, created_at DESC);`
+   - `CREATE INDEX IF NOT EXISTS order_items_product_idx ON order_items(product_id);`
+   - `CREATE INDEX IF NOT EXISTS stock_movements_created_idx ON stock_movements(created_at DESC);`
 
-RLS + GRANTs:
-- `customers` / `addresses` / `orders` / `order_items`: usuário autenticado lê/escreve só os próprios; admin (via `has_role`) lê/escreve tudo.
-- Trigger no `INSERT` de `orders` que decrementa `products.stock` na hora.
-- Função `generate_order_number()` para o `order_number` sequencial.
+## Alterações de código
 
-## 2. Fluxo de checkout (frontend)
+- `src/lib/api/supaOrders.ts` — reescrever `createOrder` para chamar `supabase.rpc('place_order', { payload })`. Remover toda a lógica de insert manual. `getOrderByNumber` passa a chamar `get_order_public` quando não há sessão.
+- `src/routes/pedido.sucesso.$numero.tsx` e `pedido.acompanhar.tsx` — passar email no `get_order_public`. Se a UI ainda não coleta email nessa tela, ler do carrinho/localStorage que já foi salvo no checkout.
+- `src/routes/api/public/payment-webhook.ts` — antes de marcar `pago`, comparar `pay.transaction_amount` com `orders.total` (tolerância R$ 0,01). Se divergir: log + resposta 200 + status permanece `aguardando_pagamento` (para investigação manual, não retry infinito do MP).
+- `src/routes/api/public/reconcile-payments.ts` — mesma checagem de valor.
+- `src/lib/supabaseClient.ts` — trocar constantes hardcoded por `import.meta.env.VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` com fallback para os valores atuais (para não quebrar dev sem `.env`).
 
-Novas rotas:
+## O que fica fora deste lote (débito técnico anotado)
+- Trocar `products.category_id text` por `uuid REFERENCES categories(id)` — migração pesada, feita em ciclo separado.
+- Rate limiting real em `/api/public/*` — depende de KV/Durable Objects; anotar.
+- Rotacionar `MP_WEBHOOK_SECRET` quando você tiver o valor real do painel MP.
 
-- **`/checkout`** — formulário em 3 etapas (uma página, sem reload):
-  1. **Identificação**: nome, e-mail, telefone, CPF (auto-preenche se logado)
-  2. **Entrega**: CEP (busca ViaCEP automática), rua, número, complemento, bairro, cidade, estado + escolha do método de frete (stub mostra opções fixas por enquanto: PAC, SEDEX, Retirada na loja)
-  3. **Pagamento**: escolha entre Pix / Cartão / Boleto (todos com selo "em integração") + resumo final
-  - Botão "Finalizar pedido" cria a `order` no Supabase com `status = aguardando_pagamento` e redireciona para `/pedido/sucesso/:numero`
+## Como valido
+- `bun run build` deve passar.
+- Rodar checkout end-to-end no preview: PIX de teste → success page reflete `pago` após reconcile/webhook.
+- Tentativa de POST direto em `orders` via curl com anon key deve retornar `permission denied`.
+- Simular `place_order` com quantidade maior que estoque → erro `insufficient_stock`.
+- Verificar `reserved_stock` no admin após criar pedido e após cancelar.
 
-- **`/pedido/sucesso/$numero`** — mostra número do pedido, resumo, instruções ("Em breve o link de pagamento será gerado quando o gateway estiver ativo"), botão "Acompanhar meus pedidos".
-
-- **`/meus-pedidos`** (para o cliente, dentro de `_authenticated`) — lista pedidos do usuário logado.
-
-Mudanças no que já existe:
-- `CartDrawer`: botão "Comprar pelo WhatsApp" continua existindo, mas o principal vira **"Finalizar Compra"** → `/checkout`.
-- Página do produto: idem.
-- Painel admin `/pedidos`: já existe a tela, vou plugar nos dados reais da nova tabela `orders`.
-
-## 3. Camada de adapters (pronta pra plugar gateway/frete)
-
-Arquivos em `src/lib/integrations/`:
-
-- **`payment.ts`** — interface `PaymentProvider` com `createPayment(order)` retornando `{ paymentId, paymentUrl, qrCode? }`. Implementação `MockPaymentProvider` por enquanto (apenas gera id fake e marca a ordem como aguardando). Quando você escolher Mercado Pago / Asaas / etc., só troco a implementação ativa.
-- **`shipping.ts`** — interface `ShippingProvider` com `quote({ cep, items })` retornando `[{ name, price, days }]`. Implementação `MockShippingProvider` com tabela fixa: Retirada Joinville (grátis), PAC (R$ 19,90 / 5 dias), SEDEX (R$ 34,90 / 2 dias) + frete grátis acima de R$ 299.
-
-Quando você fornecer as APIs, é só trocar `MockPaymentProvider` por `MercadoPagoProvider` (ou outro) — nenhum componente UI precisa mudar.
-
-## 4. Webhook genérico de pagamento
-
-Rota `src/routes/api/public/payment-webhook.ts` (server route):
-- Aceita `POST` com `{ orderId, status, providerId, signature }`
-- Valida assinatura HMAC (segredo `PAYMENT_WEBHOOK_SECRET` — vou gerar via `generate_secret`)
-- Usa `supabaseAdmin` pra atualizar `orders.status = 'pago'` + `paid_at = now()`
-- Retorna 200/401 padrão
-
-Pronto pra apontar o painel do gateway pra essa URL quando chegar a hora.
-
-## 5. O que você precisa decidir depois (não bloqueia agora)
-
-- Gateway (Mercado Pago / Asaas / outro) → eu plugo no `payment.ts`
-- Frete (Melhor Envio / Frenet / tabela fixa) → eu plugo no `shipping.ts`
-- Token do gateway e do frete → me passa quando tiver, eu armazeno via secret
-
-## Detalhes técnicos
-
-- Stack: TanStack Start + Supabase existente (não Lovable Cloud — confirmando seu setup atual).
-- Validação de formulários: `react-hook-form` + `zod`.
-- Busca de CEP: ViaCEP (público, sem chave).
-- Estados pendentes do pedido têm reserva de estoque (movem `stock` → `reserved_stock`); cancelamento devolve.
-- Toda navegação pós-checkout limpa o carrinho do Zustand.
-
-## Entrega em uma única passada
-
-Faço migration + adapters + checkout + páginas de sucesso/meus-pedidos + plug no admin + webhook stub, tudo de uma vez. Depois é só você confirmar os fluxos clicando.
-
-Posso seguir?
+## Confirmação necessária antes de aplicar
+- Os pedidos existentes ficarão intactos (só schema/policies/índices novos, nada é dropado além das policies `*_insert_any`).
+- Se você tiver front-end em outro lugar (app admin externo, script) inserindo diretamente em `orders`, ele quebra — só a RPC passa a funcionar.

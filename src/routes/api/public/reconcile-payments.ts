@@ -47,8 +47,10 @@ interface MpSearchResult {
     status: string;
     external_reference?: string;
     date_approved?: string | null;
+    transaction_amount?: number;
   }>;
 }
+
 
 async function reconcile(request: Request): Promise<Response> {
   const cronSecret = process.env.CRON_SECRET;
@@ -82,7 +84,7 @@ async function reconcile(request: Request): Promise<Response> {
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data: pending, error: selErr } = await admin
     .from("orders")
-    .select("id, order_number, created_at")
+    .select("id, order_number, total, created_at")
     .eq("status", "aguardando_pagamento")
     .gte("created_at", since)
     .order("created_at", { ascending: false })
@@ -131,6 +133,17 @@ async function reconcile(request: Request): Promise<Response> {
         continue;
       }
 
+      // Segurança: se aprovado, valida amount cobrado vs total do pedido
+      if (mapped === "pago") {
+        const expected = Number(order.total);
+        const paidAmt = Number(chosen.transaction_amount ?? NaN);
+        if (!Number.isFinite(paidAmt) || Math.abs(paidAmt - expected) > 0.01) {
+          console.error("reconcile amount mismatch:", { orderNumber: order.order_number, expected, paidAmt });
+          checked.push({ orderNumber: order.order_number, mpStatus: chosen.status, mapped, error: "amount_mismatch" });
+          continue;
+        }
+      }
+
       const update: Record<string, unknown> = {
         status: mapped,
         payment_provider: "mercadopago",
@@ -139,6 +152,7 @@ async function reconcile(request: Request): Promise<Response> {
       if (mapped === "pago") {
         update.paid_at = chosen.date_approved ?? new Date().toISOString();
       }
+
 
       const { error: updErr } = await admin
         .from("orders")

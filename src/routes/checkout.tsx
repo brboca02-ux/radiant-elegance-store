@@ -397,7 +397,7 @@ function CheckoutPage() {
         window.location.href = paymentUrl;
         return;
       }
-      navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number } });
+      navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number }, search: { email: v.email } });
     } catch (e) {
       console.error(e);
       toast.error("Não foi possível finalizar o pedido", { description: (e as Error).message });
