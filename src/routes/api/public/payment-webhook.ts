@@ -125,8 +125,8 @@ export const Route = createFileRoute("/api/public/payment-webhook")({
           return Response.json({ ok: true, ignored_status: pay.status });
         }
 
-        const supaUrl = process.env.SUPABASE_URL;
-        const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const supaUrl = (process.env.EXTERNAL_SUPABASE_URL ?? process.env.SUPABASE_URL);
+        const supaKey = (process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY);
         if (!supaUrl || !supaKey) {
           return new Response("Supabase service role not configured", { status: 503 });
         }

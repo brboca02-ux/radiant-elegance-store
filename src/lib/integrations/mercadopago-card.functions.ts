@@ -41,8 +41,8 @@ export const createMpCardPayment = createServerFn({ method: "POST" })
     if (!token) throw new Error("MP_ACCESS_TOKEN não configurado");
 
     // Segurança: amount SEMPRE lido do banco pelo order_number.
-    const supaUrl = process.env.SUPABASE_URL;
-    const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supaUrl = (process.env.EXTERNAL_SUPABASE_URL ?? process.env.SUPABASE_URL);
+    const supaKey = (process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY);
     if (!supaUrl || !supaKey) throw new Error("Supabase não configurado");
     const { createClient } = await import("@supabase/supabase-js");
     const admin = createClient(supaUrl, supaKey, { auth: { persistSession: false, autoRefreshToken: false } });
