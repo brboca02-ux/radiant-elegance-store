@@ -25,6 +25,20 @@ export const createMpPreference = createServerFn({ method: "POST" })
     const token = process.env.MP_ACCESS_TOKEN;
     if (!token) throw new Error("MP_ACCESS_TOKEN não configurado");
 
+    // Segurança: amount SEMPRE lido do banco pelo order_number.
+    const supaUrl = process.env.SUPABASE_URL;
+    const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supaUrl || !supaKey) throw new Error("Supabase não configurado");
+    const { createClient } = await import("@supabase/supabase-js");
+    const admin = createClient(supaUrl, supaKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: ord, error: ordErr } = await admin
+      .from("orders").select("total, status")
+      .eq("order_number", data.orderNumber).maybeSingle();
+    if (ordErr || !ord) throw new Error("Pedido não encontrado");
+    if (ord.status !== "aguardando_pagamento") throw new Error("Pedido não está aguardando pagamento");
+    const amountFromDb = Number(ord.total);
+
+
     // Restringe métodos conforme escolha do cliente
     const excludedTypes: { id: string }[] = [];
     if (data.method === "pix") {
@@ -45,7 +59,8 @@ export const createMpPreference = createServerFn({ method: "POST" })
           title: `Pedido ${data.orderNumber} — MD Modas`,
           quantity: 1,
           currency_id: "BRL",
-          unit_price: Number(data.amount.toFixed(2)),
+          unit_price: Number(amountFromDb.toFixed(2)),
+
         },
       ],
       payer: {
