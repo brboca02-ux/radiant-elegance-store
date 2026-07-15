@@ -26,11 +26,25 @@ export const createMpPixPayment = createServerFn({ method: "POST" })
     const token = process.env.MP_ACCESS_TOKEN;
     if (!token) throw new Error("MP_ACCESS_TOKEN não configurado");
 
+    // Segurança: amount SEMPRE lido do banco pelo order_number.
+    const supaUrl = process.env.SUPABASE_URL;
+    const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supaUrl || !supaKey) throw new Error("Supabase não configurado");
+    const { createClient } = await import("@supabase/supabase-js");
+    const admin = createClient(supaUrl, supaKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: ord, error: ordErr } = await admin
+      .from("orders").select("total, status")
+      .eq("order_number", data.orderNumber).maybeSingle();
+    if (ordErr || !ord) throw new Error("Pedido não encontrado");
+    if (ord.status !== "aguardando_pagamento") throw new Error("Pedido não está aguardando pagamento");
+    const amountFromDb = Number(ord.total);
+
     const [firstName, ...rest] = data.customer.name.trim().split(/\s+/);
     const lastName = rest.join(" ") || firstName;
 
     const body = {
-      transaction_amount: Number(data.amount.toFixed(2)),
+      transaction_amount: Number(amountFromDb.toFixed(2)),
+
       description: `Pedido ${data.orderNumber} — MD Modas`,
       payment_method_id: "pix",
       external_reference: data.orderNumber,
