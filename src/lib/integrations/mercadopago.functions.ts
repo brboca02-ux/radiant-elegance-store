@@ -73,10 +73,11 @@ export const createMpPreference = createServerFn({ method: "POST" })
       external_reference: data.orderNumber,
       statement_descriptor: "MD MODAS",
       back_urls: {
-        success: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}`,
-        pending: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}`,
-        failure: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}?erro=pagamento`,
+        success: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}?email=${encodeURIComponent(data.customer.email)}`,
+        pending: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}?email=${encodeURIComponent(data.customer.email)}`,
+        failure: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}?email=${encodeURIComponent(data.customer.email)}&erro=pagamento`,
       },
+
       auto_return: "approved",
       notification_url: `${data.siteUrl}/api/public/payment-webhook`,
       payment_methods: {
