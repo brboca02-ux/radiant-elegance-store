@@ -20,17 +20,17 @@ export interface NewOrderInput {
   };
   items: {
     product_id: string | null;
-    product_name: string;
+    product_name?: string;
     variant_size?: string;
     variant_color?: string;
-    unit_price: number;
+    unit_price?: number; // ignorado no servidor
     quantity: number;
   }[];
-  subtotal: number;
+  subtotal?: number; // ignorado no servidor
   shipping_cost: number;
   shipping_method: string;
-  discount: number;
-  total: number;
+  discount?: number; // ignorado no servidor
+  total?: number; // ignorado no servidor
   payment_method: PaymentMethod;
   notes?: string;
 }
@@ -42,51 +42,21 @@ export interface CreatedOrder {
   status: string;
 }
 
-function createCheckoutId() {
-  return crypto.randomUUID();
-}
-
-function createCheckoutOrderNumber() {
-  const year = new Date().getFullYear();
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `MD-${year}-${timestamp}${suffix}`;
-}
-
+/**
+ * Cria um pedido via RPC `place_order` (SECURITY DEFINER).
+ * O servidor recalcula preços/subtotal/total a partir de `products` e
+ * valida estoque — nada do que vem do cliente sobre preço é confiado.
+ */
 export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
-  // 1) upsert do customer (por email + user_id quando disponível)
-  const isSignedIn = Boolean(input.customer.user_id);
-  const { data: existing } = isSignedIn
-    ? await supabase
-        .from("customers")
-        .select("id")
-        .eq("email", input.customer.email.toLowerCase())
-        .maybeSingle()
-    : { data: null };
-
-  let customerId = existing?.id as string | undefined;
-  if (!customerId) {
-    customerId = createCheckoutId();
-    const { error } = await supabase
-      .from("customers")
-      .insert({
-        id: customerId,
-        name: input.customer.name,
-        email: input.customer.email.toLowerCase(),
-        phone: input.customer.phone ?? null,
-        cpf: input.customer.cpf ?? null,
-        user_id: input.customer.user_id ?? null,
-      });
-    if (error) throw error;
-  }
-
-  // 2) endereço
-  const addressId = createCheckoutId();
-  const { error: addrErr } = await supabase
-    .from("addresses")
-    .insert({
-      id: addressId,
-      customer_id: customerId,
+  const payload = {
+    user_id: input.customer.user_id ?? null,
+    customer: {
+      name: input.customer.name,
+      email: input.customer.email.toLowerCase(),
+      phone: input.customer.phone ?? null,
+      cpf: input.customer.cpf ?? null,
+    },
+    address: {
       cep: input.address.cep.replace(/\D/g, ""),
       street: input.address.street,
       number: input.address.number,
@@ -94,49 +64,44 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
       district: input.address.district,
       city: input.address.city,
       state: input.address.state,
-    });
-  if (addrErr) throw addrErr;
+    },
+    items: input.items
+      .filter((i) => i.product_id) // sem product_id não dá pra validar server-side
+      .map((i) => ({
+        product_id: i.product_id,
+        variant_size: i.variant_size ?? null,
+        variant_color: i.variant_color ?? null,
+        quantity: i.quantity,
+      })),
+    shipping_method: input.shipping_method,
+    shipping_cost: input.shipping_cost,
+    payment_method: input.payment_method,
+    notes: input.notes ?? null,
+  };
 
-  // 3) order
-  const order: CreatedOrder = {
-    id: createCheckoutId(),
-    order_number: createCheckoutOrderNumber(),
-    total: input.total,
+  if (payload.items.length === 0) {
+    throw new Error("Nenhum item do carrinho tem product_id válido. Reabra a loja e adicione os produtos novamente.");
+  }
+
+  const { data, error } = await supabase.rpc("place_order", { payload });
+  if (error) {
+    // Traduz erros conhecidos
+    const msg = error.message ?? "";
+    if (msg.includes("insufficient_stock"))
+      throw new Error("Estoque insuficiente para um dos itens.");
+    if (msg.includes("product_not_found"))
+      throw new Error("Um dos produtos não está mais disponível.");
+    if (msg.includes("empty_cart")) throw new Error("Carrinho vazio.");
+    if (msg.includes("invalid_email")) throw new Error("E-mail inválido.");
+    throw new Error(msg || "Falha ao criar pedido.");
+  }
+  const result = data as { id: string; order_number: string; total: number };
+  return {
+    id: result.id,
+    order_number: result.order_number,
+    total: Number(result.total),
     status: "aguardando_pagamento",
   };
-  const { error: ordErr } = await supabase
-    .from("orders")
-    .insert({
-      id: order.id,
-      order_number: order.order_number,
-      customer_id: customerId,
-      address_id: addressId,
-      subtotal: input.subtotal,
-      shipping_cost: input.shipping_cost,
-      shipping_method: input.shipping_method,
-      discount: input.discount,
-      total: input.total,
-      payment_method: input.payment_method,
-      notes: input.notes ?? null,
-      status: "aguardando_pagamento",
-    });
-  if (ordErr) throw ordErr;
-
-  // 4) items
-  const itemsRows = input.items.map((i) => ({
-    order_id: order.id,
-    product_id: i.product_id,
-    product_name: i.product_name,
-    variant_size: i.variant_size ?? null,
-    variant_color: i.variant_color ?? null,
-    unit_price: i.unit_price,
-    quantity: i.quantity,
-    subtotal: +(i.unit_price * i.quantity).toFixed(2),
-  }));
-  const { error: itemsErr } = await supabase.from("order_items").insert(itemsRows);
-  if (itemsErr) throw itemsErr;
-
-  return order;
 }
 
 export interface OrderFull {
