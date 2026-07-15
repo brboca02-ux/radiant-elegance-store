@@ -84,7 +84,7 @@ async function reconcile(request: Request): Promise<Response> {
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data: pending, error: selErr } = await admin
     .from("orders")
-    .select("id, order_number, created_at")
+    .select("id, order_number, total, created_at")
     .eq("status", "aguardando_pagamento")
     .gte("created_at", since)
     .order("created_at", { ascending: false })
