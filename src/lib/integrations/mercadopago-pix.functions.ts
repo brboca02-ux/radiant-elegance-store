@@ -132,21 +132,31 @@ export const getMpPaymentStatus = createServerFn({ method: "POST" })
           const admin = createClient(supaUrl, supaKey, {
             auth: { persistSession: false, autoRefreshToken: false },
           });
-          await admin
-            .from("orders")
-            .update({
-              status: "pago",
-              payment_provider: "mercadopago",
-              payment_id: String(json.id),
-              paid_at: new Date().toISOString(),
-            })
-            .eq("order_number", orderNumber)
-            .eq("status", "aguardando_pagamento");
+          // Valida valor cobrado vs total do pedido
+          const paidAmt = Number((json as { transaction_amount?: number }).transaction_amount ?? NaN);
+          const { data: ord } = await admin
+            .from("orders").select("total").eq("order_number", orderNumber).maybeSingle();
+          const expected = Number(ord?.total ?? NaN);
+          if (ord && Number.isFinite(paidAmt) && Number.isFinite(expected) && Math.abs(paidAmt - expected) <= 0.01) {
+            await admin
+              .from("orders")
+              .update({
+                status: "pago",
+                payment_provider: "mercadopago",
+                payment_id: String(json.id),
+                paid_at: new Date().toISOString(),
+              })
+              .eq("order_number", orderNumber)
+              .eq("status", "aguardando_pagamento");
+          } else {
+            console.error("pix reconcile amount mismatch:", { orderNumber, expected, paidAmt });
+          }
         } catch (e) {
           console.warn("pix reconcile update failed:", e);
         }
       }
     }
+
 
     return { paymentId: String(json.id), status: json.status };
   });
