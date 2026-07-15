@@ -47,8 +47,10 @@ interface MpSearchResult {
     status: string;
     external_reference?: string;
     date_approved?: string | null;
+    transaction_amount?: number;
   }>;
 }
+
 
 async function reconcile(request: Request): Promise<Response> {
   const cronSecret = process.env.CRON_SECRET;
