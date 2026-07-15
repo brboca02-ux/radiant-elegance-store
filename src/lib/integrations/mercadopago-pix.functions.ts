@@ -116,7 +116,9 @@ export const getMpPaymentStatus = createServerFn({ method: "POST" })
       id: number | string;
       status: string;
       external_reference?: string;
+      transaction_amount?: number;
     };
+
 
     // Reconciliação: se aprovado, garante que o pedido seja marcado como "pago"
     // mesmo que o webhook do MP não tenha chegado (secret ausente, URL não
