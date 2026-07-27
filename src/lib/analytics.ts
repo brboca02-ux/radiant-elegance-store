@@ -16,8 +16,28 @@ const hasPixel = () => typeof window !== "undefined" && typeof window.fbq === "f
 function ga(event: string, params?: Params) {
   if (hasGA()) window.gtag!("event", event, params ?? {});
 }
-function pixel(event: string, params?: Params, custom = false) {
-  if (hasPixel()) window.fbq!(custom ? "trackCustom" : "track", event, params ?? {});
+function pixel(event: string, params?: Params, custom = false, eventID?: string) {
+  if (!hasPixel()) return;
+  if (eventID) window.fbq!(custom ? "trackCustom" : "track", event, params ?? {}, { eventID });
+  else window.fbq!(custom ? "trackCustom" : "track", event, params ?? {});
+}
+
+// Dedup guard (per page load) to prevent double-fires of the same event.
+const recentEvents = new Map<string, number>();
+function isDuplicate(name: string, key: string, windowMs = 1500): boolean {
+  const k = `${name}:${key}`;
+  const now = Date.now();
+  const last = recentEvents.get(k) ?? 0;
+  if (now - last < windowMs) return true;
+  recentEvents.set(k, now);
+  return false;
+}
+
+export function genEventId(): string {
+  try {
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+  } catch { /* noop */ }
+  return `evt_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export const track = {
