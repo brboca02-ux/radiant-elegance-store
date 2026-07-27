@@ -88,6 +88,7 @@ export interface Order {
   history: OrderHistoryEntry[];
   notes?: string;
   created_at: string;
+  paid_at?: string | null;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -210,6 +211,7 @@ function mapDbToLocal(o: OrderFull): Order {
     history: [],
     notes: o.notes ?? undefined,
     created_at: o.created_at,
+    paid_at: o.paid_at ?? null,
   };
 }
 

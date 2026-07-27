@@ -95,15 +95,21 @@ function DashboardPage() {
   }, []);
 
   const paidStatuses: Order["status"][] = ["pago", "separando", "enviado", "entregue"];
+  const isPaid = (o: Order) => paidStatuses.includes(o.status);
+  // Data de referência para faturamento: paid_at (fonte de verdade do webhook)
+  // com fallback para created_at quando o admin marcou como pago manualmente.
+  const paidAtMs = (o: Order) =>
+    new Date(o.paid_at ?? o.created_at).getTime();
 
   const todayOrders = orders.filter((o) => new Date(o.created_at).getTime() >= startOfToday);
-  const todayPaid = todayOrders.filter((o) => paidStatuses.includes(o.status));
+  const todayPaid = orders.filter((o) => isPaid(o) && paidAtMs(o) >= startOfToday);
   const salesToday = todayPaid.reduce((a, o) => a + o.total, 0);
 
   const monthOrders = orders.filter((o) => new Date(o.created_at).getTime() >= startOfMonth);
-  const monthPaid = monthOrders.filter((o) => paidStatuses.includes(o.status));
+  const monthPaid = orders.filter((o) => isPaid(o) && paidAtMs(o) >= startOfMonth);
   const monthRevenue = monthPaid.reduce((a, o) => a + o.total, 0);
   const ticket = monthPaid.length ? monthRevenue / monthPaid.length : 0;
+  const pendingToday = todayOrders.filter((o) => !isPaid(o) && o.status !== "cancelado").length;
 
   const activeProducts = products.filter((p) => p.status === "ativo");
   const lowStockItems = activeProducts
@@ -120,7 +126,7 @@ function DashboardPage() {
 
   const kpis = [
     { label: "Vendas Hoje", value: fmtBRL(salesToday), delta: `${todayPaid.length} pagos`, icon: DollarSign, accent: "text-emerald-600" },
-    { label: "Pedidos Hoje", value: String(todayOrders.length), delta: `${todayOrders.length - todayPaid.length} pendentes`, icon: ShoppingBag, accent: "text-blue-600" },
+    { label: "Pedidos Hoje", value: String(todayOrders.length), delta: `${pendingToday} pendentes`, icon: ShoppingBag, accent: "text-blue-600" },
     { label: "Produtos Ativos", value: String(activeProducts.length), delta: `${products.length} no total`, icon: Package, accent: "text-violet-600" },
     { label: "Estoque Baixo", value: String(lowStockItems.length), delta: lowStockItems.length ? "reposição" : "ok", icon: AlertTriangle, accent: "text-amber-600" },
   ];
