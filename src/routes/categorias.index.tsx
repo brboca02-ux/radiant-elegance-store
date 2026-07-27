@@ -1,7 +1,7 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Pencil, Archive, Plus, ImageOff, Star } from "lucide-react";
+import { Pencil, Trash2, Plus, ImageOff, Star } from "lucide-react";
 import { useCategoriesStore, type CategoryStatus } from "@/stores/categoriesStore";
 
 export const Route = createFileRoute("/categorias/")({
