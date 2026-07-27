@@ -1,7 +1,7 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Pencil, Archive, Plus, ImageOff, Star } from "lucide-react";
+import { Pencil, Trash2, Plus, ImageOff, Star } from "lucide-react";
 import { useCategoriesStore, type CategoryStatus } from "@/stores/categoriesStore";
 
 export const Route = createFileRoute("/categorias/")({
@@ -18,7 +18,7 @@ const statusBadge: Record<CategoryStatus, string> = {
 function CategoriesListPage() {
   const navigate = useNavigate();
   const categories = useCategoriesStore((s) => s.categories);
-  const archive = useCategoriesStore((s) => s.archive);
+  const remove = useCategoriesStore((s) => s.remove);
 
   return (
     <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
@@ -105,8 +105,8 @@ function CategoriesListPage() {
                     <div className="flex justify-end gap-1">
                       <button onClick={() => navigate({ to: "/categorias/$id/editar", params: { id: c.id } })}
                         className="rounded p-1.5 hover:bg-muted" title="Editar"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => { archive(c.id); toast.success("Categoria arquivada"); }}
-                        className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
+                      <button onClick={() => { if (confirm(`Remover definitivamente "${c.name}"? Esta ação não pode ser desfeita.`)) { remove(c.id); toast.success("Categoria removida"); } }}
+                        className="rounded p-1.5 hover:bg-muted text-red-700" title="Remover"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -132,8 +132,8 @@ function CategoriesListPage() {
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => navigate({ to: "/categorias/$id/editar", params: { id: c.id } })}
                     className="text-xs rounded border border-border px-2 py-1">Editar</button>
-                  <button onClick={() => { archive(c.id); toast.success("Arquivada"); }}
-                    className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
+                  <button onClick={() => { if (confirm(`Remover "${c.name}"?`)) { remove(c.id); toast.success("Removida"); } }}
+                    className="text-xs rounded border border-border px-2 py-1 text-red-700">Remover</button>
                 </div>
               </div>
             </div>
