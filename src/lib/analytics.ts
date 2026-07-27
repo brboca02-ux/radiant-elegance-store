@@ -59,17 +59,41 @@ export const track = {
     pixel("AddToCart", { content_ids: [p.id], content_name: p.name, value: p.price * qty, currency: p.currency ?? "BRL" });
   },
   beginCheckout(p: { value: number; currency?: string; items?: Array<{ id: string; name: string; price: number; quantity: number }> }) {
+    const currency = p.currency ?? "BRL";
+    const value = Math.round(p.value * 100) / 100;
+    const ids = p.items?.map((i) => i.id) ?? [];
+    const numItems = p.items?.reduce((a, b) => a + b.quantity, 0) ?? 0;
+    // Dedup key = snapshot do carrinho (ids+qty+valor). Evita double-fire.
+    const key = `${value}|${numItems}|${ids.join(",")}`;
+    if (isDuplicate("begin_checkout", key)) return;
+
     ga("begin_checkout", {
-      currency: p.currency ?? "BRL",
-      value: p.value,
+      currency,
+      value,
       items: p.items?.map((i) => ({ item_id: i.id, item_name: i.name, price: i.price, quantity: i.quantity })),
     });
-    pixel("InitiateCheckout", {
-      value: p.value,
-      currency: p.currency ?? "BRL",
-      content_ids: p.items?.map((i) => i.id),
-      num_items: p.items?.reduce((a, b) => a + b.quantity, 0),
-    });
+    const eventID = genEventId();
+    pixel(
+      "InitiateCheckout",
+      {
+        value,
+        currency,
+        content_ids: ids,
+        content_type: "product",
+        num_items: numItems,
+        contents: p.items?.map((i) => ({ id: i.id, quantity: i.quantity, item_price: i.price })),
+      },
+      false,
+      eventID,
+    );
+    // Guardado pra futura Conversion API (server-side) reusar o mesmo eventID pra dedup.
+    try {
+      if (typeof window !== "undefined") {
+        (window as unknown as { __lastInitiateCheckout?: unknown }).__lastInitiateCheckout = {
+          eventID, value, currency, content_ids: ids, num_items: numItems, ts: Date.now(),
+        };
+      }
+    } catch { /* noop */ }
   },
   purchase(p: { value: number; currency?: string; transactionId?: string }) {
     ga("purchase", { transaction_id: p.transactionId, value: p.value, currency: p.currency ?? "BRL" });
