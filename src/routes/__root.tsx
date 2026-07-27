@@ -113,7 +113,7 @@ const organizationJsonLd = {
   email: "contato@mdmoda.com.br",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Santa Luzia, 672",
+    streetAddress: "Rua Santa Luzia, 550",
     addressLocality: "Joinville",
     addressRegion: "SC",
     postalCode: "89225-100",
@@ -153,7 +153,7 @@ const localBusinessJsonLd = {
   paymentAccepted: "Pix, Cartão de crédito, Boleto",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Santa Luzia, 672",
+    streetAddress: "Rua Santa Luzia, 550",
     addressLocality: "Joinville",
     addressRegion: "SC",
     postalCode: "89225-100",
@@ -166,7 +166,7 @@ const localBusinessJsonLd = {
     longitude: -48.8112,
   },
   hasMap:
-    "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+672+-+Aventureiro%2C+Joinville%2C+SC",
+    "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+550+-+Aventureiro%2C+Joinville%2C+SC",
   areaServed: [
     { "@type": "City", name: "Joinville" },
     { "@type": "AdministrativeArea", name: "Santa Catarina" },
