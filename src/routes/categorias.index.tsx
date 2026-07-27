@@ -132,8 +132,8 @@ function CategoriesListPage() {
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => navigate({ to: "/categorias/$id/editar", params: { id: c.id } })}
                     className="text-xs rounded border border-border px-2 py-1">Editar</button>
-                  <button onClick={() => { archive(c.id); toast.success("Arquivada"); }}
-                    className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
+                  <button onClick={() => { if (confirm(`Remover "${c.name}"?`)) { remove(c.id); toast.success("Removida"); } }}
+                    className="text-xs rounded border border-border px-2 py-1 text-red-700">Remover</button>
                 </div>
               </div>
             </div>
