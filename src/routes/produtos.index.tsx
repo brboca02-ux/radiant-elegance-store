@@ -141,6 +141,8 @@ function ProductsListPage() {
                           className="rounded p-1.5 hover:bg-muted" title="Duplicar"><Copy className="h-4 w-4" /></button>
                         <button onClick={() => { archive(p.id); toast.success("Produto arquivado"); }}
                           className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
+                        <button onClick={() => { if (confirm(`Apagar definitivamente "${p.name}"? Esta ação não pode ser desfeita.`)) { remove(p.id).then(() => toast.success("Produto apagado")).catch(() => toast.error("Erro ao apagar")); } }}
+                          className="rounded p-1.5 hover:bg-muted text-red-700" title="Apagar"><Trash2 className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>
