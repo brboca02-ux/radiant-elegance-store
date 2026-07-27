@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles } from "lucide-react";
+import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2 } from "lucide-react";
 import { useProductsStore, CATEGORIES, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
