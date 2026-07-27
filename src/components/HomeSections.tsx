@@ -307,31 +307,6 @@ export function InstagramSection() {
             Lançamentos, bastidores e provas da semana. Toque em um post para abrir no Instagram.
           </p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
-          {cells.map((c, i) => (
-            <a
-              key={i}
-              href={c.permalink}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Abrir post ${i + 1} no Instagram`}
-              className="group relative aspect-square overflow-hidden bg-secondary"
-            >
-              <img
-                src={c.img}
-                alt=""
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors flex items-center justify-center">
-                <Instagram
-                  className="h-6 w-6 text-background opacity-0 group-hover:opacity-100 transition-opacity"
-                  strokeWidth={1.5}
-                />
-              </div>
-            </a>
-          ))}
-        </div>
         <div className="text-center">
           <Button
             size="lg"
