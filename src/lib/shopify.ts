@@ -11,7 +11,7 @@ export const STORE_INFO = {
   city: "Joinville",
   region: "SC",
   country: "BR",
-  street: "Rua Santa Luzia, 672 - Aventureiro",
+  street: "Rua Santa Luzia, 550 - Aventureiro",
   postalCode: "89225-100",
   phone: "+55 47 98446-8103",
   whatsapp: "5547984468103",
