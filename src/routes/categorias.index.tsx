@@ -18,7 +18,7 @@ const statusBadge: Record<CategoryStatus, string> = {
 function CategoriesListPage() {
   const navigate = useNavigate();
   const categories = useCategoriesStore((s) => s.categories);
-  const archive = useCategoriesStore((s) => s.archive);
+  const remove = useCategoriesStore((s) => s.remove);
 
   return (
     <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
