@@ -115,7 +115,7 @@ function DashboardPage() {
     .slice(0, 5);
 
   const recentLeads = [...leads]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
     .slice(0, 4);
 
   const kpis = [
