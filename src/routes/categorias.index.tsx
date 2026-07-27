@@ -105,8 +105,8 @@ function CategoriesListPage() {
                     <div className="flex justify-end gap-1">
                       <button onClick={() => navigate({ to: "/categorias/$id/editar", params: { id: c.id } })}
                         className="rounded p-1.5 hover:bg-muted" title="Editar"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => { archive(c.id); toast.success("Categoria arquivada"); }}
-                        className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
+                      <button onClick={() => { if (confirm(`Remover definitivamente "${c.name}"? Esta ação não pode ser desfeita.`)) { remove(c.id); toast.success("Categoria removida"); } }}
+                        className="rounded p-1.5 hover:bg-muted text-red-700" title="Remover"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
                 </tr>
