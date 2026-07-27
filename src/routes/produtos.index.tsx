@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles } from "lucide-react";
+import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2 } from "lucide-react";
 import { useProductsStore, CATEGORIES, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
@@ -23,6 +23,7 @@ function ProductsListPage() {
   const products = useProductsStore((s) => s.products);
   const duplicate = useProductsStore((s) => s.duplicate);
   const archive = useProductsStore((s) => s.archive);
+  const remove = useProductsStore((s) => s.remove);
 
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("");
@@ -140,6 +141,8 @@ function ProductsListPage() {
                           className="rounded p-1.5 hover:bg-muted" title="Duplicar"><Copy className="h-4 w-4" /></button>
                         <button onClick={() => { archive(p.id); toast.success("Produto arquivado"); }}
                           className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
+                        <button onClick={() => { if (confirm(`Apagar definitivamente "${p.name}"? Esta ação não pode ser desfeita.`)) { remove(p.id).then(() => toast.success("Produto apagado")).catch(() => toast.error("Erro ao apagar")); } }}
+                          className="rounded p-1.5 hover:bg-muted text-red-700" title="Apagar"><Trash2 className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -173,6 +176,8 @@ function ProductsListPage() {
                       className="text-xs rounded border border-border px-2 py-1">Duplicar</button>
                     <button onClick={() => { archive(p.id); toast.success("Arquivado"); }}
                       className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
+                    <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch(() => toast.error("Erro")); } }}
+                      className="text-xs rounded border border-border px-2 py-1 text-red-700">Apagar</button>
                   </div>
                 </div>
               </div>
