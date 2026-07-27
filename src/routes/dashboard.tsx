@@ -239,17 +239,17 @@ function DashboardPage() {
               <p className="py-8 text-center text-sm text-muted-foreground">Nenhum lead capturado ainda.</p>
             ) : (
             <ul className="divide-y divide-border">
-              {recentLeads.map((l) => (
-                <li key={l.id} className="flex items-start justify-between py-3 gap-3">
+              {recentLeads.map((l, i) => (
+                <li key={i} className="flex items-start justify-between py-3 gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">{l.name || "—"}</p>
-                    <p className="text-xs text-muted-foreground truncate">{l.email || l.phone || "—"}</p>
+                    <p className="text-xs text-muted-foreground truncate">{l.email || l.whatsapp || l.value || "—"}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground/80 ring-1 ring-border">
-                      <Users className="h-3 w-3" /> {l.source ?? "—"}
+                      <Users className="h-3 w-3" /> {l.source ?? l.type ?? "—"}
                     </span>
-                    <p className="text-[11px] text-muted-foreground mt-1">{timeAgo(l.created_at)}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{timeAgo(l.at)}</p>
                   </div>
                 </li>
               ))}
