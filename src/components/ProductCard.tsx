@@ -13,16 +13,26 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
   const isLoading = useCartStore((s) => s.isLoading);
   const [loaded0, setLoaded0] = useState(false);
   const [loaded1, setLoaded1] = useState(false);
-  const variant = product.node.variants.edges[0]?.node;
+  const allVariants = product.node.variants.edges.map((e) => e.node);
+  // Escolhe a primeira variante COM estoque disponível (não apenas a primeira da lista),
+  // pra evitar marcar como "Esgotado" quando só o PP zerou mas M/G têm estoque.
+  const variant =
+    allVariants.find((v) => v.availableForSale && (v.quantityAvailable ?? 1) > 0) ??
+    allVariants[0];
 
   const img0 = product.node.images.edges[0]?.node;
   const img1 = product.node.images.edges[1]?.node ?? img0;
   const price = product.node.priceRange.minVariantPrice;
-  const soldOut = !variant?.availableForSale;
-  const lowStock =
-    typeof variant?.quantityAvailable === "number" &&
-    variant.quantityAvailable > 0 &&
-    variant.quantityAvailable <= 3;
+  const soldOut =
+    allVariants.length > 0 &&
+    allVariants.every(
+      (v) => !v.availableForSale || (typeof v.quantityAvailable === "number" && v.quantityAvailable <= 0),
+    );
+  const totalAvailable = allVariants.reduce(
+    (sum, v) => sum + (typeof v.quantityAvailable === "number" ? Math.max(0, v.quantityAvailable) : 0),
+    0,
+  );
+  const lowStock = !soldOut && totalAvailable > 0 && totalAvailable <= 3;
 
   const onAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -42,6 +52,7 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
       currency: variant.price.currencyCode,
     });
   };
+
 
 
   return (
