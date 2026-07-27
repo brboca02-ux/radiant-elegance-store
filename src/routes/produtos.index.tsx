@@ -23,6 +23,7 @@ function ProductsListPage() {
   const products = useProductsStore((s) => s.products);
   const duplicate = useProductsStore((s) => s.duplicate);
   const archive = useProductsStore((s) => s.archive);
+  const remove = useProductsStore((s) => s.remove);
 
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("");
