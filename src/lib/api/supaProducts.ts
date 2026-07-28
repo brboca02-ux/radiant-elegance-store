@@ -124,9 +124,21 @@ export async function archiveProductRemote(id: string): Promise<void> {
 }
 
 export async function deleteProductRemote(id: string): Promise<void> {
-  const { error } = await supabase.from("products").delete().eq("id", id);
+  // Remove dependências primeiro (evita bloqueio por FK)
+  await supabase.from("product_images").delete().eq("product_id", id);
+  await supabase.from("product_variants").delete().eq("product_id", id);
+
+  const { data, error } = await supabase
+    .from("products").delete().eq("id", id).select("id");
   if (error) throw error;
+  // RLS pode bloquear silenciosamente (0 linhas afetadas, sem erro)
+  if (!data || data.length === 0) {
+    throw new Error(
+      "Não foi possível apagar: sua conta não tem permissão de administrador ou o produto está vinculado a pedidos.",
+    );
+  }
 }
+
 
 export async function setStockRemote(id: string, value: number): Promise<void> {
   const { error } = await supabase.from("products").update({ stock: Math.max(0, value) }).eq("id", id);
