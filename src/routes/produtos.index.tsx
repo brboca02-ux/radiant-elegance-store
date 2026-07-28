@@ -177,8 +177,9 @@ function ProductsListPage() {
                       className="text-xs rounded border border-border px-2 py-1">Duplicar</button>
                     <button onClick={() => { archive(p.id); toast.success("Arquivado"); }}
                       className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
-                    <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch(() => toast.error("Erro")); } }}
+                    <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch((e) => toast.error(e?.message ?? "Erro")); } }}
                       className="text-xs rounded border border-border px-2 py-1 text-red-700">Apagar</button>
+
                   </div>
                 </div>
               </div>
