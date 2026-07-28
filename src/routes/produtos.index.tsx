@@ -141,8 +141,9 @@ function ProductsListPage() {
                           className="rounded p-1.5 hover:bg-muted" title="Duplicar"><Copy className="h-4 w-4" /></button>
                         <button onClick={() => { archive(p.id); toast.success("Produto arquivado"); }}
                           className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
-                        <button onClick={() => { if (confirm(`Apagar definitivamente "${p.name}"? Esta ação não pode ser desfeita.`)) { remove(p.id).then(() => toast.success("Produto apagado")).catch(() => toast.error("Erro ao apagar")); } }}
+                        <button onClick={() => { if (confirm(`Apagar definitivamente "${p.name}"? Esta ação não pode ser desfeita.`)) { remove(p.id).then(() => toast.success("Produto apagado")).catch((e) => toast.error(e?.message ?? "Erro ao apagar")); } }}
                           className="rounded p-1.5 hover:bg-muted text-red-700" title="Apagar"><Trash2 className="h-4 w-4" /></button>
+
                       </div>
                     </td>
                   </tr>
@@ -176,8 +177,9 @@ function ProductsListPage() {
                       className="text-xs rounded border border-border px-2 py-1">Duplicar</button>
                     <button onClick={() => { archive(p.id); toast.success("Arquivado"); }}
                       className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
-                    <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch(() => toast.error("Erro")); } }}
+                    <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch((e) => toast.error(e?.message ?? "Erro")); } }}
                       className="text-xs rounded border border-border px-2 py-1 text-red-700">Apagar</button>
+
                   </div>
                 </div>
               </div>

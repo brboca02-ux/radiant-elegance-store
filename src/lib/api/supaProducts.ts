@@ -130,14 +130,22 @@ export async function deleteProductRemote(id: string): Promise<void> {
 
   const { data, error } = await supabase
     .from("products").delete().eq("id", id).select("id");
-  if (error) throw error;
+  if (error) {
+    if ((error as { code?: string }).code === "23503") {
+      throw new Error(
+        "Este produto está vinculado a pedidos e não pode ser apagado. Use Arquivar para tirá-lo da loja.",
+      );
+    }
+    throw new Error(error.message);
+  }
   // RLS pode bloquear silenciosamente (0 linhas afetadas, sem erro)
   if (!data || data.length === 0) {
     throw new Error(
-      "Não foi possível apagar: sua conta não tem permissão de administrador ou o produto está vinculado a pedidos.",
+      "Não foi possível apagar: sua conta não tem permissão de administrador. Saia e entre novamente para atualizar as permissões.",
     );
   }
 }
+
 
 
 export async function setStockRemote(id: string, value: number): Promise<void> {
