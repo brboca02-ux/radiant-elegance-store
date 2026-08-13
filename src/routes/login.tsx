@@ -79,7 +79,7 @@ function LoginPage() {
         <div className="flex items-center gap-2 justify-center mb-6">
           <Store className="h-6 w-6 text-primary" />
           <span className="font-display font-extrabold text-xl tracking-tight">
-            <span className="text-primary">MD</span> Modas
+            <span className="text-primary">J&amp;S</span> Store
           </span>
         </div>
         <h1 className="text-center text-lg font-semibold mb-1">

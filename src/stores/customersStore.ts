@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export const STORE_ID = "store_md_modas";
+export const STORE_ID = "store_js_store";
 
 export type CustomerStatus = "ativo" | "vip" | "inativo";
 

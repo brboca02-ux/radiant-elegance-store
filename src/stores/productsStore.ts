@@ -4,7 +4,7 @@ import {
   archiveProductRemote, deleteProductRemote, adjustStockRemote, setStockRemote,
 } from "@/lib/api/supaProducts";
 
-export const STORE_ID = "store_md_modas";
+export const STORE_ID = "store_js_store";
 
 export const CATEGORIES = [
   { id: "feminino", name: "Feminino" },
@@ -165,11 +165,42 @@ export const emptyProduct = (): Omit<Product, "id" | "store_id" | "created_at"> 
 // ---------- Stock helpers ----------
 export type StockLevel = "critico" | "baixo" | "normal" | "esgotado";
 
-export function stockLevel(p: Pick<Product, "stock" | "minimum_stock" | "track_stock">): StockLevel {
+type StockShape = Pick<Product, "stock" | "minimum_stock" | "track_stock"> & {
+  variants?: ProductVariant[];
+};
+
+/**
+ * Estoque real do produto: quando existem variantes (tamanhos), o total é a
+ * soma das variantes — é ela que manda na vitrine. Sem variantes, usa o campo
+ * de estoque simples do produto.
+ */
+export function effectiveStock(p: StockShape): number {
+  if (p.variants && p.variants.length > 0) {
+    return p.variants.reduce((sum, v) => sum + Math.max(0, v.stock || 0), 0);
+  }
+  return Math.max(0, p.stock || 0);
+}
+
+export function stockLevel(p: StockShape): StockLevel {
   if (!p.track_stock) return "normal";
-  if (p.stock <= 0) return "esgotado";
-  if (p.stock <= 2) return "critico";
-  if (p.stock <= (p.minimum_stock || 5)) return "baixo";
+  const total = effectiveStock(p);
+  const min = p.minimum_stock || 5;
+  if (total <= 0) return "esgotado";
+  if (total <= Math.max(1, Math.min(2, min))) return "critico";
+  if (total <= min) return "baixo";
+  return "normal";
+}
+
+/** Status de uma variante isolada, usando o mínimo definido no produto. */
+export function variantLevel(
+  v: Pick<ProductVariant, "stock">,
+  p: Pick<Product, "minimum_stock" | "track_stock">,
+): StockLevel {
+  if (!p.track_stock) return "normal";
+  const min = p.minimum_stock || 5;
+  if (v.stock <= 0) return "esgotado";
+  if (v.stock <= Math.max(1, Math.min(2, min))) return "critico";
+  if (v.stock <= min) return "baixo";
   return "normal";
 }
 

@@ -139,7 +139,7 @@ function DashboardPage() {
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">Painel da loja</p>
             <h1 className="font-display text-3xl md:text-4xl tracking-tight mt-1">Dashboard</h1>
-            <p className="text-sm text-muted-foreground mt-1">Visão geral · loja {STORE_ID}</p>
+            <p className="text-sm text-muted-foreground mt-1">Visão geral · J&amp;S Store</p>
           </div>
           <div className="text-xs text-muted-foreground">
             Dados em tempo real · {new Date().toLocaleTimeString("pt-BR")}

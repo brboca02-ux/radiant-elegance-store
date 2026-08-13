@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2 } from "lucide-react";
-import { useProductsStore, CATEGORIES, type ProductStatus } from "@/stores/productsStore";
+import { useProductsStore, CATEGORIES, effectiveStock, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
   head: () => ({ meta: [{ title: "Produtos — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -129,7 +129,7 @@ function ProductsListPage() {
                         </div>
                       ) : <span className="font-medium">{BRL(p.price)}</span>}
                     </td>
-                    <td className="px-4 py-3">{p.stock}</td>
+                    <td className="px-4 py-3">{effectiveStock(p)}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 capitalize ${statusBadge[p.status]}`}>{p.status}</span>
                     </td>
@@ -169,7 +169,7 @@ function ProductsListPage() {
                     <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ring-1 capitalize ${statusBadge[p.status]}`}>{p.status}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">{cat} · SKU {p.sku || "—"}</p>
-                  <p className="text-sm font-medium mt-1">{BRL(p.sale_price ?? p.price)} · estoque {p.stock}</p>
+                  <p className="text-sm font-medium mt-1">{BRL(p.sale_price ?? p.price)} · estoque {effectiveStock(p)}</p>
                   <div className="flex gap-2 mt-2">
                     <button onClick={() => navigate({ to: "/produtos/$id/editar", params: { id: p.id } })}
                       className="text-xs rounded border border-border px-2 py-1">Editar</button>

@@ -3,7 +3,10 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowDownCircle, ArrowUpCircle, Settings2, AlertTriangle, History, Search } from "lucide-react";
-import { useProductsStore, CATEGORIES, stockLevel, stockStatusLabel } from "@/stores/productsStore";
+import {
+  useProductsStore, CATEGORIES, stockLevel, stockStatusLabel,
+  effectiveStock, variantLevel, type Product,
+} from "@/stores/productsStore";
 import { useStockStore, type MovementType } from "@/stores/stockStore";
 
 export const Route = createFileRoute("/estoque/")({
@@ -25,7 +28,15 @@ function EstoquePage() {
       .filter((p) => p.status !== "arquivado")
       .filter((p) => (q ? p.name.toLowerCase().includes(q.toLowerCase()) || p.sku.toLowerCase().includes(q.toLowerCase()) : true))
       .filter((p) => (cat === "all" ? true : p.category_id === cat))
-      .map((p) => ({ ...p, level: stockLevel(p), available: Math.max(0, p.stock - (p.reserved_stock || 0)) }))
+      .map((p) => {
+        const total = effectiveStock(p);
+        return {
+          ...p,
+          total,
+          level: stockLevel(p),
+          available: Math.max(0, total - (p.reserved_stock || 0)),
+        };
+      })
       .filter((p) => (statusF === "all" ? true : p.level === statusF));
   }, [products, q, cat, statusF]);
 
@@ -47,7 +58,7 @@ function EstoquePage() {
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">Operação</p>
             <h1 className="font-display text-3xl md:text-4xl tracking-tight mt-1">Estoque</h1>
-            <p className="text-sm text-muted-foreground mt-1">Controle de inventário · loja store_md_modas</p>
+            <p className="text-sm text-muted-foreground mt-1">Controle de inventário · J&amp;S Store</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button onClick={() => setOpenType("entrada")} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-emerald-700">
@@ -118,11 +129,12 @@ function EstoquePage() {
                         <div className="min-w-0">
                           <p className="font-medium truncate">{p.name}</p>
                           <p className="text-xs text-muted-foreground">SKU {p.sku || "—"} · mín. {p.minimum_stock}</p>
+                          <VariantChips product={p} />
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{CATEGORIES.find((c) => c.id === p.category_id)?.name ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-medium">{p.stock}</td>
+                    <td className="px-4 py-3 text-right font-medium">{p.total}</td>
                     <td className="px-4 py-3 text-right text-muted-foreground">{p.reserved_stock || 0}</td>
                     <td className="px-4 py-3 text-right font-medium">{p.available}</td>
                     <td className="px-4 py-3"><LevelPill level={p.level} /></td>
@@ -166,6 +178,30 @@ function KPI({ label, value, accent = "text-foreground" }: { label: string; valu
     <div className="rounded-xl border border-border bg-background p-5">
       <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className={`mt-2 text-2xl font-semibold tracking-tight ${accent}`}>{value}</p>
+    </div>
+  );
+}
+
+const VARIANT_CHIP: Record<string, string> = {
+  normal: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  baixo: "bg-amber-50 text-amber-700 ring-amber-200",
+  critico: "bg-rose-50 text-rose-700 ring-rose-200",
+  esgotado: "bg-muted text-muted-foreground ring-border line-through",
+};
+
+function VariantChips({ product }: { product: Product }) {
+  if (!product.variants?.length) return null;
+  return (
+    <div className="mt-1.5 flex flex-wrap gap-1">
+      {product.variants.map((v) => (
+        <span
+          key={v.id}
+          title={`${v.size}${v.color ? ` · ${v.color}` : ""} — ${v.stock} un.`}
+          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ring-1 ${VARIANT_CHIP[variantLevel(v, product)]}`}
+        >
+          {v.size} <span className="opacity-70">{v.stock}</span>
+        </span>
+      ))}
     </div>
   );
 }
@@ -221,7 +257,7 @@ function MovementDialog({
         <div className="p-5 space-y-4">
           <Field label="Produto">
             <select value={productId} onChange={(e) => setProductId(e.target.value)} className={inp}>
-              {products.map((p) => <option key={p.id} value={p.id}>{p.name} — atual: {p.stock}</option>)}
+              {products.map((p) => <option key={p.id} value={p.id}>{p.name} — atual: {effectiveStock(p)}</option>)}
             </select>
           </Field>
           <Field label={type === "ajuste" ? "Novo total" : "Quantidade"}>
