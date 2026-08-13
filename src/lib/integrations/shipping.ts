@@ -130,7 +130,7 @@ function lookupCity(city?: string): CityRate | null {
 }
 
 export const StoreShippingProvider: ShippingProvider = {
-  name: "md-modas-joinville",
+  name: "js-store-joinville",
   async quote({ cep, subtotal, city }) {
     const cleanCep = cep.replace(/\D/g, "");
     const isJoinvilleCep = cleanCep.startsWith("892") || cleanCep.startsWith("891");

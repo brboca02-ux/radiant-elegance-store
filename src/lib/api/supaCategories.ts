@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import type { Category } from "@/stores/categoriesStore";
 
-const STORE_ID = "store_md_modas";
+const STORE_ID = "store_js_store";
 
 type DbCategory = {
   id: string; slug: string; name: string; description: string | null;

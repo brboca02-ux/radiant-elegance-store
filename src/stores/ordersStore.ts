@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { supabase } from "@/lib/supabaseClient";
 import { listMyOrders, type OrderFull } from "@/lib/api/supaOrders";
 
-export const STORE_ID = "store_md_modas";
+export const STORE_ID = "store_js_store";
 
 export type OrderStatus =
   | "novo"

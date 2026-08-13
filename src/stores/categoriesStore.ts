@@ -3,7 +3,7 @@ import {
   listCategories, createCategoryRemote, updateCategoryRemote, deleteCategoryRemote,
 } from "@/lib/api/supaCategories";
 
-export const STORE_ID = "store_md_modas";
+export const STORE_ID = "store_js_store";
 
 export type CategoryStatus = "ativo" | "inativo" | "arquivado";
 

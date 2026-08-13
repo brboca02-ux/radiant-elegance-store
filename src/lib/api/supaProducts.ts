@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 import type { Product, ProductImage, ProductVariant, ProductStatus } from "@/stores/productsStore";
 
 // ----- Helpers -----------------------------------------------------------
-const STORE_ID = "store_md_modas";
+const STORE_ID = "store_js_store";
 
 type DbProduct = {
   id: string;

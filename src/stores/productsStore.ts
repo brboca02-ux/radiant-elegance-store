@@ -4,7 +4,7 @@ import {
   archiveProductRemote, deleteProductRemote, adjustStockRemote, setStockRemote,
 } from "@/lib/api/supaProducts";
 
-export const STORE_ID = "store_md_modas";
+export const STORE_ID = "store_js_store";
 
 export const CATEGORIES = [
   { id: "feminino", name: "Feminino" },
