@@ -62,7 +62,7 @@ export function PromoCountdownBanner() {
         <Link
           to="/colecao"
           search={{ c: "promocoes" }}
-          className="bg-white text-primary font-semibold px-5 py-2.5 rounded-full text-sm hover:opacity-90"
+          className="bg-gold text-gold-foreground font-semibold px-5 py-2.5 rounded-full text-sm hover:opacity-90"
         >
           Ver ofertas →
         </Link>
