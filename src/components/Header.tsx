@@ -236,7 +236,7 @@ export function Header() {
         <button
           aria-label="Abrir menu"
           onClick={() => setOpen(true)}
-          className="md:hidden h-11 w-11 -ml-2 flex items-center justify-center"
+          className="md:hidden tap-target -ml-2 flex items-center justify-center"
         >
           <Menu className="h-6 w-6" />
         </button>
@@ -258,7 +258,7 @@ export function Header() {
             <MessageCircle className="h-4 w-4" /> WhatsApp
           </a>
 
-          <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden h-10 w-10 flex items-center justify-center">
+          <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center">
             <Search className="h-5 w-5" />
           </button>
           <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex h-10 w-10 items-center justify-center text-foreground/70 hover:text-primary transition">
