@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import logoAsset from "@/assets/js-store-logo.jpg.asset.json";
 import { CartDrawer } from "./CartDrawer";
 import { SearchBox } from "./SearchBox";
 import { buildWhatsAppLink } from "@/lib/shopify";
@@ -160,8 +161,8 @@ export function Header() {
         >
           <Menu className="h-6 w-6" />
         </button>
-        <Link to="/" className="font-display font-extrabold text-xl sm:text-2xl tracking-tight">
-          <span className="text-primary">J&S</span> Store
+        <Link to="/" className="flex items-center">
+          <img src={logoAsset.url} alt="J&S Store" className="h-10 sm:h-12 w-auto object-contain" />
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
           <SearchBox />

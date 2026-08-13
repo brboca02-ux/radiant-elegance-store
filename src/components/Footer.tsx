@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, MessageCircle, MapPin, ShieldCheck, Lock } from "lucide-react";
 import { NewsletterCapture } from "@/components/NewsletterCapture";
 import { STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
+import logoAsset from "@/assets/js-store-logo.jpg.asset.json";
 
 const COL_TITLE = "text-[11px] tracking-[0.3em] uppercase mb-5 text-background/60";
 const LINK = "inline-flex items-center min-h-11 py-2 text-sm text-background/75 hover:text-background transition";
@@ -12,8 +13,8 @@ export function Footer() {
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
         {/* Brand + Newsletter */}
         <div className="lg:col-span-2">
-          <div className="font-display font-extrabold text-3xl">
-            <span className="text-primary">J&S</span> Store
+          <div className="flex flex-col gap-4">
+            <img src={logoAsset.url} alt="J&S Store" className="h-16 w-auto object-contain self-start" />
           </div>
           <p className="text-sm text-background/70 mt-5 leading-relaxed max-w-sm">
             Moda feminina e masculina em Joinville. Curadoria honesta, atendimento próximo
