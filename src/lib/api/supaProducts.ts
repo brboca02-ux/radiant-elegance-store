@@ -68,7 +68,7 @@ const SELECT =
 // ----- Reads -------------------------------------------------------------
 export async function listAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
-    .from("products").select(SELECT)
+    .from("products").select(SELECT).in("category_id", ["feminino", "masculino", "plus-size", "vestidos", "conjuntos"])
     .neq("status", "arquivado")
     .order("created_at", { ascending: false });
   if (error) throw error;

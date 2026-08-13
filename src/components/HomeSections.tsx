@@ -23,9 +23,6 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const categories = [
   { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: vestidos, q: "feminino" },
   { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: blazers, q: "masculino" },
-  { label: "Vestidos", alt: "Categoria Vestidos J&S Store", img: tricots, q: "vestidos" },
-  { label: "Conjuntos", alt: "Categoria Conjuntos J&S Store", img: conjuntos, q: "conjuntos" },
-  { label: "Plus Size", alt: "Categoria Moda Plus Size Feminina", img: conjuntos, q: "plus-size" },
 ];
 
 const diferenciais = [

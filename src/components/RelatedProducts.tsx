@@ -6,13 +6,12 @@ import { ProductCard } from "./ProductCard";
 // Mapa de complementaridade: se o produto atual for "X", priorizamos as
 // categorias listadas para recomendar itens que combinem no look.
 const COMPLEMENTS: Record<string, string[]> = {
-  feminino: ["calcados", "vestidos", "conjuntos"],
-  masculino: ["calcados", "conjuntos"],
-  infantil: ["calcados"],
-  vestidos: ["calcados", "feminino"],
-  conjuntos: ["calcados", "feminino", "masculino"],
-  "plus-size": ["calcados", "vestidos"],
-  calcados: ["feminino", "masculino", "vestidos"],
+  feminino: ["feminino", "masculino"],
+  masculino: ["masculino", "feminino"],
+  vestidos: ["feminino"],
+  conjuntos: ["feminino", "masculino"],
+  "plus-size": ["feminino"],
+  calcados: ["feminino", "masculino"],
 };
 
 // Detecta "tipo" da peça pelo nome/descrição para casar melhor os pares.

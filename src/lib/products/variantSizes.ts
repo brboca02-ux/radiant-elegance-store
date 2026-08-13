@@ -4,8 +4,8 @@
 export type ProductCategoryId =
   | "feminino"
   | "masculino"
-  | "infantil"
-  | "calcados"
+  | "feminino"
+  | "masculino"
   | "vestidos"
   | "conjuntos"
   | "plus-size";

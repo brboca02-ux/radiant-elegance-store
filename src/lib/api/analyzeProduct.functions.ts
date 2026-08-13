@@ -8,7 +8,7 @@ export type DetectedColor = { name: string; hex: string };
 export type AnalyzedProduct = {
   name: string;
   description: string;
-  category_id: "feminino" | "masculino" | "infantil" | "calcados" | "vestidos" | "conjuntos" | "plus-size";
+  category_id: "feminino" | "masculino" | "vestidos" | "conjuntos" | "plus-size";
   piece_type: string;
   color: string;
   colors: DetectedColor[];
@@ -17,7 +17,7 @@ export type AnalyzedProduct = {
   meta_description: string;
 };
 
-const CATEGORIES = ["feminino", "masculino", "infantil", "calcados", "vestidos", "conjuntos", "plus-size"];
+const CATEGORIES = ["feminino", "masculino", "vestidos", "conjuntos", "plus-size"];
 
 export const analyzeProductImage = createServerFn({ method: "POST" })
   .inputValidator(

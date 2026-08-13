@@ -213,8 +213,6 @@ function QuickAddPage() {
                     options={[
                       { v: "feminino", l: "Feminino" },
                       { v: "masculino", l: "Masculino" },
-                      { v: "infantil", l: "Infantil" },
-                      { v: "calcados", l: "Calçados" },
                       { v: "vestidos", l: "Vestidos" },
                       { v: "conjuntos", l: "Conjuntos" },
                       { v: "plus-size", l: "Plus Size" },
