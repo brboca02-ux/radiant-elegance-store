@@ -5,7 +5,7 @@ import { track } from "@/lib/analytics";
 export function WhatsAppFloat() {
   return (
     <a
-      href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
+      href={buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de ajuda.")}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Atendimento WhatsApp"

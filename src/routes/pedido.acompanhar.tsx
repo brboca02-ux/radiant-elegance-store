@@ -7,8 +7,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/pedido/acompanhar")({
   head: () => ({
     meta: [
-      { title: "Acompanhar pedido — MD Modas" },
-      { name: "description", content: "Consulte o status do seu pedido MD Modas em tempo real." },
+      { title: "Acompanhar pedido — J&S Store" },
+      { name: "description", content: "Consulte o status do seu pedido J&S Store em tempo real." },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

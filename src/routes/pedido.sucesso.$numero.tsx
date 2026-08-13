@@ -16,7 +16,7 @@ export const Route = createFileRoute("/pedido/sucesso/$numero")({
   validateSearch: searchSchema,
   head: ({ params }) => ({
     meta: [
-      { title: `Pedido ${params.numero} — MD Modas` },
+      { title: `Pedido ${params.numero} — J&S Store` },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -151,7 +151,7 @@ function SuccessPage() {
   if (!order) throw notFound();
 
   const m = statusMeta(order.status);
-  const waMsg = `Olá MD Modas! Meu pedido é *${order.order_number}* e gostaria de acompanhar o status. Obrigado!`;
+  const waMsg = `Olá J&S Store! Meu pedido é *${order.order_number}* e gostaria de acompanhar o status. Obrigado!`;
   const waLink = buildWhatsAppLink(waMsg);
   const showPayCta = order.status === "aguardando_pagamento" && order.payment_url;
   const paid = order.status === "pago";

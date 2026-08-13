@@ -4,9 +4,9 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — MD Modas" },
-      { name: "description", content: "Como a MD Modas coleta, usa e protege seus dados pessoais. Política de privacidade em conformidade com a LGPD." },
-      { property: "og:title", content: "Política de Privacidade — MD Modas" },
+      { title: "Política de Privacidade — J&S Store" },
+      { name: "description", content: "Como a J&S Store coleta, usa e protege seus dados pessoais. Política de privacidade em conformidade com a LGPD." },
+      { property: "og:title", content: "Política de Privacidade — J&S Store" },
       { property: "og:description", content: "Transparência sobre coleta de dados, cookies, Google Analytics, Meta Pixel, WhatsApp e newsletter." },
       { property: "og:url", content: "/privacidade" },
       { property: "og:type", content: "article" },
@@ -27,7 +27,7 @@ function PrivacidadePage() {
         { name: "Política de Privacidade", href: "/privacidade" },
       ]}
     >
-      <p>A MD Modas respeita a sua privacidade. Esta política descreve como coletamos, usamos, armazenamos e protegemos seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD).</p>
+      <p>A J&S Store respeita a sua privacidade. Esta política descreve como coletamos, usamos, armazenamos e protegemos seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD).</p>
 
       <h2>1. Dados que coletamos</h2>
       <p>Coletamos apenas as informações necessárias para atender você:</p>

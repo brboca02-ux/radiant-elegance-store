@@ -29,7 +29,7 @@ export const analyzeProductImage = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("LOVABLE_API_KEY ausente no servidor.");
 
-    const system = `Você é uma especialista em moda da loja MD Modas.
+    const system = `Você é uma especialista em moda da loja J&S Store.
 Analise a imagem do produto e responda APENAS com JSON puro (sem markdown, sem crase).
 Formato exato:
 {
@@ -116,7 +116,7 @@ Regras:
 
 
     return {
-      name: (parsed.name ?? "").toString().slice(0, 80) || "Produto MD Modas",
+      name: (parsed.name ?? "").toString().slice(0, 80) || "Produto J&S Store",
       description: (parsed.description ?? "").toString(),
       category_id: category,
       piece_type: pieceType,

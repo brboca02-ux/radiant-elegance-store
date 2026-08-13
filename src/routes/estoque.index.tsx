@@ -7,7 +7,7 @@ import { useProductsStore, CATEGORIES, stockLevel, stockStatusLabel } from "@/st
 import { useStockStore, type MovementType } from "@/stores/stockStore";
 
 export const Route = createFileRoute("/estoque/")({
-  head: () => ({ meta: [{ title: "Estoque — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Estoque — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: EstoquePage,
 });
 

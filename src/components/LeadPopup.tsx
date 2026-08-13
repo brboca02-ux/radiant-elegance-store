@@ -45,7 +45,7 @@ export function LeadPopup() {
       setWelcomeShown(true);
       setActive({
         source: "welcome_popup",
-        title: "Bem-vinda à MD Modas",
+        title: "Bem-vinda à J&S Store",
         intro: "Receba lançamentos, novidades e ofertas exclusivas.",
       });
       track.popupView("welcome");

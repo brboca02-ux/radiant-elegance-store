@@ -16,7 +16,7 @@ import {
 import { useOrdersStore, ORDER_STATUS_LABEL } from "@/stores/ordersStore";
 
 export const Route = createFileRoute("/clientes/$id")({
-  head: () => ({ meta: [{ title: "Cliente — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Cliente — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: CustomerDetailPage,
 });
 

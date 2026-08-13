@@ -33,7 +33,7 @@
   --color-silver-foreground: var(--silver-foreground);
   --color-onyx: var(--onyx);
   --color-offwhite: var(--offwhite);
-  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -52,7 +52,7 @@
   --secondary: oklch(0.968 0.002 90);                  /* off-white */
   --secondary-foreground: oklch(0.145 0 0);
   --muted: oklch(0.968 0.002 90);
-  --muted-foreground: oklch(0.48 0.006 90);
+  --muted-foreground: oklch(0.44 0.006 90);
   --accent: oklch(0.75 0.115 84);                      /* #C9A24C dourado */
   --accent-foreground: oklch(0.145 0 0);
   --gold: oklch(0.75 0.115 84);                        /* #C9A24C */
@@ -77,7 +77,7 @@
     -webkit-font-smoothing: antialiased;
   }
   img, video { max-width: 100%; height: auto; }
-  h1, h2, h3, h4, .font-display { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; }
+  h1, h2, h3, h4, .font-display { font-family: var(--font-display); font-weight: 700; letter-spacing: normal; }
 }
 
 @utility no-scrollbar {
@@ -182,3 +182,15 @@
   .animate-marquee { animation: none !important; }
 }
 
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+@utility tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}

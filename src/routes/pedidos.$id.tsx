@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/pedidos/$id")({
   head: () => ({
     meta: [
-      { title: "Detalhe do Pedido — MD Modas" },
+      { title: "Detalhe do Pedido — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -114,7 +114,7 @@ function OrderDetailPage() {
 
   const sendPickupWhatsapp = () => {
     if (!order?.customer.phone) return;
-    const msg = `Olá ${order.customer.name}! Seu pedido *${order.number}* está pronto para retirada na loja MD Modas. Instruções e endereço: ${pickupUrl}`;
+    const msg = `Olá ${order.customer.name}! Seu pedido *${order.number}* está pronto para retirada na loja J&S Store. Instruções e endereço: ${pickupUrl}`;
     window.open(buildCustomerWhatsAppLink(order.customer.phone, msg), "_blank", "noopener");
   };
 

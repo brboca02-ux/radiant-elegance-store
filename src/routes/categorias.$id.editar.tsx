@@ -3,7 +3,7 @@ import { CategoryForm } from "@/components/CategoryForm";
 import { useCategoriesStore } from "@/stores/categoriesStore";
 
 export const Route = createFileRoute("/categorias/$id/editar")({
-  head: () => ({ meta: [{ title: "Editar Categoria — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Editar Categoria — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: EditPage,
 });
 

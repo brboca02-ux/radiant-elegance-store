@@ -8,9 +8,9 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
-      { title: "Sobre a MD Modas — Loja em Joinville" },
-      { name: "description", content: "Conheça a MD Modas, loja de moda feminina e masculina em Joinville/SC. Atendimento pelo WhatsApp e venda online para toda a região." },
-      { property: "og:title", content: "Sobre a MD Modas — Joinville" },
+      { title: "Sobre a J&S Store — Loja em Joinville" },
+      { name: "description", content: "Conheça a J&S Store, loja de moda feminina e masculina em Joinville/SC. Atendimento pelo WhatsApp e venda online para toda a região." },
+      { property: "og:title", content: "Sobre a J&S Store — Joinville" },
       { property: "og:description", content: "Loja física em Joinville, atendimento humanizado e moda acessível." },
       { property: "og:url", content: "https://mdmoda.com.br/sobre" },
     ],
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/sobre")({
 
 
 function SobrePage() {
-  const wa = buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de tirar uma dúvida.");
+  const wa = buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de tirar uma dúvida.");
   return (
     <div className="bg-background">
       <Breadcrumbs
@@ -34,7 +34,7 @@ function SobrePage() {
 
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <span className="eyebrow">Nossa história</span>
-          <h1 className="font-display text-4xl md:text-6xl mt-3">Sobre a MD Modas — Moda em Joinville</h1>
+          <h1 className="font-display text-4xl md:text-6xl mt-3">Sobre a J&S Store — Moda em Joinville</h1>
           <span className="gold-rule mt-5" />
           <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Há anos vestindo Joinville com peças selecionadas com carinho. Acreditamos em moda
@@ -44,7 +44,7 @@ function SobrePage() {
       </section>
 
       <section className="max-w-[1200px] mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-        <img src={lookbook1} alt="Loja MD Modas em Joinville" className="w-full aspect-[4/5] object-cover rounded-md" />
+        <img src={lookbook1} alt="Loja J&S Store em Joinville" className="w-full aspect-[4/5] object-cover rounded-md" />
         <div>
           <h2 className="font-display text-3xl md:text-4xl">Uma loja real, feita por pessoas reais</h2>
           <p className="mt-5 text-muted-foreground leading-relaxed">
@@ -76,7 +76,7 @@ function SobrePage() {
           </div>
           <div className="order-1 md:order-2 aspect-[4/3] overflow-hidden rounded-md border border-border">
             <iframe
-              title="Mapa MD Modas Joinville"
+              title="Mapa J&S Store Joinville"
               src={STORE_INFO.mapsEmbed}
               className="w-full h-full"
               loading="lazy"

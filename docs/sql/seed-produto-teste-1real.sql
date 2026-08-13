@@ -1,5 +1,5 @@
 -- =====================================================================
--- MD Modas — Produto de teste R$ 1,00 para validar fluxo de compra
+-- J&S Store — Produto de teste R$ 1,00 para validar fluxo de compra
 -- Rode no Supabase → SQL Editor. Idempotente (pode rodar várias vezes).
 -- Depois de criado, acesse: /produto/teste-checkout-1-real
 -- =====================================================================
@@ -13,7 +13,7 @@ INSERT INTO public.products (
   '[TESTE] Validação de Checkout — R$ 1,00',
   'Produto de teste usado apenas para validar o fluxo completo de compra (checkout, Mercado Pago, webhook, etapas de envio e retirada). Valor simbólico de R$ 1,00. **Não é um produto real à venda.**',
   'feminino',
-  'MD Modas',
+  'J&S Store',
   'TESTE-1REAL',
   1.00,
   NULL,
@@ -22,7 +22,7 @@ INSERT INTO public.products (
   false,
   0.10,
   'ativo',
-  'Teste de checkout — MD Modas',
+  'Teste de checkout — J&S Store',
   'Produto interno de validação do fluxo de compra.'
 )
 ON CONFLICT (slug) DO UPDATE SET

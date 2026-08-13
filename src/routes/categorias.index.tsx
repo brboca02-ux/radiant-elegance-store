@@ -5,7 +5,7 @@ import { Pencil, Trash2, Plus, ImageOff, Star } from "lucide-react";
 import { useCategoriesStore, type CategoryStatus } from "@/stores/categoriesStore";
 
 export const Route = createFileRoute("/categorias/")({
-  head: () => ({ meta: [{ title: "Categorias — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Categorias — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: CategoriesListPage,
 });
 

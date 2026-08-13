@@ -45,7 +45,7 @@ function rowToProduct(r: DbProduct): Product {
     name: r.name, slug: r.slug,
     description: r.description ?? "",
     category_id: r.category_id,
-    brand: r.brand ?? "MD Modas",
+    brand: r.brand ?? "J&S Store",
     sku: r.sku ?? "",
     price: num(r.price),
     sale_price: r.sale_price == null ? null : num(r.sale_price),

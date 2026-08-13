@@ -12,7 +12,7 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Configurações — MD Modas" },
+      { title: "Configurações — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -78,7 +78,7 @@ function AdminPanel() {
     <AdminShell active="configuracoes">
     <div className="max-w-3xl mx-auto px-6 py-12">
       <div className="mb-8">
-        <h1 className="font-display text-3xl">Painel MD Modas</h1>
+        <h1 className="font-display text-3xl">Painel J&S Store</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Edite banners, promoções e textos da home sem alterar código. As mudanças são salvas neste dispositivo.
         </p>

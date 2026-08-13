@@ -45,7 +45,7 @@ export const createMpPixPayment = createServerFn({ method: "POST" })
     const body = {
       transaction_amount: Number(amountFromDb.toFixed(2)),
 
-      description: `Pedido ${data.orderNumber} — MD Modas`,
+      description: `Pedido ${data.orderNumber} — J&S Store`,
       payment_method_id: "pix",
       external_reference: data.orderNumber,
       notification_url: `${data.siteUrl}/api/public/payment-webhook`,

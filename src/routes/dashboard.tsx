@@ -9,7 +9,7 @@ import { loadLeads } from "@/lib/leads";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — MD Modas" },
+      { title: "Dashboard — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

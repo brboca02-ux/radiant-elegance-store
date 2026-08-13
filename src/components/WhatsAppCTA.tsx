@@ -13,7 +13,7 @@ export function WhatsAppCTA({ source = "section" }: { source?: string }) {
           <p className="text-sm md:text-base mt-2 opacity-90">{cfg.whatsappCtaSubtitle}</p>
         </div>
         <a
-          href={buildWhatsAppLink("Olá! Preciso de ajuda para escolher uma peça da MD Modas.")}
+          href={buildWhatsAppLink("Olá! Preciso de ajuda para escolher uma peça da J&S Store.")}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => track.whatsappClick(source)}

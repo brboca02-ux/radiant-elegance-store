@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/shopify";
 export const Route = createFileRoute("/_authenticated/meus-pedidos")({
   head: () => ({
     meta: [
-      { title: "Meus Pedidos — MD Modas" },
+      { title: "Meus Pedidos — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

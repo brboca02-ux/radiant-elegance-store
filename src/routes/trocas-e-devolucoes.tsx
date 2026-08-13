@@ -4,10 +4,10 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/trocas-e-devolucoes")({
   head: () => ({
     meta: [
-      { title: "Trocas e Devoluções — MD Modas" },
-      { name: "description", content: "Como solicitar troca ou devolução de peças compradas na MD Modas. Prazos, condições e atendimento pelo WhatsApp." },
-      { property: "og:title", content: "Trocas e Devoluções — MD Modas" },
-      { property: "og:description", content: "Política de trocas, devoluções e atendimento da MD Modas." },
+      { title: "Trocas e Devoluções — J&S Store" },
+      { name: "description", content: "Como solicitar troca ou devolução de peças compradas na J&S Store. Prazos, condições e atendimento pelo WhatsApp." },
+      { property: "og:title", content: "Trocas e Devoluções — J&S Store" },
+      { property: "og:description", content: "Política de trocas, devoluções e atendimento da J&S Store." },
       { property: "og:url", content: "/trocas-e-devolucoes" },
       { property: "og:type", content: "article" },
       { name: "robots", content: "index, follow" },
@@ -27,7 +27,7 @@ function TrocasPage() {
         { name: "Trocas e Devoluções", href: "/trocas-e-devolucoes" },
       ]}
     >
-      <p>Queremos que você fique 100% satisfeita(o) com sua compra na MD Modas. Confira abaixo as condições, prazos e o passo a passo para solicitar troca ou devolução.</p>
+      <p>Queremos que você fique 100% satisfeita(o) com sua compra na J&S Store. Confira abaixo as condições, prazos e o passo a passo para solicitar troca ou devolução.</p>
 
       <h2>1. Arrependimento (compra online) — 7 dias corridos</h2>
       <ul>
@@ -35,15 +35,15 @@ function TrocasPage() {
         <li>Válido apenas para compras feitas pelo site (não se aplica a retiradas presenciais na loja, onde o cliente já viu a peça).</li>
         <li>Prazo contado a partir do <strong>recebimento</strong> do produto.</li>
         <li>A peça deve voltar <strong>sem uso</strong>, com etiqueta, embalagem original e nota fiscal.</li>
-        <li>Frete de devolução por conta da <strong>MD Modas</strong> (conforme lei).</li>
+        <li>Frete de devolução por conta da <strong>J&S Store</strong> (conforme lei).</li>
         <li>Reembolso integral: PIX estorna em até <strong>5 dias úteis</strong>; cartão conforme prazo da operadora (1 a 2 faturas).</li>
       </ul>
 
       <h2>2. Troca por tamanho ou cor (sem defeito) — 15 dias</h2>
       <ul>
-        <li>Cortesia da MD Modas (não é obrigação legal).</li>
+        <li>Cortesia da J&S Store (não é obrigação legal).</li>
         <li>Peça sem uso, com etiqueta e embalagem originais.</li>
-        <li>Frete de devolução por conta do cliente; reenvio da nova peça por conta da MD Modas.</li>
+        <li>Frete de devolução por conta do cliente; reenvio da nova peça por conta da J&S Store.</li>
         <li>Troca condicionada à disponibilidade em estoque. Se não houver, convertemos em <strong>vale-compra válido por 90 dias</strong>.</li>
       </ul>
 
@@ -52,7 +52,7 @@ function TrocasPage() {
         <li>Prazo previsto no <strong>art. 26 do CDC</strong> (produto não durável).</li>
         <li>Cliente envia foto + descrição pelo WhatsApp; nossa equipe avalia em até <strong>2 dias úteis</strong>.</li>
         <li>Confirmado o defeito, o cliente escolhe: <strong>troca, conserto ou reembolso</strong>.</li>
-        <li>Frete integralmente por conta da MD Modas.</li>
+        <li>Frete integralmente por conta da J&S Store.</li>
       </ul>
 
       <h2>4. Itens que não trocamos</h2>

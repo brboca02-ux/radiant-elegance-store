@@ -35,7 +35,7 @@ const checkoutSchema = z.object({
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Finalizar Compra — MD Modas" },
+      { title: "Finalizar Compra — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

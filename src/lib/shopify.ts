@@ -5,9 +5,9 @@ export const SHOPIFY_STORE_PERMANENT_DOMAIN = "aura-boutique-u79e9.myshopify.com
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 export const SHOPIFY_STOREFRONT_TOKEN = "e7b6f8596fe2ff012a17ffc6a00d11fb";
 
-// ====== Loja física – MD Modas Joinville ======
+// ====== Loja física – J&S Store Joinville ======
 export const STORE_INFO = {
-  name: "MD Modas",
+  name: "J&S Store",
   city: "Joinville",
   region: "SC",
   country: "BR",
@@ -153,7 +153,7 @@ export function buildOrderPaidMessage(params: {
   const nome = params.customerName?.split(" ")[0] ?? "Cliente";
   const totalStr = formatPrice(params.total, "BRL");
   return (
-    `Oi ${nome}! Aqui é a MD Modas 💛\n\n` +
+    `Oi ${nome}! Aqui é a J&S Store 💛\n\n` +
     `Seu pagamento do pedido *${params.orderNumber}* (${totalStr}) foi confirmado! ✅\n\n` +
     `Já estamos preparando tudo com carinho. Você pode acompanhar cada etapa por aqui:\n${params.trackingUrl}\n\n` +
     `Qualquer dúvida, é só responder essa mensagem. Obrigada pela confiança! 🌸`
@@ -175,6 +175,6 @@ export function buildStageMessage(params: {
     `➡️ *${params.stageLabel}*\n` +
     (params.stageDescription ? `${params.stageDescription}\n` : "") +
     `\nAcompanhe em tempo real:\n${params.trackingUrl}\n\n` +
-    `— MD Modas`
+    `— J&S Store`
   );
 }

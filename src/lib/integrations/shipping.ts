@@ -153,18 +153,18 @@ export const StoreShippingProvider: ShippingProvider = {
         code: rate.partner ? "flash" : "entrega-propria",
         name: rate.partner
           ? "Entrega parceira (THE FLASH)"
-          : "Entrega MD Modas",
+          : "Entrega J&S Store",
         price: freeShipping ? 0 : rate.price,
         days: 2,
         description: freeShipping
           ? "Frete grátis acima de R$ 299 · próximo dia útil após a coleta"
           : rate.note ?? "Próximo dia útil após a coleta (8h às 18h)",
-        carrier: rate.partner ? "THE FLASH" : "MD Modas",
+        carrier: rate.partner ? "THE FLASH" : "J&S Store",
       });
     } else if (isJoinvilleCep) {
       opts.push({
         code: "entrega-propria",
-        name: "Entrega MD Modas — Joinville",
+        name: "Entrega J&S Store — Joinville",
         price: freeShipping ? 0 : 14,
         days: 1,
         description: "Entrega no mesmo dia ou próximo dia útil",

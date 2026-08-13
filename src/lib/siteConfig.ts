@@ -19,7 +19,7 @@ export interface SiteConfig {
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
   heroEyebrow: "Nova Coleção",
-  heroTitle: "MD Modas",
+  heroTitle: "J&S Store",
   heroSubtitle: "Moda feminina e masculina para todas as ocasiões.",
   heroCta: "Comprar Agora",
   promoTitle: "Ofertas da Semana",
@@ -27,9 +27,9 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   promoCoupon: "BEMVINDA5",
   promoCouponPercent: 5,
   newsletterTitle: "Lançamentos em primeira mão",
-  newsletterSubtitle: "Receba novidades, recebidos da semana e tendências da MD Modas direto no seu e-mail.",
+  newsletterSubtitle: "Receba novidades, recebidos da semana e tendências da J&S Store direto no seu e-mail.",
   whatsappCtaTitle: "Precisa de ajuda para escolher?",
-  whatsappCtaSubtitle: "Fale com uma consultora MD Modas pelo WhatsApp.",
+  whatsappCtaSubtitle: "Fale com uma consultora J&S Store pelo WhatsApp.",
 };
 
 const STORAGE_KEY = "md_site_config_v1";
