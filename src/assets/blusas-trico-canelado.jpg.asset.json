@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "40ce981b-ddd7-42ee-b4c0-c71636be56f5",
-  "project_id": "49a95742-0e50-4abb-a337-f46a4c649230",
-  "url": "/__l5e/assets-v1/40ce981b-ddd7-42ee-b4c0-c71636be56f5/blusas-trico-canelado.jpg",
-  "r2_key": "a/v1/49a95742-0e50-4abb-a337-f46a4c649230/40ce981b-ddd7-42ee-b4c0-c71636be56f5/blusas-trico-canelado.jpg",
-  "original_filename": "blusas-trico-canelado.jpg",
-  "size": 271232,
   "content_type": "image/jpeg",
-  "created_at": "2026-06-22T15:02:28Z"
+  "created_at": "2026-06-22T15:02:28Z",
+  "original_filename": "blusas-trico-canelado.jpg",
+  "project_id": "62643781-db30-481c-b10a-6b47760481d0",
+  "r2_key": "a/v1/62643781-db30-481c-b10a-6b47760481d0/40ce981b-ddd7-42ee-b4c0-c71636be56f5/blusas-trico-canelado.jpg",
+  "size": 271232,
+  "url": "/__l5e/assets-v1/40ce981b-ddd7-42ee-b4c0-c71636be56f5/blusas-trico-canelado.jpg",
+  "version": 1
 }

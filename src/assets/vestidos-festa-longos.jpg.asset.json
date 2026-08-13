@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "4cf8852b-80f9-4673-99e4-5caaaa78de1a",
-  "project_id": "49a95742-0e50-4abb-a337-f46a4c649230",
-  "url": "/__l5e/assets-v1/4cf8852b-80f9-4673-99e4-5caaaa78de1a/vestidos-festa-longos.jpg",
-  "r2_key": "a/v1/49a95742-0e50-4abb-a337-f46a4c649230/4cf8852b-80f9-4673-99e4-5caaaa78de1a/vestidos-festa-longos.jpg",
-  "original_filename": "vestidos-festa-longos.jpg",
-  "size": 187180,
   "content_type": "image/jpeg",
-  "created_at": "2026-06-22T15:00:12Z"
+  "created_at": "2026-06-22T15:00:12Z",
+  "original_filename": "vestidos-festa-longos.jpg",
+  "project_id": "62643781-db30-481c-b10a-6b47760481d0",
+  "r2_key": "a/v1/62643781-db30-481c-b10a-6b47760481d0/4cf8852b-80f9-4673-99e4-5caaaa78de1a/vestidos-festa-longos.jpg",
+  "size": 187180,
+  "url": "/__l5e/assets-v1/4cf8852b-80f9-4673-99e4-5caaaa78de1a/vestidos-festa-longos.jpg",
+  "version": 1
 }
