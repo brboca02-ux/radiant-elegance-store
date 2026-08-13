@@ -178,14 +178,11 @@ const PROMOCOES: MegaContent = {
   },
 };
 
-type MenuKey = "feminino" | "masculino" | "infantil" | "calcados" | "acessorios" | "promocoes" | null;
+type MenuKey = "feminino" | "masculino" | "promocoes" | null;
 
 const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; badge?: string }[] = [
   { key: "feminino", label: "Feminino", content: FEMININO },
   { key: "masculino", label: "Masculino", content: MASCULINO },
-  { key: "infantil", label: "Infantil", content: INFANTIL },
-  { key: "calcados", label: "Calçados", content: CALCADOS },
-  { key: "acessorios", label: "Acessórios", content: ACESSORIOS },
   { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, badge: "PROMOÇÃO" },
 ];
 

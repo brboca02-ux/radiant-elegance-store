@@ -34,7 +34,7 @@ export const Route = createFileRoute("/colecao")({
     const seo = loaderData?.seo ?? null;
     const title = seo?.title ?? DEFAULT_SEO.title;
     const description = seo?.description ?? DEFAULT_SEO.description;
-    const url = `https://mdmoda.com.br/colecao${safe ? `?c=${safe}` : ""}`;
+    const url = `https://jsstore.lovable.app/colecao${safe ? `?c=${safe}` : ""}`;
     const meta = [
       { title },
       { name: "description", content: description },
