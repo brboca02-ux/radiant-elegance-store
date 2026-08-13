@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-// Projeto Supabase externo (MD Modas — produção).
+// Projeto Supabase externo (J&S Store — produção).
 // Mantido hardcoded de propósito: o .env foi tomado pelo Lovable Cloud
 // (banco vazio) e não pode ser editado. A anon key é publishable, seguro.
 const SUPABASE_URL = "https://snqvhexeruvlyrtzsdnm.supabase.co";

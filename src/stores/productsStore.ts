@@ -156,7 +156,7 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
 }));
 
 export const emptyProduct = (): Omit<Product, "id" | "store_id" | "created_at"> => ({
-  name: "", slug: "", description: "", category_id: "feminino", brand: "MD Modas",
+  name: "", slug: "", description: "", category_id: "feminino", brand: "J&S Store",
   sku: "", price: 0, sale_price: null, stock: 0, reserved_stock: 0,
   minimum_stock: 5, track_stock: true, weight: 0, status: "ativo",
   meta_title: "", meta_description: "", images: [], variants: [],

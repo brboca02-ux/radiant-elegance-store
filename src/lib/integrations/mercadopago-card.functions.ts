@@ -57,13 +57,13 @@ export const createMpCardPayment = createServerFn({ method: "POST" })
       transaction_amount: Number(amountFromDb.toFixed(2)),
 
       token: data.token,
-      description: `Pedido ${data.orderNumber} — MD Modas`,
+      description: `Pedido ${data.orderNumber} — J&S Store`,
       installments: data.installments,
       payment_method_id: data.paymentMethodId,
       ...(data.issuerId ? { issuer_id: data.issuerId } : {}),
       external_reference: data.orderNumber,
       notification_url: `${data.siteUrl}/api/public/payment-webhook`,
-      statement_descriptor: "MD MODAS",
+      statement_descriptor: "J&S STORE",
       payer: {
         email: data.payer.email,
         ...(data.payer.identification

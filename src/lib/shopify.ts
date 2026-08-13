@@ -5,7 +5,7 @@ export const SHOPIFY_STORE_PERMANENT_DOMAIN = "aura-boutique-u79e9.myshopify.com
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 export const SHOPIFY_STOREFRONT_TOKEN = "e7b6f8596fe2ff012a17ffc6a00d11fb";
 
-// ====== Loja física – MD Modas Joinville ======
+// ====== Loja física – J&S Store Joinville ======
 export const STORE_INFO = {
   name: "J&S Store",
   city: "Joinville",

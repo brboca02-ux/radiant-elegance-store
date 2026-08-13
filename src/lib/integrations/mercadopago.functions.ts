@@ -56,7 +56,7 @@ export const createMpPreference = createServerFn({ method: "POST" })
       items: [
         {
           id: data.orderNumber,
-          title: `Pedido ${data.orderNumber} — MD Modas`,
+          title: `Pedido ${data.orderNumber} — J&S Store`,
           quantity: 1,
           currency_id: "BRL",
           unit_price: Number(amountFromDb.toFixed(2)),
@@ -71,7 +71,7 @@ export const createMpPreference = createServerFn({ method: "POST" })
         ...(data.customer.phone ? { phone: { number: data.customer.phone } } : {}),
       },
       external_reference: data.orderNumber,
-      statement_descriptor: "MD MODAS",
+      statement_descriptor: "J&S STORE",
       back_urls: {
         success: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}?email=${encodeURIComponent(data.customer.email)}`,
         pending: `${data.siteUrl}/pedido/sucesso/${data.orderNumber}?email=${encodeURIComponent(data.customer.email)}`,

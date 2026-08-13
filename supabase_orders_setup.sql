@@ -1,5 +1,5 @@
 -- =============================================================
--- MD MODAS — Setup de Pedidos / Checkout
+-- J&S STORE — Setup de Pedidos / Checkout
 -- Rode tudo no SQL Editor do Supabase (role: postgres)
 -- Pré-requisitos: tabelas `products`, `user_roles`, função `has_role` já existem
 -- =============================================================

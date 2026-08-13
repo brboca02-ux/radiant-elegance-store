@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Visual regression para MD Modas.
+Visual regression para J&S Store.
 Captura screenshots das principais rotas em 3 viewports (desktop, tablet, mobile).
 Se existir baseline em scripts/visual-baseline/, compara pixel-a-pixel e falha se
 diferença > threshold. Se não existir baseline, salva os atuais como baseline.

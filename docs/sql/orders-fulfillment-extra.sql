@@ -1,5 +1,5 @@
 -- =====================================================================
--- MD Modas — Adiciona etapas `pronto_retirada` e `em_transito`
+-- J&S Store — Adiciona etapas `pronto_retirada` e `em_transito`
 -- Rode no Supabase → SQL Editor. Idempotente.
 -- =====================================================================
 

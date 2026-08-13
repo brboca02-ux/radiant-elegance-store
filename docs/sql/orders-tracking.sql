@@ -1,5 +1,5 @@
 -- =====================================================================
--- MD Modas — Rastreio público + etapas de fulfillment
+-- J&S Store — Rastreio público + etapas de fulfillment
 -- Rode no Supabase → SQL Editor. Idempotente.
 -- =====================================================================
 

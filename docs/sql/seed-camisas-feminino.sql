@@ -9,17 +9,17 @@ values
   ('camisa-listrada-laco',
    'Camisa Listrada Laço',
    'Camisa feminina listrada com laço na gola, manga longa. Elegante e versátil para o dia a dia ou looks de trabalho.',
-   'feminino', 'MD Modas', 'CAM-LIST-LACO',
+   'feminino', 'J&S Store', 'CAM-LIST-LACO',
    189.90, null, 8, 0, 3, true, 0.35, 'ativo',
-   'Camisa Listrada Laço — MD Modas',
-   'Camisa feminina listrada com laço na gola. Compre na MD Modas.'),
+   'Camisa Listrada Laço — J&S Store',
+   'Camisa feminina listrada com laço na gola. Compre na J&S Store.'),
   ('camisa-richelieu-offwhite',
    'Camisa Richelieu Offwhite',
    'Camisa feminina em tecido leve offwhite com bordado richelieu no busto e ombros. Sofisticada e romântica.',
-   'feminino', 'MD Modas', 'CAM-RICH-OFF',
+   'feminino', 'J&S Store', 'CAM-RICH-OFF',
    229.90, null, 6, 0, 3, true, 0.30, 'ativo',
-   'Camisa Richelieu Offwhite — MD Modas',
-   'Camisa feminina bordada richelieu offwhite. Compre na MD Modas.')
+   'Camisa Richelieu Offwhite — J&S Store',
+   'Camisa feminina bordada richelieu offwhite. Compre na J&S Store.')
 on conflict (slug) do nothing;
 
 -- Imagens (usa assets já existentes no projeto)

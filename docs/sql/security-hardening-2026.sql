@@ -1,5 +1,5 @@
 -- =====================================================================
--- MD Modas — Hardening de segurança (checkout, RLS, estoque)
+-- J&S Store — Hardening de segurança (checkout, RLS, estoque)
 -- Rodar no SQL Editor do Supabase (role: postgres)
 -- Depende de: supabase_setup.sql + supabase_orders_setup.sql já aplicados
 -- =====================================================================
