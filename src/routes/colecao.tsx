@@ -34,7 +34,7 @@ export const Route = createFileRoute("/colecao")({
     const seo = loaderData?.seo ?? null;
     const title = seo?.title ?? DEFAULT_SEO.title;
     const description = seo?.description ?? DEFAULT_SEO.description;
-    const url = `https://mdmoda.com.br/colecao${safe ? `?c=${safe}` : ""}`;
+    const url = `https://jsstore.lovable.app/colecao${safe ? `?c=${safe}` : ""}`;
     const meta = [
       { title },
       { name: "description", content: description },
@@ -77,10 +77,10 @@ function ColecaoPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://mdmoda.com.br/" },
-      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://mdmoda.com.br/colecao" },
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://jsstore.com.br/" },
+      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://jsstore.com.br/colecao" },
       ...(seo
-        ? [{ "@type": "ListItem", position: 3, name: seo.name, item: `https://mdmoda.com.br/colecao?c=${seo.id}` }]
+        ? [{ "@type": "ListItem", position: 3, name: seo.name, item: `https://jsstore.com.br/colecao?c=${seo.id}` }]
         : []),
     ],
   };

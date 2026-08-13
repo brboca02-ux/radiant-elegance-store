@@ -69,9 +69,15 @@ const SELECT =
 export async function listAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products").select(SELECT)
+    .neq("status", "arquivado")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data as DbProduct[]).map(rowToProduct);
+  
+  // Apenas categorias Masculino e Feminino (incluindo subcategorias femininas)
+  const allowedCategories = ["masculino", "feminino", "vestidos", "conjuntos", "plus-size"];
+  return (data as DbProduct[])
+    .map(rowToProduct)
+    .filter(p => allowedCategories.includes(p.category_id));
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
@@ -145,8 +151,6 @@ export async function deleteProductRemote(id: string): Promise<void> {
     );
   }
 }
-
-
 
 export async function setStockRemote(id: string, value: number): Promise<void> {
   const { error } = await supabase.from("products").update({ stock: Math.max(0, value) }).eq("id", id);

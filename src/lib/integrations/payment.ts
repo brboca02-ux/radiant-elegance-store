@@ -33,7 +33,7 @@ function currentSiteUrl(): string {
   if (typeof window !== "undefined" && window.location?.origin) {
     return window.location.origin;
   }
-  return "https://mdmodas.lovable.app";
+  return "https://jsstore.lovable.app";
 }
 
 export const MercadoPagoProvider: PaymentProvider = {

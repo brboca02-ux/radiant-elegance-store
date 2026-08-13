@@ -62,7 +62,7 @@ export function Footer() {
               </a>
             </li>
             <li>
-              <a href="https://www.instagram.com/mdmodasfem_/" target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
+              <a href="https://www.instagram.com/jes.storejoinville/" target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
                 <Instagram className="h-4 w-4" strokeWidth={1.5} /> Instagram
               </a>
             </li>

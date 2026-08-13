@@ -37,30 +37,6 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "A coleção masculina da J&S Store reúne camisas, camisetas, bermudas, calças e conjuntos pensados para o homem que valoriza conforto e presença. Modelagens atuais, tecidos de qualidade e curadoria feita na nossa loja física em Joinville.",
     keywords: ["moda masculina joinville", "roupa masculina", "camisa masculina", "bermuda masculina"],
   },
-  infantil: {
-    id: "infantil",
-    name: "Infantil",
-    title: "Moda Infantil em Joinville — Roupas para Meninos e Meninas | J&S Store",
-    description:
-      "Moda infantil na J&S Store: conjuntos, vestidos, camisetas e calças para meninas e meninos. Confortável, resistente e com preço justo. Envio para todo o Brasil.",
-    h1: "Moda Infantil",
-    eyebrow: "Coleção Infantil",
-    intro:
-      "Roupas infantis pensadas para acompanhar o ritmo da criançada: conjuntos, vestidos, camisetas, calças e macacões em tecidos macios e resistentes. A curadoria da J&S Store prioriza conforto, durabilidade e preços que cabem no bolso da família.",
-    keywords: ["moda infantil joinville", "roupa infantil", "vestido infantil", "conjunto infantil"],
-  },
-  calcados: {
-    id: "calcados",
-    name: "Calçados",
-    title: "Calçados Femininos e Masculinos em Joinville | J&S Store",
-    description:
-      "Calçados na J&S Store: sandálias, tênis, rasteirinhas, sapatilhas e mocassins para completar o look. Loja em Joinville com envio para todo o Brasil.",
-    h1: "Calçados",
-    eyebrow: "Coleção de Calçados",
-    intro:
-      "Do casual ao social: a seção de calçados da J&S Store traz sandálias, rasteirinhas, sapatilhas, tênis e mocassins para fechar o look com conforto. Numeração completa e novidades a cada estação, direto da nossa loja em Joinville.",
-    keywords: ["calçados femininos", "sandálias joinville", "tênis feminino", "rasteirinhas"],
-  },
   vestidos: {
     id: "vestidos",
     name: "Vestidos",

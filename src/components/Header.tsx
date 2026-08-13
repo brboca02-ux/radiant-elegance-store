@@ -81,83 +81,6 @@ const MASCULINO: MegaContent = {
   ],
 };
 
-const INFANTIL: MegaContent = {
-  columns: [
-    {
-      title: "Meninas",
-      items: [
-        { label: "Vestidos", c: "infantil-vestidos" },
-        { label: "Conjuntos", c: "infantil-conjuntos-fem" },
-        { label: "Blusas", c: "infantil-blusas-fem" },
-        { label: "Calças e Shorts", c: "infantil-calcas-fem" },
-      ],
-    },
-    {
-      title: "Meninos",
-      items: [
-        { label: "Camisetas", c: "infantil-camisetas" },
-        { label: "Conjuntos", c: "infantil-conjuntos-masc" },
-        { label: "Bermudas", c: "infantil-bermudas" },
-        { label: "Moletons", c: "infantil-moletons" },
-      ],
-    },
-    {
-      title: "Idades",
-      items: [
-        { label: "1 a 4 anos", c: "infantil-1-4" },
-        { label: "5 a 8 anos", c: "infantil-5-8" },
-        { label: "9 a 12 anos", c: "infantil-9-12" },
-      ],
-    },
-  ],
-};
-
-const CALCADOS: MegaContent = {
-  columns: [
-    {
-      title: "Feminino",
-      items: [
-        { label: "Tênis", c: "tenis-fem" },
-        { label: "Sandálias", c: "sandalias" },
-        { label: "Rasteirinhas", c: "rasteirinhas" },
-        { label: "Botas", c: "botas-fem" },
-        { label: "Scarpins", c: "scarpins" },
-      ],
-    },
-    {
-      title: "Masculino",
-      items: [
-        { label: "Tênis", c: "tenis-masc" },
-        { label: "Sapatênis", c: "sapatenis" },
-        { label: "Mocassins", c: "mocassins" },
-        { label: "Chinelos", c: "chinelos" },
-      ],
-    },
-    {
-      title: "Infantil",
-      items: [
-        { label: "Tênis Infantil", c: "tenis-infantil" },
-        { label: "Sandálias Infantis", c: "sandalias-infantil" },
-      ],
-    },
-  ],
-};
-
-const ACESSORIOS: MegaContent = {
-  columns: [
-    {
-      title: "Acessórios",
-      items: [
-        { label: "Bolsas", c: "bolsas" },
-        { label: "Cintos", c: "cintos" },
-        { label: "Bijuterias", c: "bijuterias" },
-        { label: "Óculos", c: "oculos" },
-        { label: "Lenços", c: "lencos" },
-        { label: "Chapéus", c: "chapeus" },
-      ],
-    },
-  ],
-};
 
 const PROMOCOES: MegaContent = {
   columns: [
@@ -178,14 +101,11 @@ const PROMOCOES: MegaContent = {
   },
 };
 
-type MenuKey = "feminino" | "masculino" | "infantil" | "calcados" | "acessorios" | "promocoes" | null;
+type MenuKey = "feminino" | "masculino" | "promocoes" | null;
 
 const MENUS: { key: Exclude<MenuKey, null>; label: string; content: MegaContent; highlight?: boolean; badge?: string }[] = [
   { key: "feminino", label: "Feminino", content: FEMININO },
   { key: "masculino", label: "Masculino", content: MASCULINO },
-  { key: "infantil", label: "Infantil", content: INFANTIL },
-  { key: "calcados", label: "Calçados", content: CALCADOS },
-  { key: "acessorios", label: "Acessórios", content: ACESSORIOS },
   { key: "promocoes", label: "Promoções", content: PROMOCOES, highlight: true, badge: "PROMOÇÃO" },
 ];
 

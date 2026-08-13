@@ -16,15 +16,15 @@ import { buildWhatsAppLink, STORE_INFO } from "@/lib/shopify";
 import { useSiteConfig } from "@/lib/siteConfig";
 import { track } from "@/lib/analytics";
 
-export const INSTAGRAM_HANDLE = "mdmodasfem_";
+export const INSTAGRAM_HANDLE = "jes.storejoinville";
 export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
 
 const categories = [
   { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: vestidos, q: "feminino" },
   { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: blazers, q: "masculino" },
-  { label: "Infantil", alt: "Categoria Moda Infantil J&S Store", img: novidades, q: "infantil" },
-  { label: "Calçados", alt: "Categoria Calçados femininos e masculinos", img: alfaiataria, q: "calcados" },
+  { label: "Vestidos", alt: "Categoria Vestidos J&S Store", img: tricots, q: "vestidos" },
+  { label: "Conjuntos", alt: "Categoria Conjuntos J&S Store", img: conjuntos, q: "conjuntos" },
   { label: "Plus Size", alt: "Categoria Moda Plus Size Feminina", img: conjuntos, q: "plus-size" },
 ];
 

@@ -156,7 +156,7 @@ export function buildOrderPaidMessage(params: {
     `Oi ${nome}! Aqui é a J&S Store 💛\n\n` +
     `Seu pagamento do pedido *${params.orderNumber}* (${totalStr}) foi confirmado! ✅\n\n` +
     `Já estamos preparando tudo com carinho. Você pode acompanhar cada etapa por aqui:\n${params.trackingUrl}\n\n` +
-    `Qualquer dúvida, é só responder essa mensagem. Obrigada pela confiança! 🌸`
+    `Qualquer dúvida, é só responder essa mensagem. Obrigada pela confiança! ✨`
   );
 }
 
