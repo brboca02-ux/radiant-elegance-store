@@ -79,7 +79,7 @@ export function AdminShell({
           </div>
           <div className="leading-tight">
             <div className="font-display font-extrabold tracking-tight text-sm">
-              <span className="text-primary">MD</span> Modas
+              <span className="text-primary">J&amp;S</span> Store
             </div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
               Painel admin
@@ -161,7 +161,7 @@ export function AdminShell({
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-primary" />
           <span className="font-display font-bold text-sm">
-            <span className="text-primary">MD</span> Admin
+            <span className="text-primary">J&amp;S</span> Admin
           </span>
         </div>
         <AdminNotificationsBell />
@@ -178,7 +178,7 @@ export function AdminShell({
                 </div>
                 <div className="leading-tight">
                   <div className="font-display font-bold text-base">
-                    <span className="text-primary">MD</span> Modas
+                    <span className="text-primary">J&amp;S</span> Store
                   </div>
                   <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">
                     Painel admin
