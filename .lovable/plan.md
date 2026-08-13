@@ -1,32 +1,43 @@
-# Identidade J&S Store: tipografia, logo, cores e acessibilidade
+# Cadastrar o catálogo J&S Store no estoque
 
-## 1. Nome da loja: "MD Modas" → "J&S Store"
-Trocar em todos os textos visíveis ao cliente: cabeçalho, rodapé, home, páginas de produto, coleção, carrinho, checkout, login, wishlist, páginas de pedido, páginas legais (termos, privacidade, trocas), popups, newsletter, CTAs de WhatsApp, títulos/descrições SEO e textos padrão do painel.
-Também nas mensagens automáticas (WhatsApp, e-mails, descrições de pagamento) e nos textos SEO de categorias.
+Vou cadastrar os 17 produtos do catálogo do vídeo (WhatsApp — J e S Store Joinville) no estoque da loja, com nome, descrição, preço, grade de tamanhos e imagem.
 
-## 2. Tipografia: Playfair Display (títulos) + Inter (textos)
-- Substituir Poppins por Playfair Display no carregamento das fontes (Google Fonts, via link no head).
-- Ajustar o token de fonte de título para Playfair Display; Inter permanece no corpo.
-- Aplicar aos títulos de todas as páginas e componentes, incluindo carrinho, checkout, login e wishlist (usar o token de título em vez de fontes soltas).
-- Como Playfair é serifada, remover o espaçamento negativo entre letras usado hoje e ajustar peso (600/700) para leitura correta.
+## Produtos e preços
 
-## 3. Logo, favicon e theme-color
-- Criar uma marca "J&S" em moldura dourada sobre preto: logo para cabeçalho/rodapé e ícone quadrado para favicon.
-- Substituir o texto do cabeçalho pela logo (com texto alternativo acessível) e usar a versão clara/dourada no rodapé escuro.
-- Gerar `public/favicon.png` a partir do mesmo ícone, apontar o head para ele e remover o favicon padrão antigo.
-- Manter `theme-color` preto ônix (#0A0A0A) e adicionar cor de tema para modo claro/escuro do mobile.
+| Produto | Preço | Categoria |
+|---|---|---|
+| Calça Jeans Masculina Importada (azul escuro, azul médio, preta) | R$ 129,90 | Masculino |
+| Calça de Sarja Premium Masculina | R$ 129,90 | Masculino |
+| Calça Jeans Importada Feminina | R$ 129,90 | Feminino |
+| Camisa Gola Polo Importada (Tommy, Lacoste, Boss, Polo) | R$ 99,90 | Masculino |
+| Camisa Gola Polo com Elastano | R$ 89,90 | Masculino |
+| Camiseta Tommy Malha Suprema | R$ 89,90 | Masculino |
+| Short Sarja Mauricinho | R$ 69,90 | Masculino |
+| Short Sarja Mauricinho Rústico | R$ 69,90 | Masculino |
+| Bermuda de Sarja Polo Ralph Lauren | R$ 69,90 | Masculino |
+| Bermuda Sarja Lacoste | R$ 69,90 | Masculino |
+| Bermuda Sarja Reserva | R$ 69,90 | Masculino |
+| Bermuda Sarja Plus Size | R$ 69,90 | Plus Size |
+| Bermuda Jeans Masculina | R$ 69,90 | Masculino |
+| Calça Jeans Masculina Básica | R$ 69,90 | Masculino |
+| Camiseta Peruana 40.1 (M, G, GG) | R$ 59,90 | Masculino |
+| T-Shirt Feminina malha 100% algodão | R$ 39,90 | Feminino |
+| Camiseta Masculina Fio 30.1 | R$ 29,90 | Masculino |
 
-## 4. Cores das páginas restantes com os tokens da marca
-Revisar e converter para tokens (preto ônix, dourado, prata, off-white) as páginas: produto, coleção, carrinho/drawer, checkout, wishlist, login, acompanhamento/sucesso de pedido e áreas do cliente. Remover cores fixas remanescentes (rosa, cinzas soltos, branco/preto literais).
+## Estoque e tamanhos
 
-## 5. Contraste e estados (acessibilidade AA)
-- Corrigir combinações de baixo contraste: dourado (#C9A24C) sobre branco não atinge AA para texto — usar dourado apenas como fundo com texto preto, ou detalhe/borda; texto dourado somente sobre preto.
-- Definir estados consistentes em botões e links: hover (escurecer/dourar), focus visível com anel dourado sobre offset escuro em todo botão, link, input e item de menu, disabled com opacidade + contraste mínimo legível.
-- Garantir alvos de toque de 44px no mobile em ícones do cabeçalho, botões do carrinho e passos do checkout.
-- Ajustar `--muted-foreground` para atingir AA em texto secundário.
-- Verificar o resultado no navegador (desktop e mobile) com capturas das telas principais.
+- Camisetas/polos/T-shirts: P, M, G, GG — 10 unidades por tamanho.
+- Bermudas, shorts e calças: 38, 40, 42, 44, 46, 48 — 10 unidades por tamanho.
+- Bermuda Plus Size: 50, 52, 54, 56 — 10 unidades por tamanho.
+- Estoque mínimo 2, controle de estoque ativado, status "ativo", marca J&S Store.
 
-## Notas técnicas
-- Tokens em `src/styles.css` (`@theme inline` + `:root`), fontes via `links` no `head` de `src/routes/__root.tsx`.
-- Logo como asset importado em `src/assets`; favicon em `public/`.
-- Nome da loja: atualizar `DEFAULT_SITE_CONFIG` em `src/lib/siteConfig.ts` e os textos fixos nos componentes/rotas; usuários com config salva no navegador continuam vendo o valor antigo até limpar/atualizar no /admin.
+## Imagens
+
+Extraio as miniaturas correspondentes do vídeo, faço upscale leve e publico cada uma como imagem principal do produto. São miniaturas de baixa resolução (~90px), então a qualidade vai ficar limitada — depois basta substituir pelas fotos originais no admin.
+
+## Detalhes técnicos
+
+1. Confirmar permissão de escrita: o catálogo fica no banco externo da loja acessado com a chave publishable. Primeiro passo é validar se a inserção é permitida por RLS com a sessão de administrador; se não for, faço o cadastro autenticado como admin (ou peço o acesso necessário) antes de seguir.
+2. Recortar os frames do vídeo (ffmpeg), salvar cada foto como asset em CDN e usar a URL no registro de imagem do produto.
+3. Inserir em `products` (slug único, name, description, category_id, brand, sku, price, stock, minimum_stock, track_stock, status, meta_title, meta_description), mais `product_images` (primária) e `product_variants` (tamanho/cor/estoque), usando as funções já existentes de cadastro de produto.
+4. Verificar no fim: listagem de produtos/estoque no admin e a vitrine por categoria mostrando os novos itens com preço e imagem.
