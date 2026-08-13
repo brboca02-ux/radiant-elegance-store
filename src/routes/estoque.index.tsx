@@ -206,15 +206,6 @@ function VariantChips({ product }: { product: Product }) {
   );
 }
 
-function KPILegacy({ label, value, accent = "text-foreground" }: { label: string; value: number | string; accent?: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-background p-5">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className={`mt-2 text-2xl font-semibold tracking-tight ${accent}`}>{value}</p>
-    </div>
-  );
-}
-
 function LevelPill({ level }: { level: ReturnType<typeof stockLevel> }) {
   const map: Record<string, { cls: string; dot: string }> = {
     normal: { cls: "bg-emerald-50 text-emerald-700 ring-emerald-200", dot: "bg-emerald-500" },
