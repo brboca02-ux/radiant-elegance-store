@@ -3,7 +3,10 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowDownCircle, ArrowUpCircle, Settings2, AlertTriangle, History, Search } from "lucide-react";
-import { useProductsStore, CATEGORIES, stockLevel, stockStatusLabel } from "@/stores/productsStore";
+import {
+  useProductsStore, CATEGORIES, stockLevel, stockStatusLabel,
+  effectiveStock, variantLevel, type Product,
+} from "@/stores/productsStore";
 import { useStockStore, type MovementType } from "@/stores/stockStore";
 
 export const Route = createFileRoute("/estoque/")({
@@ -25,7 +28,15 @@ function EstoquePage() {
       .filter((p) => p.status !== "arquivado")
       .filter((p) => (q ? p.name.toLowerCase().includes(q.toLowerCase()) || p.sku.toLowerCase().includes(q.toLowerCase()) : true))
       .filter((p) => (cat === "all" ? true : p.category_id === cat))
-      .map((p) => ({ ...p, level: stockLevel(p), available: Math.max(0, p.stock - (p.reserved_stock || 0)) }))
+      .map((p) => {
+        const total = effectiveStock(p);
+        return {
+          ...p,
+          total,
+          level: stockLevel(p),
+          available: Math.max(0, total - (p.reserved_stock || 0)),
+        };
+      })
       .filter((p) => (statusF === "all" ? true : p.level === statusF));
   }, [products, q, cat, statusF]);
 
@@ -118,11 +129,12 @@ function EstoquePage() {
                         <div className="min-w-0">
                           <p className="font-medium truncate">{p.name}</p>
                           <p className="text-xs text-muted-foreground">SKU {p.sku || "—"} · mín. {p.minimum_stock}</p>
+                          <VariantChips product={p} />
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{CATEGORIES.find((c) => c.id === p.category_id)?.name ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-medium">{p.stock}</td>
+                    <td className="px-4 py-3 text-right font-medium">{p.total}</td>
                     <td className="px-4 py-3 text-right text-muted-foreground">{p.reserved_stock || 0}</td>
                     <td className="px-4 py-3 text-right font-medium">{p.available}</td>
                     <td className="px-4 py-3"><LevelPill level={p.level} /></td>
