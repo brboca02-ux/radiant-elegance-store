@@ -47,7 +47,7 @@ function EstoquePage() {
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">Operação</p>
             <h1 className="font-display text-3xl md:text-4xl tracking-tight mt-1">Estoque</h1>
-            <p className="text-sm text-muted-foreground mt-1">Controle de inventário · loja store_md_modas</p>
+            <p className="text-sm text-muted-foreground mt-1">Controle de inventário · J&amp;S Store</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button onClick={() => setOpenType("entrada")} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-emerald-700">
