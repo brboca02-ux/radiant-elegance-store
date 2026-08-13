@@ -66,7 +66,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "J&S Store" },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@mdmodas" },
+      { name: "twitter:site", content: "@jesstore" },
       { name: "theme-color", content: "#0A0A0A" },
       { name: "format-detection", content: "telephone=no" },
       { property: "og:title", content: "J&S Store — Moda Feminina e Masculina" },
@@ -82,8 +82,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" },
-      { rel: "alternate", hrefLang: "pt-BR", href: "https://mdmodas.lovable.app/" },
-      { rel: "alternate", hrefLang: "x-default", href: "https://mdmodas.lovable.app/" },
+      { rel: "alternate", hrefLang: "pt-BR", href: "https://jsstore.lovable.app/" },
+      { rel: "alternate", hrefLang: "x-default", href: "https://jsstore.lovable.app/" },
     ],
   }),
   shellComponent: RootShell,
@@ -95,7 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
 
-const SITE_URL = "https://mdmoda.com.br";
+const SITE_URL = "https://jsstore.com.br";
 const LOGO_URL = `${SITE_URL}/logo-js.jpg`;
 
 const organizationJsonLd = {
@@ -111,7 +111,7 @@ const organizationJsonLd = {
   description:
     "J&S Store — moda feminina e masculina em Joinville/SC. Vestidos, conjuntos, plus size, calçados e novidades toda semana.",
   telephone: "+55 47 98446-8103",
-  email: "contato@mdmoda.com.br",
+  email: "contato@jsstore.com.br",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Rua Santa Luzia, 550",
@@ -120,7 +120,7 @@ const organizationJsonLd = {
     postalCode: "89225-100",
     addressCountry: "BR",
   },
-  sameAs: ["https://www.instagram.com/mdmodasfem_/"],
+  sameAs: ["https://www.instagram.com/jes.storejoinville/"],
 };
 
 const websiteJsonLd = {
@@ -186,7 +186,7 @@ const localBusinessJsonLd = {
       closes: "13:00",
     },
   ],
-  sameAs: ["https://www.instagram.com/mdmodasfem_/"],
+  sameAs: ["https://www.instagram.com/jes.storejoinville/"],
 };
 
 

@@ -25,11 +25,11 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "J&S Store — Moda em Joinville (Aventureiro)" },
       { property: "og:description", content: "Loja física no Aventureiro e loja online. Curadoria feminina e masculina, atendimento pelo WhatsApp e entrega para toda a região." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://mdmodas.lovable.app/" },
+      { property: "og:url", content: "https://jsstore.lovable.app/" },
       { property: "og:locale", content: "pt_BR" },
     ],
     links: [
-      { rel: "canonical", href: "https://mdmodas.lovable.app/" },
+      { rel: "canonical", href: "https://jsstore.lovable.app/" },
       // Preload LCP hero — variante por viewport
       { rel: "preload", as: "image", href: heroMobile, fetchPriority: "high", media: "(max-width: 1023px)" },
       { rel: "preload", as: "image", href: heroDesktop, fetchPriority: "high", media: "(min-width: 1024px)" },
