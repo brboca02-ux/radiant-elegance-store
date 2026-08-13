@@ -77,6 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9cb6d142-24f3-48de-a281-08feb761ef0b" },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -95,7 +96,7 @@ const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
 
 const SITE_URL = "https://mdmoda.com.br";
-const LOGO_URL = `${SITE_URL}/og-image.jpg`;
+const LOGO_URL = `${SITE_URL}/logo-js.jpg`;
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
