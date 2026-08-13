@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Store } from "lucide-react";
+import logoAsset from "@/assets/js-store-logo.jpg.asset.json";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,11 +77,8 @@ function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md bg-background border border-border rounded-xl shadow-lg p-8">
-        <div className="flex items-center gap-2 justify-center mb-6">
-          <Store className="h-6 w-6 text-primary" />
-          <span className="font-display font-extrabold text-xl tracking-tight">
-            <span className="text-primary">J&amp;S</span> Store
-          </span>
+        <div className="flex justify-center mb-6">
+          <img src={logoAsset.url} alt="J&S Store" className="h-16 w-auto object-contain" />
         </div>
         <h1 className="text-center text-lg font-semibold mb-1">
           {forgot ? "Recuperar acesso" : "Entrar no painel"}
