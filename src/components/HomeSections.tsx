@@ -38,7 +38,7 @@ const diferenciais = [
 export function HomeHero() {
   const cfg = useSiteConfig();
   return (
-    <section className="relative h-[88vh] min-h-[620px] lg:h-[78vh] lg:min-h-[680px] overflow-hidden bg-[#a98869]">
+    <section className="relative h-[88vh] min-h-[620px] lg:h-[78vh] lg:min-h-[680px] overflow-hidden bg-onyx">
       <picture>
         {/* Desktop: landscape composition, model on the left, negative space on the right */}
         <source media="(min-width: 1024px)" srcSet={hero} width={1920} height={1280} />
