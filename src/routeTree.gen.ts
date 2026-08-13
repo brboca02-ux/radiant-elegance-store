@@ -9,85 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TrocasEDevolucoesRouteImport } from './routes/trocas-e-devolucoes'
-import { Route as TermosRouteImport } from './routes/termos'
-import { Route as SobreRouteImport } from './routes/sobre'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PrivacidadeRouteImport } from './routes/privacidade'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ColecaoRouteImport } from './routes/colecao'
-import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
-import { Route as PedidosIndexRouteImport } from './routes/pedidos.index'
-import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
-import { Route as EstoqueIndexRouteImport } from './routes/estoque.index'
-import { Route as ClientesIndexRouteImport } from './routes/clientes.index'
-import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
-import { Route as ProdutosRapidoRouteImport } from './routes/produtos.rapido'
-import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
-import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
-import { Route as PedidosIdRouteImport } from './routes/pedidos.$id'
-import { Route as PedidoAcompanharRouteImport } from './routes/pedido.acompanhar'
-import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
-import { Route as EstoqueHistoricoRouteImport } from './routes/estoque.historico'
-import { Route as ClientesIdRouteImport } from './routes/clientes.$id'
-import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ColecaoRouteImport } from './routes/colecao'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as TrocasEDevolucoesRouteImport } from './routes/trocas-e-devolucoes'
 import { Route as AuthenticatedMeusPedidosRouteImport } from './routes/_authenticated/meus-pedidos'
-import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
-import { Route as PedidosRastreioIdRouteImport } from './routes/pedidos.rastreio.$id'
-import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
-import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retirada.$numero'
-import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
-import { Route as ApiPublicReconcilePaymentsRouteImport } from './routes/api/public/reconcile-payments'
+import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
+import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
+import { Route as ClientesIndexRouteImport } from './routes/clientes.index'
+import { Route as ClientesIdRouteImport } from './routes/clientes.$id'
+import { Route as EstoqueIndexRouteImport } from './routes/estoque.index'
+import { Route as EstoqueHistoricoRouteImport } from './routes/estoque.historico'
+import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
+import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
+import { Route as PedidoAcompanharRouteImport } from './routes/pedido.acompanhar'
+import { Route as PedidosIndexRouteImport } from './routes/pedidos.index'
+import { Route as PedidosIdRouteImport } from './routes/pedidos.$id'
+import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
+import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
+import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
+import { Route as ProdutosRapidoRouteImport } from './routes/produtos.rapido'
 import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
+import { Route as ApiPublicReconcilePaymentsRouteImport } from './routes/api/public/reconcile-payments'
+import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
+import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retirada.$numero'
+import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
+import { Route as PedidosRastreioIdRouteImport } from './routes/pedidos.rastreio.$id'
+import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
 
-const TrocasEDevolucoesRoute = TrocasEDevolucoesRouteImport.update({
-  id: '/trocas-e-devolucoes',
-  path: '/trocas-e-devolucoes',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermosRoute = TermosRouteImport.update({
-  id: '/termos',
-  path: '/termos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadeRoute = PrivacidadeRouteImport.update({
-  id: '/privacidade',
-  path: '/privacidade',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ColecaoRoute = ColecaoRouteImport.update({
-  id: '/colecao',
-  path: '/colecao',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -95,88 +59,49 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ColecaoRoute = ColecaoRouteImport.update({
+  id: '/colecao',
+  path: '/colecao',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
-  id: '/produtos/',
-  path: '/produtos/',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PedidosIndexRoute = PedidosIndexRouteImport.update({
-  id: '/pedidos/',
-  path: '/pedidos/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MarketingIndexRoute = MarketingIndexRouteImport.update({
-  id: '/marketing/',
-  path: '/marketing/',
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EstoqueIndexRoute = EstoqueIndexRouteImport.update({
-  id: '/estoque/',
-  path: '/estoque/',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClientesIndexRoute = ClientesIndexRouteImport.update({
-  id: '/clientes/',
-  path: '/clientes/',
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
-  id: '/categorias/',
-  path: '/categorias/',
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProdutosRapidoRoute = ProdutosRapidoRouteImport.update({
-  id: '/produtos/rapido',
-  path: '/produtos/rapido',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProdutosNovoRoute = ProdutosNovoRouteImport.update({
-  id: '/produtos/novo',
-  path: '/produtos/novo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
-  id: '/produto/$handle',
-  path: '/produto/$handle',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PedidosIdRoute = PedidosIdRouteImport.update({
-  id: '/pedidos/$id',
-  path: '/pedidos/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PedidoAcompanharRoute = PedidoAcompanharRouteImport.update({
-  id: '/pedido/acompanhar',
-  path: '/pedido/acompanhar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PedidoIdRoute = PedidoIdRouteImport.update({
-  id: '/pedido/$id',
-  path: '/pedido/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstoqueHistoricoRoute = EstoqueHistoricoRouteImport.update({
-  id: '/estoque/historico',
-  path: '/estoque/historico',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientesIdRoute = ClientesIdRouteImport.update({
-  id: '/clientes/$id',
-  path: '/clientes/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasNovoRoute = CategoriasNovoRouteImport.update({
-  id: '/categorias/novo',
-  path: '/categorias/novo',
+const TrocasEDevolucoesRoute = TrocasEDevolucoesRouteImport.update({
+  id: '/trocas-e-devolucoes',
+  path: '/trocas-e-devolucoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeusPedidosRoute =
@@ -185,29 +110,84 @@ const AuthenticatedMeusPedidosRoute =
     path: '/meus-pedidos',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const ProdutosIdEditarRoute = ProdutosIdEditarRouteImport.update({
-  id: '/produtos/$id/editar',
-  path: '/produtos/$id/editar',
+const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
+  id: '/categorias/',
+  path: '/categorias/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PedidosRastreioIdRoute = PedidosRastreioIdRouteImport.update({
-  id: '/pedidos/rastreio/$id',
-  path: '/pedidos/rastreio/$id',
+const CategoriasNovoRoute = CategoriasNovoRouteImport.update({
+  id: '/categorias/novo',
+  path: '/categorias/novo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PedidoSucessoNumeroRoute = PedidoSucessoNumeroRouteImport.update({
-  id: '/pedido/sucesso/$numero',
-  path: '/pedido/sucesso/$numero',
+const ClientesIndexRoute = ClientesIndexRouteImport.update({
+  id: '/clientes/',
+  path: '/clientes/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PedidoRetiradaNumeroRoute = PedidoRetiradaNumeroRouteImport.update({
-  id: '/pedido/retirada/$numero',
-  path: '/pedido/retirada/$numero',
+const ClientesIdRoute = ClientesIdRouteImport.update({
+  id: '/clientes/$id',
+  path: '/clientes/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
-  id: '/categorias/$id/editar',
-  path: '/categorias/$id/editar',
+const EstoqueIndexRoute = EstoqueIndexRouteImport.update({
+  id: '/estoque/',
+  path: '/estoque/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstoqueHistoricoRoute = EstoqueHistoricoRouteImport.update({
+  id: '/estoque/historico',
+  path: '/estoque/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
+  id: '/marketing/',
+  path: '/marketing/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoIdRoute = PedidoIdRouteImport.update({
+  id: '/pedido/$id',
+  path: '/pedido/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoAcompanharRoute = PedidoAcompanharRouteImport.update({
+  id: '/pedido/acompanhar',
+  path: '/pedido/acompanhar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidosIndexRoute = PedidosIndexRouteImport.update({
+  id: '/pedidos/',
+  path: '/pedidos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidosIdRoute = PedidosIdRouteImport.update({
+  id: '/pedidos/$id',
+  path: '/pedidos/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
+  id: '/produto/$handle',
+  path: '/produto/$handle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
+  id: '/produtos/',
+  path: '/produtos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosNovoRoute = ProdutosNovoRouteImport.update({
+  id: '/produtos/novo',
+  path: '/produtos/novo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRapidoRoute = ProdutosRapidoRouteImport.update({
+  id: '/produtos/rapido',
+  path: '/produtos/rapido',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPaymentWebhookRoute = ApiPublicPaymentWebhookRouteImport.update({
+  id: '/api/public/payment-webhook',
+  path: '/api/public/payment-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicReconcilePaymentsRoute =
@@ -216,9 +196,29 @@ const ApiPublicReconcilePaymentsRoute =
     path: '/api/public/reconcile-payments',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicPaymentWebhookRoute = ApiPublicPaymentWebhookRouteImport.update({
-  id: '/api/public/payment-webhook',
-  path: '/api/public/payment-webhook',
+const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
+  id: '/categorias/$id/editar',
+  path: '/categorias/$id/editar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoRetiradaNumeroRoute = PedidoRetiradaNumeroRouteImport.update({
+  id: '/pedido/retirada/$numero',
+  path: '/pedido/retirada/$numero',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoSucessoNumeroRoute = PedidoSucessoNumeroRouteImport.update({
+  id: '/pedido/sucesso/$numero',
+  path: '/pedido/sucesso/$numero',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidosRastreioIdRoute = PedidosRastreioIdRouteImport.update({
+  id: '/pedidos/rastreio/$id',
+  path: '/pedidos/rastreio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosIdEditarRoute = ProdutosIdEditarRouteImport.update({
+  id: '/produtos/$id/editar',
+  path: '/produtos/$id/editar',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -483,74 +483,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/trocas-e-devolucoes': {
-      id: '/trocas-e-devolucoes'
-      path: '/trocas-e-devolucoes'
-      fullPath: '/trocas-e-devolucoes'
-      preLoaderRoute: typeof TrocasEDevolucoesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/termos': {
-      id: '/termos'
-      path: '/termos'
-      fullPath: '/termos'
-      preLoaderRoute: typeof TermosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidade': {
-      id: '/privacidade'
-      path: '/privacidade'
-      fullPath: '/privacidade'
-      preLoaderRoute: typeof PrivacidadeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/colecao': {
-      id: '/colecao'
-      path: '/colecao'
-      fullPath: '/colecao'
-      preLoaderRoute: typeof ColecaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -560,116 +497,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/produtos/': {
-      id: '/produtos/'
-      path: '/produtos'
-      fullPath: '/produtos/'
-      preLoaderRoute: typeof ProdutosIndexRouteImport
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pedidos/': {
-      id: '/pedidos/'
-      path: '/pedidos'
-      fullPath: '/pedidos/'
-      preLoaderRoute: typeof PedidosIndexRouteImport
+    '/colecao': {
+      id: '/colecao'
+      path: '/colecao'
+      fullPath: '/colecao'
+      preLoaderRoute: typeof ColecaoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/marketing/': {
-      id: '/marketing/'
-      path: '/marketing'
-      fullPath: '/marketing/'
-      preLoaderRoute: typeof MarketingIndexRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/estoque/': {
-      id: '/estoque/'
-      path: '/estoque'
-      fullPath: '/estoque/'
-      preLoaderRoute: typeof EstoqueIndexRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/clientes/': {
-      id: '/clientes/'
-      path: '/clientes'
-      fullPath: '/clientes/'
-      preLoaderRoute: typeof ClientesIndexRouteImport
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/categorias/': {
-      id: '/categorias/'
-      path: '/categorias'
-      fullPath: '/categorias/'
-      preLoaderRoute: typeof CategoriasIndexRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/produtos/rapido': {
-      id: '/produtos/rapido'
-      path: '/produtos/rapido'
-      fullPath: '/produtos/rapido'
-      preLoaderRoute: typeof ProdutosRapidoRouteImport
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/produtos/novo': {
-      id: '/produtos/novo'
-      path: '/produtos/novo'
-      fullPath: '/produtos/novo'
-      preLoaderRoute: typeof ProdutosNovoRouteImport
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/produto/$handle': {
-      id: '/produto/$handle'
-      path: '/produto/$handle'
-      fullPath: '/produto/$handle'
-      preLoaderRoute: typeof ProdutoHandleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pedidos/$id': {
-      id: '/pedidos/$id'
-      path: '/pedidos/$id'
-      fullPath: '/pedidos/$id'
-      preLoaderRoute: typeof PedidosIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pedido/acompanhar': {
-      id: '/pedido/acompanhar'
-      path: '/pedido/acompanhar'
-      fullPath: '/pedido/acompanhar'
-      preLoaderRoute: typeof PedidoAcompanharRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pedido/$id': {
-      id: '/pedido/$id'
-      path: '/pedido/$id'
-      fullPath: '/pedido/$id'
-      preLoaderRoute: typeof PedidoIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estoque/historico': {
-      id: '/estoque/historico'
-      path: '/estoque/historico'
-      fullPath: '/estoque/historico'
-      preLoaderRoute: typeof EstoqueHistoricoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clientes/$id': {
-      id: '/clientes/$id'
-      path: '/clientes/$id'
-      fullPath: '/clientes/$id'
-      preLoaderRoute: typeof ClientesIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias/novo': {
-      id: '/categorias/novo'
-      path: '/categorias/novo'
-      fullPath: '/categorias/novo'
-      preLoaderRoute: typeof CategoriasNovoRouteImport
+    '/trocas-e-devolucoes': {
+      id: '/trocas-e-devolucoes'
+      path: '/trocas-e-devolucoes'
+      fullPath: '/trocas-e-devolucoes'
+      preLoaderRoute: typeof TrocasEDevolucoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/meus-pedidos': {
@@ -679,39 +574,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeusPedidosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/produtos/$id/editar': {
-      id: '/produtos/$id/editar'
-      path: '/produtos/$id/editar'
-      fullPath: '/produtos/$id/editar'
-      preLoaderRoute: typeof ProdutosIdEditarRouteImport
+    '/categorias/': {
+      id: '/categorias/'
+      path: '/categorias'
+      fullPath: '/categorias/'
+      preLoaderRoute: typeof CategoriasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pedidos/rastreio/$id': {
-      id: '/pedidos/rastreio/$id'
-      path: '/pedidos/rastreio/$id'
-      fullPath: '/pedidos/rastreio/$id'
-      preLoaderRoute: typeof PedidosRastreioIdRouteImport
+    '/categorias/novo': {
+      id: '/categorias/novo'
+      path: '/categorias/novo'
+      fullPath: '/categorias/novo'
+      preLoaderRoute: typeof CategoriasNovoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pedido/sucesso/$numero': {
-      id: '/pedido/sucesso/$numero'
-      path: '/pedido/sucesso/$numero'
-      fullPath: '/pedido/sucesso/$numero'
-      preLoaderRoute: typeof PedidoSucessoNumeroRouteImport
+    '/clientes/': {
+      id: '/clientes/'
+      path: '/clientes'
+      fullPath: '/clientes/'
+      preLoaderRoute: typeof ClientesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pedido/retirada/$numero': {
-      id: '/pedido/retirada/$numero'
-      path: '/pedido/retirada/$numero'
-      fullPath: '/pedido/retirada/$numero'
-      preLoaderRoute: typeof PedidoRetiradaNumeroRouteImport
+    '/clientes/$id': {
+      id: '/clientes/$id'
+      path: '/clientes/$id'
+      fullPath: '/clientes/$id'
+      preLoaderRoute: typeof ClientesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/categorias/$id/editar': {
-      id: '/categorias/$id/editar'
-      path: '/categorias/$id/editar'
-      fullPath: '/categorias/$id/editar'
-      preLoaderRoute: typeof CategoriasIdEditarRouteImport
+    '/estoque/': {
+      id: '/estoque/'
+      path: '/estoque'
+      fullPath: '/estoque/'
+      preLoaderRoute: typeof EstoqueIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estoque/historico': {
+      id: '/estoque/historico'
+      path: '/estoque/historico'
+      fullPath: '/estoque/historico'
+      preLoaderRoute: typeof EstoqueHistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketing/': {
+      id: '/marketing/'
+      path: '/marketing'
+      fullPath: '/marketing/'
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/$id': {
+      id: '/pedido/$id'
+      path: '/pedido/$id'
+      fullPath: '/pedido/$id'
+      preLoaderRoute: typeof PedidoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/acompanhar': {
+      id: '/pedido/acompanhar'
+      path: '/pedido/acompanhar'
+      fullPath: '/pedido/acompanhar'
+      preLoaderRoute: typeof PedidoAcompanharRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedidos/': {
+      id: '/pedidos/'
+      path: '/pedidos'
+      fullPath: '/pedidos/'
+      preLoaderRoute: typeof PedidosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedidos/$id': {
+      id: '/pedidos/$id'
+      path: '/pedidos/$id'
+      fullPath: '/pedidos/$id'
+      preLoaderRoute: typeof PedidosIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produto/$handle': {
+      id: '/produto/$handle'
+      path: '/produto/$handle'
+      fullPath: '/produto/$handle'
+      preLoaderRoute: typeof ProdutoHandleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos/': {
+      id: '/produtos/'
+      path: '/produtos'
+      fullPath: '/produtos/'
+      preLoaderRoute: typeof ProdutosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos/novo': {
+      id: '/produtos/novo'
+      path: '/produtos/novo'
+      fullPath: '/produtos/novo'
+      preLoaderRoute: typeof ProdutosNovoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos/rapido': {
+      id: '/produtos/rapido'
+      path: '/produtos/rapido'
+      fullPath: '/produtos/rapido'
+      preLoaderRoute: typeof ProdutosRapidoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payment-webhook': {
+      id: '/api/public/payment-webhook'
+      path: '/api/public/payment-webhook'
+      fullPath: '/api/public/payment-webhook'
+      preLoaderRoute: typeof ApiPublicPaymentWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/reconcile-payments': {
@@ -721,11 +693,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicReconcilePaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payment-webhook': {
-      id: '/api/public/payment-webhook'
-      path: '/api/public/payment-webhook'
-      fullPath: '/api/public/payment-webhook'
-      preLoaderRoute: typeof ApiPublicPaymentWebhookRouteImport
+    '/categorias/$id/editar': {
+      id: '/categorias/$id/editar'
+      path: '/categorias/$id/editar'
+      fullPath: '/categorias/$id/editar'
+      preLoaderRoute: typeof CategoriasIdEditarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/retirada/$numero': {
+      id: '/pedido/retirada/$numero'
+      path: '/pedido/retirada/$numero'
+      fullPath: '/pedido/retirada/$numero'
+      preLoaderRoute: typeof PedidoRetiradaNumeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/sucesso/$numero': {
+      id: '/pedido/sucesso/$numero'
+      path: '/pedido/sucesso/$numero'
+      fullPath: '/pedido/sucesso/$numero'
+      preLoaderRoute: typeof PedidoSucessoNumeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedidos/rastreio/$id': {
+      id: '/pedidos/rastreio/$id'
+      path: '/pedidos/rastreio/$id'
+      fullPath: '/pedidos/rastreio/$id'
+      preLoaderRoute: typeof PedidosRastreioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos/$id/editar': {
+      id: '/produtos/$id/editar'
+      path: '/produtos/$id/editar'
+      fullPath: '/produtos/$id/editar'
+      preLoaderRoute: typeof ProdutosIdEditarRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
