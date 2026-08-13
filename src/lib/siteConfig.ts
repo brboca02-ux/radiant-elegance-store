@@ -20,7 +20,7 @@ export interface SiteConfig {
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
   heroEyebrow: "Nova Coleção",
   heroTitle: "J&S Store",
-  heroSubtitle: "Confirmar que o controle de estoque funciona por variante e que o status muda corretamente quando o estoque atingir o mínimo definido.\n\nVerificar a vitrine e o painel de admin para confirmar que os 17 produtos aparecem com preço, categoria, tamanhos e imagens corretos.\ntirar os estoques da md modas",
+  heroSubtitle: "Moda feminina e masculina para todas as ocasiões.",
   heroCta: "Comprar Agora",
   promoTitle: "Ofertas da Semana",
   promoSubtitle: "Aproveite descontos exclusivos até domingo",
