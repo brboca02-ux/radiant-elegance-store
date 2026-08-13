@@ -257,7 +257,7 @@ function MovementDialog({
         <div className="p-5 space-y-4">
           <Field label="Produto">
             <select value={productId} onChange={(e) => setProductId(e.target.value)} className={inp}>
-              {products.map((p) => <option key={p.id} value={p.id}>{p.name} — atual: {p.stock}</option>)}
+              {products.map((p) => <option key={p.id} value={p.id}>{p.name} — atual: {effectiveStock(p)}</option>)}
             </select>
           </Field>
           <Field label={type === "ajuste" ? "Novo total" : "Quantidade"}>
