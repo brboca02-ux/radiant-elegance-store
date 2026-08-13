@@ -39,6 +39,7 @@ import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutosRapidoRouteImport } from './routes/produtos.rapido'
 import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
 import { Route as ApiPublicReconcilePaymentsRouteImport } from './routes/api/public/reconcile-payments'
+import { Route as ApiPublicSeedCatalogRouteImport } from './routes/api/public/seed-catalog'
 import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
 import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retirada.$numero'
 import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
@@ -196,6 +197,11 @@ const ApiPublicReconcilePaymentsRoute =
     path: '/api/public/reconcile-payments',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSeedCatalogRoute = ApiPublicSeedCatalogRouteImport.update({
+  id: '/api/public/seed-catalog',
+  path: '/api/public/seed-catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
   id: '/categorias/$id/editar',
   path: '/categorias/$id/editar',
@@ -252,6 +258,7 @@ export interface FileRoutesByFullPath {
   '/produtos/': typeof ProdutosIndexRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
+  '/api/public/seed-catalog': typeof ApiPublicSeedCatalogRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
@@ -288,6 +295,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof ProdutosIndexRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
+  '/api/public/seed-catalog': typeof ApiPublicSeedCatalogRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
@@ -326,6 +334,7 @@ export interface FileRoutesById {
   '/produtos/': typeof ProdutosIndexRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
+  '/api/public/seed-catalog': typeof ApiPublicSeedCatalogRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
     | '/produtos/'
     | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
+    | '/api/public/seed-catalog'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
+    | '/api/public/seed-catalog'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
@@ -437,6 +448,7 @@ export interface FileRouteTypes {
     | '/produtos/'
     | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
+    | '/api/public/seed-catalog'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
@@ -474,6 +486,7 @@ export interface RootRouteChildren {
   ProdutosIndexRoute: typeof ProdutosIndexRoute
   ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   ApiPublicReconcilePaymentsRoute: typeof ApiPublicReconcilePaymentsRoute
+  ApiPublicSeedCatalogRoute: typeof ApiPublicSeedCatalogRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
   PedidoRetiradaNumeroRoute: typeof PedidoRetiradaNumeroRoute
   PedidoSucessoNumeroRoute: typeof PedidoSucessoNumeroRoute
@@ -693,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicReconcilePaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/seed-catalog': {
+      id: '/api/public/seed-catalog'
+      path: '/api/public/seed-catalog'
+      fullPath: '/api/public/seed-catalog'
+      preLoaderRoute: typeof ApiPublicSeedCatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/categorias/$id/editar': {
       id: '/categorias/$id/editar'
       path: '/categorias/$id/editar'
@@ -772,6 +792,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosIndexRoute: ProdutosIndexRoute,
   ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   ApiPublicReconcilePaymentsRoute: ApiPublicReconcilePaymentsRoute,
+  ApiPublicSeedCatalogRoute: ApiPublicSeedCatalogRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
   PedidoRetiradaNumeroRoute: PedidoRetiradaNumeroRoute,
   PedidoSucessoNumeroRoute: PedidoSucessoNumeroRoute,
