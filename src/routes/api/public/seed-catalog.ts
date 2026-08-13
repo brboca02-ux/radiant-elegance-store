@@ -1,12 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createClient } from "@supabase/supabase-js";
-import fs from "fs";
 
 export const Route = createFileRoute('/api/public/seed-catalog')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Proteção simples: exige um header específico
         const auth = request.headers.get('x-seed-auth');
         if (auth !== 'js-store-catalog-2026') {
           return new Response('Unauthorized', { status: 401 });
@@ -32,23 +30,23 @@ export const Route = createFileRoute('/api/public/seed-catalog')({
         const SIZES_PLUS = ["50", "52", "54", "56"];
 
         const products = [
-          { name: "Calça Jeans Masculina Importada", price: 129.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/tmp/catalog_images/prod_003.jpg" },
-          { name: "Calça de Sarja Premium Masculina", price: 129.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/tmp/catalog_images/prod_022.jpg" },
-          { name: "Calça Jeans Importada Feminina", price: 129.9, cat: CATEGORIES.feminino, sizes: SIZES_NUM, img: "/tmp/catalog_images/prod_033.jpg" },
-          { name: "Camisa Gola Polo Importada Tommy", price: 99.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/tmp/catalog_images/prod_010.jpg" },
-          { name: "Camisa Gola Polo com Elastano", price: 89.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/tmp/catalog_images/prod_025.jpg" },
-          { name: "Camiseta Tommy Malha Suprema", price: 89.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/tmp/catalog_images/prod_030.jpg" },
-          { name: "Short Sarja Mauricinho", price: 69.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/tmp/catalog_images/prod_015.jpg" },
-          { name: "Bermuda Sarja Lacoste", price: 69.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/tmp/catalog_images/prod_028.jpg" },
-          { name: "Bermuda Sarja Plus Size", price: 69.9, cat: CATEGORIES.plus_size, sizes: SIZES_PLUS, img: "/tmp/catalog_images/prod_028.jpg" },
-          { name: "Bermuda Jeans Masculina", price: 69.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/tmp/catalog_images/prod_031.jpg" },
-          { name: "Camiseta Peruana 40.1", price: 59.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/tmp/catalog_images/prod_012.jpg" },
-          { name: "T-Shirt Feminina Algodão", price: 39.9, cat: CATEGORIES.feminino, sizes: SIZES_STD, img: "/tmp/catalog_images/prod_032.jpg" },
+          { name: "Calça Jeans Masculina Importada", price: 129.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/__l5e/assets-v1/cb3b5a27-09df-4628-9e53-a615abb800e3/prod_003.jpg" },
+          { name: "Calça de Sarja Premium Masculina", price: 129.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/__l5e/assets-v1/0e689a41-cc7e-4d6e-bfa6-1eb687327189/prod_022.jpg" },
+          { name: "Calça Jeans Importada Feminina", price: 129.9, cat: CATEGORIES.feminino, sizes: SIZES_NUM, img: "/__l5e/assets-v1/2fc8f83a-e497-42d1-860a-ce2cdb5d9eca/prod_033.jpg" },
+          { name: "Camisa Gola Polo Importada Tommy", price: 99.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/__l5e/assets-v1/d3810a60-0a52-4bcf-b534-5c88f21b6828/prod_010.jpg" },
+          { name: "Camisa Gola Polo com Elastano", price: 89.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/__l5e/assets-v1/cc7b2f3d-7c18-46d2-9c9c-99dff74aeb4f/prod_005.jpg" },
+          { name: "Camiseta Tommy Malha Suprema", price: 89.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/__l5e/assets-v1/cc7b2f3d-7c18-46d2-9c9c-99dff74aeb4f/prod_005.jpg" },
+          { name: "Short Sarja Mauricinho", price: 69.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/__l5e/assets-v1/a1e3fb96-cc21-4d69-b51e-0213ca4241bd/prod_015.jpg" },
+          { name: "Bermuda Sarja Lacoste", price: 69.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/__l5e/assets-v1/26d21519-744b-469c-ac26-eeaecaa26bb5/prod_002.jpg" },
+          { name: "Bermuda Sarja Plus Size", price: 69.9, cat: CATEGORIES.plus_size, sizes: SIZES_PLUS, img: "/__l5e/assets-v1/26d21519-744b-469c-ac26-eeaecaa26bb5/prod_002.jpg" },
+          { name: "Bermuda Jeans Masculina", price: 69.9, cat: CATEGORIES.masculino, sizes: SIZES_NUM, img: "/__l5e/assets-v1/26d21519-744b-469c-ac26-eeaecaa26bb5/prod_002.jpg" },
+          { name: "Camiseta Peruana 40.1", price: 59.9, cat: CATEGORIES.masculino, sizes: SIZES_STD, img: "/__l5e/assets-v1/e57b8bf6-ce04-40b1-9862-6459f21c7fe4/prod_012.jpg" },
+          { name: "T-Shirt Feminina Algodão", price: 39.9, cat: CATEGORIES.feminino, sizes: SIZES_STD, img: "/__l5e/assets-v1/2fc8f83a-e497-42d1-860a-ce2cdb5d9eca/prod_033.jpg" },
         ];
 
         const results = [];
         for (const p of products) {
-          const slug = p.name.toLowerCase().replace(/ /g, "-") + "-" + Math.random().toString(36).slice(2, 5);
+          const slug = p.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-") + "-" + Math.random().toString(36).slice(2, 5);
           
           const { data: prod, error: pErr } = await supabase.from("products").insert({
             name: p.name, slug, price: p.price, category_id: p.cat,
@@ -63,14 +61,16 @@ export const Route = createFileRoute('/api/public/seed-catalog')({
 
           // Variantes
           const variants = p.sizes.map(s => ({
-            product_id: prod.id, size: s, color: "Padrão", stock: 10
+            product_id: prod.id, size: String(s), color: "Padrão", stock: 10
           }));
           await supabase.from("product_variants").insert(variants);
 
-          // Nota: Imagens locais não funcionam no serverless worker se o ffmpeg rodou no sandbox.
-          // O upload de imagem teria que ser feito via assets ou buffer enviado no request.
-          // Por enquanto, cadastramos os produtos sem imagem e o admin as coloca,
-          // ou usamos URLs genéricas.
+          // Imagem
+          if (p.img) {
+            await supabase.from("product_images").insert({
+              product_id: prod.id, url: p.img, position: 0, is_primary: true
+            });
+          }
           
           results.push({ name: p.name, status: 'success', id: prod.id });
         }
