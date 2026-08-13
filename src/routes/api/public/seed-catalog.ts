@@ -11,7 +11,7 @@ export const Route = createFileRoute('/api/public/seed-catalog')({
         }
 
         const SUPABASE_URL = "https://snqvhexeruvlyrtzsdnm.supabase.co";
-        const supaKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+        const supaKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
         if (!supaKey) {
           return new Response('EXTERNAL_SUPABASE_SERVICE_ROLE_KEY not found', { status: 500 });
