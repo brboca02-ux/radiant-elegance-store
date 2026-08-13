@@ -12,9 +12,10 @@ export const Route = createFileRoute("/sobre")({
       { name: "description", content: "Conheça a J&S Store, loja de moda feminina e masculina em Joinville/SC. Atendimento pelo WhatsApp e venda online para toda a região." },
       { property: "og:title", content: "Sobre a J&S Store — Joinville" },
       { property: "og:description", content: "Loja física em Joinville, atendimento humanizado e moda acessível." },
-      { property: "og:url", content: "https://mdmoda.com.br/sobre" },
+      { property: "og:url", content: "https://jsstore.lovable.app/sobre" },
+      { property: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://mdmoda.com.br/sobre" }],
+    links: [{ rel: "canonical", href: "https://jsstore.lovable.app/sobre" }],
   }),
   component: SobrePage,
 });

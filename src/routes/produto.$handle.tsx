@@ -234,7 +234,7 @@ function ProductPage() {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       url: canonicalUrl,
-      seller: { "@type": "Organization", name: "J&S Store", "@id": "https://mdmoda.com.br/#organization" },
+      seller: { "@type": "Organization", name: "J&S Store", "@id": "https://jsstore.lovable.app/#organization" },
     },
   };
 
