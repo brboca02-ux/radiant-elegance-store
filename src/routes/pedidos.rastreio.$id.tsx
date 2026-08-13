@@ -19,7 +19,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/pedidos/rastreio/$id")({
   head: () => ({
     meta: [
-      { title: "Rastreio do pedido — MD Modas" },
+      { title: "Rastreio do pedido — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

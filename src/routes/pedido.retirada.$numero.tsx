@@ -16,8 +16,8 @@ export const Route = createFileRoute("/pedido/retirada/$numero")({
   validateSearch: searchSchema,
   head: ({ params }) => ({
     meta: [
-      { title: `Retirada do pedido ${params.numero} — MD Modas` },
-      { name: "description", content: "Instruções para retirar seu pedido na loja MD Modas em Joinville/SC." },
+      { title: `Retirada do pedido ${params.numero} — J&S Store` },
+      { name: "description", content: "Instruções para retirar seu pedido na loja J&S Store em Joinville/SC." },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -61,7 +61,7 @@ function PickupInstructionsPage() {
 
   const isReady = order.fulfillment_status === "embalado" || order.fulfillment_status === "coletado";
   const isDone = order.fulfillment_status === "entregue";
-  const waMsg = `Olá MD Modas! Quero retirar o pedido *${order.order_number}* na loja. Já está pronto?`;
+  const waMsg = `Olá J&S Store! Quero retirar o pedido *${order.order_number}* na loja. Já está pronto?`;
   const waLink = buildWhatsAppLink(waMsg);
 
   const copyCode = async () => {
@@ -154,7 +154,7 @@ function PickupInstructionsPage() {
           </a>
         </div>
         <iframe
-          title="Mapa MD Modas"
+          title="Mapa J&S Store"
           src={STORE_INFO.mapsEmbed}
           className="w-full h-56 border-t border-border"
           loading="lazy"

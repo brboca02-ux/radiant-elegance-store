@@ -10,13 +10,13 @@ function sanitizeTerm(input: string) {
 }
 
 const DEFAULT_SEO = {
-  title: "Coleção MD Modas — Feminino, Masculino, Infantil e Plus Size em Joinville",
+  title: "Coleção J&S Store — Feminino, Masculino, Infantil e Plus Size em Joinville",
   description:
-    "Explore toda a coleção MD Modas: vestidos, conjuntos, blusas, calçados, plus size, moda masculina e infantil. Loja em Joinville com envio para todo o Brasil.",
+    "Explore toda a coleção J&S Store: vestidos, conjuntos, blusas, calçados, plus size, moda masculina e infantil. Loja em Joinville com envio para todo o Brasil.",
   h1: "Toda a Coleção",
   eyebrow: "Coleção",
   intro:
-    "Toda a coleção MD Modas em um só lugar: moda feminina, masculina, infantil, calçados, vestidos, conjuntos e plus size. Curadoria feita na nossa loja em Joinville, com envio para todo o Brasil.",
+    "Toda a coleção J&S Store em um só lugar: moda feminina, masculina, infantil, calçados, vestidos, conjuntos e plus size. Curadoria feita na nossa loja em Joinville, com envio para todo o Brasil.",
 };
 
 export const Route = createFileRoute("/colecao")({

@@ -51,7 +51,7 @@ const FEMININO: MegaContent = {
   ],
   promo: {
     title: "Toda semana novidades",
-    subtitle: "Peças recém-chegadas na MD Modas",
+    subtitle: "Peças recém-chegadas na J&S Store",
     cta: "Comprar Agora",
     c: "recebidos-da-semana",
   },
@@ -241,14 +241,14 @@ export function Header() {
           <Menu className="h-6 w-6" />
         </button>
         <Link to="/" className="font-display font-extrabold text-xl sm:text-2xl tracking-tight">
-          <span className="text-primary">MD</span> Modas
+          <span className="text-primary">J&S</span> Store
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
           <SearchBox />
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <a
-            href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
+            href={buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de ajuda.")}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"
@@ -369,7 +369,7 @@ export function Header() {
           <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background shadow-2xl flex flex-col animate-in slide-in-from-left">
             <div className="flex items-center justify-between px-5 h-14 border-b">
-              <span className="font-display font-extrabold text-xl"><span className="text-primary">MD</span> Modas</span>
+              <span className="font-display font-extrabold text-xl"><span className="text-primary">J&S</span> Store</span>
               <button aria-label="Fechar" onClick={() => setOpen(false)} className="h-11 w-11 -mr-2 flex items-center justify-center">
                 <X className="h-6 w-6" />
               </button>
@@ -459,7 +459,7 @@ export function Header() {
               </Link>
             </nav>
             <a
-              href={buildWhatsAppLink("Olá! Vim pelo site da MD Modas e gostaria de ajuda.")}
+              href={buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de ajuda.")}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track.whatsappClick("mobile-menu")}

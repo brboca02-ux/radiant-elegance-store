@@ -5,7 +5,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { loadLeads, type Lead } from "@/lib/leads";
 
 export const Route = createFileRoute("/marketing/")({
-  head: () => ({ meta: [{ title: "Marketing — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Marketing — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: MarketingPage,
 });
 

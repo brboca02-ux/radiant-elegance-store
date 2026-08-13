@@ -11,7 +11,7 @@ interface LegalPageProps {
 }
 
 export function LegalPage({ eyebrow, title, updatedAt = "Junho de 2026", breadcrumbs, children }: LegalPageProps) {
-  const wa = buildWhatsAppLink(`Olá MD Modas, vim pela página ${title} e gostaria de ajuda.`);
+  const wa = buildWhatsAppLink(`Olá J&S Store, vim pela página ${title} e gostaria de ajuda.`);
   return (
     <div className="bg-background">
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}

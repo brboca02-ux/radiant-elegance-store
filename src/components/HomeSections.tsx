@@ -21,9 +21,9 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina MD Modas", img: vestidos, q: "feminino" },
-  { label: "Masculino", alt: "Categoria Moda Masculina MD Modas", img: blazers, q: "masculino" },
-  { label: "Infantil", alt: "Categoria Moda Infantil MD Modas", img: novidades, q: "infantil" },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: vestidos, q: "feminino" },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: blazers, q: "masculino" },
+  { label: "Infantil", alt: "Categoria Moda Infantil J&S Store", img: novidades, q: "infantil" },
   { label: "Calçados", alt: "Categoria Calçados femininos e masculinos", img: alfaiataria, q: "calcados" },
   { label: "Plus Size", alt: "Categoria Moda Plus Size Feminina", img: conjuntos, q: "plus-size" },
 ];
@@ -45,7 +45,7 @@ export function HomeHero() {
         {/* Mobile + tablet: dedicated portrait composition, face safe in the upper third */}
         <img
           src={heroMobile}
-          alt="MD Modas — Nova Coleção"
+          alt="J&S Store — Nova Coleção"
           width={1080}
           height={1452}
           fetchPriority="high"
@@ -159,7 +159,7 @@ export function BestSellersSection() {
   return (
     <section className="py-20 md:py-28 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <SectionHeader kicker="Os queridinhos da loja" title="Mais Vendidos" subtitle="As peças preferidas pelas clientes da MD Modas." link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
+        <SectionHeader kicker="Os queridinhos da loja" title="Mais Vendidos" subtitle="As peças preferidas pelas clientes da J&S Store." link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
         <ProductGrid sortKey="BEST_SELLING" first={8} />
       </div>
     </section>
@@ -192,7 +192,7 @@ export function LookbookSection() {
   return (
     <section className="py-16 md:py-24 bg-foreground text-background">
       <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center space-y-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/60">Editorial MD Modas</p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/60">Editorial J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
           Moda para o seu dia, na sua cidade.
         </h2>
@@ -233,7 +233,7 @@ export function LojaFisicaSection() {
         <div className="space-y-5 order-1 md:order-2">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Visite nossa loja</p>
           <h2 id="loja-titulo" className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
-            Loja MD Modas — Aventureiro, Joinville/SC
+            Loja J&S Store — Aventureiro, Joinville/SC
           </h2>
           <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
             <p className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5 text-foreground shrink-0" /> {STORE_INFO.street} — {STORE_INFO.city}/{STORE_INFO.region}</p>

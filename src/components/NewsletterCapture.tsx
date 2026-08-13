@@ -98,12 +98,12 @@ export function NewsletterSection() {
   return (
     <section className="py-20 md:py-24 bg-offwhite border-t border-border">
       <div className="max-w-xl mx-auto px-6 text-center">
-        <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Newsletter MD Modas</p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Newsletter J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-4xl mt-4 tracking-tight">
           Lançamentos em primeira mão
         </h2>
         <p className="text-sm md:text-base text-muted-foreground mt-4 leading-relaxed">
-          Receba lançamentos, novidades e tendências da MD Modas direto no seu e-mail.
+          Receba lançamentos, novidades e tendências da J&S Store direto no seu e-mail.
         </p>
         <div className="mt-8">
           <NewsletterCapture />

@@ -10,7 +10,7 @@ import {
 } from "@/stores/customersStore";
 
 export const Route = createFileRoute("/clientes/")({
-  head: () => ({ meta: [{ title: "Clientes — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Clientes — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: ClientesPage,
 });
 

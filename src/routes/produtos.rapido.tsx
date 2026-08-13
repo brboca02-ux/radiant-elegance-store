@@ -11,7 +11,7 @@ import { buildSizeVariants } from "@/lib/products/variantSizes";
 export const Route = createFileRoute("/produtos/rapido")({
   head: () => ({
     meta: [
-      { title: "Cadastro Rápido com IA — MD Modas" },
+      { title: "Cadastro Rápido com IA — J&S Store" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -93,7 +93,7 @@ function QuickAddPage() {
         slug,
         description: analyzed.description,
         category_id: analyzed.category_id,
-        brand: "MD Modas",
+        brand: "J&S Store",
         sku: "",
         price: priceNum,
         sale_price: salePriceNum && salePriceNum > 0 && salePriceNum < priceNum ? salePriceNum : null,

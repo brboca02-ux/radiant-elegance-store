@@ -13,12 +13,12 @@ import { RelatedProducts } from "@/components/RelatedProducts";
 
 export const Route = createFileRoute("/produto/$handle")({
   head: ({ params }) => {
-    const desc = `Compre ${params.handle} na MD Modas: moda em Joinville, envio para todo o Brasil e atendimento pelo WhatsApp.`;
+    const desc = `Compre ${params.handle} na J&S Store: moda em Joinville, envio para todo o Brasil e atendimento pelo WhatsApp.`;
     return {
       meta: [
-        { title: `${params.handle} — MD Modas Joinville` },
+        { title: `${params.handle} — J&S Store Joinville` },
         { name: "description", content: desc },
-        { property: "og:title", content: `${params.handle} — MD Modas` },
+        { property: "og:title", content: `${params.handle} — J&S Store` },
         { property: "og:description", content: desc },
         { name: "twitter:description", content: desc },
         { property: "og:url", content: `https://mdmodas.lovable.app/produto/${params.handle}` },
@@ -223,7 +223,7 @@ function ProductPage() {
     description: data.description,
     image: allImages.map((i) => i.url),
     sku: selected?.id,
-    brand: { "@type": "Brand", name: "MD Modas" },
+    brand: { "@type": "Brand", name: "J&S Store" },
     url: canonicalUrl,
     offers: {
       "@type": "Offer",
@@ -234,7 +234,7 @@ function ProductPage() {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       url: canonicalUrl,
-      seller: { "@type": "Organization", name: "MD Modas", "@id": "https://mdmoda.com.br/#organization" },
+      seller: { "@type": "Organization", name: "J&S Store", "@id": "https://mdmoda.com.br/#organization" },
     },
   };
 
@@ -411,7 +411,7 @@ function ProductPage() {
 
 
         <div className="min-w-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-32 lg:self-start">
-          <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">MD Modas</span>
+          <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">J&S Store</span>
           <h1 className="font-display font-extrabold text-3xl md:text-4xl mt-3">{data.title}</h1>
           <div className="mt-4">
             <p className="text-3xl font-bold text-primary">

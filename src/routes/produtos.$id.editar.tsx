@@ -3,7 +3,7 @@ import { ProductForm } from "@/components/ProductForm";
 import { useProductsStore } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/$id/editar")({
-  head: () => ({ meta: [{ title: "Editar Produto — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Editar Produto — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: EditPage,
 });
 

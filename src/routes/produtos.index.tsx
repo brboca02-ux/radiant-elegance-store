@@ -6,7 +6,7 @@ import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2 } from 
 import { useProductsStore, CATEGORIES, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
-  head: () => ({ meta: [{ title: "Produtos — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Produtos — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: ProductsListPage,
 });
 

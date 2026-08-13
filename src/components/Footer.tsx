@@ -13,7 +13,7 @@ export function Footer() {
         {/* Brand + Newsletter */}
         <div className="lg:col-span-2">
           <div className="font-display font-extrabold text-3xl">
-            <span className="text-primary">MD</span> Modas
+            <span className="text-primary">J&S</span> Store
           </div>
           <p className="text-sm text-background/70 mt-5 leading-relaxed max-w-sm">
             Moda feminina e masculina em Joinville. Curadoria honesta, atendimento próximo
@@ -36,7 +36,7 @@ export function Footer() {
             <li><Link to="/sobre" className={LINK}>Sobre Nós</Link></li>
             <li><a href="#loja" className={LINK}>Nossa Loja</a></li>
             <li>
-              <a href={buildWhatsAppLink("Olá MD Modas, gostaria de falar com vocês.")} target="_blank" rel="noopener noreferrer" className={LINK}>
+              <a href={buildWhatsAppLink("Olá J&S Store, gostaria de falar com vocês.")} target="_blank" rel="noopener noreferrer" className={LINK}>
                 Contato
               </a>
             </li>
@@ -57,7 +57,7 @@ export function Footer() {
           <h3 className={COL_TITLE}>Contato</h3>
           <ul className="space-y-3">
             <li>
-              <a href={buildWhatsAppLink("Olá MD Modas!")} target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
+              <a href={buildWhatsAppLink("Olá J&S Store!")} target="_blank" rel="noopener noreferrer" className={`${LINK} inline-flex items-center gap-2`}>
                 <MessageCircle className="h-4 w-4" strokeWidth={1.5} /> WhatsApp
               </a>
             </li>
@@ -95,9 +95,9 @@ export function Footer() {
 
       <div className="border-t border-background/10 py-6 text-center text-xs text-background/55 px-6">
         <p>
-          MD Modas · CNPJ 00.000.000/0001-00 · {STORE_INFO.street}, {STORE_INFO.city}/{STORE_INFO.region} · CEP {STORE_INFO.postalCode}
+          J&S Store · CNPJ 00.000.000/0001-00 · {STORE_INFO.street}, {STORE_INFO.city}/{STORE_INFO.region} · CEP {STORE_INFO.postalCode}
         </p>
-        <p className="mt-1">© {new Date().getFullYear()} MD Modas. Todos os direitos reservados.</p>
+        <p className="mt-1">© {new Date().getFullYear()} J&S Store. Todos os direitos reservados.</p>
       </div>
     </footer>
   );

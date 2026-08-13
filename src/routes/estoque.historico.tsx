@@ -5,7 +5,7 @@ import { useStockStore, type MovementType } from "@/stores/stockStore";
 import { useProductsStore } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/estoque/historico")({
-  head: () => ({ meta: [{ title: "Histórico de Estoque — MD Modas" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({ meta: [{ title: "Histórico de Estoque — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: HistoricoPage,
 });
 

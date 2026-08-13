@@ -21,7 +21,7 @@ export const Route = createFileRoute("/pedido/$id")({
   validateSearch: searchSchema,
   head: ({ params }) => ({
     meta: [
-      { title: `Pedido ${params.id} — Acompanhamento MD Modas` },
+      { title: `Pedido ${params.id} — Acompanhamento J&S Store` },
       { name: "description", content: "Acompanhe as etapas do seu pedido em tempo real." },
       { name: "robots", content: "noindex,nofollow" },
     ],
@@ -146,7 +146,7 @@ function PedidoTimelinePage() {
     ? FULFILLMENT_FLOW.indexOf(order.fulfillment_status)
     : -1;
 
-  const waMsg = `Olá MD Modas! Sobre meu pedido *${order.order_number}*...`;
+  const waMsg = `Olá J&S Store! Sobre meu pedido *${order.order_number}*...`;
   const waLink = buildWhatsAppLink(waMsg);
 
   return (
