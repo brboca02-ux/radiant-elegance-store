@@ -35,7 +35,10 @@ function isClientAbort(value: unknown): boolean {
   return typeof value === "string" && /aborted|ECONNRESET/i.test(value);
 }
 
-async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
+async function normalizeCatastrophicSsrResponse(
+  response: Response,
+  request: Request,
+): Promise<Response> {
   if (response.status < 500) return response;
   const contentType = response.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return response;
@@ -46,7 +49,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   }
 
   const captured = consumeLastCapturedError();
-  if (isClientAbort(captured) || isClientAbort(body)) {
+  if (request.signal?.aborted || isClientAbort(captured) || isClientAbort(body)) {
     // Connection went away before we could respond — nothing to report.
     return new Response(null, { status: 499 });
   }
@@ -63,9 +66,11 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return await normalizeCatastrophicSsrResponse(response, request);
     } catch (error) {
-      if (isClientAbort(error)) return new Response(null, { status: 499 });
+      if (request.signal?.aborted || isClientAbort(error)) {
+        return new Response(null, { status: 499 });
+      }
       console.error(error);
       return new Response(renderErrorPage(), {
         status: 500,
