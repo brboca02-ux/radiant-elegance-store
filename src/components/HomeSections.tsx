@@ -83,7 +83,7 @@ export function CategoriesSection() {
                 src={c.img}
                 alt={c.alt}
                 loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                className={`w-full h-full object-cover ${c.pos} transition-transform duration-700 ease-out group-hover:scale-110`}
               />
               <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
               <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
