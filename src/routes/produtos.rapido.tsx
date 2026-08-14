@@ -213,9 +213,6 @@ function QuickAddPage() {
                     options={[
                       { v: "feminino", l: "Feminino" },
                       { v: "masculino", l: "Masculino" },
-                      { v: "vestidos", l: "Vestidos" },
-                      { v: "conjuntos", l: "Conjuntos" },
-                      { v: "plus-size", l: "Plus Size" },
                     ]}
                   />
                   <Field label="Cor detectada" value={analyzed.color} onChange={(v) => updateAnalyzed("color", v)} />

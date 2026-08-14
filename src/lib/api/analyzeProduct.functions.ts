@@ -8,7 +8,7 @@ export type DetectedColor = { name: string; hex: string };
 export type AnalyzedProduct = {
   name: string;
   description: string;
-  category_id: "feminino" | "masculino" | "vestidos" | "conjuntos" | "plus-size";
+  category_id: "feminino" | "masculino";
   piece_type: string;
   color: string;
   colors: DetectedColor[];
@@ -17,7 +17,7 @@ export type AnalyzedProduct = {
   meta_description: string;
 };
 
-const CATEGORIES = ["feminino", "masculino", "vestidos", "conjuntos", "plus-size"];
+const CATEGORIES = ["feminino", "masculino"];
 
 export const analyzeProductImage = createServerFn({ method: "POST" })
   .inputValidator(
@@ -36,7 +36,7 @@ Formato exato:
   "name": "Nome curto e comercial em português (máx 60 caracteres)",
   "description": "Descrição vendedora em português com tecido, caimento e ocasião de uso (2-3 frases)",
   "category_id": "uma de: ${CATEGORIES.join(", ")}",
-  "piece_type": "tipo específico da peça em português (ex: Vestido midi, Camiseta, Calça jeans, Blusa cropped, Tênis casual)",
+  "piece_type": "tipo específico da peça em português (ex: Camiseta, Camisa polo, Calça jeans, Bermuda de sarja, Short de sarja)",
   "color": "cor predominante em português (ex: Preto, Off-White, Verde-Militar)",
   "colors": [{"name": "nome da cor em português", "hex": "#rrggbb"}],
   "sizes_suggested": ["PP","P","M","G","GG"],
@@ -45,9 +45,9 @@ Formato exato:
 }
 Regras:
 - "colors": inclua APENAS as cores realmente visíveis na peça (1 a 4 cores), com hex real e nome curto em português.
-- "sizes_suggested": tamanhos típicos para essa peça. Calças, shorts, bermudas e saias adultas (numeração): ["36","38","40","42","44","46"]. Calças/shorts plus size: ["46","48","50","52","54"]. Calças jeans masculinas: ["38","40","42","44","46","48"]. Demais roupas adultas (blusas, camisetas, vestidos, conjuntos): ["PP","P","M","G","GG"]. Plus size (não-calça): ["G","GG","XG","EXG"]. Infantil: ["2","4","6","8","10"]. Calçados femininos: ["34","35","36","37","38","39"]. Calçados masculinos: ["38","39","40","41","42","43","44"]. Peça de tamanho único (bolsa, acessório): ["Único"].
+- "sizes_suggested": tamanhos típicos para essa peça. Calças, shorts e bermudas femininas (numeração): ["36","38","40","42","44"]. Calças, shorts e bermudas masculinas: ["38","40","42","44","46","48"]. Numeração ampliada (peças 50+): ["50","52","54","56"]. Demais roupas (camisetas, polos, camisas, t-shirts): ["P","M","G","GG"].
 - "piece_type": nome específico da peça (2-4 palavras), sem cor nem marca.
-- Categoria: peças infantis → "infantil"; sapatos/tênis/sandálias/botas → "calcados"; vestidos femininos → "vestidos"; conjuntos coordenados → "conjuntos"; peças plus size explícitas → "plus-size"; demais femininas → "feminino"; masculinas → "masculino".`;
+- Categoria: peças femininas → "feminino"; peças masculinas → "masculino". A loja vende somente moda masculina e feminina adulta.`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

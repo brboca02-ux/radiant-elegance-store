@@ -21,15 +21,8 @@ const FEMININO: MegaContent = {
     {
       title: "Roupas",
       items: [
-        { label: "Blusas", c: "blusas" },
-        { label: "Camisas", c: "camisas" },
-        { label: "Calças", c: "calcas" },
-        { label: "Jaquetas e Casacos", c: "jaquetas" },
-        { label: "Macacões", c: "macacoes" },
-        { label: "Saias", c: "saias" },
-        { label: "Shorts", c: "shorts" },
-        { label: "Vestidos", c: "vestidos" },
-        { label: "Conjuntos", c: "conjuntos" },
+        { label: "T-Shirts", c: "t-shirt" },
+        { label: "Calças Jeans", c: "calca-jeans" },
       ],
     },
     {
@@ -39,7 +32,6 @@ const FEMININO: MegaContent = {
         { label: "M", c: "tamanho-m" },
         { label: "G", c: "tamanho-g" },
         { label: "GG", c: "tamanho-gg" },
-        { label: "Plus Size", c: "plus-size" },
       ],
     },
     {

@@ -16,8 +16,8 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "J&S Store — Loja de Moda no Aventureiro, Joinville/SC" },
-      { name: "description", content: "J&S Store: moda feminina e masculina em Joinville (Aventureiro). Vestidos, plus size, calçados e novidades toda semana." },
-      { name: "keywords", content: "moda em Joinville, loja de roupas Aventureiro, moda feminina Joinville, moda masculina Joinville, J&S Store, plus size Joinville" },
+      { name: "description", content: "J&S Store: moda masculina e feminina em Joinville (Aventureiro). Camisas polo, camisetas peruanas, bermudas de sarja e calças jeans importadas." },
+      { name: "keywords", content: "moda em Joinville, loja de roupas Aventureiro, moda masculina Joinville, moda feminina Joinville, J&S Store, camisa polo importada, calça jeans importada" },
       { name: "geo.region", content: "BR-SC" },
       { name: "geo.placename", content: "Joinville" },
       { name: "geo.position", content: "-26.2543;-48.8112" },

@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "J&S Store — Moda Feminina e Masculina" },
-      { name: "description", content: "J&S Store: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana." },
+      { name: "description", content: "J&S Store: moda masculina e feminina. Camisas polo, camisetas peruanas, bermudas de sarja e calças jeans importadas." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "J&S Store" },
       { property: "og:locale", content: "pt_BR" },
@@ -98,8 +98,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "format-detection", content: "telephone=no" },
       { property: "og:title", content: "J&S Store — Moda Feminina e Masculina" },
       { name: "twitter:title", content: "J&S Store — Moda Feminina e Masculina" },
-      { property: "og:description", content: "J&S Store: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana." },
-      { name: "twitter:description", content: "J&S Store: moda feminina e masculina para todas as ocasiões. Vestidos, conjuntos, plus size e novidades toda semana." },
+      { property: "og:description", content: "J&S Store: moda masculina e feminina. Camisas polo, camisetas peruanas, bermudas de sarja e calças jeans importadas." },
+      { name: "twitter:description", content: "J&S Store: moda masculina e feminina. Camisas polo, camisetas peruanas, bermudas de sarja e calças jeans importadas." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9cb6d142-24f3-48de-a281-08feb761ef0b" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9cb6d142-24f3-48de-a281-08feb761ef0b" },
     ],
@@ -136,7 +136,7 @@ const organizationJsonLd = {
     url: LOGO_URL,
   },
   description:
-    "J&S Store — moda feminina e masculina em Joinville/SC. Vestidos, conjuntos, plus size, calçados e novidades toda semana.",
+    "J&S Store — moda masculina e feminina em Joinville/SC. Camisas polo, camisetas peruanas, bermudas de sarja e calças jeans importadas.",
   telephone: "+55 47 98446-8103",
   email: "contato@jsstore.com.br",
   address: {
@@ -171,7 +171,7 @@ const localBusinessJsonLd = {
   "@id": `${SITE_URL}/#store`,
   name: "J&S Store",
   description:
-    "Loja de moda feminina e masculina no bairro Aventureiro, em Joinville/SC. Vestidos, conjuntos, plus size, calçados e novidades toda semana.",
+    "Loja de moda masculina e feminina no bairro Aventureiro, em Joinville/SC. Camisas polo, camisetas, bermudas de sarja e calças jeans importadas.",
   image: LOGO_URL,
   logo: LOGO_URL,
   url: `${SITE_URL}/`,

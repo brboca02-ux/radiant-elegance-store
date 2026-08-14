@@ -1,14 +1,7 @@
 // Pure helpers para determinar tamanhos sugeridos e gerar variações.
 // Extraídos para permitir testes automatizados (ver variantSizes.test.ts).
 
-export type ProductCategoryId =
-  | "feminino"
-  | "masculino"
-  | "feminino"
-  | "masculino"
-  | "vestidos"
-  | "conjuntos"
-  | "plus-size";
+export type ProductCategoryId = "feminino" | "masculino";
 
 const BOTTOM_RE = /(cal[çc]a|short|bermuda|saia|legging|pantalona|jogger)/i;
 

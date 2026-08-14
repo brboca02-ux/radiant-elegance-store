@@ -9,9 +9,6 @@ export const STORE_ID = "store_js_store";
 export const CATEGORIES = [
   { id: "feminino", name: "Feminino" },
   { id: "masculino", name: "Masculino" },
-  { id: "vestidos", name: "Vestidos" },
-  { id: "conjuntos", name: "Conjuntos" },
-  { id: "plus-size", name: "Plus Size" },
 ] as const;
 
 export const SIZES = ["PP", "P", "M", "G", "GG", "XG"] as const;

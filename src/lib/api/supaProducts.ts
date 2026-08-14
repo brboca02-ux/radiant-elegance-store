@@ -68,13 +68,13 @@ const SELECT =
 // ----- Reads -------------------------------------------------------------
 export async function listAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
-    .from("products").select(SELECT).in("category_id", ["feminino", "masculino", "plus-size", "vestidos", "conjuntos"])
+    .from("products").select(SELECT).in("category_id", ["feminino", "masculino"])
     .neq("status", "arquivado")
     .order("created_at", { ascending: false });
   if (error) throw error;
   
-  // Apenas categorias Masculino e Feminino (incluindo subcategorias femininas)
-  const allowedCategories = ["masculino", "feminino", "vestidos", "conjuntos", "plus-size"];
+  // Apenas categorias Masculino e Feminino
+  const allowedCategories = ["masculino", "feminino"];
   return (data as DbProduct[])
     .map(rowToProduct)
     .filter(p => allowedCategories.includes(p.category_id));

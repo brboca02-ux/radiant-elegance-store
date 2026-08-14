@@ -81,7 +81,7 @@ export function CategoryForm({ categoryId }: { categoryId?: string }) {
                 <input value={data.name} onChange={(e) => set("name", e.target.value)} className={input} />
               </Field>
               <Field label="Slug">
-                <input value={data.slug} onChange={(e) => set("slug", slugify(e.target.value))} className={input} placeholder="vestidos" />
+                <input value={data.slug} onChange={(e) => set("slug", slugify(e.target.value))} className={input} placeholder="masculino" />
               </Field>
               <Field label="Descrição">
                 <textarea value={data.description} onChange={(e) => set("description", e.target.value)} rows={3} className={input} />

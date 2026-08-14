@@ -8,19 +8,12 @@ import { ProductCard } from "./ProductCard";
 const COMPLEMENTS: Record<string, string[]> = {
   feminino: ["feminino", "masculino"],
   masculino: ["masculino", "feminino"],
-  vestidos: ["feminino"],
-  conjuntos: ["feminino", "masculino"],
-  "plus-size": ["feminino"],
-  calcados: ["feminino", "masculino"],
 };
 
 // Detecta "tipo" da peça pelo nome/descrição para casar melhor os pares.
 const KEYWORD_PAIRS: { match: RegExp; suggest: RegExp }[] = [
-  { match: /(blusa|camisa|camiseta|t-?shirt|crop|top|cacharrel|body)/i, suggest: /(saia|calça|short|bermuda|jeans|legging|sapato|tênis|sandália|scarpin)/i },
-  { match: /(saia|calça|short|bermuda|jeans|legging|pantalona)/i, suggest: /(blusa|camisa|camiseta|t-?shirt|crop|top|blazer|cacharrel|sapato|tênis)/i },
-  { match: /(vestido)/i, suggest: /(sapato|tênis|sandália|scarpin|bolsa|casaco|cinto)/i },
-  { match: /(blazer|casaco|jaqueta|poncho)/i, suggest: /(calça|saia|vestido|blusa|camisa)/i },
-  { match: /(sapato|tênis|sandália|scarpin|bota)/i, suggest: /(vestido|calça|saia|blusa)/i },
+  { match: /(camisa|camiseta|polo|t-?shirt)/i, suggest: /(calça|short|bermuda|jeans|sarja)/i },
+  { match: /(calça|short|bermuda|jeans|sarja)/i, suggest: /(camisa|camiseta|polo|t-?shirt)/i },
 ];
 
 function scoreProduct(current: Product, candidate: Product): number {
