@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import heroCouple from "@/assets/hero-couple.jpg.asset.json";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
-import { Truck, RefreshCcw, ShieldCheck, MessageCircle, Clock, Instagram } from "lucide-react";
+import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock, Instagram } from "lucide-react";
 import { buildWhatsAppLink, STORE_INFO } from "@/lib/shopify";
 import { track } from "@/lib/analytics";
 
