@@ -1,29 +1,34 @@
-# Topo da home mais atrativo e preenchido
+# Plano: Hero mais compacto + espaçamentos menores
 
-O topo hoje é só a foto com os dois botões e uma faixa de categorias baixinha (85px no mobile). Sobra área vazia e falta mensagem de marca. A proposta é preencher com texto curto, hierarquia elegante e uma faixa de confiança, sem poluir.
+## 1. Reduzir a div do Hero (sem perder qualidade)
+- Reduzir a altura da seção do Hero em `src/components/HomeSections.tsx`:
+  - Mobile: de `h-[65vh] min-h-[480px]` para algo como `h-[42vh] min-h-[320px]`
+  - Tablet: `md:h-[50vh] md:min-h-[400px]`
+  - Desktop: `lg:h-[58vh] lg:min-h-[480px]`
+- Manter a mesma imagem em resolução original (nada de downscale), apenas ajustando `object-cover` e `object-position` para que os modelos e o logo continuem visíveis no recorte menor.
 
-## 1. Hero com mensagem de marca
-- Selo superior: "Joinville · Aventureiro" em letras espaçadas dourado suave.
-- Título em Playfair Display, duas linhas: "Moda masculina e feminina" / "com curadoria J&S".
-- Linha de apoio curta: "Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja — peças selecionadas, entrega para todo o Brasil."
-- Botões "Comprar Feminino" e "Comprar Masculino" ficam logo abaixo, alinhados à esquerda no desktop e centralizados no mobile.
-- Conteúdo agrupado num bloco com respiro, alinhado à esquerda no desktop para não cobrir os modelos; overlay em degradê lateral+base para manter legibilidade.
-- Altura do hero volta um pouco (para ~60vh no tablet e 80vh no desktop) para acomodar o texto sem aparência apertada.
+## 2. Botões centralizados e mais abaixo
+- Trocar o alinhamento do container do Hero: de centralizado/esquerda para centralizado horizontalmente e ancorado na parte inferior (`items-end justify-center` com `pb-8 md:pb-12`).
+- Botões "Comprar Feminino" e "Comprar Masculino" lado a lado no centro, com gradiente escuro na base reforçado para garantir contraste.
 
-## 2. Faixa de confiança logo abaixo do hero
-Uma tira fina, fundo preto com borda dourada discreta, 3 itens em linha:
-- "Frete para todo o Brasil"
-- "Troca fácil em até 30 dias"
-- "Atendimento no WhatsApp"
-No mobile vira scroll horizontal ou grade de 3 colunas compactas.
+## 3. Reduzir espaçamentos do site
+- Ajustar o utilitário `section-compact` em `src/styles.css` de `py-10 md:py-16` para `py-6 md:py-10`.
+- Uniformizar as seções que ainda usam valores próprios em `src/components/HomeSections.tsx` (TrustStrip `py-6 md:py-8` → `py-4 md:py-6`, Categorias `py-8 md:py-12` → `py-6 md:py-8`, Lookbook `py-12 md:py-16` → `section-compact`, Diferenciais `py-10 md:py-12` → `section-compact`).
+- Reduzir margens internas de títulos de seção (`mb-8` → `mb-5 md:mb-6`) para o site ficar mais denso e sem áreas vazias.
 
-## 3. Categorias com mais presença
-- Título da seção ganha um kicker e subtítulo curto: "Escolha por estilo" / "Duas curadorias, uma só identidade".
-- Cards sobem de 85px/130px para 130px/200px — ainda enxutos, mas com o nome e o "Ver coleção" legíveis.
-- Nome da categoria com uma linha descritiva fixa abaixo ("Elegância no dia a dia" / "Clássico com atitude") em vez de aparecer só no hover.
+## 4. Dados do print (Instagram)
+O print traz dados diferentes dos cadastrados hoje no site:
+- Endereço atual no site: Rua Santa Luzia, 550 - Aventureiro, Joinville/SC
+- Endereço no print: Rua Carlos Emílio Alexandre Schwartz 369, Joinville/SC — 89235-188
+- WhatsApp atual: 47 98446-8103 / no print: 41 8407-5860
 
-## Detalhes técnicos
-- Arquivo único: `src/components/HomeSections.tsx` (`HomeHero`, nova faixa `TrustStrip`, `CategoriesSection`).
-- `src/routes/index.tsx` renderiza a faixa de confiança entre hero e categorias.
-- Cores via tokens existentes (`gold`, `background`, `muted-foreground`); nada hardcoded novo.
-- Sem mudança de dados, rotas ou lógica; apenas conteúdo e estilo.
+Proposta: atualizar endereço e CEP para os do print (loja física, mapa e rodapé) e **manter** o WhatsApp atual, salvo indicação em contrário. Se preferir trocar o WhatsApp também, é só avisar antes de eu aplicar.
+
+## Arquivos afetados
+- `src/components/HomeSections.tsx`
+- `src/styles.css`
+- `src/lib/shopify.ts` (apenas endereço/CEP/mapa, se aprovado)
+
+## Validação
+- Preview em mobile (390px) e desktop para confirmar que a imagem não corta os modelos e os botões ficam legíveis na base.
+- Build sem erros.
