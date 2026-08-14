@@ -31,8 +31,8 @@ async function fetchShopify({ query, first = 12, sortKey, reverse }: FetchOpts):
 }
 
 export function ProductGrid({
-  query, first = 12, sortKey, reverse, emptyHint = true,
-}: { query?: string; first?: number; sortKey?: FetchOpts["sortKey"]; reverse?: boolean; emptyHint?: boolean }) {
+  query, first = 12, sortKey, reverse, emptyHint = true, size = "default",
+}: { query?: string; first?: number; sortKey?: FetchOpts["sortKey"]; reverse?: boolean; emptyHint?: boolean; size?: "default" | "compact" }) {
   // Fonte primária: Supabase (via store). Reativo: re-renderiza ao hidratar/CRUD.
   const products = useProductsStore((s) => s.products);
   const loading = useProductsStore((s) => s.loading);
@@ -75,7 +75,7 @@ export function ProductGrid({
 
   if ((!loaded && loading) || (!loaded && items.length === 0)) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6 sm:gap-x-4 sm:gap-y-8">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="aspect-[3/4] rounded-md bg-secondary animate-pulse" />
         ))}
@@ -97,10 +97,10 @@ export function ProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 items-stretch">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6 sm:gap-x-4 sm:gap-y-8 items-stretch">
       {items.map((p) => (
         <div key={p.node.id} className="flex">
-          <ProductCard product={p} />
+          <ProductCard product={p} size={size} />
         </div>
       ))}
     </div>
