@@ -16,8 +16,8 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 22%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey, desc: "Elegância no dia a dia" },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 14%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey, desc: "Clássico com atitude" },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 18%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey, desc: "Elegância no dia a dia" },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 12%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey, desc: "Clássico com atitude" },
 ];
 
 const diferenciais = [
@@ -134,7 +134,7 @@ export function CategoriesSection() {
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative h-[130px] md:h-[200px] overflow-hidden bg-secondary shadow-lg"
+              className="group relative h-[150px] md:h-[210px] overflow-hidden bg-secondary shadow-lg"
             >
               <picture>
                 <source srcSet={`${media[c.mediaKey] ?? c.img}?width=600&format=webp`} type="image/webp" />
@@ -149,16 +149,16 @@ export function CategoriesSection() {
                   decoding="async"
                 />
               </picture>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-colors duration-500 group-hover:from-black/60" />
-              <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end p-4 pb-6 md:pb-8 text-center">
+              <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+              <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end px-3 pb-2.5 md:pb-4 text-center">
                 <h3 className="font-display font-semibold text-lg md:text-2xl text-white tracking-wide uppercase mb-0.5">
                   {c.label}
                 </h3>
                 <p className="text-[9px] md:text-[10px] text-gold/90 font-medium tracking-[0.2em] uppercase mb-1.5">
                   {c.desc}
                 </p>
-                <div className="h-[1px] w-8 bg-gold/40 mb-1.5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                <p className="text-[8px] md:text-[9px] text-white/70 font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+                <div className="hidden md:block h-[1px] w-8 bg-gold/40 mb-1.5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                <p className="hidden md:block text-[8px] md:text-[9px] text-white/70 font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
                   Explorar curadoria →
                 </p>
               </div>
