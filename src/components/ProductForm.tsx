@@ -28,6 +28,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           minimum_stock: existing.minimum_stock ?? 5,
           track_stock: existing.track_stock ?? true,
           weight: existing.weight, status: existing.status,
+          showcase: existing.showcase ?? false,
           meta_title: existing.meta_title, meta_description: existing.meta_description,
           images: existing.images, variants: existing.variants,
         }
