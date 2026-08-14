@@ -103,51 +103,57 @@ export function TrustStrip() {
 export function CategoriesSection() {
   const media = useSiteMedia();
   return (
-    <section className="py-4 md:py-6 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-medium text-[11px] tracking-[0.22em] text-muted-foreground uppercase">Categorias</h2>
-          <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-primary hover:underline">
-            Ver tudo →
-          </Link>
+        <div className="mb-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-gold mb-2">Escolha por estilo</p>
+          <div className="flex items-end justify-between">
+            <div>
+              <h2 className="font-display font-semibold text-2xl md:text-4xl tracking-tight">Categorias</h2>
+              <p className="text-sm text-muted-foreground mt-2">Duas curadorias, uma só identidade.</p>
+            </div>
+            <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-gold hover:underline underline-offset-4">
+              Ver tudo →
+            </Link>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:gap-5">
+        
+        <div className="grid grid-cols-2 gap-4 md:gap-6">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative h-[85px] md:h-[130px] overflow-hidden bg-secondary"
+              className="group relative h-[130px] md:h-[200px] overflow-hidden bg-secondary shadow-lg"
             >
               <picture>
-                <source srcSet={`${media[c.mediaKey] ?? c.img}?width=450&format=webp`} type="image/webp" />
+                <source srcSet={`${media[c.mediaKey] ?? c.img}?width=600&format=webp`} type="image/webp" />
                 <img
                   src={media[c.mediaKey] ?? c.img}
                   alt={c.alt}
-                  width={450}
-                  height={250}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  width={600}
+                  height={300}
+                  className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.1]"
                   style={{ objectPosition: c.origin }}
                   loading="lazy"
                   decoding="async"
                 />
               </picture>
-              <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
-              <div className="absolute inset-0 flex items-center justify-center p-3 text-center">
-                <div className="space-y-2">
-                  <h3 className="font-display font-semibold text-sm md:text-lg text-gold tracking-tight uppercase">
-                    {c.label}
-                  </h3>
-                  <p className="hidden md:block text-[9px] text-white/80 font-medium tracking-[0.2em] uppercase opacity-0 transform translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
-                    Ver coleção →
-                  </p>
-                </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-colors duration-500 group-hover:from-black/60" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                <h3 className="font-display font-semibold text-lg md:text-2xl text-white tracking-wide uppercase mb-1">
+                  {c.label}
+                </h3>
+                <p className="text-[9px] md:text-[10px] text-gold font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+                  Explorar curadoria →
+                </p>
               </div>
             </Link>
           ))}
         </div>
       </div>
     </section>
+
   );
 }
 
