@@ -34,6 +34,7 @@ export interface Product {
   stock: number; reserved_stock: number; minimum_stock: number;
   track_stock: boolean; weight: number;
   status: ProductStatus;
+  showcase: boolean;
   meta_title: string; meta_description: string;
   images: ProductImage[]; variants: ProductVariant[];
   created_at: string;
@@ -59,6 +60,7 @@ interface ProductsState {
   remove: (id: string) => Promise<void>;
   adjustStock: (id: string, delta: number) => Promise<void>;
   setStock: (id: string, value: number) => Promise<void>;
+  toggleShowcase: (id: string) => Promise<void>;
 }
 
 let inflight: Promise<void> | null = null;
@@ -118,11 +120,22 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
       price: orig.price, sale_price: orig.sale_price, stock: orig.stock,
       reserved_stock: orig.reserved_stock, minimum_stock: orig.minimum_stock,
       track_stock: orig.track_stock, weight: orig.weight, status: orig.status,
+      showcase: orig.showcase,
       meta_title: orig.meta_title, meta_description: orig.meta_description,
       images: orig.images, variants: orig.variants,
     });
     set((s) => ({ products: [copy, ...s.products] }));
     return copy;
+  },
+
+  toggleShowcase: async (id) => {
+    const p = get().products.find((x) => x.id === id);
+    if (!p) return;
+    const next = !p.showcase;
+    await apiUpdate(id, { showcase: next });
+    set((s) => ({
+      products: s.products.map((x) => (x.id === id ? { ...x, showcase: next } : x)),
+    }));
   },
 
   archive: async (id) => {
@@ -154,6 +167,7 @@ export const emptyProduct = (): Omit<Product, "id" | "store_id" | "created_at"> 
   name: "", slug: "", description: "", category_id: "feminino", brand: "J&S Store",
   sku: "", price: 0, sale_price: null, stock: 0, reserved_stock: 0,
   minimum_stock: 5, track_stock: true, weight: 0, status: "ativo",
+  showcase: false,
   meta_title: "", meta_description: "", images: [], variants: [],
 });
 
