@@ -166,7 +166,7 @@ export function RecebidosHomeSection() {
 
 export function LookbookSection() {
   return (
-    <section className="py-16 md:py-24 bg-background text-foreground">
+    <section className="py-12 md:py-16 bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center space-y-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-foreground/60">Editorial J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
