@@ -33,7 +33,7 @@ export function HomeHero() {
         width={1376}
         height={768}
         fetchPriority="high"
-        className="absolute inset-0 w-full h-full object-cover object-center"
+        className="absolute inset-0 w-full h-full object-cover object-[22%_center] lg:object-center"
       />
       {/* Overlay escuro concentrado na base para garantir legibilidade dos botões */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
