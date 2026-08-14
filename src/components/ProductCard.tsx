@@ -8,7 +8,7 @@ import { track } from "@/lib/analytics";
 
 
 
-export function ProductCard({ product }: { product: ShopifyProduct }) {
+export function ProductCard({ product, size = "default" }: { product: ShopifyProduct; size?: "default" | "compact" }) {
   const addItem = useCartStore((s) => s.addItem);
   const isLoading = useCartStore((s) => s.isLoading);
   const [loaded0, setLoaded0] = useState(false);
@@ -129,11 +129,11 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
           {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : soldOut ? "Esgotado" : "Comprar"}
         </button>
       </div>
-      <div className="flex flex-1 flex-col pt-3 text-center">
-        <h3 className="font-display text-sm sm:text-base leading-snug line-clamp-2 min-h-[2.6em]">
+      <div className={`flex flex-1 flex-col text-center ${size === "compact" ? "pt-2" : "pt-3"}`}>
+        <h3 className={`font-display leading-snug line-clamp-2 ${size === "compact" ? "text-xs min-h-[2.4em]" : "text-sm sm:text-base min-h-[2.6em]"}`}>
           {product.node.title}
         </h3>
-        <p className="text-sm sm:text-[15px] mt-auto pt-2 font-semibold text-foreground">
+        <p className={`${size === "compact" ? "text-xs pt-1" : "text-sm sm:text-[15px] pt-2"} mt-auto font-semibold text-foreground`}>
           {formatPrice(price.amount, price.currencyCode)}
         </p>
       </div>

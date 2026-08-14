@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2 } from "lucide-react";
+import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2, Star } from "lucide-react";
 import { useProductsStore, CATEGORIES, effectiveStock, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
@@ -24,6 +24,7 @@ function ProductsListPage() {
   const duplicate = useProductsStore((s) => s.duplicate);
   const archive = useProductsStore((s) => s.archive);
   const remove = useProductsStore((s) => s.remove);
+  const toggleShowcase = useProductsStore((s) => s.toggleShowcase);
 
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("");
@@ -96,6 +97,7 @@ function ProductsListPage() {
                 <th className="text-left font-medium px-4 py-3">Preço</th>
                 <th className="text-left font-medium px-4 py-3">Estoque</th>
                 <th className="text-left font-medium px-4 py-3">Status</th>
+                <th className="text-left font-medium px-4 py-3">Vitrine</th>
                 <th className="text-right font-medium px-4 py-3">Ações</th>
               </tr>
             </thead>
@@ -132,6 +134,15 @@ function ProductsListPage() {
                     <td className="px-4 py-3">{effectiveStock(p)}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 capitalize ${statusBadge[p.status]}`}>{p.status}</span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button 
+                        onClick={() => { toggleShowcase(p.id); toast.success(p.showcase ? "Removido da vitrine" : "Adicionado à vitrine"); }}
+                        className={`p-1.5 rounded-full transition-colors ${p.showcase ? "bg-gold/10 text-gold" : "text-muted-foreground hover:bg-muted"}`}
+                        title={p.showcase ? "Remover da vitrine" : "Adicionar à vitrine"}
+                      >
+                        <Star className={`h-4 w-4 ${p.showcase ? "fill-current" : ""}`} />
+                      </button>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
@@ -170,7 +181,14 @@ function ProductsListPage() {
                   </div>
                   <p className="text-xs text-muted-foreground">{cat} · SKU {p.sku || "—"}</p>
                   <p className="text-sm font-medium mt-1">{BRL(p.sale_price ?? p.price)} · estoque {effectiveStock(p)}</p>
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <button 
+                      onClick={() => { toggleShowcase(p.id); toast.success(p.showcase ? "Removido da vitrine" : "Na vitrine"); }}
+                      className={`text-xs rounded border px-2 py-1 flex items-center gap-1 ${p.showcase ? "border-gold bg-gold/5 text-gold" : "border-border text-muted-foreground"}`}
+                    >
+                      <Star className={`h-3 w-3 ${p.showcase ? "fill-current" : ""}`} />
+                      Vitrine
+                    </button>
                     <button onClick={() => navigate({ to: "/produtos/$id/editar", params: { id: p.id } })}
                       className="text-xs rounded border border-border px-2 py-1">Editar</button>
                     <button onClick={() => { duplicate(p.id); toast.success("Duplicado"); }}

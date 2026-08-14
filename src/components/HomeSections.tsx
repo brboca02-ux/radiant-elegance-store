@@ -71,23 +71,30 @@ export function CategoriesSection() {
             Ver tudo →
           </Link>
         </div>
-        <div className="flex md:grid md:grid-cols-5 gap-2 md:gap-3 overflow-x-auto md:overflow-visible -mx-6 px-6 md:mx-0 md:px-0 scrollbar-none snap-x snap-mandatory">
+        <div className="grid grid-cols-2 gap-3 md:gap-5">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative shrink-0 snap-start w-[140px] md:w-auto h-[100px] md:h-[130px] overflow-hidden bg-secondary"
+              className="group relative h-[260px] md:h-[420px] overflow-hidden bg-secondary"
             >
               <img
                 src={c.img}
                 alt={c.alt}
                 loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-background/30 transition-colors duration-300 group-hover:bg-background/55" />
-              <div className="absolute inset-x-0 bottom-0 px-3 py-2">
-                <h3 className="font-medium text-xs md:text-sm text-gold tracking-wide">{c.label}</h3>
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
+              <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
+                <div className="space-y-2">
+                  <h3 className="font-display font-semibold text-2xl md:text-4xl text-gold tracking-tight uppercase">
+                    {c.label}
+                  </h3>
+                  <p className="text-[10px] md:text-xs text-white/80 font-medium tracking-[0.2em] uppercase opacity-0 transform translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+                    Ver coleção →
+                  </p>
+                </div>
               </div>
             </Link>
           ))}

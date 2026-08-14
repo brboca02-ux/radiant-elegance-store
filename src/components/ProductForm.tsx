@@ -28,6 +28,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           minimum_stock: existing.minimum_stock ?? 5,
           track_stock: existing.track_stock ?? true,
           weight: existing.weight, status: existing.status,
+          showcase: existing.showcase ?? false,
           meta_title: existing.meta_title, meta_description: existing.meta_description,
           images: existing.images, variants: existing.variants,
         }
@@ -324,6 +325,11 @@ export function ProductForm({ productId }: { productId?: string }) {
                     <option value="arquivado">Arquivado</option>
                   </select>
                 </Field>
+                <label className="flex items-end gap-2 pb-1.5">
+                  <input type="checkbox" checked={data.showcase}
+                    onChange={(e) => set("showcase", e.target.checked)} className="h-4 w-4" />
+                  <span className="text-sm">Mostrar na vitrine</span>
+                </label>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <Field label="Preço (R$)">
