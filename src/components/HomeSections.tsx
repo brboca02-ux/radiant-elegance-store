@@ -150,14 +150,14 @@ export function CategoriesSection() {
                 />
               </picture>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-colors duration-500 group-hover:from-black/60" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                <h3 className="font-display font-semibold text-lg md:text-2xl text-white tracking-wide uppercase mb-1">
+              <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end p-4 pb-6 md:pb-8 text-center">
+                <h3 className="font-display font-semibold text-lg md:text-2xl text-white tracking-wide uppercase mb-0.5">
                   {c.label}
                 </h3>
-                <p className="text-[9px] md:text-[10px] text-gold/90 font-medium tracking-[0.2em] uppercase mb-2">
+                <p className="text-[9px] md:text-[10px] text-gold/90 font-medium tracking-[0.2em] uppercase mb-1.5">
                   {c.desc}
                 </p>
-                <div className="h-[1px] w-8 bg-gold/40 mb-2 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                <div className="h-[1px] w-8 bg-gold/40 mb-1.5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
                 <p className="text-[8px] md:text-[9px] text-white/70 font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
                   Explorar curadoria →
                 </p>
