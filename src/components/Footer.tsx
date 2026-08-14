@@ -14,7 +14,9 @@ export function Footer() {
         {/* Brand + Newsletter */}
         <div className="lg:col-span-2">
           <div className="flex flex-col gap-4">
-            <img src={logoAsset.url} alt="J&S Store" className="h-16 w-auto object-contain self-start" />
+            <span className="font-display font-bold text-2xl tracking-tight text-background">
+              J&S <span className="text-gold">STORE</span>
+            </span>
           </div>
           <p className="text-sm text-background/70 mt-5 leading-relaxed max-w-sm">
             Moda feminina e masculina em Joinville. Curadoria honesta, atendimento próximo

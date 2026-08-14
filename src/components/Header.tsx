@@ -154,7 +154,9 @@ export function Header() {
           <Menu className="h-6 w-6" />
         </button>
         <Link to="/" className="flex items-center">
-          <img src={logoAsset.url} alt="J&S Store" className="h-10 sm:h-12 w-auto object-contain" />
+          <span className="font-display font-bold text-xl sm:text-2xl tracking-tight">
+            <span className="text-foreground">J&S</span> <span className="text-accent">STORE</span>
+          </span>
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
           <SearchBox />
