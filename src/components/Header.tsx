@@ -152,7 +152,7 @@ export function Header() {
         >
           <Menu className="h-6 w-6" />
         </button>
-        <Link to="/" className="flex items-center" aria-label="J&S Store">
+        <Link to="/" className="flex items-center tap-target" aria-label="J&S Store">
           <span className="font-display font-bold text-xl sm:text-2xl tracking-tight text-gold">
             &nbsp;
           </span>
@@ -175,7 +175,7 @@ export function Header() {
           <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center">
             <Search className="h-5 w-5" />
           </button>
-          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex h-10 w-10 items-center justify-center text-foreground/70 hover:text-foreground transition">
+          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex tap-target items-center justify-center text-foreground/70 hover:text-foreground transition">
             <User className="h-5 w-5" />
           </Link>
           <CartDrawer />
@@ -196,9 +196,9 @@ export function Header() {
               onClick={() => setActiveMenu((v) => (v === m.key ? null : m.key))}
               aria-expanded={activeMenu === m.key}
               aria-haspopup="true"
-              className={`inline-flex items-center gap-1 transition ${
+              className={`inline-flex items-center tap-target gap-1 transition ${
                 m.highlight ? "text-gold font-semibold" : "text-foreground/80"
-              } hover:text-gold`}
+              } hover:text-gold px-2`}
             >
               {m.label}
               {m.badge && (
@@ -209,10 +209,10 @@ export function Header() {
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-gold transition">
+          <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="tap-target px-2 text-foreground/80 hover:text-gold transition">
             Recebidos da Semana
           </Link>
-          <Link to="/sobre" className="text-foreground/80 hover:text-gold transition">
+          <Link to="/sobre" className="tap-target px-2 text-foreground/80 hover:text-gold transition">
             Sobre
           </Link>
         </nav>

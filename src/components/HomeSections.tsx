@@ -29,7 +29,7 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative h-[50vh] min-h-[360px] md:h-[65vh] md:min-h-[460px] lg:h-[82vh] lg:min-h-[640px] overflow-hidden bg-background">
+    <section className="relative h-[45vh] min-h-[320px] md:h-[55vh] md:min-h-[420px] lg:h-[75vh] lg:min-h-[580px] overflow-hidden bg-background">
       <img
         src={heroCouple.url}
         alt="J&S Store — Moda Masculina e Feminina"
@@ -83,16 +83,19 @@ export function CategoriesSection() {
               search={{ c: c.q }}
               className="group relative h-[85px] md:h-[130px] overflow-hidden bg-secondary"
             >
-              <img
-                src={media[c.mediaKey] ?? c.img}
-                alt={c.alt}
-                loading="lazy"
-                decoding="async"
-                width={900}
-                height={506}
-                style={{ objectPosition: c.origin }}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-              />
+              <picture>
+                <source srcSet={`${media[c.mediaKey] ?? c.img}?width=450&format=webp`} type="image/webp" />
+                <img
+                  src={media[c.mediaKey] ?? c.img}
+                  alt={c.alt}
+                  width={450}
+                  height={250}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  style={{ objectPosition: c.origin }}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
               <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
               <div className="absolute inset-0 flex items-center justify-center p-3 text-center">
                 <div className="space-y-2">
@@ -133,7 +136,7 @@ function SectionHeader({ kicker, title, subtitle, link }: { kicker?: string; tit
 
 export function BestSellersSection() {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Os queridinhos da loja" title="Mais Vendidos" subtitle="As peças preferidas pelas clientes da J&S Store." link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
         <ProductGrid sortKey="BEST_SELLING" first={8} />
@@ -144,7 +147,7 @@ export function BestSellersSection() {
 
 export function LaunchSection() {
   return (
-    <section id="colecao" className="py-20 md:py-28 bg-background">
+    <section id="colecao" className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Acabou de chegar" title="Novidades" link={{ to: "/colecao", label: "Ver coleção", c: "novidades" }} />
         <ProductGrid sortKey="CREATED_AT" reverse first={8} />
@@ -155,7 +158,7 @@ export function LaunchSection() {
 
 export function RecebidosHomeSection() {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Esta semana" title="Recebidos da Semana" link={{ to: "/colecao", label: "Ver lançamentos", c: "recebidos-da-semana" }} />
         <ProductGrid sortKey="CREATED_AT" reverse first={4} />
@@ -166,7 +169,7 @@ export function RecebidosHomeSection() {
 
 export function LookbookSection() {
   return (
-    <section className="py-16 md:py-24 bg-background text-foreground">
+    <section className="py-12 md:py-16 bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center space-y-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-foreground/60">Editorial J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
@@ -196,7 +199,7 @@ export function LookbookSection() {
 
 export function LojaFisicaSection() {
   return (
-    <section id="loja" aria-labelledby="loja-titulo" className="py-20 md:py-28 bg-background scroll-mt-24">
+    <section id="loja" aria-labelledby="loja-titulo" className="section-compact bg-background scroll-mt-24">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
         <div className="aspect-[4/3] overflow-hidden bg-secondary order-2 md:order-1">
           <iframe
@@ -239,7 +242,7 @@ export function LojaFisicaSection() {
 
 export function DifferentialsSection() {
   return (
-    <section className="py-14 md:py-16 bg-background border-y border-border">
+    <section className="py-10 md:py-12 bg-background border-y border-border">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         {diferenciais.map(({ i: Icon, t, d }) => (
           <div key={t} className="flex items-start gap-3">
@@ -270,7 +273,7 @@ export function InstagramSection() {
     { img: CAT_IMG("camiseta-malha-supima"), permalink: INSTAGRAM_URL },
   ];
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3 inline-flex items-center gap-2">

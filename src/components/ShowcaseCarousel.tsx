@@ -50,7 +50,7 @@ export function ShowcaseCarousel() {
   if (!loaded || showcaseProducts.length === 0) return null;
 
   return (
-    <section className="py-12 bg-background border-b border-border overflow-hidden">
+    <section className="py-10 md:py-14 bg-background border-b border-border overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -58,16 +58,16 @@ export function ShowcaseCarousel() {
             <h2 className="font-display font-semibold text-2xl tracking-tight">Vitrine J&S</h2>
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => scroll("left")}
-              className="p-2 rounded-full border border-border hover:bg-muted transition-colors"
+              className="tap-target rounded-full border border-border hover:bg-muted transition-colors"
               aria-label="Anterior"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <button 
+            <button
               onClick={() => scroll("right")}
-              className="p-2 rounded-full border border-border hover:bg-muted transition-colors"
+              className="tap-target rounded-full border border-border hover:bg-muted transition-colors"
               aria-label="Próximo"
             >
               <ChevronRight className="h-4 w-4" />
