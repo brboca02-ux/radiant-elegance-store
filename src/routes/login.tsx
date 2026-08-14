@@ -74,6 +74,16 @@ function LoginPage() {
     setForgot(false);
   }
 
+  async function handleGoogle() {
+    try {
+      sessionStorage.setItem("js_post_login_redirect", safeRedirect);
+    } catch { /* ignore */ }
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (error) toast.error(error.message);
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md bg-background border border-border rounded-xl shadow-lg p-8">
@@ -133,6 +143,25 @@ function LoginPage() {
             {forgot ? "← Voltar ao login" : "Esqueci minha senha"}
           </button>
         </form>
+
+        {!forgot && (
+          <>
+            <div className="my-6 flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-[11px] uppercase tracking-wider text-muted-foreground">ou</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogle}
+              disabled={submitting}
+            >
+              Continuar com Google
+            </Button>
+          </>
+        )}
 
         <p className="mt-6 text-center text-[11px] text-muted-foreground">
           Acesso restrito. Usuários são cadastrados pela administração.
