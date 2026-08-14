@@ -293,7 +293,10 @@ export function Header() {
           <div className="absolute inset-0 bg-background/50" onClick={() => setOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background text-foreground shadow-2xl flex flex-col animate-in slide-in-from-left">
             <div className="flex items-center justify-between px-5 h-14 border-b border-gold/20">
-              <span className="font-display font-extrabold text-xl text-gold">J&S <span className="text-silver">Store</span></span>
+              <div className="flex flex-col items-start leading-none">
+                <span className="font-display font-bold text-xl tracking-[0.1em] text-gold uppercase">J&S</span>
+                <span className="text-[8px] tracking-[0.4em] uppercase text-silver font-medium">STORE</span>
+              </div>
               <button aria-label="Fechar" onClick={() => setOpen(false)} className="h-11 w-11 -mr-2 flex items-center justify-center text-foreground hover:text-gold transition">
                 <X className="h-6 w-6" />
               </button>
