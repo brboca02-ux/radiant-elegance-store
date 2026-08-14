@@ -133,7 +133,7 @@ function SectionHeader({ kicker, title, subtitle, link }: { kicker?: string; tit
 
 export function BestSellersSection() {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Os queridinhos da loja" title="Mais Vendidos" subtitle="As peças preferidas pelas clientes da J&S Store." link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
         <ProductGrid sortKey="BEST_SELLING" first={8} />
