@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import heroCouple from "@/assets/hero-couple.jpg.asset.json";
-import catFeminino from "@/assets/cat-feminino.jpg.asset.json";
-import catMasculino from "@/assets/cat-masculino.jpg.asset.json";
+import catFeminino from "@/assets/cat-feminino.webp.asset.json";
+import catMasculino from "@/assets/cat-masculino.webp.asset.json";
+import { useSiteMedia, type SiteMediaKey } from "@/lib/api/siteMedia";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock, Instagram } from "lucide-react";
@@ -15,8 +16,8 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 30%", q: "feminino" },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 25%", q: "masculino" },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 30%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 25%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey },
 ];
 
 const diferenciais = [
