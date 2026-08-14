@@ -86,9 +86,9 @@ function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md bg-background border border-border rounded-xl shadow-lg p-8">
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6" aria-label="J&S Store">
           <span className="font-display font-bold text-3xl tracking-tight text-gold">
-            J&S
+            &nbsp;
           </span>
         </div>
         <h1 className="text-center text-lg font-semibold mb-1">
