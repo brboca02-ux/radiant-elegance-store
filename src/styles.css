@@ -200,6 +200,6 @@
 
 @layer utilities {
   .section-compact {
-    @apply py-10 md:py-16;
+    @apply py-6 md:py-10;
   }
 }
