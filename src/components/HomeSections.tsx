@@ -239,7 +239,7 @@ export function LojaFisicaSection() {
 
 export function DifferentialsSection() {
   return (
-    <section className="py-14 md:py-16 bg-background border-y border-border">
+    <section className="py-10 md:py-12 bg-background border-y border-border">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         {diferenciais.map(({ i: Icon, t, d }) => (
           <div key={t} className="flex items-start gap-3">
