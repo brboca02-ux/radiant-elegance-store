@@ -10,7 +10,7 @@ import { shipping, type ShippingQuote } from "@/lib/integrations/shipping";
 import { payment, type PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
 import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
 import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
@@ -325,10 +325,11 @@ function CheckoutPage() {
               },
             },
           });
-          await supabase.from("orders").update({
-            payment_provider: pixRes.provider,
-            payment_id: pixRes.paymentId,
-          }).eq("id", order.id);
+          await supabase.rpc("attach_order_payment", {
+            p_order_id: order.id,
+            p_provider: pixRes.provider,
+            p_payment_id: pixRes.paymentId,
+          });
           setPix({
             orderNumber: order.order_number,
             paymentId: pixRes.paymentId,
@@ -376,11 +377,12 @@ function CheckoutPage() {
           customer: { name, email, cpf: onlyDigits(cpf) || undefined, phone: onlyDigits(phone) || undefined },
         });
         paymentUrl = pay.paymentUrl;
-        await supabase.from("orders").update({
-          payment_provider: pay.provider,
-          payment_id: pay.paymentId,
-          payment_url: pay.paymentUrl ?? null,
-        }).eq("id", order.id);
+        await supabase.rpc("attach_order_payment", {
+          p_order_id: order.id,
+          p_provider: pay.provider,
+          p_payment_id: pay.paymentId,
+          p_payment_url: pay.paymentUrl ?? undefined,
+        });
       } catch (e) {
         console.warn("Pagamento não pôde ser criado:", e);
         toast.warning("Pedido criado, mas o pagamento não pôde ser iniciado agora.", {
@@ -812,10 +814,11 @@ function CheckoutPage() {
                     },
                   },
                 });
-                await supabase.from("orders").update({
-                  payment_provider: pay.provider,
-                  payment_id: pay.paymentId,
-                }).eq("id", card.orderId);
+                await supabase.rpc("attach_order_payment", {
+                  p_order_id: card.orderId,
+                  p_provider: pay.provider,
+                  p_payment_id: pay.paymentId,
+                });
 
                 if (pay.status === "approved") {
                   clearCart();

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { listMyOrders, type OrderFull } from "@/lib/api/supaOrders";
 
 export const STORE_ID = "store_js_store";

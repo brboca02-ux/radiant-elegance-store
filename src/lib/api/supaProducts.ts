@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import type { Product, ProductImage, ProductVariant, ProductStatus } from "@/stores/productsStore";
 
 // ----- Helpers -----------------------------------------------------------
@@ -107,13 +107,10 @@ export async function createProduct(p: ProductInput): Promise<Product> {
 }
 
 export async function updateProduct(id: string, patch: Partial<ProductInput>): Promise<void> {
-  const fields: Record<string, unknown> = {};
-  for (const k of [
-    "slug","name","description","category_id","brand","sku","price","sale_price",
-    "stock","reserved_stock","minimum_stock","track_stock","weight","status",
-    "meta_title","meta_description",
-  ] as const) {
-    if (patch[k] !== undefined) fields[k] = patch[k];
+  const fields: Partial<Record<(typeof PRODUCT_FIELDS)[number], never>> = {};
+  const assign = fields as Record<string, unknown>;
+  for (const k of PRODUCT_FIELDS) {
+    if (patch[k] !== undefined) assign[k] = patch[k];
   }
   if (Object.keys(fields).length) {
     const { error } = await supabase.from("products").update(fields).eq("id", id);
@@ -123,6 +120,12 @@ export async function updateProduct(id: string, patch: Partial<ProductInput>): P
     await replaceImagesAndVariants(id, patch.images, patch.variants);
   }
 }
+
+const PRODUCT_FIELDS = [
+    "slug","name","description","category_id","brand","sku","price","sale_price",
+    "stock","reserved_stock","minimum_stock","track_stock","weight","status",
+    "meta_title","meta_description",
+] as const;
 
 export async function archiveProductRemote(id: string): Promise<void> {
   const { error } = await supabase.from("products").update({ status: "arquivado" }).eq("id", id);
@@ -205,8 +208,9 @@ export async function uploadProductImage(file: File): Promise<string> {
     cacheControl: "31536000", upsert: false, contentType: processed.type,
   });
   if (error) throw error;
-  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-  return data.publicUrl;
+  // O bucket é privado neste workspace, então servimos por uma rota de proxy
+  // pública somente-leitura (URL estável, sem expiração).
+  return `/api/public/img/${path}`;
 }
 
 

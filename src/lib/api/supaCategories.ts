@@ -1,5 +1,6 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import type { Category } from "@/stores/categoriesStore";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 
 const STORE_ID = "store_js_store";
 
@@ -38,7 +39,7 @@ export async function createCategoryRemote(c: Omit<Category, "id" | "store_id" |
 }
 
 export async function updateCategoryRemote(id: string, patch: Partial<Category>): Promise<void> {
-  const fields: Record<string, unknown> = {};
+  const fields: TablesUpdate<"categories"> = {};
   if (patch.name !== undefined) fields.name = patch.name;
   if (patch.slug !== undefined) fields.slug = patch.slug;
   if (patch.description !== undefined) fields.description = patch.description;

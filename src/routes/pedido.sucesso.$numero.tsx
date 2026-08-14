@@ -6,7 +6,7 @@ import { CheckCircle2, MessageCircle, Loader2, Package, Clock, XCircle, RefreshC
 import { getOrderByNumber } from "@/lib/api/supaOrders";
 import { getOrderPublic, type PublicOrder } from "@/lib/api/orderTracking";
 import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { FulfillmentStepper } from "@/components/FulfillmentStepper";
 

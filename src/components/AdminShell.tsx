@@ -3,7 +3,7 @@ import { LayoutDashboard, Package, ShoppingBag, Users, Megaphone, Settings, Stor
 import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AdminNotificationsBell } from "@/components/admin/AdminNotificationsBell";
 
