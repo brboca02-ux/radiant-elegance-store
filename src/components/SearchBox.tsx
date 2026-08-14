@@ -28,7 +28,7 @@ function Highlight({ text, term }: { text: string; term: string }) {
   );
 }
 
-export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () => void; autoFocus?: boolean }) {
+export function SearchBox({ onNavigate, autoFocus = false, variant = "light" }: { onNavigate?: () => void; autoFocus?: boolean; variant?: "light" | "dark" }) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<Suggestion[]>([]);
@@ -95,9 +95,13 @@ export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () =
       <form
         role="search"
         onSubmit={(e) => { e.preventDefault(); submit(); }}
-        className="flex items-center gap-2 bg-secondary rounded-full px-4 py-2 text-muted-foreground focus-within:ring-2 focus-within:ring-primary/40"
+        className={`flex items-center gap-2 rounded-full px-4 py-2 focus-within:ring-2 ${
+          variant === "dark"
+            ? "bg-foreground/10 text-foreground focus-within:ring-foreground/40"
+            : "bg-secondary text-muted-foreground focus-within:ring-primary/40"
+        }`}
       >
-        <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <Search className={`h-4 w-4 shrink-0 ${variant === "dark" ? "text-foreground/80" : ""}`} aria-hidden="true" />
         <label className="sr-only" htmlFor={`${listboxId}-input`}>Buscar produtos</label>
         <input
           id={`${listboxId}-input`}
@@ -113,7 +117,11 @@ export function SearchBox({ onNavigate, autoFocus = false }: { onNavigate?: () =
           aria-autocomplete="list"
           aria-activedescendant={active >= 0 ? `${listboxId}-opt-${active}` : undefined}
           placeholder="Buscar por nome, cor, categoria..."
-          className="bg-transparent flex-1 text-sm outline-none min-w-0 text-foreground placeholder:text-muted-foreground"
+          className={`bg-transparent flex-1 text-sm outline-none min-w-0 ${
+            variant === "dark"
+              ? "text-foreground placeholder:text-foreground/60"
+              : "text-foreground placeholder:text-muted-foreground"
+          }`}
         />
       </form>
       {open && q.trim().length >= 2 && (

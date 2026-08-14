@@ -103,7 +103,7 @@ function ColecaoPage() {
           )}
         </ol>
       </nav>
-      <div className="bg-offwhite py-16 border-b border-border">
+      <div className="bg-background py-16 border-b border-border">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
           <span className="eyebrow">{eyebrow}</span>
           <h1 className="font-display text-4xl md:text-6xl mt-3">{h1}</h1>

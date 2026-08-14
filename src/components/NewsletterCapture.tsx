@@ -96,7 +96,7 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
 
 export function NewsletterSection() {
   return (
-    <section className="py-20 md:py-24 bg-offwhite border-t border-border">
+    <section className="py-20 md:py-24 bg-background border-t border-border">
       <div className="max-w-xl mx-auto px-6 text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Newsletter J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-4xl mt-4 tracking-tight">

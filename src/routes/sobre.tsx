@@ -31,7 +31,7 @@ function SobrePage() {
           { name: "Sobre", href: "/sobre" },
         ]}
       />
-      <section className="bg-offwhite py-16 border-b border-border">
+      <section className="bg-background py-16 border-b border-border">
 
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <span className="eyebrow">Nossa história</span>
@@ -65,7 +65,7 @@ function SobrePage() {
         </div>
       </section>
 
-      <section className="bg-offwhite py-16">
+      <section className="bg-background py-16">
         <div className="max-w-[1200px] mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
           <div className="order-2 md:order-1">
             <span className="eyebrow">Visite a loja</span>

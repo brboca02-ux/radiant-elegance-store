@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
-import logoAsset from "@/assets/js-store-logo.jpg.asset.json";
 import { CartDrawer } from "./CartDrawer";
 import { SearchBox } from "./SearchBox";
 import { buildWhatsAppLink } from "@/lib/shopify";
@@ -137,8 +136,8 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
-      <div className="bg-primary text-primary-foreground text-[11px] sm:text-xs py-1.5 sm:py-2 overflow-hidden">
+    <header className="sticky top-0 z-40 bg-background text-foreground border-b border-gold/20">
+      <div className="bg-background text-foreground text-[11px] sm:text-xs py-1.5 sm:py-2 overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-3 flex flex-nowrap sm:flex-wrap items-center justify-start sm:justify-center gap-x-5 sm:gap-x-6 gap-y-1 whitespace-nowrap overflow-x-auto no-scrollbar">
           <span>Entregamos para toda a região</span>
           <span>Atendimento pelo WhatsApp</span>
@@ -154,12 +153,12 @@ export function Header() {
           <Menu className="h-6 w-6" />
         </button>
         <Link to="/" className="flex items-center">
-          <span className="font-display font-bold text-xl sm:text-2xl tracking-tight">
-            <span className="text-foreground">J&S</span> <span className="text-accent">STORE</span>
+          <span className="font-display font-bold text-xl sm:text-2xl tracking-tight text-gold">
+            J&S <span className="text-silver">STORE</span>
           </span>
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
-          <SearchBox />
+          <SearchBox variant="dark" />
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <a
@@ -176,19 +175,19 @@ export function Header() {
           <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center">
             <Search className="h-5 w-5" />
           </button>
-          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex h-10 w-10 items-center justify-center text-foreground/70 hover:text-primary transition">
+          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex h-10 w-10 items-center justify-center text-foreground/70 hover:text-foreground transition">
             <User className="h-5 w-5" />
           </Link>
           <CartDrawer />
         </div>
       </div>
       {mobileSearch && (
-        <div className="md:hidden px-4 pb-3"><SearchBox autoFocus onNavigate={() => setMobileSearch(false)} /></div>
+        <div className="md:hidden px-4 pb-3"><SearchBox variant="dark" autoFocus onNavigate={() => setMobileSearch(false)} /></div>
       )}
 
       {/* Desktop nav with mega menu */}
       <div ref={navRef} className="hidden md:block relative">
-        <nav className="flex items-center justify-center gap-6 lg:gap-8 pb-3 text-sm font-medium">
+        <nav className="flex items-center justify-center gap-6 lg:gap-8 pb-3 text-sm font-medium text-foreground">
           {MENUS.map((m) => (
             <button
               key={m.key}
@@ -198,22 +197,22 @@ export function Header() {
               aria-expanded={activeMenu === m.key}
               aria-haspopup="true"
               className={`inline-flex items-center gap-1 transition ${
-                m.highlight ? "text-primary font-semibold" : "text-foreground/80"
-              } hover:text-primary`}
+                m.highlight ? "text-gold font-semibold" : "text-foreground/80"
+              } hover:text-gold`}
             >
               {m.label}
               {m.badge && (
-                <span className="ml-1 text-[9px] font-semibold tracking-[0.18em] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-sm">
+                <span className="ml-1 text-[9px] font-semibold tracking-[0.18em] bg-gold text-primary-foreground px-1.5 py-0.5 rounded-sm">
                   {m.badge}
                 </span>
               )}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${activeMenu === m.key ? "rotate-180" : ""}`} />
             </button>
           ))}
-          <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-primary transition">
+          <Link to="/colecao" search={{ c: "recebidos-da-semana" } as never} className="text-foreground/80 hover:text-gold transition">
             Recebidos da Semana
           </Link>
-          <Link to="/sobre" className="text-foreground/80 hover:text-primary transition">
+          <Link to="/sobre" className="text-foreground/80 hover:text-gold transition">
             Sobre
           </Link>
         </nav>
@@ -225,10 +224,10 @@ export function Header() {
             className="absolute left-0 right-0 top-full z-50 animate-fade-in"
           >
             <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
-              <div className="bg-background border border-border rounded-2xl shadow-2xl p-8 grid grid-cols-12 gap-8">
+              <div className="bg-background border border-gold/20 rounded-2xl shadow-2xl p-8 grid grid-cols-12 gap-8">
                 {MENUS.find((m) => m.key === activeMenu)!.content.columns.map((col) => (
                   <div key={col.title} className="col-span-12 sm:col-span-4 lg:col-span-3">
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-foreground/60 mb-3">
                       {col.title}
                     </h2>
                     <ul className="space-y-2">
@@ -238,8 +237,8 @@ export function Header() {
                             to="/colecao"
                             search={{ c: it.c } as SearchParam as never}
                             onClick={() => setActiveMenu(null)}
-                            className={`text-sm hover:text-primary transition ${
-                              it.highlight ? "text-primary font-semibold" : "text-foreground/80"
+                            className={`text-sm hover:text-gold transition ${
+                              it.highlight ? "text-gold font-semibold" : "text-foreground/80"
                             }`}
                           >
                             {it.label}
@@ -254,16 +253,16 @@ export function Header() {
                     {(() => {
                       const p = MENUS.find((m) => m.key === activeMenu)!.content.promo!;
                       return (
-                        <div className="h-full bg-primary/10 border border-primary/20 rounded-xl p-6 flex flex-col justify-between">
+                        <div className="h-full bg-gold/10 border border-gold/20 rounded-xl p-6 flex flex-col justify-between">
                           <div>
-                            <h3 className="font-display text-lg font-bold text-primary mb-1">{p.title}</h3>
+                            <h3 className="font-display text-lg font-bold text-gold mb-1">{p.title}</h3>
                             {p.subtitle && <p className="text-sm text-foreground/70">{p.subtitle}</p>}
                           </div>
                           <Link
                             to="/colecao"
                             search={{ c: p.c } as SearchParam as never}
                             onClick={() => setActiveMenu(null)}
-                            className="mt-4 inline-flex items-center justify-center bg-primary text-primary-foreground rounded-full px-4 py-2 text-sm font-semibold hover:opacity-90 transition"
+                            className="mt-4 inline-flex items-center justify-center bg-gold text-primary-foreground rounded-full px-4 py-2 text-sm font-semibold hover:opacity-90 transition"
                           >
                             {p.cta}
                           </Link>
@@ -282,32 +281,32 @@ export function Header() {
       {open && typeof document !== "undefined" && createPortal((
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background shadow-2xl flex flex-col animate-in slide-in-from-left">
-            <div className="flex items-center justify-between px-5 h-14 border-b">
-              <span className="font-display font-extrabold text-xl"><span className="text-primary">J&S</span> Store</span>
-              <button aria-label="Fechar" onClick={() => setOpen(false)} className="h-11 w-11 -mr-2 flex items-center justify-center">
+          <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background text-foreground shadow-2xl flex flex-col animate-in slide-in-from-left">
+            <div className="flex items-center justify-between px-5 h-14 border-b border-gold/20">
+              <span className="font-display font-extrabold text-xl text-gold">J&S <span className="text-silver">Store</span></span>
+              <button aria-label="Fechar" onClick={() => setOpen(false)} className="h-11 w-11 -mr-2 flex items-center justify-center text-foreground hover:text-gold transition">
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="px-5 py-4 border-b">
-              <SearchBox onNavigate={() => setOpen(false)} />
+            <div className="px-5 py-4 border-b border-gold/20">
+              <SearchBox variant="dark" onNavigate={() => setOpen(false)} />
             </div>
             <nav className="flex-1 overflow-y-auto py-2">
               {MENUS.map((m) => {
                 const isOpen = mobileAccordion === m.key;
                 return (
-                  <div key={m.key} className="border-b border-border/60">
+                  <div key={m.key} className="border-b border-gold/20">
                     <button
                       onClick={() => setMobileAccordion(isOpen ? null : m.key)}
                       aria-expanded={isOpen}
                       className={`w-full flex items-center justify-between px-5 py-3 text-base font-semibold ${
-                        m.highlight ? "text-primary" : ""
+                        m.highlight ? "text-gold" : "text-foreground/90"
                       }`}
                     >
                       <span className="inline-flex items-center gap-2">
                         {m.label}
                         {m.badge && (
-                          <span className="text-[9px] font-semibold tracking-[0.18em] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-sm">
+                          <span className="text-[9px] font-semibold tracking-[0.18em] bg-gold text-primary-foreground px-1.5 py-0.5 rounded-sm">
                             {m.badge}
                           </span>
                         )}
@@ -323,7 +322,7 @@ export function Header() {
                         <div className="px-5 pb-3 space-y-3">
                           {m.content.columns.map((col) => (
                             <div key={col.title}>
-                              <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-2 mb-1">
+                              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-2 mb-1">
                                 {col.title}
                               </p>
                               <ul className="space-y-1.5">
@@ -333,8 +332,8 @@ export function Header() {
                                       to="/colecao"
                                       search={{ c: it.c } as SearchParam as never}
                                       onClick={() => setOpen(false)}
-                                      className={`block text-sm py-1 ${
-                                        it.highlight ? "text-primary font-medium" : "text-foreground/80"
+                                      className={`block text-sm py-1 hover:text-gold transition ${
+                                        it.highlight ? "text-gold font-medium" : "text-foreground/80"
                                       }`}
                                     >
                                       {it.label}
@@ -354,21 +353,21 @@ export function Header() {
                 to="/colecao"
                 search={{ c: "recebidos-da-semana" } as never}
                 onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
+                className="block px-5 py-3 text-base font-semibold border-b border-gold/20 text-foreground hover:text-gold transition"
               >
                 Recebidos da Semana
               </Link>
               <Link
                 to="/sobre"
                 onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60"
+                className="block px-5 py-3 text-base font-semibold border-b border-gold/20 text-foreground hover:text-gold transition"
               >
                 Sobre
               </Link>
               <Link
                 to="/dashboard"
                 onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-border/60 text-primary"
+                className="block px-5 py-3 text-base font-semibold border-b border-gold/20 text-gold hover:text-gold/80 transition"
               >
                 Painel admin
               </Link>
