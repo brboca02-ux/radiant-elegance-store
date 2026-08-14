@@ -61,22 +61,6 @@ export function HomeHero() {
             </Button>
           </div>
         </div>
-            <Button
-              size="xl"
-              className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 md:h-14"
-              asChild
-            >
-              <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
-            </Button>
-            <Button
-              size="xl"
-              variant="outline"
-              className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 md:h-14 transition-all"
-              asChild
-            >
-              <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
-            </Button>
-        </div>
       </div>
     </section>
   );
