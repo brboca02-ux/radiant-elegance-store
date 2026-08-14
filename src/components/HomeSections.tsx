@@ -13,8 +13,8 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: heroCouple.url, pos: "object-left", q: "feminino" },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: heroCouple.url, pos: "object-right", q: "masculino" },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: heroCouple.url, origin: "20% 45%", q: "feminino" },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: heroCouple.url, origin: "9% 45%", q: "masculino" },
 ];
 
 const diferenciais = [
@@ -83,7 +83,8 @@ export function CategoriesSection() {
                 src={c.img}
                 alt={c.alt}
                 loading="lazy"
-                className={`w-full h-full object-cover ${c.pos} transition-transform duration-700 ease-out group-hover:scale-110`}
+                style={{ transformOrigin: c.origin }}
+                className="w-full h-full object-cover scale-[2.1] transition-transform duration-700 ease-out group-hover:scale-[2.3]"
               />
               <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
               <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
