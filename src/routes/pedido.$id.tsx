@@ -12,7 +12,7 @@ import {
 } from "@/lib/api/orderTracking";
 import { FulfillmentStepper } from "@/components/FulfillmentStepper";
 import { formatPrice, STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const searchSchema = z.object({ email: z.string().email().optional() });

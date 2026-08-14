@@ -10,7 +10,7 @@ import { shipping, type ShippingQuote } from "@/lib/integrations/shipping";
 import { payment, type PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
 import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
 import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";

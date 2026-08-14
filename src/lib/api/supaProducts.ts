@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import type { Product, ProductImage, ProductVariant, ProductStatus } from "@/stores/productsStore";
 
 // ----- Helpers -----------------------------------------------------------

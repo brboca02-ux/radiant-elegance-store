@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Store } from "lucide-react";
 import logoAsset from "@/assets/js-store-logo.jpg.asset.json";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 

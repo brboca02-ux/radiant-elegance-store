@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import type { PaymentMethod } from "@/lib/integrations/payment";
 
 export interface NewOrderInput {

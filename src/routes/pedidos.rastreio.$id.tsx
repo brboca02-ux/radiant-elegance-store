@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { getOrderByNumber, type OrderFull } from "@/lib/api/supaOrders";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import {
   FULFILLMENT_FLOW,
   FULFILLMENT_LABEL,

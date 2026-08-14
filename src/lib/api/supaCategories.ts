@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import type { Category } from "@/stores/categoriesStore";
 
 const STORE_ID = "store_js_store";
