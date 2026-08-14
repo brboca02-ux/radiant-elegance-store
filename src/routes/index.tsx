@@ -8,6 +8,7 @@ import {
   DifferentialsSection,
   InstagramSection,
 } from "@/components/HomeSections";
+import { ShowcaseCarousel } from "@/components/ShowcaseCarousel";
 import { NewsletterSection } from "@/components/NewsletterCapture";
 import heroCouple from "@/assets/hero-couple.jpg.asset.json?url";
 
@@ -41,6 +42,7 @@ function Index() {
     <>
       <HomeHero />
       <CategoriesSection />
+      <ShowcaseCarousel />
       <RecebidosHomeSection />
       <LookbookSection />
       <LojaFisicaSection />
