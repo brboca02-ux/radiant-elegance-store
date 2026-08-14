@@ -13,8 +13,8 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: CAT_IMG("calca-jeans-fem-azul-medio"), q: "feminino" },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: CAT_IMG("camisa-gola-polo-importada"), q: "masculino" },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: heroCouple.url, pos: "object-left", q: "feminino" },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: heroCouple.url, pos: "object-right", q: "masculino" },
 ];
 
 const diferenciais = [
