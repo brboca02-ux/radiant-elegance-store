@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   HomeHero,
+  TrustStrip,
   CategoriesSection,
   RecebidosHomeSection,
   LookbookSection,
@@ -40,6 +41,7 @@ function Index() {
   return (
     <>
       <HomeHero />
+      <TrustStrip />
       <CategoriesSection />
       <ShowcaseCarousel />
       <RecebidosHomeSection />

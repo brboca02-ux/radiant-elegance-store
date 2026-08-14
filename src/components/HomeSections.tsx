@@ -16,8 +16,8 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 22%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 14%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 22%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey, desc: "Elegância no dia a dia" },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 14%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey, desc: "Clássico com atitude" },
 ];
 
 const diferenciais = [
@@ -29,7 +29,7 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative h-[45vh] min-h-[320px] md:h-[55vh] md:min-h-[420px] lg:h-[75vh] lg:min-h-[580px] overflow-hidden bg-background">
+    <section className="relative h-[65vh] min-h-[480px] md:h-[75vh] md:min-h-[580px] lg:h-[85vh] lg:min-h-[720px] overflow-hidden bg-background">
       <img
         src={heroCouple.url}
         alt="J&S Store — Moda Masculina e Feminina"
@@ -38,80 +38,127 @@ export function HomeHero() {
         fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover object-left lg:object-center opacity-90"
       />
-      {/* Overlay escuro concentrado na base para garantir legibilidade dos botões */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-12 md:pb-16 lg:pb-20">
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <Button
-            size="xl"
-            className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
-            asChild
-          >
-            <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
-          </Button>
-          <Button
-            size="xl"
-            variant="outline"
-            className="bg-transparent border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
-            asChild
-          >
-            <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
-          </Button>
+      {/* Overlay escuro estratégico para legibilidade do texto à esquerda e botões na base */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-black/60 lg:via-black/10 lg:to-transparent" />
+      
+      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center justify-center lg:justify-start">
+        <div className="max-w-2xl text-center lg:text-left pt-12 md:pt-16">
+          <p className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.3em] text-gold mb-4 animate-in fade-in slide-in-from-bottom-2 duration-700">
+            Enviamos para todo o Brasil
+          </p>
+          <h1 className="font-display font-semibold text-4xl md:text-6xl lg:text-7xl text-white leading-[1.1] tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            Moda masculina e feminina <br className="hidden md:block" />
+            <span className="text-gold">com curadoria J&S</span>
+          </h1>
+          <p className="text-sm md:text-lg text-white/80 leading-relaxed max-w-lg mb-8 md:mb-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
+            Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja — peças selecionadas para quem busca estilo e qualidade.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+            <Button
+              size="xl"
+              className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 md:h-14"
+              asChild
+            >
+              <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
+            </Button>
+            <Button
+              size="xl"
+              variant="outline"
+              className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 md:h-14 transition-all"
+              asChild
+            >
+              <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+export function TrustStrip() {
+  return (
+    <div className="bg-black border-y border-gold/20 py-3 md:py-4">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+        <div className="flex flex-wrap justify-center gap-x-8 md:gap-x-16 gap-y-2">
+          {[
+            { i: Truck, t: "Frete para todo o Brasil" },
+            { i: MessageCircle, t: "Atendimento no WhatsApp" },
+            { i: ShieldCheck, t: "Compra 100% Segura" }
+          ].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2 text-[10px] md:text-xs font-medium uppercase tracking-widest text-gold/90">
+              <item.i className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={1.5} />
+              {item.t}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 export function CategoriesSection() {
   const media = useSiteMedia();
   return (
-    <section className="py-4 md:py-6 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-medium text-[11px] tracking-[0.22em] text-muted-foreground uppercase">Categorias</h2>
-          <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-primary hover:underline">
-            Ver tudo →
-          </Link>
+        <div className="mb-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-gold mb-2">Escolha por estilo</p>
+          <div className="flex items-end justify-between">
+            <div>
+              <h2 className="font-display font-semibold text-2xl md:text-4xl tracking-tight">Categorias</h2>
+              <p className="text-sm text-muted-foreground mt-2">Duas curadorias, uma só identidade.</p>
+            </div>
+            <Link to="/colecao" search={{ c: undefined }} className="hidden md:inline text-xs font-medium text-gold hover:underline underline-offset-4">
+              Ver tudo →
+            </Link>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:gap-5">
+        
+        <div className="grid grid-cols-2 gap-4 md:gap-6">
           {categories.map((c) => (
             <Link
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative h-[85px] md:h-[130px] overflow-hidden bg-secondary"
+              className="group relative h-[130px] md:h-[200px] overflow-hidden bg-secondary shadow-lg"
             >
               <picture>
-                <source srcSet={`${media[c.mediaKey] ?? c.img}?width=450&format=webp`} type="image/webp" />
+                <source srcSet={`${media[c.mediaKey] ?? c.img}?width=600&format=webp`} type="image/webp" />
                 <img
                   src={media[c.mediaKey] ?? c.img}
                   alt={c.alt}
-                  width={450}
-                  height={250}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  width={600}
+                  height={300}
+                  className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.1]"
                   style={{ objectPosition: c.origin }}
                   loading="lazy"
                   decoding="async"
                 />
               </picture>
-              <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
-              <div className="absolute inset-0 flex items-center justify-center p-3 text-center">
-                <div className="space-y-2">
-                  <h3 className="font-display font-semibold text-sm md:text-lg text-gold tracking-tight uppercase">
-                    {c.label}
-                  </h3>
-                  <p className="hidden md:block text-[9px] text-white/80 font-medium tracking-[0.2em] uppercase opacity-0 transform translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
-                    Ver coleção →
-                  </p>
-                </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-colors duration-500 group-hover:from-black/60" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                <h3 className="font-display font-semibold text-lg md:text-2xl text-white tracking-wide uppercase mb-1">
+                  {c.label}
+                </h3>
+                <p className="text-[9px] md:text-[10px] text-gold/90 font-medium tracking-[0.2em] uppercase mb-2">
+                  {c.desc}
+                </p>
+                <div className="h-[1px] w-8 bg-gold/40 mb-2 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                <p className="text-[8px] md:text-[9px] text-white/70 font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+                  Explorar curadoria →
+                </p>
               </div>
+
             </Link>
           ))}
         </div>
       </div>
     </section>
+
   );
 }
 
