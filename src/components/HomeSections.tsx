@@ -77,7 +77,7 @@ export function CategoriesSection() {
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative h-[260px] md:h-[420px] overflow-hidden bg-secondary"
+              className="group relative h-[170px] md:h-[260px] overflow-hidden bg-secondary"
             >
               <img
                 src={c.img}
@@ -88,7 +88,7 @@ export function CategoriesSection() {
               <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
               <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                 <div className="space-y-2">
-                  <h3 className="font-display font-semibold text-2xl md:text-4xl text-gold tracking-tight uppercase">
+                  <h3 className="font-display font-semibold text-lg md:text-2xl text-gold tracking-tight uppercase">
                     {c.label}
                   </h3>
                   <p className="text-[10px] md:text-xs text-white/80 font-medium tracking-[0.2em] uppercase opacity-0 transform translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
