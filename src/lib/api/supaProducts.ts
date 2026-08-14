@@ -208,8 +208,9 @@ export async function uploadProductImage(file: File): Promise<string> {
     cacheControl: "31536000", upsert: false, contentType: processed.type,
   });
   if (error) throw error;
-  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-  return data.publicUrl;
+  // O bucket é privado neste workspace, então servimos por uma rota de proxy
+  // pública somente-leitura (URL estável, sem expiração).
+  return `/api/public/img/${path}`;
 }
 
 
