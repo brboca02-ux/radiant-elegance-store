@@ -14,7 +14,7 @@ export function Footer() {
         <div className="lg:col-span-2">
           <div className="flex flex-col gap-4">
             <span className="font-display font-bold text-2xl tracking-tight text-gold">
-              J&S
+              &nbsp;
             </span>
           </div>
           <p className="text-sm text-foreground/70 mt-5 leading-relaxed max-w-sm">

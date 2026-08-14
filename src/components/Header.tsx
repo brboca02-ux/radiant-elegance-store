@@ -152,9 +152,9 @@ export function Header() {
         >
           <Menu className="h-6 w-6" />
         </button>
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center" aria-label="J&S Store">
           <span className="font-display font-bold text-xl sm:text-2xl tracking-tight text-gold">
-            J&S
+            &nbsp;
           </span>
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
