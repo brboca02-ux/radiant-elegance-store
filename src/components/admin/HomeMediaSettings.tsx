@@ -114,8 +114,17 @@ function ShowcaseRow({ id }: { id: string }) {
     setBusy(true);
     try {
       const url = await uploadProductImage(file);
-      const rest = product.images.slice(1).map((i) => ({ ...i, is_primary: false }));
-      await update(product.id, { images: [{ url, is_primary: true }, ...rest] });
+      const rest = product.images
+        .slice(1)
+        .map((i, idx) => ({ ...i, is_primary: false, position: idx + 1 }));
+      const cover = {
+        id: product.images[0]?.id ?? crypto.randomUUID(),
+        product_id: product.id,
+        url,
+        position: 0,
+        is_primary: true,
+      };
+      await update(product.id, { images: [cover, ...rest] });
       toast.success("Imagem da vitrine atualizada.");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha no upload.");
