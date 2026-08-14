@@ -1,34 +1,24 @@
-# Plano: Hero mais compacto + espaçamentos menores
+# Auditoria: textos das categorias sobre os modelos
 
-## 1. Reduzir a div do Hero (sem perder qualidade)
-- Reduzir a altura da seção do Hero em `src/components/HomeSections.tsx`:
-  - Mobile: de `h-[65vh] min-h-[480px]` para algo como `h-[42vh] min-h-[320px]`
-  - Tablet: `md:h-[50vh] md:min-h-[400px]`
-  - Desktop: `lg:h-[58vh] lg:min-h-[480px]`
-- Manter a mesma imagem em resolução original (nada de downscale), apenas ajustando `object-cover` e `object-position` para que os modelos e o logo continuem visíveis no recorte menor.
+## O que a auditoria mostrou (mobile 390, 649, tablet 820, desktop 1440)
+O bloco de textos está tecnicamente ancorado na base do card (`inset-x-0 bottom-0`), mas visualmente ele NÃO está no rodapé da imagem:
 
-## 2. Botões centralizados e mais abaixo
-- Trocar o alinhamento do container do Hero: de centralizado/esquerda para centralizado horizontalmente e ancorado na parte inferior (`items-end justify-center` com `pb-8 md:pb-12`).
-- Botões "Comprar Feminino" e "Comprar Masculino" lado a lado no centro, com gradiente escuro na base reforçado para garantir contraste.
+- O bloco reserva espaço permanente para 4 elementos (título, descrição, risco dourado e o texto de hover "Explorar curadoria →"), somando ~75px + 40px de padding.
+- Como os cards têm apenas 130px (mobile) e 200px (desktop), esse bloco ocupa quase toda a altura e empurra o título para o meio do card — exatamente sobre o rosto dos modelos.
+- O gradiente atual (`via-black/20`) é fraco nessa altura, então o texto disputa contraste com o rosto.
 
-## 3. Reduzir espaçamentos do site
-- Ajustar o utilitário `section-compact` em `src/styles.css` de `py-10 md:py-16` para `py-6 md:py-10`.
-- Uniformizar as seções que ainda usam valores próprios em `src/components/HomeSections.tsx` (TrustStrip `py-6 md:py-8` → `py-4 md:py-6`, Categorias `py-8 md:py-12` → `py-6 md:py-8`, Lookbook `py-12 md:py-16` → `section-compact`, Diferenciais `py-10 md:py-12` → `section-compact`).
-- Reduzir margens internas de títulos de seção (`mb-8` → `mb-5 md:mb-6`) para o site ficar mais denso e sem áreas vazias.
+Conclusão: o ajuste anterior não resolveu o problema relatado; em todos os formatos de tela o título ainda cai sobre o personagem.
 
-## 4. Dados do print (Instagram)
-O print traz dados diferentes dos cadastrados hoje no site:
-- Endereço atual no site: Rua Santa Luzia, 550 - Aventureiro, Joinville/SC
-- Endereço no print: Rua Carlos Emílio Alexandre Schwartz 369, Joinville/SC — 89235-188
-- WhatsApp atual: 47 98446-8103 / no print: 41 8407-5860
-
-Proposta: atualizar endereço e CEP para os do print (loja física, mapa e rodapé) e **manter** o WhatsApp atual, salvo indicação em contrário. Se preferir trocar o WhatsApp também, é só avisar antes de eu aplicar.
-
-## Arquivos afetados
-- `src/components/HomeSections.tsx`
-- `src/styles.css`
-- `src/lib/shopify.ts` (apenas endereço/CEP/mapa, se aprovado)
+## Correção proposta (apenas visual, em `src/components/HomeSections.tsx`)
+1. Retirar do fluxo os elementos de hover (risco dourado + "Explorar curadoria") usando posicionamento absoluto/`hidden` nos cards pequenos, para que somente título + descrição definam a altura do bloco.
+2. Reduzir o padding do bloco (`p-4 pb-6 md:pb-8` → `px-3 pb-2.5 md:pb-4`) para que o texto encoste no rodapé real da imagem.
+3. Aplicar uma faixa de contraste só na base (`bg-gradient-to-t from-black via-black/70 to-transparent` limitada a ~45% da altura), preservando o rosto do modelo sem escurecer o card inteiro.
+4. Ajustar `object-position` dos dois cards (feminino `50% 18%`, masculino `50% 12%`) para que o rosto suba um pouco e a faixa inferior fique livre.
+5. Aumentar levemente a altura dos cards (`h-[150px] md:h-[210px]`) para acomodar título + descrição no rodapé sem cortar os modelos — mantendo o site compacto.
 
 ## Validação
-- Preview em mobile (390px) e desktop para confirmar que a imagem não corta os modelos e os botões ficam legíveis na base.
+- Novas capturas dos cards em 390px, 649px, 820px e 1440px confirmando: texto no terço inferior, sem sobrepor rostos, contraste legível.
 - Build sem erros.
+
+## Arquivo afetado
+- `src/components/HomeSections.tsx`
