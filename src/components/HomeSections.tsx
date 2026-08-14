@@ -43,17 +43,6 @@ export function HomeHero() {
       
       <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center justify-center lg:justify-start">
         <div className="max-w-2xl text-center lg:text-left pt-12 md:pt-16">
-          <p className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.3em] text-gold mb-4 animate-in fade-in slide-in-from-bottom-2 duration-700">
-            Enviamos para todo o Brasil
-          </p>
-          <h1 className="font-display font-semibold text-4xl md:text-6xl lg:text-7xl text-white leading-[1.1] tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            Moda masculina e feminina <br className="hidden md:block" />
-            <span className="text-gold">com curadoria J&S</span>
-          </h1>
-          <p className="text-sm md:text-lg text-white/80 leading-relaxed max-w-lg mb-8 md:mb-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-            Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja — peças selecionadas para quem busca estilo e qualidade.
-          </p>
-          
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
             <Button
               size="xl"
