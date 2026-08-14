@@ -170,23 +170,23 @@ export function Header() {
         <div className="hidden md:flex flex-1 max-w-md">
           <SearchBox variant="dark" />
         </div>
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-4">
           <a
             href={buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de ajuda.")}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"
             onClick={() => track.whatsappClick("header")}
-            className="hidden sm:inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition"
+            className="hidden lg:inline-flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-full text-sm font-bold hover:opacity-90 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-green-500/20"
           >
-            <MessageCircle className="h-4 w-4" /> WhatsApp
+            <MessageCircle className="h-4 w-4 fill-current" /> WHATSAPP
           </a>
 
-          <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center">
-            <Search className="h-5 w-5" />
+          <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center text-gold">
+            <Search className="h-6 w-6" />
           </button>
-          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex tap-target items-center justify-center text-foreground/70 hover:text-foreground transition">
-            <User className="h-5 w-5" />
+          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden sm:inline-flex tap-target items-center justify-center text-gold hover:text-silver transition-colors">
+            <User className="h-6 w-6" />
           </Link>
           <CartDrawer />
         </div>
