@@ -9,8 +9,7 @@ import {
   InstagramSection,
 } from "@/components/HomeSections";
 import { NewsletterSection } from "@/components/NewsletterCapture";
-import heroDesktop from "@/assets/hero.jpg?url";
-import heroMobile from "@/assets/hero-mobile.jpg?url";
+import heroCouple from "@/assets/hero-couple.jpg.asset.json?url";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,9 +29,8 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: "https://jsstore.lovable.app/" },
-      // Preload LCP hero — variante por viewport
-      { rel: "preload", as: "image", href: heroMobile, fetchPriority: "high", media: "(max-width: 1023px)" },
-      { rel: "preload", as: "image", href: heroDesktop, fetchPriority: "high", media: "(min-width: 1024px)" },
+      // Preload LCP hero
+      { rel: "preload", as: "image", href: heroCouple, fetchPriority: "high" },
     ],
   }),
   component: Index,
