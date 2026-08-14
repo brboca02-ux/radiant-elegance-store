@@ -41,6 +41,7 @@ function Index() {
   return (
     <>
       <HomeHero />
+      <TrustStrip />
       <CategoriesSection />
       <ShowcaseCarousel />
       <RecebidosHomeSection />
