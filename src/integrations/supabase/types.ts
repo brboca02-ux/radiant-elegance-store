@@ -364,6 +364,7 @@ export type Database = {
           price: number
           reserved_stock: number
           sale_price: number | null
+          showcase: boolean
           sku: string
           slug: string
           status: string
@@ -385,6 +386,7 @@ export type Database = {
           price?: number
           reserved_stock?: number
           sale_price?: number | null
+          showcase?: boolean
           sku?: string
           slug: string
           status?: string
@@ -406,6 +408,7 @@ export type Database = {
           price?: number
           reserved_stock?: number
           sale_price?: number | null
+          showcase?: boolean
           sku?: string
           slug?: string
           status?: string
