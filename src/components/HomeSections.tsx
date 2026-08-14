@@ -144,7 +144,7 @@ export function BestSellersSection() {
 
 export function LaunchSection() {
   return (
-    <section id="colecao" className="py-20 md:py-28 bg-background">
+    <section id="colecao" className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Acabou de chegar" title="Novidades" link={{ to: "/colecao", label: "Ver coleção", c: "novidades" }} />
         <ProductGrid sortKey="CREATED_AT" reverse first={8} />
