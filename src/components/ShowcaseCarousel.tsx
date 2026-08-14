@@ -58,16 +58,16 @@ export function ShowcaseCarousel() {
             <h2 className="font-display font-semibold text-2xl tracking-tight">Vitrine J&S</h2>
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => scroll("left")}
-              className="p-2 rounded-full border border-border hover:bg-muted transition-colors"
+              className="tap-target rounded-full border border-border hover:bg-muted transition-colors"
               aria-label="Anterior"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <button 
+            <button
               onClick={() => scroll("right")}
-              className="p-2 rounded-full border border-border hover:bg-muted transition-colors"
+              className="tap-target rounded-full border border-border hover:bg-muted transition-colors"
               aria-label="Próximo"
             >
               <ChevronRight className="h-4 w-4" />

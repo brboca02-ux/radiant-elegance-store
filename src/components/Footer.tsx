@@ -8,8 +8,8 @@ const LINK = "inline-flex items-center min-h-11 py-2 text-sm text-foreground/75 
 
 export function Footer() {
   return (
-    <footer className="bg-background text-foreground mt-24">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
+    <footer className="bg-background text-foreground mt-16 md:mt-24">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12 md:py-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
         {/* Brand + Newsletter */}
         <div className="lg:col-span-2">
           <div className="flex flex-col gap-4">
