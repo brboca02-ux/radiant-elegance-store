@@ -65,6 +65,7 @@ export function HomeHero() {
 
 
 export function CategoriesSection() {
+  const media = useSiteMedia();
   return (
     <section className="py-4 md:py-6 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
@@ -83,9 +84,12 @@ export function CategoriesSection() {
               className="group relative h-[85px] md:h-[130px] overflow-hidden bg-secondary"
             >
               <img
-                src={c.img}
+                src={media[c.mediaKey] ?? c.img}
                 alt={c.alt}
                 loading="lazy"
+                decoding="async"
+                width={900}
+                height={506}
                 style={{ transformOrigin: c.origin }}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
               />
