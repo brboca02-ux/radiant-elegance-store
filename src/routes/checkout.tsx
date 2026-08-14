@@ -381,7 +381,7 @@ function CheckoutPage() {
           p_order_id: order.id,
           p_provider: pay.provider,
           p_payment_id: pay.paymentId,
-          p_payment_url: pay.paymentUrl ?? null,
+          p_payment_url: pay.paymentUrl ?? undefined,
         });
       } catch (e) {
         console.warn("Pagamento não pôde ser criado:", e);
