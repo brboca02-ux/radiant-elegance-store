@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
+import { HomeMediaSettings } from "@/components/admin/HomeMediaSettings";
 import {
   DEFAULT_SITE_CONFIG,
   loadSiteConfig,
@@ -116,6 +117,8 @@ function AdminPanel() {
         <Field label="Título" value={cfg.whatsappCtaTitle} onChange={(v) => update("whatsappCtaTitle", v)} />
         <Field label="Subtítulo" value={cfg.whatsappCtaSubtitle} onChange={(v) => update("whatsappCtaSubtitle", v)} />
       </section>
+
+      <HomeMediaSettings />
 
       <div className="flex flex-wrap gap-3 mt-10">
         <button onClick={save} className="bg-primary text-primary-foreground rounded-md px-5 py-2.5 text-sm font-semibold">
