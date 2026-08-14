@@ -196,7 +196,7 @@ export function LookbookSection() {
 
 export function LojaFisicaSection() {
   return (
-    <section id="loja" aria-labelledby="loja-titulo" className="py-20 md:py-28 bg-background scroll-mt-24">
+    <section id="loja" aria-labelledby="loja-titulo" className="section-compact bg-background scroll-mt-24">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
         <div className="aspect-[4/3] overflow-hidden bg-secondary order-2 md:order-1">
           <iframe
