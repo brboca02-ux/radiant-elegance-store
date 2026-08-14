@@ -144,10 +144,15 @@ export function CategoriesSection() {
                 <h3 className="font-display font-semibold text-lg md:text-2xl text-white tracking-wide uppercase mb-1">
                   {c.label}
                 </h3>
-                <p className="text-[9px] md:text-[10px] text-gold font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+                <p className="text-[9px] md:text-[10px] text-gold/90 font-medium tracking-[0.2em] uppercase mb-2">
+                  {c.desc}
+                </p>
+                <div className="h-[1px] w-8 bg-gold/40 mb-2 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                <p className="text-[8px] md:text-[9px] text-white/70 font-medium tracking-[0.2em] uppercase transition-all duration-500 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
                   Explorar curadoria →
                 </p>
               </div>
+
             </Link>
           ))}
         </div>
