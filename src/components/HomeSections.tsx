@@ -1,11 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import hero from "@/assets/hero.jpg";
-import heroMobile from "@/assets/hero-mobile.jpg";
+import heroCouple from "@/assets/hero-couple.jpg.asset.json";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
-import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock, Instagram } from "lucide-react";
+import { Truck, RefreshCcw, ShieldCheck, MessageCircle, Clock, Instagram } from "lucide-react";
 import { buildWhatsAppLink, STORE_INFO } from "@/lib/shopify";
-import { useSiteConfig } from "@/lib/siteConfig";
 import { track } from "@/lib/analytics";
 
 export const INSTAGRAM_HANDLE = "jes.storejoinville";
@@ -27,63 +25,35 @@ const diferenciais = [
 ];
 
 export function HomeHero() {
-  const cfg = useSiteConfig();
   return (
-    <section className="relative h-[88vh] min-h-[620px] lg:h-[78vh] lg:min-h-[680px] overflow-hidden bg-onyx">
-      <picture>
-        {/* Desktop: landscape composition, model on the left, negative space on the right */}
-        <source media="(min-width: 1024px)" srcSet={hero} width={1920} height={1280} />
-        {/* Mobile + tablet: dedicated portrait composition, face safe in the upper third */}
-        <img
-          src={heroMobile}
-          alt="J&S Store — Nova Coleção"
-          width={1080}
-          height={1452}
-          fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover object-[center_top] lg:object-[24%_center]"
-        />
-      </picture>
-      {/* Mobile + tablet: strong bottom gradient so text sits clear of the model. Desktop: very subtle wash over negative space. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent lg:bg-gradient-to-l lg:from-background/25 lg:via-transparent lg:to-foreground/10" />
-      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end pb-10 lg:items-center lg:pb-0 lg:justify-end">
-        <div className="max-w-xl text-background lg:text-foreground">
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/80 lg:text-foreground/70 mb-4 lg:mb-5">
-            Nova Coleção
-          </p>
-          <h1 className="font-display font-semibold text-4xl sm:text-5xl lg:text-7xl leading-[1.04] tracking-tight">
-            Moda para o seu dia,<br className="hidden lg:block" /> na sua cidade.
-          </h1>
-          <p className="text-sm sm:text-base lg:text-lg mt-4 lg:mt-6 leading-relaxed font-light max-w-md text-background/90 lg:text-foreground/75">
-            {cfg.heroSubtitle || "Moda feminina e masculina selecionada em Joinville."}
-          </p>
-          <div className="mt-6 lg:mt-10 flex flex-wrap gap-3">
-            <Button size="xl" className="bg-foreground hover:bg-foreground/90 text-background rounded-none px-6 lg:px-8 font-semibold" asChild>
-              <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
-            </Button>
-            <Button size="xl" variant="outline" className="bg-transparent border-background text-background lg:border-foreground lg:text-foreground hover:bg-background hover:text-foreground lg:hover:bg-foreground lg:hover:text-background rounded-none px-6 lg:px-8 font-semibold" asChild>
-              <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
-            </Button>
-          </div>
-          <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            
-            className="mt-5 lg:mt-6 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.24em] text-background/85 lg:text-foreground/75 hover:text-primary transition-colors group"
+    <section className="relative h-[78vh] min-h-[520px] md:min-h-[580px] lg:h-[82vh] lg:min-h-[640px] overflow-hidden bg-onyx">
+      <img
+        src={heroCouple.url}
+        alt="J&S Store — Moda Masculina e Feminina"
+        width={1376}
+        height={768}
+        fetchPriority="high"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      {/* Overlay escuro concentrado na base para garantir legibilidade dos botões */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-12 md:pb-16 lg:pb-20">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <Button
+            size="xl"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
+            asChild
           >
-            <Instagram className="h-4 w-4" strokeWidth={1.5} />
-            <span>Siga @{INSTAGRAM_HANDLE}</span>
-            <span className="transition-transform group-hover:translate-x-0.5">→</span>
-          </a>
-          <div className="mt-3">
-            <a
-              href="#loja"
-              className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.24em] text-background/70 lg:text-foreground/60 hover:text-primary transition-colors"
-            >
-              <MapPin className="h-3.5 w-3.5" strokeWidth={1.5} />
-              Visite a loja no Aventureiro, Joinville →
-            </a>
-          </div>
+            <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
+          </Button>
+          <Button
+            size="xl"
+            variant="outline"
+            className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
+            asChild
+          >
+            <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
+          </Button>
         </div>
       </div>
     </section>
