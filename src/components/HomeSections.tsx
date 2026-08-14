@@ -26,14 +26,14 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative h-[50vh] min-h-[360px] md:h-[65vh] md:min-h-[460px] lg:h-[82vh] lg:min-h-[640px] overflow-hidden bg-onyx">
+    <section className="relative h-[50vh] min-h-[360px] md:h-[65vh] md:min-h-[460px] lg:h-[82vh] lg:min-h-[640px] overflow-hidden bg-background">
       <img
         src={heroCouple.url}
         alt="J&S Store — Moda Masculina e Feminina"
         width={1376}
         height={768}
         fetchPriority="high"
-        className="absolute inset-0 w-full h-full object-cover object-left lg:object-center"
+        className="absolute inset-0 w-full h-full object-cover object-left lg:object-center opacity-90"
       />
       {/* Overlay escuro concentrado na base para garantir legibilidade dos botões */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
