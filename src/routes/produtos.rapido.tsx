@@ -103,6 +103,7 @@ function QuickAddPage() {
         track_stock: true,
         weight: 0.3,
         status: "ativo",
+        showcase: false,
         meta_title: analyzed.meta_title,
         meta_description: analyzed.meta_description,
         images: [
