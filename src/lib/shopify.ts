@@ -11,12 +11,12 @@ export const STORE_INFO = {
   city: "Joinville",
   region: "SC",
   country: "BR",
-  street: "Rua Santa Luzia, 550 - Aventureiro",
-  postalCode: "89225-100",
+  street: "Rua Carlos Emílio Alexandre Schwartz, 369 - Aventureiro",
+  postalCode: "89235-188",
   phone: "+55 47 98446-8103",
   whatsapp: "5547984468103",
   mapsEmbed:
-    "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+550+-+Aventureiro%2C+Joinville%2C+SC&output=embed",
+    "https://www.google.com/maps?q=Rua+Carlos+Em%C3%ADlio+Alexandre+Schwartz%2C+369+-+Aventureiro%2C+Joinville%2C+SC&output=embed",
 };
 
 export interface ShopifyVariantNode {

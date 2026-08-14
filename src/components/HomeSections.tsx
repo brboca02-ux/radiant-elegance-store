@@ -29,24 +29,24 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative h-[65vh] min-h-[480px] md:h-[75vh] md:min-h-[580px] lg:h-[85vh] lg:min-h-[720px] overflow-hidden bg-background">
+    <section className="relative h-[42vh] min-h-[320px] md:h-[50vh] md:min-h-[400px] lg:h-[58vh] lg:min-h-[480px] overflow-hidden bg-background">
       <img
         src={heroCouple.url}
         alt="J&S Store — Moda Masculina e Feminina"
         width={1376}
         height={768}
         fetchPriority="high"
-        className="absolute inset-0 w-full h-full object-cover object-left lg:object-center opacity-90"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-90"
       />
-      {/* Overlay escuro estratégico para legibilidade do texto à esquerda e botões na base */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-black/60 lg:via-black/10 lg:to-transparent" />
+      {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
       
-      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-center justify-center lg:justify-start">
-        <div className="max-w-2xl text-center lg:text-left pt-12 md:pt-16">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-8 md:pb-12">
+        <div className="max-w-2xl text-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
             <Button
               size="xl"
-              className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 md:h-14"
+              className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12"
               asChild
             >
               <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
@@ -54,7 +54,7 @@ export function HomeHero() {
             <Button
               size="xl"
               variant="outline"
-              className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 md:h-14 transition-all"
+              className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12 transition-all"
               asChild
             >
               <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
@@ -68,7 +68,7 @@ export function HomeHero() {
 
 export function TrustStrip() {
   return (
-    <div className="bg-black border-y border-gold/10 py-6 md:py-8">
+    <div className="bg-black border-y border-gold/10 py-4 md:py-6">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
           {[
@@ -113,9 +113,9 @@ export function TrustStrip() {
 export function CategoriesSection() {
   const media = useSiteMedia();
   return (
-    <section className="py-8 md:py-12 bg-background">
+    <section className="py-6 md:py-8 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="mb-8">
+        <div className="mb-5 md:mb-6">
           <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-gold mb-2">Escolha por estilo</p>
           <div className="flex items-end justify-between">
             <div>
@@ -176,7 +176,7 @@ export function CategoriesSection() {
 
 function SectionHeader({ kicker, title, subtitle, link }: { kicker?: string; title: string; subtitle?: string; link?: { to: string; label: string; c?: string } }) {
   return (
-    <div className="flex items-end justify-between mb-10">
+    <div className="flex items-end justify-between mb-5 md:mb-6">
       <div>
         {kicker && <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3">{kicker}</p>}
         <h2 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">{title}</h2>
@@ -226,7 +226,7 @@ export function RecebidosHomeSection() {
 
 export function LookbookSection() {
   return (
-    <section className="py-12 md:py-16 bg-background text-foreground">
+    <section className="section-compact bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center space-y-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-foreground/60">Editorial J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
@@ -299,7 +299,7 @@ export function LojaFisicaSection() {
 
 export function DifferentialsSection() {
   return (
-    <section className="py-10 md:py-12 bg-background border-y border-border">
+    <section className="section-compact bg-background border-y border-border">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         {diferenciais.map(({ i: Icon, t, d }) => (
           <div key={t} className="flex items-start gap-3">
