@@ -1,14 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
 import heroMobile from "@/assets/hero-mobile.jpg";
-import vestidos from "@/assets/cat-vestidos.jpg";
-import conjuntos from "@/assets/cat-conjuntos.jpg";
-import blazers from "@/assets/cat-blazers.jpg";
-import alfaiataria from "@/assets/cat-alfaiataria.jpg";
-import tricots from "@/assets/cat-tricots.jpg";
-import novidades from "@/assets/cat-novidades.jpg";
-import lookbook1 from "@/assets/lookbook-1.jpg";
-import lookbook2 from "@/assets/lookbook-2.jpg";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Truck, RefreshCcw, ShieldCheck, MessageCircle, MapPin, Clock, Instagram } from "lucide-react";
@@ -19,10 +11,12 @@ import { track } from "@/lib/analytics";
 export const INSTAGRAM_HANDLE = "jes.storejoinville";
 export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
+// Imagens do catálogo real, servidas pelo proxy público do storage.
+const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: vestidos, q: "feminino" },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: blazers, q: "masculino" },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: CAT_IMG("calca-jeans-fem-azul-medio"), q: "feminino" },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: CAT_IMG("camisa-gola-polo-importada"), q: "masculino" },
 ];
 
 const diferenciais = [
@@ -281,14 +275,14 @@ export function InstagramSection() {
   // basta substituir "cells" por dados retornados de uma server function usando um
   // token de longa duração da Meta e mapear cada item para { image, permalink }.
   const cells: Array<{ img: string; permalink: string }> = [
-    { img: vestidos, permalink: INSTAGRAM_URL },
-    { img: conjuntos, permalink: INSTAGRAM_URL },
-    { img: blazers, permalink: INSTAGRAM_URL },
-    { img: alfaiataria, permalink: INSTAGRAM_URL },
-    { img: tricots, permalink: INSTAGRAM_URL },
-    { img: novidades, permalink: INSTAGRAM_URL },
-    { img: lookbook1, permalink: INSTAGRAM_URL },
-    { img: lookbook2, permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("camisa-gola-polo-importada"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("camiseta-peruana-branca"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("calca-jeans-masc-importada-azul-escuro"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("bermuda-sarja-lacoste"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("tshirt-feminina"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("calca-jeans-fem-azul-claro"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("short-sarja-mauricinho-reserva"), permalink: INSTAGRAM_URL },
+    { img: CAT_IMG("camiseta-malha-supima"), permalink: INSTAGRAM_URL },
   ];
   return (
     <section className="py-20 md:py-28 bg-background">
