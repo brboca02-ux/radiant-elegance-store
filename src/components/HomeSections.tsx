@@ -16,8 +16,8 @@ export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 const CAT_IMG = (slug: string) => `/api/public/img/catalogo/${slug}.jpg`;
 
 const categories = [
-  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 30%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey },
-  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 25%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey },
+  { label: "Feminino", alt: "Categoria Moda Feminina J&S Store", img: catFeminino.url, origin: "50% 22%", q: "feminino", mediaKey: "cat_feminino" as SiteMediaKey },
+  { label: "Masculino", alt: "Categoria Moda Masculina J&S Store", img: catMasculino.url, origin: "50% 14%", q: "masculino", mediaKey: "cat_masculino" as SiteMediaKey },
 ];
 
 const diferenciais = [
@@ -90,7 +90,7 @@ export function CategoriesSection() {
                 decoding="async"
                 width={900}
                 height={506}
-                style={{ transformOrigin: c.origin }}
+                style={{ objectPosition: c.origin }}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
               />
               <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
