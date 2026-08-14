@@ -419,6 +419,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_media: {
+        Row: {
+          key: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       stock_movements: {
         Row: {
           created_at: string
