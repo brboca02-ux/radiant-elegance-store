@@ -280,7 +280,7 @@ export function Header() {
       {/* Mobile drawer */}
       {open && typeof document !== "undefined" && createPortal((
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-foreground/50" onClick={() => setOpen(false)} />
+          <div className="absolute inset-0 bg-background/50" onClick={() => setOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background text-foreground shadow-2xl flex flex-col animate-in slide-in-from-left">
             <div className="flex items-center justify-between px-5 h-14 border-b border-gold/20">
               <span className="font-display font-extrabold text-xl text-gold">J&S <span className="text-silver">Store</span></span>

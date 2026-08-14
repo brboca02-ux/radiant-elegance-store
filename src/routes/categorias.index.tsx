@@ -47,9 +47,9 @@ function CategoriesListPage() {
                 {c.image ? (
                   <img src={c.image} alt={c.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                 ) : null}
-                <div className="absolute inset-0 bg-foreground/25 group-hover:bg-foreground/45 transition-colors" />
+                <div className="absolute inset-0 bg-background/30 group-hover:bg-background/55 transition-colors" />
                 <div className="absolute inset-x-0 bottom-0 px-3 py-2">
-                  <h3 className="font-medium text-xs md:text-sm text-background">{c.name}</h3>
+                  <h3 className="font-medium text-xs md:text-sm text-gold">{c.name}</h3>
                 </div>
               </div>
             ))}

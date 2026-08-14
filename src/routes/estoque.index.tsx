@@ -246,7 +246,7 @@ function MovementDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-background/50 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-background rounded-xl shadow-xl w-full max-w-md border border-border">
         <div className="p-5 border-b border-border">
           <h2 className="text-lg font-semibold">{titles[type]}</h2>

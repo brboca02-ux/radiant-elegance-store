@@ -172,7 +172,7 @@ function LeadModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="lead-popup-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-foreground/55 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-background/60 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div

@@ -97,7 +97,7 @@ export function SearchBox({ onNavigate, autoFocus = false, variant = "light" }: 
         onSubmit={(e) => { e.preventDefault(); submit(); }}
         className={`flex items-center gap-2 rounded-full px-4 py-2 focus-within:ring-2 ${
           variant === "dark"
-            ? "bg-foreground/10 text-foreground focus-within:ring-foreground/40"
+            ? "bg-input text-foreground focus-within:ring-primary/40"
             : "bg-secondary text-muted-foreground focus-within:ring-primary/40"
         }`}
       >
