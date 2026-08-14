@@ -68,17 +68,38 @@ export function HomeHero() {
 
 export function TrustStrip() {
   return (
-    <div className="bg-black border-y border-gold/20 py-3 md:py-4">
+    <div className="bg-black border-y border-gold/10 py-6 md:py-8">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="flex flex-wrap justify-center gap-x-8 md:gap-x-16 gap-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
           {[
-            { i: Truck, t: "Frete para todo o Brasil" },
-            { i: MessageCircle, t: "Atendimento no WhatsApp" },
-            { i: ShieldCheck, t: "Compra 100% Segura" }
+            { 
+              i: Truck, 
+              t: "Envio Nacional", 
+              d: "Entregamos com rapidez e segurança em todo o Brasil." 
+            },
+            { 
+              i: MessageCircle, 
+              t: "Suporte VIP", 
+              d: "Atendimento exclusivo via WhatsApp para sua melhor experiência." 
+            },
+            { 
+              i: ShieldCheck, 
+              t: "Pagamento Seguro", 
+              d: "Sua compra protegida com as melhores tecnologias de segurança." 
+            }
           ].map((item, idx) => (
-            <div key={idx} className="flex items-center gap-2 text-[10px] md:text-xs font-medium uppercase tracking-widest text-gold/90">
-              <item.i className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={1.5} />
-              {item.t}
+            <div key={idx} className="flex flex-col items-center text-center space-y-3 group">
+              <div className="p-3 rounded-full bg-gold/5 border border-gold/10 group-hover:border-gold/30 transition-colors">
+                <item.i className="h-5 w-5 md:h-6 md:w-6 text-gold" strokeWidth={1.2} />
+              </div>
+              <div>
+                <h3 className="text-xs md:text-sm font-bold uppercase tracking-widest text-gold mb-1">
+                  {item.t}
+                </h3>
+                <p className="text-[10px] md:text-xs text-muted-foreground/80 leading-relaxed max-w-[200px] mx-auto">
+                  {item.d}
+                </p>
+              </div>
             </div>
           ))}
         </div>
