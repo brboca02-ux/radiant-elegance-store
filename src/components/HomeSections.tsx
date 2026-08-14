@@ -155,7 +155,7 @@ export function LaunchSection() {
 
 export function RecebidosHomeSection() {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Esta semana" title="Recebidos da Semana" link={{ to: "/colecao", label: "Ver lançamentos", c: "recebidos-da-semana" }} />
         <ProductGrid sortKey="CREATED_AT" reverse first={4} />
