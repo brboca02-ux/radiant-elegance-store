@@ -154,7 +154,7 @@ export function Header() {
         </button>
         <Link to="/" className="flex items-center">
           <span className="font-display font-bold text-xl sm:text-2xl tracking-tight text-gold">
-            J&S <span className="text-silver">STORE</span>
+            J&S
           </span>
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
