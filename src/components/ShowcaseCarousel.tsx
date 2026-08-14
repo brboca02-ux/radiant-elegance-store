@@ -50,7 +50,7 @@ export function ShowcaseCarousel() {
   if (!loaded || showcaseProducts.length === 0) return null;
 
   return (
-    <section className="py-12 bg-background border-b border-border overflow-hidden">
+    <section className="py-10 md:py-14 bg-background border-b border-border overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between mb-8">
           <div>
