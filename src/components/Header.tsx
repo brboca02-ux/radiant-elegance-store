@@ -137,46 +137,56 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-background text-foreground border-b border-gold/20">
-      <div className="bg-background text-foreground text-[11px] sm:text-xs py-1.5 sm:py-2 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-3 flex flex-nowrap sm:flex-wrap items-center justify-start sm:justify-center gap-x-5 sm:gap-x-6 gap-y-1 whitespace-nowrap overflow-x-auto no-scrollbar">
-          <span>Entregamos para toda a região</span>
-          <span>Atendimento pelo WhatsApp</span>
-          <span>Parcelamento facilitado</span>
+      <div className="bg-black text-gold border-b border-gold/10 py-2 overflow-hidden relative">
+        <div className="flex animate-marquee whitespace-nowrap">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
+              <span className="text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase">Entregamos para todo o Brasil</span>
+              <span className="h-1 w-1 bg-gold rounded-full" />
+              <span className="text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase">Parcelamento em até 10x</span>
+              <span className="h-1 w-1 bg-gold rounded-full" />
+              <span className="text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase">Atendimento Personalizado</span>
+              <span className="h-1 w-1 bg-gold rounded-full" />
+            </div>
+          ))}
         </div>
       </div>
-      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-6">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
         <button
           aria-label="Abrir menu"
           onClick={() => setOpen(true)}
-          className="md:hidden tap-target -ml-2 flex items-center justify-center"
+          className="md:hidden tap-target -ml-2 flex items-center justify-center text-gold"
         >
           <Menu className="h-6 w-6" />
         </button>
-        <Link to="/" className="flex items-center tap-target" aria-label="J&S Store">
-          <span className="font-display font-bold text-xl sm:text-2xl tracking-tight text-gold">
-            &nbsp;
+        <Link to="/" className="flex flex-col items-center tap-target group" aria-label="J&S Store">
+          <span className="font-display font-bold text-2xl sm:text-3xl tracking-[0.15em] text-gold transition-transform group-hover:scale-105">
+            J&S
+          </span>
+          <span className="text-[8px] tracking-[0.4em] uppercase text-silver font-medium -mt-1 opacity-80">
+            STORE
           </span>
         </Link>
         <div className="hidden md:flex flex-1 max-w-md">
           <SearchBox variant="dark" />
         </div>
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-4">
           <a
             href={buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de ajuda.")}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"
             onClick={() => track.whatsappClick("header")}
-            className="hidden sm:inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition"
+            className="hidden lg:inline-flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-full text-sm font-bold hover:opacity-90 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-green-500/20"
           >
-            <MessageCircle className="h-4 w-4" /> WhatsApp
+            <MessageCircle className="h-4 w-4 fill-current" /> WHATSAPP
           </a>
 
-          <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center">
-            <Search className="h-5 w-5" />
+          <button aria-label="Buscar" onClick={() => setMobileSearch((v) => !v)} className="md:hidden tap-target flex items-center justify-center text-gold">
+            <Search className="h-6 w-6" />
           </button>
-          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden md:inline-flex tap-target items-center justify-center text-foreground/70 hover:text-foreground transition">
-            <User className="h-5 w-5" />
+          <Link to="/dashboard" aria-label="Painel administrativo" title="Painel admin" className="hidden sm:inline-flex tap-target items-center justify-center text-gold hover:text-silver transition-colors">
+            <User className="h-6 w-6" />
           </Link>
           <CartDrawer />
         </div>
@@ -283,7 +293,10 @@ export function Header() {
           <div className="absolute inset-0 bg-background/50" onClick={() => setOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-background text-foreground shadow-2xl flex flex-col animate-in slide-in-from-left">
             <div className="flex items-center justify-between px-5 h-14 border-b border-gold/20">
-              <span className="font-display font-extrabold text-xl text-gold">J&S <span className="text-silver">Store</span></span>
+              <div className="flex flex-col items-start leading-none">
+                <span className="font-display font-bold text-xl tracking-[0.1em] text-gold uppercase">J&S</span>
+                <span className="text-[8px] tracking-[0.4em] uppercase text-silver font-medium">STORE</span>
+              </div>
               <button aria-label="Fechar" onClick={() => setOpen(false)} className="h-11 w-11 -mr-2 flex items-center justify-center text-foreground hover:text-gold transition">
                 <X className="h-6 w-6" />
               </button>
