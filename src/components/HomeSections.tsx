@@ -83,16 +83,19 @@ export function CategoriesSection() {
               search={{ c: c.q }}
               className="group relative h-[85px] md:h-[130px] overflow-hidden bg-secondary"
             >
-              <img
-                src={media[c.mediaKey] ?? c.img}
-                alt={c.alt}
-                loading="lazy"
-                decoding="async"
-                width={900}
-                height={506}
-                style={{ objectPosition: c.origin }}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-              />
+              <picture>
+                <source srcSet={`${media[c.mediaKey] ?? c.img}?width=450&format=webp`} type="image/webp" />
+                <img
+                  src={media[c.mediaKey] ?? c.img}
+                  alt={c.alt}
+                  width={450}
+                  height={250}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  style={{ objectPosition: c.origin }}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
               <div className="absolute inset-0 bg-black/40 transition-colors duration-500 group-hover:bg-black/20" />
               <div className="absolute inset-0 flex items-center justify-center p-3 text-center">
                 <div className="space-y-2">
