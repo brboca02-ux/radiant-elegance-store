@@ -451,7 +451,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           <div className="space-y-6">
             <Card title="SEO">
               <Field label="Slug">
-                <input value={data.slug} onChange={(e) => set("slug", slugify(e.target.value))} className={input} placeholder="vestido-aurora" />
+                <input value={data.slug} onChange={(e) => set("slug", slugify(e.target.value))} className={input} placeholder="camisa-gola-polo-importada" />
               </Field>
               <Field label="Meta Title">
                 <input value={data.meta_title} onChange={(e) => set("meta_title", e.target.value)} className={input} maxLength={60} />
@@ -526,7 +526,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                     <input
                       value={aiPieceType}
                       onChange={(e) => setAiPieceType(e.target.value)}
-                      placeholder="Ex: Vestido midi"
+                      placeholder="Ex: Camisa gola polo"
                       className={`${input} h-9 text-xs`}
                     />
                   </label>
