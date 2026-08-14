@@ -270,7 +270,7 @@ export function InstagramSection() {
     { img: CAT_IMG("camiseta-malha-supima"), permalink: INSTAGRAM_URL },
   ];
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3 inline-flex items-center gap-2">
