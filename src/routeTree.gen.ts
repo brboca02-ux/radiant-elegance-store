@@ -44,6 +44,7 @@ import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retira
 import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
 import { Route as PedidosRastreioIdRouteImport } from './routes/pedidos.rastreio.$id'
 import { Route as ProdutosIdEditarRouteImport } from './routes/produtos.$id.editar'
+import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -221,6 +222,11 @@ const ProdutosIdEditarRoute = ProdutosIdEditarRouteImport.update({
   path: '/produtos/$id/editar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
+  id: '/api/public/img/$',
+  path: '/api/public/img/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -257,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
+  '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -293,6 +300,7 @@ export interface FileRoutesByTo {
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
+  '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -331,6 +339,7 @@ export interface FileRoutesById {
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
   '/pedidos/rastreio/$id': typeof PedidosRastreioIdRoute
   '/produtos/$id/editar': typeof ProdutosIdEditarRoute
+  '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -369,6 +378,7 @@ export interface FileRouteTypes {
     | '/pedido/sucesso/$numero'
     | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
+    | '/api/public/img/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -405,6 +415,7 @@ export interface FileRouteTypes {
     | '/pedido/sucesso/$numero'
     | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
+    | '/api/public/img/$'
   id:
     | '__root__'
     | '/'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/pedido/sucesso/$numero'
     | '/pedidos/rastreio/$id'
     | '/produtos/$id/editar'
+    | '/api/public/img/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -479,6 +491,7 @@ export interface RootRouteChildren {
   PedidoSucessoNumeroRoute: typeof PedidoSucessoNumeroRoute
   PedidosRastreioIdRoute: typeof PedidosRastreioIdRoute
   ProdutosIdEditarRoute: typeof ProdutosIdEditarRoute
+  ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -728,6 +741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosIdEditarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/img/$': {
+      id: '/api/public/img/$'
+      path: '/api/public/img/$'
+      fullPath: '/api/public/img/$'
+      preLoaderRoute: typeof ApiPublicImgSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -777,6 +797,7 @@ const rootRouteChildren: RootRouteChildren = {
   PedidoSucessoNumeroRoute: PedidoSucessoNumeroRoute,
   PedidosRastreioIdRoute: PedidosRastreioIdRoute,
   ProdutosIdEditarRoute: ProdutosIdEditarRoute,
+  ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

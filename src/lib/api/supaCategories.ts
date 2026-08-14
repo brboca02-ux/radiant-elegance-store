@@ -38,7 +38,7 @@ export async function createCategoryRemote(c: Omit<Category, "id" | "store_id" |
 }
 
 export async function updateCategoryRemote(id: string, patch: Partial<Category>): Promise<void> {
-  const fields: Record<string, unknown> = {};
+  const fields: Partial<DbCategory> = {};
   if (patch.name !== undefined) fields.name = patch.name;
   if (patch.slug !== undefined) fields.slug = patch.slug;
   if (patch.description !== undefined) fields.description = patch.description;
