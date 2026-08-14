@@ -41,7 +41,7 @@ export function HomeHero() {
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <Button
             size="xl"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
+            className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
             asChild
           >
             <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
@@ -49,7 +49,7 @@ export function HomeHero() {
           <Button
             size="xl"
             variant="outline"
-            className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
+            className="bg-transparent border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none px-7 lg:px-10 font-semibold shadow-lg"
             asChild
           >
             <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
@@ -85,9 +85,9 @@ export function CategoriesSection() {
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-foreground/25 transition-colors duration-300 group-hover:bg-foreground/45" />
+              <div className="absolute inset-0 bg-background/30 transition-colors duration-300 group-hover:bg-background/55" />
               <div className="absolute inset-x-0 bottom-0 px-3 py-2">
-                <h3 className="font-medium text-xs md:text-sm text-background tracking-wide">{c.label}</h3>
+                <h3 className="font-medium text-xs md:text-sm text-gold tracking-wide">{c.label}</h3>
               </div>
             </Link>
           ))}
@@ -129,7 +129,7 @@ export function BestSellersSection() {
 
 export function LaunchSection() {
   return (
-    <section id="colecao" className="py-20 md:py-28 bg-offwhite">
+    <section id="colecao" className="py-20 md:py-28 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Acabou de chegar" title="Novidades" link={{ to: "/colecao", label: "Ver coleção", c: "novidades" }} />
         <ProductGrid sortKey="CREATED_AT" reverse first={8} />
@@ -151,22 +151,22 @@ export function RecebidosHomeSection() {
 
 export function LookbookSection() {
   return (
-    <section className="py-16 md:py-24 bg-foreground text-background">
+    <section className="py-16 md:py-24 bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center space-y-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-background/60">Editorial J&S Store</p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-foreground/60">Editorial J&S Store</p>
         <h2 className="font-display font-semibold text-3xl md:text-5xl leading-tight">
           Moda para o seu dia, na sua cidade.
         </h2>
-        <p className="text-base text-background/75 leading-relaxed max-w-xl mx-auto">
+        <p className="text-base text-foreground/75 leading-relaxed max-w-xl mx-auto">
           Há anos vestindo mulheres e homens de Joinville com peças selecionadas para o
           dia a dia, trabalho e ocasiões especiais. Atendimento próximo, curadoria honesta
           e o cuidado de uma loja física feita por gente da cidade.
         </p>
         <div className="pt-2 flex flex-wrap gap-3 justify-center">
-          <Button size="xl" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-none px-8" asChild>
+          <Button size="xl" className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8" asChild>
             <Link to="/colecao" search={{ c: undefined }}>Explorar coleção</Link>
           </Button>
-          <Button size="xl" variant="outline" className="bg-transparent border-background text-background hover:bg-background hover:text-foreground rounded-none px-8" asChild>
+          <Button size="xl" variant="outline" className="bg-transparent border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none px-8" asChild>
             <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
               <Instagram className="w-4 h-4 mr-2" strokeWidth={1.5} />
               Siga @{INSTAGRAM_HANDLE}
@@ -181,7 +181,7 @@ export function LookbookSection() {
 
 export function LojaFisicaSection() {
   return (
-    <section id="loja" aria-labelledby="loja-titulo" className="py-20 md:py-28 bg-offwhite scroll-mt-24">
+    <section id="loja" aria-labelledby="loja-titulo" className="py-20 md:py-28 bg-background scroll-mt-24">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
         <div className="aspect-[4/3] overflow-hidden bg-secondary order-2 md:order-1">
           <iframe

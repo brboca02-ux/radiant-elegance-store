@@ -15,7 +15,7 @@ export function LegalPage({ eyebrow, title, updatedAt = "Junho de 2026", breadcr
   return (
     <div className="bg-background">
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-      <section className="bg-offwhite border-b border-border py-14">
+      <section className="bg-background border-b border-border py-14">
         <div className="max-w-[860px] mx-auto px-6">
           <span className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground">{eyebrow}</span>
           <h1 className="font-display text-4xl md:text-5xl mt-3">{title}</h1>
@@ -28,7 +28,7 @@ export function LegalPage({ eyebrow, title, updatedAt = "Junho de 2026", breadcr
         {children}
       </article>
 
-      <section className="border-t border-border bg-offwhite py-12">
+      <section className="border-t border-border bg-background py-12">
         <div className="max-w-[860px] mx-auto px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p className="font-display text-xl">Precisa de ajuda?</p>
