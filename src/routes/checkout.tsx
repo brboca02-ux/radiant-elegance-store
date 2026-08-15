@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
 import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
 import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
+import { validateCoupon, calculateDiscount, type Coupon } from "@/lib/coupons";
+import { Ticket, X as CloseIcon } from "lucide-react";
 
 const DRAFT_KEY = "md_checkout_draft_v1";
 
@@ -104,7 +106,31 @@ function CheckoutPage() {
     amount: number;
     email: string;
   } | null>(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
   const pollRef = useRef<number | null>(null);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setValidatingCoupon(true);
+    try {
+      const c = await validateCoupon(couponCode);
+      if (c) {
+        setAppliedCoupon(c);
+        toast.success("Cupom aplicado!");
+      } else {
+        toast.error("Cupom inválido ou expirado.");
+      }
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+  };
 
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0),
@@ -113,7 +139,8 @@ function CheckoutPage() {
   const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
   const selectedQuote = quotes.find((q) => q.code === shippingCode);
   const shippingCost = selectedQuote?.price ?? 0;
-  const total = subtotal + shippingCost;
+  const discount = appliedCoupon ? calculateDiscount(subtotal, appliedCoupon) : 0;
+  const total = subtotal + shippingCost - discount;
 
   // pré-preenche email/nome do usuário logado
   useEffect(() => {
@@ -300,7 +327,7 @@ function CheckoutPage() {
         subtotal: +subtotal.toFixed(2),
         shipping_cost: +shippingCost.toFixed(2),
         shipping_method: selectedQuote?.name ?? "",
-        discount: 0,
+        discount: +discount.toFixed(2),
         total: +total.toFixed(2),
         payment_method: paymentMethod,
       });
@@ -639,8 +666,43 @@ function CheckoutPage() {
                     muted
                   />
                 )}
+                {appliedCoupon && (
+                  <Row 
+                    label={`Cupom (${appliedCoupon.code})`} 
+                    value={`-${formatPrice(discount, "BRL")}`} 
+                    className="text-emerald-500 font-medium"
+                  />
+                )}
                 <Row label="Total" value={formatPrice(total, "BRL")} bold />
               </div>
+
+              {!appliedCoupon ? (
+                <div className="mt-4 flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Cupom de desconto"
+                    className="flex-1 h-9 px-3 rounded border border-border bg-background text-xs outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    onClick={handleApplyCoupon}
+                    disabled={validatingCoupon || !couponCode}
+                    className="h-9 px-4 bg-secondary text-foreground text-[10px] uppercase font-bold rounded hover:bg-secondary/80 disabled:opacity-50"
+                  >
+                    {validatingCoupon ? <Loader2 className="h-3 w-3 animate-spin" /> : "Aplicar"}
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-4 flex items-center justify-between p-2 rounded bg-emerald-500/5 border border-emerald-500/20">
+                  <div className="flex items-center gap-2 text-[10px] text-emerald-600 font-bold uppercase">
+                    <Ticket className="h-3 w-3" /> {appliedCoupon.code}
+                  </div>
+                  <button onClick={removeCoupon} className="p-1 hover:text-red-500 transition">
+                    <CloseIcon className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
               <button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
