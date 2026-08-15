@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AdminNotificationsBell } from "@/components/admin/AdminNotificationsBell";
 
-type MenuKey = "dashboard" | "produtos" | "pedidos" | "clientes" | "marketing" | "configuracoes";
+type MenuKey = "dashboard" | "produtos" | "pedidos" | "marketing" | "configuracoes";
 
 const MENU: { key: MenuKey; label: string; to: string; icon: typeof LayoutDashboard; match: string[] }[] = [
   { key: "dashboard", label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, match: ["/dashboard"] },
