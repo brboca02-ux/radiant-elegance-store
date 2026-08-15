@@ -115,7 +115,7 @@ export function TrustStrip() {
 export function CategoriesSection() {
   const media = useSiteMedia();
   return (
-    <section className="py-6 md:py-8 bg-background">
+    <section className="py-4 md:py-6 bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <div className="mb-5 md:mb-6">
           <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-gold mb-2">Escolha por estilo</p>
