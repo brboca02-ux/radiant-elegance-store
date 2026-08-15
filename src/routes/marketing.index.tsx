@@ -35,6 +35,8 @@ function MarketingPage() {
       const [l, c] = await Promise.all([loadLeads(), loadCoupons()]);
       setLeads(l);
       setCoupons(c);
+    } catch (e) {
+      toast.error("Não foi possível carregar leads/cupons do banco.");
     } finally {
       setLoading(false);
     }

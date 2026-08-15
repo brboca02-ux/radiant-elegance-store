@@ -32,10 +32,25 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
 };
 
 const STORAGE_KEY = "md_site_config_v1";
+const CONFIG_KEY = "home";
 
 export async function loadSiteConfig(): Promise<SiteConfig> {
-  // Use localStorage as the source for now since we cannot create new tables
-  // but we provide an async interface to make it feel like a backend.
+  // Fonte de verdade: tabela `site_config` (leitura pública). O localStorage
+  // fica apenas como cache para a primeira pintura da home.
+  const { data, error } = await supabase
+    .from("site_config")
+    .select("value")
+    .eq("key", CONFIG_KEY)
+    .maybeSingle();
+
+  if (!error && data?.value) {
+    const cfg = { ...DEFAULT_SITE_CONFIG, ...(data.value as Partial<SiteConfig>) };
+    if (typeof window !== "undefined") {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); } catch { /* cache opcional */ }
+    }
+    return cfg;
+  }
+
   if (typeof window === "undefined") return DEFAULT_SITE_CONFIG;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -47,9 +62,18 @@ export async function loadSiteConfig(): Promise<SiteConfig> {
 }
 
 export async function saveSiteConfig(cfg: SiteConfig) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
-  window.dispatchEvent(new CustomEvent("md:site-config"));
+  const { error } = await supabase
+    .from("site_config")
+    .upsert(
+      { key: CONFIG_KEY, value: JSON.parse(JSON.stringify(cfg)) },
+      { onConflict: "key" },
+    );
+  if (error) throw new Error(error.message);
+
+  if (typeof window !== "undefined") {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); } catch { /* cache opcional */ }
+    window.dispatchEvent(new CustomEvent("md:site-config"));
+  }
 }
 
 export function useSiteConfig(): SiteConfig {

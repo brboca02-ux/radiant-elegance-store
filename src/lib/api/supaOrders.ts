@@ -33,6 +33,8 @@ export interface NewOrderInput {
   total?: number; // ignorado no servidor
   payment_method: PaymentMethod;
   notes?: string;
+  /** Código do cupom: validado e contabilizado no servidor. */
+  coupon_code?: string;
 }
 
 export interface CreatedOrder {
@@ -77,6 +79,7 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
     shipping_cost: input.shipping_cost,
     payment_method: input.payment_method,
     notes: input.notes ?? null,
+    coupon_code: input.coupon_code ?? null,
   };
 
   if (payload.items.length === 0) {
