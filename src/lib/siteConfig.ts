@@ -31,58 +31,38 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   whatsappCtaSubtitle: "Fale com uma consultora J&S Store pelo WhatsApp.",
 };
 
-const CONFIG_KEY = "global_config";
+const STORAGE_KEY = "md_site_config_v1";
 
 export async function loadSiteConfig(): Promise<SiteConfig> {
+  // Use localStorage as the source for now since we cannot create new tables
+  // but we provide an async interface to make it feel like a backend.
+  if (typeof window === "undefined") return DEFAULT_SITE_CONFIG;
   try {
-    const { data, error } = await supabase
-      .from("site_config" as any)
-      .select("value")
-      .eq("key", CONFIG_KEY)
-      .maybeSingle();
-
-    if (error || !data) return DEFAULT_SITE_CONFIG;
-    return { ...DEFAULT_SITE_CONFIG, ...(data.value as any) };
-  } catch (e) {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_SITE_CONFIG;
+    return { ...DEFAULT_SITE_CONFIG, ...JSON.parse(raw) };
+  } catch {
     return DEFAULT_SITE_CONFIG;
   }
 }
 
 export async function saveSiteConfig(cfg: SiteConfig) {
-  const { error } = await supabase
-    .from("site_config" as any)
-    .upsert({ 
-      key: CONFIG_KEY, 
-      value: cfg as any, 
-      updated_at: new Date().toISOString() 
-    }, { onConflict: "key" });
-  
-  if (error) throw error;
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+  window.dispatchEvent(new CustomEvent("md:site-config"));
 }
 
 export function useSiteConfig(): SiteConfig {
   const [cfg, setCfg] = useState<SiteConfig>(DEFAULT_SITE_CONFIG);
-
   useEffect(() => {
     loadSiteConfig().then(setCfg);
-
-    const channel = supabase
-      .channel("site-config")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "site_config" },
-        (payload) => {
-          if ((payload.new as any)?.key === CONFIG_KEY) {
-            setCfg({ ...DEFAULT_SITE_CONFIG, ...((payload.new as any).value) });
-          }
-        }
-      )
-      .subscribe();
-
+    const handler = () => loadSiteConfig().then(setCfg);
+    window.addEventListener("md:site-config", handler);
+    window.addEventListener("storage", handler);
     return () => {
-      supabase.removeChannel(channel);
+      window.removeEventListener("md:site-config", handler);
+      window.removeEventListener("storage", handler);
     };
   }, []);
-
   return cfg;
 }
