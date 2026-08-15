@@ -96,7 +96,7 @@ function CategoriesListPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{c.slug}</td>
-                  <td className="px-4 py-3">{countFor(c.id)}</td>
+                  <td className="px-4 py-3">{countFor(c)}</td>
                   <td className="px-4 py-3 text-xs">
                     <div className="flex flex-wrap gap-1">
                       {c.show_home && <span className="rounded bg-muted px-1.5 py-0.5">Home</span>}
@@ -136,7 +136,7 @@ function CategoriesListPage() {
                   <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ring-1 capitalize ${statusBadge[c.status]}`}>{c.status}</span>
                 </div>
                 <p className="text-xs text-muted-foreground font-mono">/{c.slug}</p>
-                <p className="text-xs text-muted-foreground mt-1">{countFor(c.id)} produtos · ordem {c.sort_order}</p>
+                <p className="text-xs text-muted-foreground mt-1">{countFor(c)} produtos · ordem {c.sort_order}</p>
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => navigate({ to: "/categorias/$id/editar", params: { id: c.id } })}
                     className="text-xs rounded border border-border px-2 py-1">Editar</button>
