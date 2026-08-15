@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, ImageOff, Star } from "lucide-react";
 import { useCategoriesStore, type CategoryStatus } from "@/stores/categoriesStore";
+import { useProductsStore } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/categorias/")({
   head: () => ({ meta: [{ title: "Categorias — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -19,6 +20,13 @@ function CategoriesListPage() {
   const navigate = useNavigate();
   const categories = useCategoriesStore((s) => s.categories);
   const remove = useCategoriesStore((s) => s.remove);
+  const products = useProductsStore((s) => s.products);
+  const countFor = (category: { id: string; slug: string }) =>
+    products.filter(
+      (p) =>
+        (p.category_id === category.id || p.category_id === category.slug) &&
+        p.status !== "arquivado",
+    ).length;
 
   return (
     <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
@@ -88,7 +96,7 @@ function CategoriesListPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{c.slug}</td>
-                  <td className="px-4 py-3">{c.product_count}</td>
+                  <td className="px-4 py-3">{countFor(c)}</td>
                   <td className="px-4 py-3 text-xs">
                     <div className="flex flex-wrap gap-1">
                       {c.show_home && <span className="rounded bg-muted px-1.5 py-0.5">Home</span>}
@@ -128,7 +136,7 @@ function CategoriesListPage() {
                   <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ring-1 capitalize ${statusBadge[c.status]}`}>{c.status}</span>
                 </div>
                 <p className="text-xs text-muted-foreground font-mono">/{c.slug}</p>
-                <p className="text-xs text-muted-foreground mt-1">{c.product_count} produtos · ordem {c.sort_order}</p>
+                <p className="text-xs text-muted-foreground mt-1">{countFor(c)} produtos · ordem {c.sort_order}</p>
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => navigate({ to: "/categorias/$id/editar", params: { id: c.id } })}
                     className="text-xs rounded border border-border px-2 py-1">Editar</button>

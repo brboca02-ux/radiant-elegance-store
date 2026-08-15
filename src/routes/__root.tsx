@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -11,6 +12,18 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+
+const ADMIN_PREFIXES = [
+  "/dashboard",
+  "/produtos",
+  "/pedidos",
+  "/clientes",
+  "/marketing",
+  "/admin",
+  "/estoque",
+  "/categorias",
+  "/login",
+];
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -247,6 +260,22 @@ function AppShell() {
   useCartSync();
   useHydrateStores();
   useAuthSync();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdminArea = ADMIN_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/"),
+  );
+
+  if (isAdminArea) {
+    return (
+      <>
+        <main id="conteudo" tabIndex={-1} className="min-h-screen">
+          <Outlet />
+        </main>
+        <Toaster position="top-center" />
+      </>
+    );
+  }
+
   return (
     <>
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
