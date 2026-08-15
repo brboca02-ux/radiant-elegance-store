@@ -305,7 +305,7 @@ function MarketingPage() {
                         {a.customer_email} {a.customer_phone && `· ${a.customer_phone}`}
                       </div>
                       <div className="text-[11px] text-muted-foreground mt-2">
-                        {a.cart_data.items?.length || 0} itens · Total: {formatPrice({ amount: String(a.total), currencyCode: "BRL" })}
+                        {a.cart_data.items?.length || 0} itens · Total: {formatPrice(a.total)}
                       </div>
                       <div className="text-[10px] text-muted-foreground italic">
                         Visto pela última vez: {new Date(a.last_updated_at).toLocaleString("pt-BR")}
