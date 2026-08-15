@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import {
   ArrowLeft, MessageCircle, Download, Save, ShoppingBag, Mail, Phone,
   Calendar, MessageSquare,
@@ -24,8 +24,14 @@ function CustomerDetailPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const customer = useCustomersStore((s) => s.customers.find((c) => c.id === id));
+  const hydrate = useCustomersStore((s) => s.hydrate);
   const update = useCustomersStore((s) => s.update);
   const addMessage = useCustomersStore((s) => s.addMessage);
+  
+  useEffect(() => {
+    if (!customer) hydrate();
+  }, [id, customer, hydrate]);
+
   const orders = useOrdersStore((s) =>
     s.orders.filter((o) => o.customer.id === id || o.customer.email === customer?.email),
   );

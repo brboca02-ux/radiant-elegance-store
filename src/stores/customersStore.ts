@@ -5,6 +5,16 @@ export const STORE_ID = "store_js_store";
 
 export type CustomerStatus = "ativo" | "vip" | "inativo";
 
+export interface CustomerMessage {
+  id: string;
+  customer_id: string;
+  channel: "whatsapp" | "email" | "manual";
+  direction: "in" | "out";
+  body: string;
+  user_id?: string;
+  created_at: string;
+}
+
 export interface Customer {
   id: string;
   name: string;
@@ -15,6 +25,8 @@ export interface Customer {
   total_spent: number;
   last_order_at?: string | null;
   status: CustomerStatus;
+  notes?: string;
+  messages: CustomerMessage[];
   created_at: string;
 }
 
@@ -23,6 +35,8 @@ interface CustomersState {
   loading: boolean;
   hydrate: () => Promise<void>;
   get: (id: string) => Promise<Customer | null>;
+  update: (id: string, patch: Partial<Omit<Customer, "id" | "messages">>) => Promise<void>;
+  addMessage: (id: string, m: Omit<CustomerMessage, "id" | "customer_id" | "created_at">) => Promise<void>;
 }
 
 export const useCustomersStore = create<CustomersState>((set, get) => ({
@@ -39,23 +53,20 @@ export const useCustomersStore = create<CustomersState>((set, get) => ({
 
       if (error) throw error;
 
-      // Transform data to fit Customer interface if needed
-      // Currently the table columns match well enough, but we might want to calculate stats
-      // if they aren't directly in the table. 
-      // The `customers` table in types.ts has: cpf, created_at, email, id, name, phone, updated_at, user_id
-      // It lacks total_orders and total_spent which were in the local store.
-      
-      // We'll fetch total stats from orders
       const { data: orders, error: ordersError } = await supabase
         .from("orders")
-        .select("customer_id, total, status");
+        .select("customer_id, total, status, created_at");
 
       if (ordersError) throw ordersError;
 
       const mapped: Customer[] = (data || []).map(c => {
         const customerOrders = orders?.filter(o => o.customer_id === c.id) || [];
-        const paidOrders = customerOrders.filter(o => o.status === 'pago' || o.status === 'entregue' || o.status === 'enviado' || o.status === 'separando');
+        const paidOrders = customerOrders.filter(o => ['pago', 'entregue', 'enviado', 'separando'].includes(o.status));
         
+        const lastOrder = customerOrders.length > 0 
+          ? customerOrders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+          : null;
+
         return {
           id: c.id,
           name: c.name,
@@ -64,8 +75,10 @@ export const useCustomersStore = create<CustomersState>((set, get) => ({
           cpf: c.cpf,
           total_orders: customerOrders.length,
           total_spent: paidOrders.reduce((acc, o) => acc + (o.total || 0), 0),
-          last_order_at: null, // Would need more complex query or join
-          status: "ativo", // Default status
+          last_order_at: lastOrder?.created_at || null,
+          status: "ativo",
+          notes: "",
+          messages: [],
           created_at: c.created_at,
         };
       });
@@ -86,7 +99,6 @@ export const useCustomersStore = create<CustomersState>((set, get) => ({
 
     if (error || !data) return null;
     
-    // Simple return for detail view
     return {
       id: data.id,
       name: data.name,
@@ -96,8 +108,35 @@ export const useCustomersStore = create<CustomersState>((set, get) => ({
       total_orders: 0,
       total_spent: 0,
       status: "ativo",
+      notes: "",
+      messages: [],
       created_at: data.created_at,
     };
+  },
+
+  update: async (id, patch) => {
+    // Optimistic update
+    set(s => ({
+      customers: s.customers.map(c => c.id === id ? { ...c, ...patch } : c)
+    }));
+
+    // In a real scenario, we would update Supabase here
+    await supabase.from("customers").update({
+      name: patch.name,
+      email: patch.email,
+      phone: patch.whatsapp,
+      cpf: patch.cpf
+    }).eq("id", id);
+  },
+
+  addMessage: async (id, m) => {
+    // Placeholder for real message storage
+    set(s => ({
+      customers: s.customers.map(c => c.id === id ? {
+        ...c,
+        messages: [...c.messages, { ...m, id: Math.random().toString(), customer_id: id, created_at: new Date().toISOString() }]
+      } : c)
+    }));
   }
 }));
 
@@ -106,6 +145,9 @@ export const fmtBRL = (n: number) =>
 
 export const fmtDate = (iso?: string | null) =>
   iso ? new Date(iso).toLocaleDateString("pt-BR") : "—";
+
+export const fmtDateTime = (iso: string) =>
+  new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
 export const statusTone: Record<CustomerStatus, string> = {
   ativo: "bg-emerald-50 text-emerald-700 ring-emerald-200",
