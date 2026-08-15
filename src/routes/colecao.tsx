@@ -77,10 +77,10 @@ function ColecaoPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://jsstore.com.br/" },
-      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://jsstore.com.br/colecao" },
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://jsstore.lovable.app/" },
+      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://jsstore.lovable.app/colecao" },
       ...(seo
-        ? [{ "@type": "ListItem", position: 3, name: seo.name, item: `https://jsstore.com.br/colecao?c=${seo.id}` }]
+        ? [{ "@type": "ListItem", position: 3, name: seo.name, item: `https://jsstore.lovable.app/colecao?c=${seo.id}` }]
         : []),
     ],
   };
