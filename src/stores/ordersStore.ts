@@ -283,11 +283,6 @@ export const useOrdersStore = create<OrdersState>()(
   ),
 );
 
-export const fmtBRL = (n: number) =>
-  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-export const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
 export const statusTone: Record<OrderStatus, string> = {
   novo: "bg-slate-100 text-slate-700 ring-slate-200",

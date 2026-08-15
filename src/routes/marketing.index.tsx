@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useMemo } from "react";
-import { Megaphone, Mail, Ticket, Users, Plus, Trash2, Calendar, Hash, Percent } from "lucide-react";
+import { Megaphone, Mail, Ticket, Package, Plus, Trash2, Calendar, Hash, Percent } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { loadLeads, type Lead } from "@/lib/leads";
 import { loadCoupons, saveCoupon, deleteCoupon, type Coupon } from "@/lib/coupons";
@@ -93,7 +93,7 @@ function MarketingPage() {
 
         <div className="flex gap-1 border-b border-border mb-6 overflow-x-auto">
           {[
-            { k: "leads" as Tab, label: "Leads", icon: Users },
+            { k: "leads" as Tab, label: "Leads", icon: Package },
             { k: "cupons" as Tab, label: "Cupons", icon: Ticket },
             { k: "newsletter" as Tab, label: "Newsletter", icon: Mail },
           ].map((t) => {

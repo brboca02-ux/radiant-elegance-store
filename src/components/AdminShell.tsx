@@ -7,13 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AdminNotificationsBell } from "@/components/admin/AdminNotificationsBell";
 
-type MenuKey = "dashboard" | "produtos" | "pedidos" | "clientes" | "marketing" | "configuracoes";
+type MenuKey = "dashboard" | "produtos" | "pedidos" | "marketing" | "configuracoes";
 
 const MENU: { key: MenuKey; label: string; to: string; icon: typeof LayoutDashboard; match: string[] }[] = [
   { key: "dashboard", label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, match: ["/dashboard"] },
   { key: "produtos", label: "Produtos", to: "/produtos", icon: Package, match: ["/produtos", "/categorias", "/estoque"] },
   { key: "pedidos", label: "Pedidos", to: "/pedidos", icon: ShoppingBag, match: ["/pedidos"] },
-  { key: "clientes", label: "Clientes", to: "/clientes", icon: Users, match: ["/clientes"] },
+  
   { key: "marketing", label: "Marketing", to: "/marketing", icon: Megaphone, match: ["/marketing"] },
   { key: "configuracoes", label: "Configurações", to: "/admin", icon: Settings, match: ["/admin"] },
 ];
