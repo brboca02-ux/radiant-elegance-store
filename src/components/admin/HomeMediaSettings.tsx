@@ -11,6 +11,7 @@ import {
   type SiteMediaKey,
   type SiteMediaMap,
 } from "@/lib/api/siteMedia";
+import { useCategoriesStore } from "@/stores/categoriesStore";
 import { useProductsStore } from "@/stores/productsStore";
 import { uploadProductImage } from "@/lib/api/supaProducts";
 
@@ -30,6 +31,8 @@ function CategorySlot({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const categories = useCategoriesStore((s) => s.categories);
+  const updateCategory = useCategoriesStore((s) => s.update);
 
   async function pick(file?: File) {
     if (!file) return;
@@ -37,6 +40,16 @@ function CategorySlot({
     try {
       const url = await uploadSiteImage(file, { aspect: 16 / 9, maxWidth: 900 });
       await saveSiteMedia(slot.key, url);
+      
+      // Tentar atualizar a categoria correspondente no catálogo
+      const slug = slot.key === "cat_feminino" ? "feminino" : slot.key === "cat_masculino" ? "masculino" : null;
+      if (slug) {
+        const cat = categories.find(c => c.slug === slug);
+        if (cat) {
+          await updateCategory(cat.id, { image: url });
+        }
+      }
+
       onChange(url);
       toast.success(`${slot.label} atualizada.`);
     } catch (e) {

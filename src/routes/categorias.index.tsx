@@ -1,9 +1,10 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Pencil, Trash2, Plus, ImageOff, Star } from "lucide-react";
+import { Pencil, Trash2, Plus, ImageOff, Star, ExternalLink } from "lucide-react";
 import { useCategoriesStore, type CategoryStatus } from "@/stores/categoriesStore";
 import { useProductsStore } from "@/stores/productsStore";
+import { useSiteMedia } from "@/lib/api/siteMedia";
 
 export const Route = createFileRoute("/categorias/")({
   head: () => ({ meta: [{ title: "Categorias — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -21,6 +22,13 @@ function CategoriesListPage() {
   const categories = useCategoriesStore((s) => s.categories);
   const remove = useCategoriesStore((s) => s.remove);
   const products = useProductsStore((s) => s.products);
+  const media = useSiteMedia();
+
+  const getCategoryImage = (c: any) => {
+    if (c.slug === "feminino" && media.cat_feminino) return media.cat_feminino;
+    if (c.slug === "masculino" && media.cat_masculino) return media.cat_masculino;
+    return c.image;
+  };
   const countFor = (category: { id: string; slug: string }) =>
     products.filter(
       (p) =>
@@ -50,17 +58,24 @@ function CategoriesListPage() {
         <div className="mb-6 rounded-xl border border-border bg-background p-4">
           <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Pré-visualização da home</h2>
           <div className="flex md:grid md:grid-cols-5 gap-2 md:gap-3 overflow-x-auto -mx-1 px-1 scrollbar-none">
-            {categories.filter((c) => c.show_home && c.status === "ativo").map((c) => (
-              <div key={c.id} className="group relative shrink-0 w-[140px] md:w-auto h-[100px] md:h-[120px] overflow-hidden rounded-md bg-secondary">
-                {c.image ? (
-                  <img src={c.image} alt={c.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
-                ) : null}
-                <div className="absolute inset-0 bg-background/30 group-hover:bg-background/55 transition-colors" />
-                <div className="absolute inset-x-0 bottom-0 px-3 py-2">
-                  <h3 className="font-medium text-xs md:text-sm text-gold">{c.name}</h3>
+            {categories.filter((c) => c.show_home && c.status === "ativo").map((c) => {
+              const imgUrl = getCategoryImage(c);
+              return (
+                <div key={c.id} className="group relative shrink-0 w-[140px] md:w-auto h-[100px] md:h-[120px] overflow-hidden rounded-md bg-secondary">
+                  {imgUrl ? (
+                    <img src={imgUrl} alt={c.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+                      <ImageOff className="h-5 w-5 opacity-20" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-background/30 group-hover:bg-background/55 transition-colors" />
+                  <div className="absolute inset-x-0 bottom-0 px-3 py-2">
+                    <h3 className="font-medium text-xs md:text-sm text-gold">{c.name}</h3>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -83,7 +98,7 @@ function CategoriesListPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-muted">
-                        {c.image ? <img src={c.image} alt="" className="h-full w-full object-cover" />
+                        {getCategoryImage(c) ? <img src={getCategoryImage(c)} alt="" className="h-full w-full object-cover" />
                           : <div className="h-full w-full flex items-center justify-center text-muted-foreground"><ImageOff className="h-4 w-4" /></div>}
                       </div>
                       <div>
@@ -128,7 +143,7 @@ function CategoriesListPage() {
           {categories.map((c) => (
             <div key={c.id} className="rounded-xl border border-border bg-background p-3 flex gap-3">
               <div className="h-20 w-20 shrink-0 overflow-hidden rounded bg-muted">
-                {c.image && <img src={c.image} alt="" className="h-full w-full object-cover" />}
+                {getCategoryImage(c) && <img src={getCategoryImage(c)} alt="" className="h-full w-full object-cover" />}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between gap-2">
