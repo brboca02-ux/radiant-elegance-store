@@ -59,20 +59,28 @@ function AdminPanel() {
   const [cfg, setCfg] = useState<SiteConfig>(DEFAULT_SITE_CONFIG);
 
   useEffect(() => {
-    setCfg(loadSiteConfig());
+    loadSiteConfig().then(setCfg);
   }, []);
 
   const update = <K extends keyof SiteConfig>(k: K, v: SiteConfig[K]) => setCfg((c) => ({ ...c, [k]: v }));
 
-  const save = () => {
-    saveSiteConfig(cfg);
-    toast.success("Conteúdo atualizado em todo o site.");
+  const save = async () => {
+    try {
+      await saveSiteConfig(cfg);
+      toast.success("Conteúdo atualizado em todo o site.");
+    } catch (e) {
+      toast.error("Erro ao salvar configurações.");
+    }
   };
 
-  const reset = () => {
-    setCfg(DEFAULT_SITE_CONFIG);
-    saveSiteConfig(DEFAULT_SITE_CONFIG);
-    toast.success("Conteúdo restaurado para o padrão.");
+  const reset = async () => {
+    try {
+      await saveSiteConfig(DEFAULT_SITE_CONFIG);
+      setCfg(DEFAULT_SITE_CONFIG);
+      toast.success("Conteúdo restaurado para o padrão.");
+    } catch (e) {
+      toast.error("Erro ao restaurar padrão.");
+    }
   };
 
   return (
