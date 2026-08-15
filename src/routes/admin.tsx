@@ -89,7 +89,7 @@ function AdminPanel() {
       <div className="mb-8">
         <h1 className="font-display text-3xl">Painel J&S Store</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Edite banners, promoções e textos da home sem alterar código. As mudanças são salvas neste dispositivo.
+          Edite banners, promoções e textos da home sem alterar código. As mudanças são salvas no banco e valem em qualquer dispositivo.
         </p>
       </div>
 
