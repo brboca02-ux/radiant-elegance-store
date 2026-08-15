@@ -62,7 +62,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
       aria-label={`Ver detalhes de ${product.node.title}`}
       className="group flex h-full w-full flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary">
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary border border-gold/5">
         {img0 ? (
           <>
             {!loaded0 && (
@@ -83,7 +83,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
               width={600}
               height={800}
               onLoad={() => setLoaded0(true)}
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 w-full h-full object-contain sm:object-cover object-center transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
             />
             {img1 && (
               <img
@@ -97,7 +97,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
                 width={600}
                 height={800}
                 onLoad={() => setLoaded1(true)}
-                className={`absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100 ${loaded1 ? "opacity-100" : "opacity-0"}`}
+                className={`absolute inset-0 w-full h-full object-contain sm:object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100 ${loaded1 ? "opacity-100" : "opacity-0"}`}
               />
             )}
           </>
@@ -130,7 +130,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
         </button>
       </div>
       <div className={`flex flex-1 flex-col text-center ${size === "compact" ? "pt-2" : "pt-3"}`}>
-        <h3 className={`font-display leading-snug line-clamp-2 ${size === "compact" ? "text-xs min-h-[2.4em]" : "text-sm sm:text-base min-h-[2.6em]"}`}>
+        <h3 className={`font-display leading-snug line-clamp-2 overflow-hidden text-ellipsis ${size === "compact" ? "text-[10px] md:text-xs min-h-[2.4em]" : "text-sm sm:text-base min-h-[2.6em]"}`}>
           {product.node.title}
         </h3>
         <p className={`${size === "compact" ? "text-xs pt-1" : "text-sm sm:text-[15px] pt-2"} mt-auto font-semibold text-foreground`}>
