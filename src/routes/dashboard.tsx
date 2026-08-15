@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ShoppingBag, Package, AlertTriangle, DollarSign, Users, TrendingUp, ArrowUpRight } from "lucide-react";
+import { ShoppingBag, Package, AlertTriangle, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { useOrdersStore, fmtBRL, STORE_ID, type Order } from "@/stores/ordersStore";
 import { useProductsStore } from "@/stores/productsStore";
@@ -258,7 +258,7 @@ function DashboardPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground/80 ring-1 ring-border">
-                      <Users className="h-3 w-3" /> {l.source ?? l.type ?? "—"}
+                      <Package className="h-3 w-3" /> {l.source ?? l.type ?? "—"}
                     </span>
                     <p className="text-[11px] text-muted-foreground mt-1">{timeAgo(l.at)}</p>
                   </div>
