@@ -1,24 +1,39 @@
-# Auditoria: textos das categorias sobre os modelos
+# Plano: Corrigir cortes de imagem e auditar funcionalidades
 
-## O que a auditoria mostrou (mobile 390, 649, tablet 820, desktop 1440)
-O bloco de textos está tecnicamente ancorado na base do card (`inset-x-0 bottom-0`), mas visualmente ele NÃO está no rodapé da imagem:
+## Problema principal (hero da home no desktop)
+O hero usa altura fixa em vh (`h-[42vh] … lg:h-[58vh]`) com `object-cover object-center`. Como a imagem enviada é landscape com o casal à esquerda e o logo à direita, em telas largas o `object-cover` amplia e corta topo/base — em desktop os modelos aparecem cortados.
 
-- O bloco reserva espaço permanente para 4 elementos (título, descrição, risco dourado e o texto de hover "Explorar curadoria →"), somando ~75px + 40px de padding.
-- Como os cards têm apenas 130px (mobile) e 200px (desktop), esse bloco ocupa quase toda a altura e empurra o título para o meio do card — exatamente sobre o rosto dos modelos.
-- O gradiente atual (`via-black/20`) é fraco nessa altura, então o texto disputa contraste com o rosto.
+### Correção proposta
+- Trocar a altura fixa por proporção real da imagem no desktop (`aspect-[16/9]` com `max-h`), mantendo altura controlada no mobile.
+- Usar `object-contain` (ou `object-cover` com `object-position` ajustado por breakpoint) para desktop, garantindo que casal + logo apareçam inteiros.
+- Manter fundo preto atrás da imagem, então qualquer letterbox fica invisível na identidade da marca.
+- Manter os botões "Comprar Feminino"/"Comprar Masculino" no rodapé central com gradiente de legibilidade.
 
-Conclusão: o ajuste anterior não resolveu o problema relatado; em todos os formatos de tela o título ainda cai sobre o personagem.
+## Auditoria de cortes nas outras imagens
+Verificar e ajustar onde houver corte indevido:
+- Cards de categorias na home (`h-[150px] md:h-[210px]` + `object-position` manual) — validar em 375/768/1440 px.
+- Cards de produto (`aspect-[3/4] object-cover`) — as imagens do catálogo já são normalizadas com fundo (contain) no pipeline; confirmar que nenhuma peça é cortada e ajustar as que ainda estiverem em corte.
+- Carrossel da vitrine, galeria da página de produto, miniaturas de busca, carrinho e checkout.
+- Painel admin (produtos, estoque, categorias, mídias da home).
+Método: capturar screenshots reais em mobile/tablet/desktop e comparar antes/depois.
 
-## Correção proposta (apenas visual, em `src/components/HomeSections.tsx`)
-1. Retirar do fluxo os elementos de hover (risco dourado + "Explorar curadoria") usando posicionamento absoluto/`hidden` nos cards pequenos, para que somente título + descrição definam a altura do bloco.
-2. Reduzir o padding do bloco (`p-4 pb-6 md:pb-8` → `px-3 pb-2.5 md:pb-4`) para que o texto encoste no rodapé real da imagem.
-3. Aplicar uma faixa de contraste só na base (`bg-gradient-to-t from-black via-black/70 to-transparent` limitada a ~45% da altura), preservando o rosto do modelo sem escurecer o card inteiro.
-4. Ajustar `object-position` dos dois cards (feminino `50% 18%`, masculino `50% 12%`) para que o rosto suba um pouco e a faixa inferior fique livre.
-5. Aumentar levemente a altura dos cards (`h-[150px] md:h-[210px]`) para acomodar título + descrição no rodapé sem cortar os modelos — mantendo o site compacto.
+## Auditoria de funcionalidades
+Checar e corrigir o que estiver quebrado:
+- Seção Instagram: a grade de posts (`cells`) está montada mas nunca é renderizada, e aponta para slugs de catálogo antigos que provavelmente retornam 404. Decisão: remover a grade morta ou renderizar com imagens válidas do catálogo atual.
+- Links/imagens via proxy `/api/public/img/...`: identificar 404s de slugs legados.
+- Navegação e filtros (Feminino/Masculino, promoções, recebidos), busca, carrinho, checkout (PIX/cartão), acompanhamento de pedido e login admin.
+- Registrar erros de console/rede encontrados e corrigir os que forem do app.
+
+## Arquivos que devem ser tocados
+- `src/components/HomeSections.tsx` (hero, categorias, Instagram)
+- `src/components/ProductCard.tsx` / `ShowcaseCarousel.tsx` (se houver corte)
+- `src/routes/index.tsx` (preload do hero, se a proporção mudar)
+- Ajustes pontuais em páginas de produto/admin conforme a auditoria apontar
+
+## Fora do escopo
+- Reseed de produtos, mudanças de preço ou de dados.
+- Alterar paleta, tipografia ou estrutura de rotas.
 
 ## Validação
-- Novas capturas dos cards em 390px, 649px, 820px e 1440px confirmando: texto no terço inferior, sem sobrepor rostos, contraste legível.
-- Build sem erros.
-
-## Arquivo afetado
-- `src/components/HomeSections.tsx`
+- Screenshots em 375, 768, 1280 e 1440 px do hero e das seções.
+- Console/rede sem erros novos; build limpo.
