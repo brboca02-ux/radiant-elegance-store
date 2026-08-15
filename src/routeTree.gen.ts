@@ -24,8 +24,6 @@ import { Route as TrocasEDevolucoesRouteImport } from './routes/trocas-e-devoluc
 import { Route as AuthenticatedMeusPedidosRouteImport } from './routes/_authenticated/meus-pedidos'
 import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
 import { Route as CategoriasNovoRouteImport } from './routes/categorias.novo'
-import { Route as EstoqueIndexRouteImport } from './routes/estoque.index'
-import { Route as EstoqueHistoricoRouteImport } from './routes/estoque.historico'
 import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as PedidoAcompanharRouteImport } from './routes/pedido.acompanhar'
@@ -117,16 +115,6 @@ const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
 const CategoriasNovoRoute = CategoriasNovoRouteImport.update({
   id: '/categorias/novo',
   path: '/categorias/novo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstoqueIndexRoute = EstoqueIndexRouteImport.update({
-  id: '/estoque/',
-  path: '/estoque/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstoqueHistoricoRoute = EstoqueHistoricoRouteImport.update({
-  id: '/estoque/historico',
-  path: '/estoque/historico',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketingIndexRoute = MarketingIndexRouteImport.update({
@@ -230,7 +218,6 @@ export interface FileRoutesByFullPath {
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/categorias/novo': typeof CategoriasNovoRoute
-  '/estoque/historico': typeof EstoqueHistoricoRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/pedido/acompanhar': typeof PedidoAcompanharRoute
   '/pedidos/$id': typeof PedidosIdRoute
@@ -238,7 +225,6 @@ export interface FileRoutesByFullPath {
   '/produtos/novo': typeof ProdutosNovoRoute
   '/produtos/rapido': typeof ProdutosRapidoRoute
   '/categorias/': typeof CategoriasIndexRoute
-  '/estoque/': typeof EstoqueIndexRoute
   '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
@@ -265,7 +251,6 @@ export interface FileRoutesByTo {
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/categorias/novo': typeof CategoriasNovoRoute
-  '/estoque/historico': typeof EstoqueHistoricoRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/pedido/acompanhar': typeof PedidoAcompanharRoute
   '/pedidos/$id': typeof PedidosIdRoute
@@ -273,7 +258,6 @@ export interface FileRoutesByTo {
   '/produtos/novo': typeof ProdutosNovoRoute
   '/produtos/rapido': typeof ProdutosRapidoRoute
   '/categorias': typeof CategoriasIndexRoute
-  '/estoque': typeof EstoqueIndexRoute
   '/marketing': typeof MarketingIndexRoute
   '/pedidos': typeof PedidosIndexRoute
   '/produtos': typeof ProdutosIndexRoute
@@ -302,7 +286,6 @@ export interface FileRoutesById {
   '/trocas-e-devolucoes': typeof TrocasEDevolucoesRoute
   '/_authenticated/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/categorias/novo': typeof CategoriasNovoRoute
-  '/estoque/historico': typeof EstoqueHistoricoRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/pedido/acompanhar': typeof PedidoAcompanharRoute
   '/pedidos/$id': typeof PedidosIdRoute
@@ -310,7 +293,6 @@ export interface FileRoutesById {
   '/produtos/novo': typeof ProdutosNovoRoute
   '/produtos/rapido': typeof ProdutosRapidoRoute
   '/categorias/': typeof CategoriasIndexRoute
-  '/estoque/': typeof EstoqueIndexRoute
   '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
@@ -339,7 +321,6 @@ export interface FileRouteTypes {
     | '/trocas-e-devolucoes'
     | '/meus-pedidos'
     | '/categorias/novo'
-    | '/estoque/historico'
     | '/pedido/$id'
     | '/pedido/acompanhar'
     | '/pedidos/$id'
@@ -347,7 +328,6 @@ export interface FileRouteTypes {
     | '/produtos/novo'
     | '/produtos/rapido'
     | '/categorias/'
-    | '/estoque/'
     | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
@@ -374,7 +354,6 @@ export interface FileRouteTypes {
     | '/trocas-e-devolucoes'
     | '/meus-pedidos'
     | '/categorias/novo'
-    | '/estoque/historico'
     | '/pedido/$id'
     | '/pedido/acompanhar'
     | '/pedidos/$id'
@@ -382,7 +361,6 @@ export interface FileRouteTypes {
     | '/produtos/novo'
     | '/produtos/rapido'
     | '/categorias'
-    | '/estoque'
     | '/marketing'
     | '/pedidos'
     | '/produtos'
@@ -410,7 +388,6 @@ export interface FileRouteTypes {
     | '/trocas-e-devolucoes'
     | '/_authenticated/meus-pedidos'
     | '/categorias/novo'
-    | '/estoque/historico'
     | '/pedido/$id'
     | '/pedido/acompanhar'
     | '/pedidos/$id'
@@ -418,7 +395,6 @@ export interface FileRouteTypes {
     | '/produtos/novo'
     | '/produtos/rapido'
     | '/categorias/'
-    | '/estoque/'
     | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
@@ -446,7 +422,6 @@ export interface RootRouteChildren {
   TermosRoute: typeof TermosRoute
   TrocasEDevolucoesRoute: typeof TrocasEDevolucoesRoute
   CategoriasNovoRoute: typeof CategoriasNovoRoute
-  EstoqueHistoricoRoute: typeof EstoqueHistoricoRoute
   PedidoIdRoute: typeof PedidoIdRoute
   PedidoAcompanharRoute: typeof PedidoAcompanharRoute
   PedidosIdRoute: typeof PedidosIdRoute
@@ -454,7 +429,6 @@ export interface RootRouteChildren {
   ProdutosNovoRoute: typeof ProdutosNovoRoute
   ProdutosRapidoRoute: typeof ProdutosRapidoRoute
   CategoriasIndexRoute: typeof CategoriasIndexRoute
-  EstoqueIndexRoute: typeof EstoqueIndexRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
   PedidosIndexRoute: typeof PedidosIndexRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
@@ -573,20 +547,6 @@ declare module '@tanstack/react-router' {
       path: '/categorias/novo'
       fullPath: '/categorias/novo'
       preLoaderRoute: typeof CategoriasNovoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estoque/': {
-      id: '/estoque/'
-      path: '/estoque'
-      fullPath: '/estoque/'
-      preLoaderRoute: typeof EstoqueIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estoque/historico': {
-      id: '/estoque/historico'
-      path: '/estoque/historico'
-      fullPath: '/estoque/historico'
-      preLoaderRoute: typeof EstoqueHistoricoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketing/': {
@@ -736,7 +696,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermosRoute: TermosRoute,
   TrocasEDevolucoesRoute: TrocasEDevolucoesRoute,
   CategoriasNovoRoute: CategoriasNovoRoute,
-  EstoqueHistoricoRoute: EstoqueHistoricoRoute,
   PedidoIdRoute: PedidoIdRoute,
   PedidoAcompanharRoute: PedidoAcompanharRoute,
   PedidosIdRoute: PedidosIdRoute,
@@ -744,7 +703,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosNovoRoute: ProdutosNovoRoute,
   ProdutosRapidoRoute: ProdutosRapidoRoute,
   CategoriasIndexRoute: CategoriasIndexRoute,
-  EstoqueIndexRoute: EstoqueIndexRoute,
   MarketingIndexRoute: MarketingIndexRoute,
   PedidosIndexRoute: PedidosIndexRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
