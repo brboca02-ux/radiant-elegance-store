@@ -30,17 +30,17 @@ const diferenciais = [
 export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] xl:aspect-[2.4] max-h-[85vh] w-full bg-black">
+      <div className="relative aspect-[3/4] sm:aspect-[16/9] lg:aspect-[21/9] xl:aspect-[2.4] max-h-[90vh] w-full bg-black">
         <img
           src={heroCouple.url}
           alt="J&S Store — Moda Masculina e Feminina"
           width={1376}
           height={768}
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center sm:object-[center_20%] lg:object-center opacity-90"
+          className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center sm:object-[center_15%] lg:object-center opacity-90"
         />
         {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
       </div>
       
       <div className="absolute inset-x-0 bottom-0 max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-8 md:pb-12">
@@ -136,7 +136,7 @@ export function CategoriesSection() {
               key={c.label}
               to="/colecao"
               search={{ c: c.q }}
-              className="group relative h-[150px] md:h-[210px] overflow-hidden bg-secondary shadow-lg"
+              className="group relative h-[180px] md:h-[240px] overflow-hidden bg-secondary shadow-lg"
             >
               <picture>
                 <source srcSet={`${media[c.mediaKey] ?? c.img}?width=600&format=webp`} type="image/webp" />
