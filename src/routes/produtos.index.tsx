@@ -41,7 +41,7 @@ function ProductsListPage() {
   }, [products, q, cat, status]);
 
   return (
-    <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
+    <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }]}>
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
