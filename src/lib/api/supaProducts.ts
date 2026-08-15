@@ -71,7 +71,6 @@ const SELECT =
 export async function listAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products").select(SELECT).in("category_id", ["feminino", "masculino"])
-    .neq("status", "arquivado")
     .order("created_at", { ascending: false });
   if (error) throw error;
   
