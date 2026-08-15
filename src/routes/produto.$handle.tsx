@@ -60,7 +60,7 @@ function ProductPage() {
   const data = useMemo(() => (product ? productToShopify(product).node : null), [product]);
 
   const addItem = useCartStore((s) => s.addItem);
-  const isAdding = useCartStore((s) => s.isLoading);
+  const [isAdding, setIsAdding] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [carouselIdx, setCarouselIdx] = useState(0);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -191,15 +191,20 @@ function ProductPage() {
     selected.quantityAvailable <= 3;
 
   const handleAdd = async () => {
-    if (!selected || soldOut) return;
-    await addItem({
-      product: { node: { ...data } } as never,
-      variantId: selected.id,
-      variantTitle: selected.title,
-      price: selected.price,
-      quantity: 1,
-      selectedOptions: selected.selectedOptions,
-    });
+    if (!selected || soldOut || isAdding) return;
+    setIsAdding(true);
+    try {
+      await addItem({
+        product: { node: { ...data } } as never,
+        variantId: selected.id,
+        variantTitle: selected.title,
+        price: selected.price,
+        quantity: 1,
+        selectedOptions: selected.selectedOptions,
+      });
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const productUrl = typeof window !== "undefined" ? window.location.href : `/produto/${handle}`;

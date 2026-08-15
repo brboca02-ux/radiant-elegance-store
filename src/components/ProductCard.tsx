@@ -10,7 +10,7 @@ import { track } from "@/lib/analytics";
 
 export function ProductCard({ product, size = "default" }: { product: ShopifyProduct; size?: "default" | "compact" }) {
   const addItem = useCartStore((s) => s.addItem);
-  const isLoading = useCartStore((s) => s.isLoading);
+  const [isAdding, setIsAdding] = useState(false);
   const [loaded0, setLoaded0] = useState(false);
   const [loaded1, setLoaded1] = useState(false);
   const allVariants = product.node.variants.edges.map((e) => e.node);
@@ -36,21 +36,26 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
 
   const onAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!variant || soldOut) return;
-    await addItem({
-      product,
-      variantId: variant.id,
-      variantTitle: variant.title,
-      price: variant.price,
-      quantity: 1,
-      selectedOptions: variant.selectedOptions ?? [],
-    });
-    track.addToCart({
-      id: product.node.id,
-      name: product.node.title,
-      price: parseFloat(variant.price.amount),
-      currency: variant.price.currencyCode,
-    });
+    if (!variant || soldOut || isAdding) return;
+    setIsAdding(true);
+    try {
+      await addItem({
+        product,
+        variantId: variant.id,
+        variantTitle: variant.title,
+        price: variant.price,
+        quantity: 1,
+        selectedOptions: variant.selectedOptions ?? [],
+      });
+      track.addToCart({
+        id: product.node.id,
+        name: product.node.title,
+        price: parseFloat(variant.price.amount),
+        currency: variant.price.currencyCode,
+      });
+    } finally {
+      setIsAdding(false);
+    }
   };
 
 
@@ -122,11 +127,11 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
 
         <button
           onClick={onAdd}
-          disabled={isLoading || !variant || soldOut}
+          disabled={isAdding || !variant || soldOut}
           aria-label={soldOut ? "Produto esgotado" : `Comprar ${product.node.title}`}
           className="absolute bottom-0 inset-x-0 bg-foreground text-background text-[11px] tracking-[0.25em] uppercase py-3 translate-y-full group-hover:translate-y-0 focus-visible:translate-y-0 transition-transform duration-500 flex items-center justify-center disabled:opacity-60"
         >
-          {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : soldOut ? "Esgotado" : "Comprar"}
+          {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : soldOut ? "Esgotado" : "Comprar"}
         </button>
       </div>
       <div className={`flex flex-1 flex-col text-center ${size === "compact" ? "pt-2" : "pt-3"}`}>
