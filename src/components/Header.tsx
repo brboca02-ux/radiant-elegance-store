@@ -160,10 +160,10 @@ export function Header() {
           <Menu className="h-6 w-6" />
         </button>
         <Link to="/" className="flex flex-col items-center tap-target group" aria-label="J&S Store">
-          <span className="font-display font-bold text-2xl sm:text-3xl tracking-[0.15em] text-gold transition-transform group-hover:scale-105">
+          <span className="font-display font-bold text-2xl sm:text-3xl tracking-[0.1em] text-gold transition-transform group-hover:scale-105">
             J&S
           </span>
-          <span className="text-[8px] tracking-[0.4em] uppercase text-silver font-medium -mt-1 opacity-80">
+          <span className="text-[7px] tracking-[0.3em] uppercase text-silver font-medium -mt-1 opacity-80">
             STORE
           </span>
         </Link>
