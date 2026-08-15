@@ -30,7 +30,7 @@ const diferenciais = [
 export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div className="relative aspect-[3/4.5] sm:aspect-[16/9] lg:aspect-[1376/768] max-h-[90vh] w-full bg-black">
+      <div className="relative aspect-[3/4.5] sm:aspect-[16/9] lg:aspect-[1376/768] h-[75vh] sm:h-auto max-h-[90vh] w-full bg-black">
         <img
           src={heroCouple.url}
           alt="J&S Store — Moda Masculina e Feminina"

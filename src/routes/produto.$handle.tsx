@@ -60,7 +60,7 @@ function ProductPage() {
   const data = useMemo(() => (product ? productToShopify(product).node : null), [product]);
 
   const addItem = useCartStore((s) => s.addItem);
-  const isAdding = useCartStore((s) => s.isLoading);
+  const [isAdding, setIsAdding] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [carouselIdx, setCarouselIdx] = useState(0);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -191,15 +191,20 @@ function ProductPage() {
     selected.quantityAvailable <= 3;
 
   const handleAdd = async () => {
-    if (!selected || soldOut) return;
-    await addItem({
-      product: { node: { ...data } } as never,
-      variantId: selected.id,
-      variantTitle: selected.title,
-      price: selected.price,
-      quantity: 1,
-      selectedOptions: selected.selectedOptions,
-    });
+    if (!selected || soldOut || isAdding) return;
+    setIsAdding(true);
+    try {
+      await addItem({
+        product: { node: { ...data } } as never,
+        variantId: selected.id,
+        variantTitle: selected.title,
+        price: selected.price,
+        quantity: 1,
+        selectedOptions: selected.selectedOptions,
+      });
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const productUrl = typeof window !== "undefined" ? window.location.href : `/produto/${handle}`;
@@ -458,7 +463,7 @@ function ProductPage() {
                       title={c}
                       aria-label={`Cor ${c}`}
                       aria-pressed={active}
-                      className={`relative h-9 w-9 rounded-full border transition ${active ? "ring-2 ring-primary ring-offset-2 border-primary" : "border-border hover:border-foreground/50"} ${!avail ? "opacity-40" : ""}`}
+                      className={`relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border transition ${active ? "ring-2 ring-primary ring-offset-2 border-primary" : "border-border hover:border-foreground/50"} ${!avail ? "opacity-40" : ""}`}
                       style={{ backgroundColor: colorSwatch(c, colorHexMap[c]) }}
                     >
                       {active && (
@@ -487,7 +492,7 @@ function ProductPage() {
                       onClick={() => setSize(s)}
                       disabled={!avail}
                       aria-pressed={active}
-                      className={`min-w-10 h-9 px-3 text-xs font-semibold rounded-md border transition ${active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60"} ${!avail ? "opacity-40 line-through cursor-not-allowed" : ""}`}
+                      className={`min-w-10 sm:min-w-12 h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold rounded-md border transition ${active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60"} ${!avail ? "opacity-40 line-through cursor-not-allowed" : ""}`}
                     >
                       {s}
                     </button>
