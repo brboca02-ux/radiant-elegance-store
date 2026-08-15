@@ -450,8 +450,26 @@ export function ProductForm({ productId }: { productId?: string }) {
                         <option value={v.size}>{v.size}</option>
                       )}
                     </select>
-                    <input placeholder="Cor (livre)" value={v.color} onChange={(e) => updateVariant(v.id, { color: e.target.value })}
-                      className={`${input} col-span-5`} />
+                    <div className="col-span-5 relative group/vitem">
+                      <input 
+                        placeholder="Cor (ex: Preto)" 
+                        value={v.color} 
+                        onChange={(e) => updateVariant(v.id, { color: e.target.value })}
+                        className={`${input} pr-8`} 
+                      />
+                      {v.color && (
+                        <div className="absolute right-1 top-1/2 -translate-y-1/2 flex -space-x-1.5 pointer-events-none">
+                          {data.images
+                            .filter(img => img.url.toLowerCase().includes(v.color.toLowerCase().replace(/\s+/g, '-')))
+                            .slice(0, 2)
+                            .map((img, idx) => (
+                              <div key={idx} className="h-4 w-4 rounded-full border border-background overflow-hidden bg-muted ring-1 ring-border shadow-sm">
+                                <img src={img.url} className="h-full w-full object-cover" alt="" />
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </div>
                     <input type="number" placeholder="Estoque" value={v.stock} onChange={(e) => updateVariant(v.id, { stock: Number(e.target.value) })}
                       className={`${input} col-span-3`} />
                     <button onClick={() => removeVariant(v.id)} className="col-span-1 rounded p-2 hover:bg-muted text-destructive" title="Remover">
