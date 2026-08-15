@@ -30,14 +30,14 @@ const diferenciais = [
 export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div className="relative aspect-[3/4.5] sm:aspect-[16/9] lg:aspect-[21/9] xl:aspect-[2.4] max-h-[90vh] w-full bg-black">
+      <div className="relative aspect-[3/4.5] sm:aspect-[16/9] lg:aspect-[1376/768] max-h-[90vh] w-full bg-black">
         <img
           src={heroCouple.url}
           alt="J&S Store — Moda Masculina e Feminina"
           width={1376}
           height={768}
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center sm:object-[center_12%] lg:object-center opacity-90"
+          className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center sm:object-[center_12%] lg:object-[center_top] opacity-90"
         />
         {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
