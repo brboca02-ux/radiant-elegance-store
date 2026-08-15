@@ -387,8 +387,24 @@ export function ProductForm({ productId }: { productId?: string }) {
                       className="relative aspect-[4/5] rounded-lg overflow-hidden bg-muted group ring-1 ring-border"
                     >
                       <img src={img.url} alt="" className="h-full w-full object-cover" />
+                      
+                      {/* Image-Variant Link Indicators */}
+                      <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[calc(100%-8px)]">
+                        {data.variants
+                          .filter(v => v.color && data.images.find(img_i => img_i.id === img.id)?.url?.includes(v.color.toLowerCase().replace(/\s+/g, '-')))
+                          .map(v => (
+                            <span 
+                              key={v.id} 
+                              className="text-[8px] bg-black/60 text-white px-1 py-0.5 rounded backdrop-blur-sm border border-white/20 uppercase font-bold"
+                              title={`Vinculado à cor: ${v.color}`}
+                            >
+                              {v.color.slice(0, 3)}
+                            </span>
+                          ))}
+                      </div>
+
                       {img.is_primary && (
-                        <span className="absolute top-1 left-1 bg-foreground text-background text-[10px] px-1.5 py-0.5 rounded">Principal</span>
+                        <span className="absolute top-1 left-1 bg-foreground text-background text-[10px] px-1.5 py-0.5 rounded shadow-sm">Principal</span>
                       )}
                       <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition">
                         <button onClick={(e) => { e.preventDefault(); setPrimary(img.id); }}
