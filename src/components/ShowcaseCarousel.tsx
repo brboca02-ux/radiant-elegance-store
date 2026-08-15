@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useProductsStore } from "@/stores/productsStore";
 import { productToShopify } from "@/lib/mockProducts";
 import { ProductCard } from "./ProductCard";
@@ -93,4 +93,4 @@ export function ShowcaseCarousel() {
   );
 }
 
-import { useMemo } from "react";
+

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ShoppingBag, Package, AlertTriangle, DollarSign, Users, TrendingUp, ArrowUpRight } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { useOrdersStore, fmtBRL, STORE_ID, type Order } from "@/stores/ordersStore";
@@ -85,7 +85,10 @@ function DashboardPage() {
     return unsub;
   }, [hydrateOrders, hydrateProducts, subscribeOrders]);
 
-  const leads = useMemo(() => loadLeads(), []);
+  const [leads, setLeads] = useState<any[]>([]);
+  useEffect(() => {
+    loadLeads().then(setLeads);
+  }, []);
 
   const startOfToday = useMemo(() => {
     const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();

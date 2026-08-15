@@ -33,11 +33,35 @@ export function AdminShell({
   const [openMobile, setOpenMobile] = useState(false);
   const navigate = useNavigate();
   const { session, loading } = useAuth();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!loading && !session && !pathname.startsWith("/login")) {
-      navigate({ to: "/login", search: { redirect: pathname } });
+    if (loading) return;
+
+    if (!session) {
+      if (!pathname.startsWith("/login")) {
+        navigate({ to: "/login", search: { redirect: pathname } });
+      }
+      return;
     }
+
+    // Verify admin role
+    const checkRole = async () => {
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id);
+
+      const hasAdminRole = roles?.some(r => r.role === "admin");
+      setIsAdmin(!!hasAdminRole);
+
+      if (!hasAdminRole) {
+        toast.error("Acesso negado: você não tem permissão de administrador.");
+        navigate({ to: "/" });
+      }
+    };
+
+    checkRole();
   }, [loading, session, navigate, pathname]);
 
   // Fecha o menu mobile ao trocar de rota e bloqueia scroll do body enquanto aberto
@@ -61,12 +85,19 @@ export function AdminShell({
     navigate({ to: "/login" });
   }
 
-  if (loading || !session) {
+  if (loading || !session || isAdmin === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/30">
-        <div className="text-sm text-muted-foreground">Carregando painel...</div>
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <div className="text-sm text-muted-foreground">Verificando permissões...</div>
+        </div>
       </div>
     );
+  }
+
+  if (isAdmin === false) {
+    return null;
   }
 
   return (

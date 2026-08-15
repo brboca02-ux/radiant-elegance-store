@@ -9,7 +9,7 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
   const [phone, setPhone] = useState("");
   const [done, setDone] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cEmail = cleanEmail(email);
     const cPhone = cleanPhone(phone);
@@ -25,17 +25,21 @@ export function NewsletterCapture({ compact = false }: { compact?: boolean }) {
       toast.error("WhatsApp inválido.");
       return;
     }
-    saveLead({
-      email: cEmail || undefined,
-      whatsapp: cPhone || undefined,
-      source: compact ? "footer" : "newsletter",
-      at: new Date().toISOString(),
-    });
-    track.lead(cEmail && cPhone ? "email+whatsapp" : cEmail ? "email" : "whatsapp");
-    setDone(true);
-    toast.success("Cadastro confirmado", {
-      description: "Você receberá nossos lançamentos e novidades em primeira mão.",
-    });
+    
+    try {
+      await saveLead({
+        email: cEmail || undefined,
+        whatsapp: cPhone || undefined,
+        source: compact ? "footer" : "newsletter",
+      });
+      track.lead(cEmail && cPhone ? "email+whatsapp" : cEmail ? "email" : "whatsapp");
+      setDone(true);
+      toast.success("Cadastro confirmado", {
+        description: "Você receberá nossos lançamentos e novidades em primeira mão.",
+      });
+    } catch (err) {
+      toast.error("Erro ao realizar cadastro. Tente novamente.");
+    }
   };
 
 

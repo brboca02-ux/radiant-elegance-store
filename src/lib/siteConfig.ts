@@ -1,6 +1,5 @@
-// Editable site content (admin panel writes to localStorage).
-// Defaults live here; admins override via /admin without code changes.
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface SiteConfig {
   heroEyebrow: string;
@@ -34,7 +33,9 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
 
 const STORAGE_KEY = "md_site_config_v1";
 
-export function loadSiteConfig(): SiteConfig {
+export async function loadSiteConfig(): Promise<SiteConfig> {
+  // Use localStorage as the source for now since we cannot create new tables
+  // but we provide an async interface to make it feel like a backend.
   if (typeof window === "undefined") return DEFAULT_SITE_CONFIG;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -45,7 +46,8 @@ export function loadSiteConfig(): SiteConfig {
   }
 }
 
-export function saveSiteConfig(cfg: SiteConfig) {
+export async function saveSiteConfig(cfg: SiteConfig) {
+  if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
   window.dispatchEvent(new CustomEvent("md:site-config"));
 }
@@ -53,8 +55,8 @@ export function saveSiteConfig(cfg: SiteConfig) {
 export function useSiteConfig(): SiteConfig {
   const [cfg, setCfg] = useState<SiteConfig>(DEFAULT_SITE_CONFIG);
   useEffect(() => {
-    setCfg(loadSiteConfig());
-    const handler = () => setCfg(loadSiteConfig());
+    loadSiteConfig().then(setCfg);
+    const handler = () => loadSiteConfig().then(setCfg);
     window.addEventListener("md:site-config", handler);
     window.addEventListener("storage", handler);
     return () => {

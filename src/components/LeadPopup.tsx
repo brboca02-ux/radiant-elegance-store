@@ -157,7 +157,7 @@ function LeadModal({
       email: cEmail || undefined,
       whatsapp: cPhone || undefined,
       source,
-      at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     });
     track.lead(source);
     markDismissed(source === "welcome_popup" ? "md_welcome_popup_dismissed_at" : "md_exit_popup_dismissed_at");
