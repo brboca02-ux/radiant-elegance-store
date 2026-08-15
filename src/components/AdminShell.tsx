@@ -11,7 +11,7 @@ type MenuKey = "dashboard" | "produtos" | "pedidos" | "marketing" | "configuraco
 
 const MENU: { key: MenuKey; label: string; to: string; icon: typeof LayoutDashboard; match: string[] }[] = [
   { key: "dashboard", label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, match: ["/dashboard"] },
-  { key: "produtos", label: "Produtos", to: "/produtos", icon: Package, match: ["/produtos", "/categorias", "/estoque"] },
+  { key: "produtos", label: "Produtos", to: "/produtos", icon: Package, match: ["/produtos", "/categorias"] },
   { key: "pedidos", label: "Pedidos", to: "/pedidos", icon: ShoppingBag, match: ["/pedidos"] },
   
   { key: "marketing", label: "Marketing", to: "/marketing", icon: Megaphone, match: ["/marketing"] },
@@ -341,7 +341,6 @@ export function AdminShell({
 export const PRODUCTS_TABS: AdminTab[] = [
   { label: "Produtos", to: "/produtos" },
   { label: "Categorias", to: "/categorias" },
-  { label: "Estoque", to: "/estoque" },
 ];
 
 export const MARKETING_TABS: AdminTab[] = [
