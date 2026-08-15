@@ -21,7 +21,7 @@ export async function loadCoupons(): Promise<Coupon[]> {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error && data) return data as Coupon[];
+    if (!error && data) return data as unknown as Coupon[];
   } catch (e) {
     console.warn("Could not load coupons from Supabase, falling back to local storage.");
   }
