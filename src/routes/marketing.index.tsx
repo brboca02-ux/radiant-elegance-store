@@ -15,7 +15,7 @@ function MarketingPage() {
   const [tab, setTab] = useState<Tab>("leads");
   const [leads, setLeads] = useState<Lead[]>([]);
 
-  useEffect(() => { setLeads(loadLeads()); }, []);
+  useEffect(() => { loadLeads().then(setLeads); }, []);
 
   const newsletterLeads = leads.filter((l) => (l.source ?? l.type) !== "whatsapp");
 

@@ -85,7 +85,10 @@ function DashboardPage() {
     return unsub;
   }, [hydrateOrders, hydrateProducts, subscribeOrders]);
 
-  const leads = useMemo(() => loadLeads(), []);
+  const [leads, setLeads] = useState<any[]>([]);
+  useEffect(() => {
+    loadLeads().then(setLeads);
+  }, []);
 
   const startOfToday = useMemo(() => {
     const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();
