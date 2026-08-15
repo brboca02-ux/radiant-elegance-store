@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useMemo } from "react";
-import { Megaphone, Mail, Ticket, Package, Plus, Trash2, Calendar, Hash, Percent } from "lucide-react";
+import { Megaphone, Mail, Ticket, Package, Plus, Trash2, Calendar, Hash, Percent, ShoppingCart, MessageCircle, ExternalLink, CheckCircle2 } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { loadLeads, type Lead } from "@/lib/leads";
 import { loadCoupons, saveCoupon, deleteCoupon, type Coupon } from "@/lib/coupons";
+import { loadAbandonedCarts, markAsRecovered, buildAbandonmentWhatsAppLink, type AbandonedCart } from "@/lib/api/abandoned";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/shopify";
 
@@ -12,12 +13,13 @@ export const Route = createFileRoute("/marketing/")({
   component: MarketingPage,
 });
 
-type Tab = "leads" | "cupons" | "newsletter";
+type Tab = "leads" | "cupons" | "newsletter" | "abandoned";
 
 function MarketingPage() {
   const [tab, setTab] = useState<Tab>("leads");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [abandoned, setAbandoned] = useState<AbandonedCart[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [newCoupon, setNewCoupon] = useState<Omit<Coupon, "id" | "created_at" | "usage_count">>({
@@ -32,9 +34,10 @@ function MarketingPage() {
   const refresh = async () => {
     setLoading(true);
     try {
-      const [l, c] = await Promise.all([loadLeads(), loadCoupons()]);
+      const [l, c, a] = await Promise.all([loadLeads(), loadCoupons(), loadAbandonedCarts()]);
       setLeads(l);
       setCoupons(c);
+      setAbandoned(a);
     } catch (e) {
       toast.error("Não foi possível carregar leads/cupons do banco.");
     } finally {
@@ -95,6 +98,7 @@ function MarketingPage() {
           {[
             { k: "leads" as Tab, label: "Leads", icon: Package },
             { k: "cupons" as Tab, label: "Cupons", icon: Ticket },
+            { k: "abandoned" as Tab, label: "Carrinhos", icon: ShoppingCart },
             { k: "newsletter" as Tab, label: "Newsletter", icon: Mail },
           ].map((t) => {
             const Icon = t.icon;
@@ -264,6 +268,98 @@ function MarketingPage() {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {tab === "abandoned" && (
+          <div className="space-y-6">
+            <div className="rounded-xl border border-border bg-background overflow-hidden">
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                <h2 className="font-semibold">Carrinhos Abandonados ({abandoned.length})</h2>
+                <span className="text-xs text-muted-foreground">Últimas 24h</span>
+              </div>
+              <ul className="divide-y divide-border">
+                {abandoned.length === 0 && (
+                  <li className="p-10 text-center text-sm text-muted-foreground">
+                    <ShoppingCart className="h-10 w-10 mx-auto mb-2 opacity-20" />
+                    Nenhum carrinho abandonado recentemente.
+                  </li>
+                )}
+                {abandoned.map((a) => (
+                  <li key={a.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm">{a.customer_name || "Cliente sem nome"}</span>
+                        {a.customer_phone && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase">
+                            WhatsApp
+                          </span>
+                        )}
+                        {a.customer_email && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 font-bold uppercase">
+                            E-mail
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {a.customer_email} {a.customer_phone && `· ${a.customer_phone}`}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground mt-2">
+                        {a.cart_data.items?.length || 0} itens · Total: {formatPrice(a.total)}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground italic">
+                        Visto pela última vez: {new Date(a.last_updated_at).toLocaleString("pt-BR")}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={async () => {
+                          const link = buildAbandonmentWhatsAppLink(a);
+                          window.open(link, "_blank");
+                          try {
+                            await markAsRecovered(a.id);
+                            refresh();
+                          } catch (e) {
+                            console.error(e);
+                          }
+                        }}
+                        disabled={!a.customer_phone}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-md hover:bg-emerald-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <MessageCircle className="h-4 w-4" /> Recuperar WhatsApp
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (!confirm("Marcar este carrinho como recuperado manualmente?")) return;
+                          try {
+                            await markAsRecovered(a.id);
+                            toast.success("Marcado como recuperado!");
+                            refresh();
+                          } catch (e) {
+                            toast.error("Erro ao atualizar status.");
+                          }
+                        }}
+                        className="p-2 text-muted-foreground hover:text-primary transition"
+                        title="Marcar como recuperado"
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex gap-3">
+              <Megaphone className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-sm text-amber-900">
+                <p className="font-semibold">Dica de Recuperação</p>
+                <p className="mt-1 opacity-90">
+                  Carrinhos com mais de 30 minutos de inatividade são os melhores para recuperar. 
+                  Ao clicar no botão de WhatsApp, a mensagem já vai pronta com o link do checkout e a lista de itens.
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </div>

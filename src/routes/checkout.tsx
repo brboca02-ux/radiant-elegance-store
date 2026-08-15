@@ -16,6 +16,7 @@ import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functio
 import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
 import { validateCoupon, calculateDiscount, type Coupon } from "@/lib/coupons";
 import { Ticket, X as CloseIcon } from "lucide-react";
+import { upsertAbandonedCart } from "@/lib/api/abandoned";
 
 const DRAFT_KEY = "md_checkout_draft_v1";
 
@@ -183,9 +184,23 @@ function CheckoutPage() {
       } catch {
         // quota / privacidade: silencia
       }
+
+      // Sync abandoned cart
+      if (email || phone) {
+        void upsertAbandonedCart({
+          customer_name: name || null,
+          customer_email: email || null,
+          customer_phone: phone || null,
+          cart_data: { items },
+          subtotal: +subtotal.toFixed(2),
+          shipping_cost: +shippingCost.toFixed(2),
+          discount: +discount.toFixed(2),
+          total: +total.toFixed(2),
+        });
+      }
     }, 400);
     return () => window.clearTimeout(t);
-  }, [name, email, phone, cpf, cep, street, number, complement, district, city, stateUf]);
+  }, [name, email, phone, cpf, cep, street, number, complement, district, city, stateUf, items, subtotal, shippingCost, discount, total]);
 
 
   // auto-preenche endereço assim que o CEP fica completo (8 dígitos)
