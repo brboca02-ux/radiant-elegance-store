@@ -419,6 +419,13 @@ export function ProductForm({ productId }: { productId?: string }) {
                       <span className="absolute bottom-1 left-1 bg-background/90 rounded p-0.5 cursor-grab"><GripVertical className="h-3 w-3" /></span>
                     </div>
                   ))}
+                  
+                  {/* Visual Aid Note */}
+                  <div className="col-span-full mt-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-[10px] text-primary font-medium leading-relaxed">
+                      💡 <strong>Dica:</strong> Nomeie as cores conforme aparecem nos nomes dos arquivos das imagens para vinculá-las visualmente.
+                    </p>
+                  </div>
                 </div>
               )}
             </Card>
