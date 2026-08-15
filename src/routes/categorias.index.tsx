@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, ImageOff, Star } from "lucide-react";
 import { useCategoriesStore, type CategoryStatus } from "@/stores/categoriesStore";
+import { useProductsStore } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/categorias/")({
   head: () => ({ meta: [{ title: "Categorias — J&S Store" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -19,6 +20,9 @@ function CategoriesListPage() {
   const navigate = useNavigate();
   const categories = useCategoriesStore((s) => s.categories);
   const remove = useCategoriesStore((s) => s.remove);
+  const products = useProductsStore((s) => s.products);
+  const countFor = (categoryId: string) =>
+    products.filter((p) => p.category_id === categoryId && p.status !== "arquivado").length;
 
   return (
     <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
