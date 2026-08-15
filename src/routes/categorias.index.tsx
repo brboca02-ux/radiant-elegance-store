@@ -21,8 +21,12 @@ function CategoriesListPage() {
   const categories = useCategoriesStore((s) => s.categories);
   const remove = useCategoriesStore((s) => s.remove);
   const products = useProductsStore((s) => s.products);
-  const countFor = (categoryId: string) =>
-    products.filter((p) => p.category_id === categoryId && p.status !== "arquivado").length;
+  const countFor = (category: { id: string; slug: string }) =>
+    products.filter(
+      (p) =>
+        (p.category_id === category.id || p.category_id === category.slug) &&
+        p.status !== "arquivado",
+    ).length;
 
   return (
     <AdminShell active="produtos" tabs={[{ label: "Produtos", to: "/produtos" }, { label: "Categorias", to: "/categorias" }, { label: "Estoque", to: "/estoque" }]}>
