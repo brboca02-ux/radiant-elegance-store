@@ -69,12 +69,13 @@ function CategoriesListPage() {
                       <ImageOff className="h-5 w-5 opacity-20" />
                     </div>
                   )}
-                <div className="absolute inset-0 bg-background/30 group-hover:bg-background/55 transition-colors" />
-                <div className="absolute inset-x-0 bottom-0 px-3 py-2">
-                  <h3 className="font-medium text-xs md:text-sm text-gold">{c.name}</h3>
+                  <div className="absolute inset-0 bg-background/30 group-hover:bg-background/55 transition-colors" />
+                  <div className="absolute inset-x-0 bottom-0 px-3 py-2">
+                    <h3 className="font-medium text-xs md:text-sm text-gold">{c.name}</h3>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
