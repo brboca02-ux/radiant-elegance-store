@@ -934,9 +934,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function Row({ label, value, bold, muted }: { label: string; value: string; bold?: boolean; muted?: boolean }) {
+function Row({ label, value, bold, muted, className }: { label: string; value: string; bold?: boolean; muted?: boolean; className?: string }) {
   return (
-    <div className={`flex justify-between ${bold ? "text-base font-semibold pt-2 border-t border-border" : ""} ${muted ? "text-muted-foreground" : ""}`}>
+    <div className={`flex justify-between ${bold ? "text-base font-semibold pt-2 border-t border-border" : ""} ${muted ? "text-muted-foreground" : ""} ${className || ""}`}>
       <span>{label}</span>
       <span>{value}</span>
     </div>
