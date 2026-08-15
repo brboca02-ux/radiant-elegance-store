@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      abandoned_carts: {
+        Row: {
+          cart_data: Json
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          discount: number | null
+          id: string
+          last_updated_at: string | null
+          order_id: string | null
+          recovered_at: string | null
+          shipping_cost: number | null
+          subtotal: number | null
+          total: number | null
+        }
+        Insert: {
+          cart_data: Json
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount?: number | null
+          id?: string
+          last_updated_at?: string | null
+          order_id?: string | null
+          recovered_at?: string | null
+          shipping_cost?: number | null
+          subtotal?: number | null
+          total?: number | null
+        }
+        Update: {
+          cart_data?: Json
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount?: number | null
+          id?: string
+          last_updated_at?: string | null
+          order_id?: string | null
+          recovered_at?: string | null
+          shipping_cost?: number | null
+          subtotal?: number | null
+          total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abandoned_carts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       addresses: {
         Row: {
           cep: string
