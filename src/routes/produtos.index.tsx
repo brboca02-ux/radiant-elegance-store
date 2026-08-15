@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2, Star } from "lucide-react";
+import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2, Star, ArchiveRestore } from "lucide-react";
 import { useProductsStore, CATEGORIES, effectiveStock, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
@@ -23,6 +23,7 @@ function ProductsListPage() {
   const products = useProductsStore((s) => s.products);
   const duplicate = useProductsStore((s) => s.duplicate);
   const archive = useProductsStore((s) => s.archive);
+  const update = useProductsStore((s) => s.update);
   const remove = useProductsStore((s) => s.remove);
   const toggleShowcase = useProductsStore((s) => s.toggleShowcase);
 
@@ -150,8 +151,31 @@ function ProductsListPage() {
                           className="rounded p-1.5 hover:bg-muted" title="Editar"><Pencil className="h-4 w-4" /></button>
                         <button onClick={() => { duplicate(p.id); toast.success("Produto duplicado"); }}
                           className="rounded p-1.5 hover:bg-muted" title="Duplicar"><Copy className="h-4 w-4" /></button>
-                        <button onClick={() => { archive(p.id); toast.success("Produto arquivado"); }}
-                          className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
+                        {p.status === "arquivado" ? (
+                          <button
+                            onClick={() => {
+                              update(p.id, { status: "ativo" })
+                                .then(() => toast.success("Produto reativado"))
+                                .catch((e: any) => toast.error(e?.message ?? "Erro ao reativar"));
+                            }}
+                            className="rounded p-1.5 hover:bg-muted text-emerald-700"
+                            title="Reativar produto"
+                          >
+                            <ArchiveRestore className="h-4 w-4" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              archive(p.id)
+                                .then(() => toast.success("Produto arquivado (não foi apagado)"))
+                                .catch((e: any) => toast.error(e?.message ?? "Erro ao arquivar"));
+                            }}
+                            className="rounded p-1.5 hover:bg-muted text-amber-700"
+                            title="Arquivar (esconde da loja, sem apagar)"
+                          >
+                            <Archive className="h-4 w-4" />
+                          </button>
+                        )}
                         <button onClick={() => { if (confirm(`Apagar definitivamente "${p.name}"? Esta ação não pode ser desfeita.`)) { remove(p.id).then(() => toast.success("Produto apagado")).catch((e) => toast.error(e?.message ?? "Erro ao apagar")); } }}
                           className="rounded p-1.5 hover:bg-muted text-red-700" title="Apagar"><Trash2 className="h-4 w-4" /></button>
 
@@ -193,8 +217,29 @@ function ProductsListPage() {
                       className="text-xs rounded border border-border px-2 py-1">Editar</button>
                     <button onClick={() => { duplicate(p.id); toast.success("Duplicado"); }}
                       className="text-xs rounded border border-border px-2 py-1">Duplicar</button>
-                    <button onClick={() => { archive(p.id); toast.success("Arquivado"); }}
-                      className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
+                    {p.status === "arquivado" ? (
+                      <button
+                        onClick={() => {
+                          update(p.id, { status: "ativo" })
+                            .then(() => toast.success("Reativado"))
+                            .catch((e: any) => toast.error(e?.message ?? "Erro ao reativar"));
+                        }}
+                        className="text-xs rounded border border-border px-2 py-1 text-emerald-700"
+                      >
+                        Reativar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          archive(p.id)
+                            .then(() => toast.success("Arquivado (não apagado)"))
+                            .catch((e: any) => toast.error(e?.message ?? "Erro ao arquivar"));
+                        }}
+                        className="text-xs rounded border border-border px-2 py-1 text-amber-700"
+                      >
+                        Arquivar
+                      </button>
+                    )}
                     <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch((e) => toast.error(e?.message ?? "Erro")); } }}
                       className="text-xs rounded border border-border px-2 py-1 text-red-700">Apagar</button>
 
