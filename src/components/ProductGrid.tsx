@@ -97,7 +97,7 @@ export function ProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6 sm:gap-x-4 sm:gap-y-8 items-stretch">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12 items-stretch">
       {items.map((p) => (
         <div key={p.node.id} className="flex">
           <ProductCard product={p} size={size} />
