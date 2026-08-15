@@ -225,7 +225,7 @@ function DashboardPage() {
           </Card>
 
           <Card className="lg:col-span-2">
-            <SectionHeader title="Produtos com Estoque Baixo" hint="Reposição recomendada" to="/estoque" />
+            <SectionHeader title="Produtos com Estoque Baixo" hint="Reposição recomendada" to="/produtos" />
             {lowStockItems.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">Nenhum item com estoque baixo. 🎉</p>
             ) : (
