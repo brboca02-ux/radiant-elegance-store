@@ -24,8 +24,14 @@ function downloadCsv(filename: string, content: string) {
 
 function ClientesPage() {
   const customers = useCustomersStore((s) => s.customers);
+  const loading = useCustomersStore((s) => s.loading);
+  const hydrate = useCustomersStore((s) => s.hydrate);
   const [q, setQ] = useState("");
   const [field, setField] = useState<"all" | "name" | "whatsapp" | "email">("all");
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -93,9 +99,13 @@ function ClientesPage() {
           </select>
         </div>
 
-        {/* Tabela */}
         <div className="rounded-xl border border-border bg-background overflow-hidden">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="p-20 text-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+              <p className="mt-3 text-sm text-muted-foreground">Carregando clientes...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="p-10 text-center">
               <Users className="h-10 w-10 mx-auto text-muted-foreground" />
               <p className="mt-3 text-sm text-muted-foreground">Nenhum cliente encontrado.</p>
