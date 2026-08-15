@@ -15,74 +15,42 @@ export interface Lead {
   at?: string; // for compatibility with existing code
 }
 
-const STORAGE_KEY = "md_leads_v1";
-
-export function loadLeadsLocal(): Lead[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-  } catch {
-    return [];
-  }
-}
-
 export async function loadLeads(): Promise<Lead[]> {
-  // Try to load from Supabase if possible
-  try {
-    const { data, error } = await supabase
-      .from("leads" as any)
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      return (data as any[]).map(l => ({
-        id: l.id,
-        name: l.name || undefined,
-        email: l.email || undefined,
-        whatsapp: l.phone || undefined,
-        source: l.source || undefined,
-        created_at: l.created_at,
-        at: l.created_at
-      }));
-    }
-  } catch (e) {
-    console.warn("Could not load leads from Supabase, falling back to local storage.");
-  }
-
-  // Fallback to local storage
-  return loadLeadsLocal();
+  const { data, error } = await supabase
+    .from("leads")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((l) => ({
+    id: l.id,
+    name: l.name ?? undefined,
+    email: l.email ?? undefined,
+    whatsapp: l.phone ?? undefined,
+    source: l.source ?? undefined,
+    created_at: l.created_at,
+    at: l.created_at,
+  }));
 }
 
 export async function saveLead(lead: Lead) {
-  // Save to local storage first for immediate feedback
+  const { error } = await supabase.from("leads").insert({
+    name: lead.name ?? null,
+    email: lead.email ?? null,
+    phone: lead.whatsapp ?? null,
+    source: lead.source ?? null,
+  });
+  if (error) throw new Error(error.message);
   if (typeof window !== "undefined") {
-    try {
-      const list = loadLeadsLocal();
-      list.push({ ...lead, at: lead.at || new Date().toISOString() });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch (e) {
-      console.warn("Failed to save lead to localStorage");
-    }
-  }
-
-  // Then try Supabase
-  try {
-    await supabase
-      .from("leads" as any)
-      .insert({
-        name: lead.name,
-        email: lead.email,
-        phone: lead.whatsapp,
-        source: lead.source
-      } as any);
-  } catch (e) {
-    console.warn("Failed to save lead to Supabase");
+    try { localStorage.setItem(CAPTURED_KEY, "1"); } catch { /* marcador opcional */ }
   }
 }
 
+/** Marcador local: este navegador já deixou um contato (evita repetir o pop-up). */
+const CAPTURED_KEY = "js_lead_captured_v1";
+
 export function hasAnyLead(): boolean {
   if (typeof window === "undefined") return false;
-  return loadLeadsLocal().length > 0;
+  return localStorage.getItem(CAPTURED_KEY) === "1" || localStorage.getItem("md_leads_v1") !== null;
 }
 
 export function cleanEmail(v: string) {

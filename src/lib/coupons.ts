@@ -12,76 +12,32 @@ export interface Coupon {
   created_at: string;
 }
 
-const STORAGE_KEY = "md_coupons_v1";
-
 export async function loadCoupons(): Promise<Coupon[]> {
-  try {
-    const { data, error } = await supabase
-      .from("coupons" as any)
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (!error && data) return data as unknown as Coupon[];
-  } catch (e) {
-    console.warn("Could not load coupons from Supabase, falling back to local storage.");
-  }
-
-  // Fallback to local storage
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-  } catch {
-    return [];
-  }
+  const { data, error } = await supabase
+    .from("coupons")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as unknown as Coupon[];
 }
 
 export async function saveCoupon(coupon: Omit<Coupon, "id" | "created_at" | "usage_count">) {
-  try {
-    const { error } = await supabase
-      .from("coupons" as any)
-      .upsert({
+  const { error } = await supabase
+    .from("coupons")
+    .upsert(
+      {
         ...coupon,
         code: coupon.code.toUpperCase().trim(),
-        updated_at: new Date().toISOString()
-      } as any);
-    
-    if (!error) return;
-  } catch (e) {
-    console.warn("Failed to save coupon to Supabase");
-  }
-
-  // Fallback
-  if (typeof window !== "undefined") {
-    const list = await loadCoupons();
-    const newCoupon = {
-      ...coupon,
-      id: crypto.randomUUID(),
-      usage_count: 0,
-      created_at: new Date().toISOString()
-    };
-    list.push(newCoupon);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  }
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "code" },
+    );
+  if (error) throw new Error(error.message);
 }
 
 export async function deleteCoupon(id: string) {
-  try {
-    const { error } = await supabase
-      .from("coupons" as any)
-      .delete()
-      .eq("id", id);
-    
-    if (!error) return;
-  } catch (e) {
-    console.warn("Failed to delete coupon from Supabase");
-  }
-
-  // Fallback
-  if (typeof window !== "undefined") {
-    const list = await loadCoupons();
-    const next = list.filter(c => c.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  }
+  const { error } = await supabase.from("coupons").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }
 
 export async function validateCoupon(code: string): Promise<Coupon | null> {

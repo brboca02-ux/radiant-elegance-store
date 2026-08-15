@@ -87,7 +87,9 @@ function DashboardPage() {
 
   const [leads, setLeads] = useState<any[]>([]);
   useEffect(() => {
-    loadLeads().then(setLeads);
+    loadLeads()
+      .then(setLeads)
+      .catch(() => setLeads([]));
   }, []);
 
   const startOfToday = useMemo(() => {

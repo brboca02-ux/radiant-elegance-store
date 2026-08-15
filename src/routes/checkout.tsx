@@ -330,6 +330,7 @@ function CheckoutPage() {
         discount: +discount.toFixed(2),
         total: +total.toFixed(2),
         payment_method: paymentMethod,
+        coupon_code: appliedCoupon?.code,
       });
 
       // Pagamento
