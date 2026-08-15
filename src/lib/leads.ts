@@ -1,41 +1,51 @@
-// Shared lead persistence (localStorage). Backward compatible with older entries.
+import { supabase } from "@/integrations/supabase/client";
+
 export type LeadSource = "newsletter" | "footer" | "welcome_popup" | "exit_intent";
 
 export interface Lead {
+  id?: string;
   name?: string;
   email?: string;
   whatsapp?: string;
-  /** Legacy fields kept for back-compat with older v1 entries */
-  type?: "email" | "whatsapp";
-  value?: string;
-  source?: LeadSource;
-  at: string;
+  source?: LeadSource | string;
+  created_at?: string;
 }
 
-const STORAGE_KEY = "md_leads_v1";
+export async function loadLeads(): Promise<Lead[]> {
+  const { data, error } = await supabase
+    .from("leads")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-export function loadLeads(): Lead[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-  } catch {
+  if (error) {
+    console.error("Error loading leads:", error);
     return [];
   }
+
+  return (data || []).map(l => ({
+    id: l.id,
+    name: l.name || undefined,
+    email: l.email || undefined,
+    whatsapp: l.phone || undefined,
+    source: l.source || undefined,
+    created_at: l.created_at
+  }));
 }
 
-export function saveLead(lead: Lead) {
-  if (typeof window === "undefined") return;
-  try {
-    const list = loadLeads();
-    list.push(lead);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  } catch {
-    // ignore quota
+export async function saveLead(lead: Omit<Lead, "id" | "created_at">) {
+  const { error } = await supabase
+    .from("leads")
+    .insert({
+      name: lead.name,
+      email: lead.email,
+      phone: lead.whatsapp,
+      source: lead.source
+    });
+
+  if (error) {
+    console.error("Error saving lead:", error);
+    throw error;
   }
-}
-
-export function hasAnyLead(): boolean {
-  return loadLeads().length > 0;
 }
 
 export function cleanEmail(v: string) {
