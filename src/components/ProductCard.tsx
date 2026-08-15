@@ -83,7 +83,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
               width={600}
               height={800}
               onLoad={() => setLoaded0(true)}
-              className={`absolute inset-0 w-full h-full object-contain sm:object-cover object-center transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 w-full h-full object-contain object-top transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
             />
             {img1 && (
               <img
@@ -97,7 +97,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
                 width={600}
                 height={800}
                 onLoad={() => setLoaded1(true)}
-                className={`absolute inset-0 w-full h-full object-contain sm:object-cover object-center scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100 ${loaded1 ? "opacity-100" : "opacity-0"}`}
+                className={`absolute inset-0 w-full h-full object-contain object-top scale-105 transition-transform duration-[1200ms] ease-out group-hover:scale-100 ${loaded1 ? "opacity-100" : "opacity-0"}`}
               />
             )}
           </>
