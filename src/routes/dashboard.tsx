@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ShoppingBag, Package, AlertTriangle, DollarSign, Users, TrendingUp, ArrowUpRight } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { useOrdersStore, fmtBRL, STORE_ID, type Order } from "@/stores/ordersStore";

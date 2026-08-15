@@ -66,7 +66,7 @@ function MarketingPage() {
                   <li key={i} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
                     <span className="uppercase text-[10px] tracking-widest text-muted-foreground w-24">{origem}</span>
                     <span className="flex-1 truncate">{l.name ? `${l.name} · ` : ""}{contato}</span>
-                    <span className="text-xs text-muted-foreground">{new Date(l.at).toLocaleDateString("pt-BR")}</span>
+                    <span className="text-xs text-muted-foreground">{l.at ? new Date(l.at).toLocaleDateString("pt-BR") : "—"}</span>
                   </li>
                 );
               })}
@@ -93,7 +93,7 @@ function MarketingPage() {
               {newsletterLeads.map((l, i) => (
                 <li key={i} className="flex justify-between py-2 text-sm">
                   <span className="truncate">{l.email || l.value}</span>
-                  <span className="text-xs text-muted-foreground">{new Date(l.at).toLocaleDateString("pt-BR")}</span>
+                  <span className="text-xs text-muted-foreground">{l.at ? new Date(l.at).toLocaleDateString("pt-BR") : "—"}</span>
                 </li>
               ))}
             </ul>
