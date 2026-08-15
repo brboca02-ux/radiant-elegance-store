@@ -150,8 +150,31 @@ function ProductsListPage() {
                           className="rounded p-1.5 hover:bg-muted" title="Editar"><Pencil className="h-4 w-4" /></button>
                         <button onClick={() => { duplicate(p.id); toast.success("Produto duplicado"); }}
                           className="rounded p-1.5 hover:bg-muted" title="Duplicar"><Copy className="h-4 w-4" /></button>
-                        <button onClick={() => { archive(p.id); toast.success("Produto arquivado"); }}
-                          className="rounded p-1.5 hover:bg-muted text-amber-700" title="Arquivar"><Archive className="h-4 w-4" /></button>
+                        {p.status === "arquivado" ? (
+                          <button
+                            onClick={() => {
+                              update(p.id, { status: "ativo" })
+                                .then(() => toast.success("Produto reativado"))
+                                .catch((e) => toast.error(e?.message ?? "Erro ao reativar"));
+                            }}
+                            className="rounded p-1.5 hover:bg-muted text-emerald-700"
+                            title="Reativar produto"
+                          >
+                            <ArchiveRestore className="h-4 w-4" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              archive(p.id)
+                                .then(() => toast.success("Produto arquivado (não foi apagado)"))
+                                .catch((e) => toast.error(e?.message ?? "Erro ao arquivar"));
+                            }}
+                            className="rounded p-1.5 hover:bg-muted text-amber-700"
+                            title="Arquivar (esconde da loja, sem apagar)"
+                          >
+                            <Archive className="h-4 w-4" />
+                          </button>
+                        )}
                         <button onClick={() => { if (confirm(`Apagar definitivamente "${p.name}"? Esta ação não pode ser desfeita.`)) { remove(p.id).then(() => toast.success("Produto apagado")).catch((e) => toast.error(e?.message ?? "Erro ao apagar")); } }}
                           className="rounded p-1.5 hover:bg-muted text-red-700" title="Apagar"><Trash2 className="h-4 w-4" /></button>
 
