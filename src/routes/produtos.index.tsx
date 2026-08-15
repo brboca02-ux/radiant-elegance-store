@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2, Star } from "lucide-react";
+import { Pencil, Copy, Archive, Plus, Search, ImageOff, Sparkles, Trash2, Star, ArchiveRestore } from "lucide-react";
 import { useProductsStore, CATEGORIES, effectiveStock, type ProductStatus } from "@/stores/productsStore";
 
 export const Route = createFileRoute("/produtos/")({
@@ -23,6 +23,7 @@ function ProductsListPage() {
   const products = useProductsStore((s) => s.products);
   const duplicate = useProductsStore((s) => s.duplicate);
   const archive = useProductsStore((s) => s.archive);
+  const update = useProductsStore((s) => s.update);
   const remove = useProductsStore((s) => s.remove);
   const toggleShowcase = useProductsStore((s) => s.toggleShowcase);
 
@@ -155,7 +156,7 @@ function ProductsListPage() {
                             onClick={() => {
                               update(p.id, { status: "ativo" })
                                 .then(() => toast.success("Produto reativado"))
-                                .catch((e) => toast.error(e?.message ?? "Erro ao reativar"));
+                                .catch((e: any) => toast.error(e?.message ?? "Erro ao reativar"));
                             }}
                             className="rounded p-1.5 hover:bg-muted text-emerald-700"
                             title="Reativar produto"
@@ -167,7 +168,7 @@ function ProductsListPage() {
                             onClick={() => {
                               archive(p.id)
                                 .then(() => toast.success("Produto arquivado (não foi apagado)"))
-                                .catch((e) => toast.error(e?.message ?? "Erro ao arquivar"));
+                                .catch((e: any) => toast.error(e?.message ?? "Erro ao arquivar"));
                             }}
                             className="rounded p-1.5 hover:bg-muted text-amber-700"
                             title="Arquivar (esconde da loja, sem apagar)"
