@@ -217,8 +217,29 @@ function ProductsListPage() {
                       className="text-xs rounded border border-border px-2 py-1">Editar</button>
                     <button onClick={() => { duplicate(p.id); toast.success("Duplicado"); }}
                       className="text-xs rounded border border-border px-2 py-1">Duplicar</button>
-                    <button onClick={() => { archive(p.id); toast.success("Arquivado"); }}
-                      className="text-xs rounded border border-border px-2 py-1 text-amber-700">Arquivar</button>
+                    {p.status === "arquivado" ? (
+                      <button
+                        onClick={() => {
+                          update(p.id, { status: "ativo" })
+                            .then(() => toast.success("Reativado"))
+                            .catch((e: any) => toast.error(e?.message ?? "Erro ao reativar"));
+                        }}
+                        className="text-xs rounded border border-border px-2 py-1 text-emerald-700"
+                      >
+                        Reativar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          archive(p.id)
+                            .then(() => toast.success("Arquivado (não apagado)"))
+                            .catch((e: any) => toast.error(e?.message ?? "Erro ao arquivar"));
+                        }}
+                        className="text-xs rounded border border-border px-2 py-1 text-amber-700"
+                      >
+                        Arquivar
+                      </button>
+                    )}
                     <button onClick={() => { if (confirm(`Apagar "${p.name}"?`)) { remove(p.id).then(() => toast.success("Apagado")).catch((e) => toast.error(e?.message ?? "Erro")); } }}
                       className="text-xs rounded border border-border px-2 py-1 text-red-700">Apagar</button>
 
