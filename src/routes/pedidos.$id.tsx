@@ -6,8 +6,9 @@ import {
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
-  fmtBRL, fmtDate, type OrderStatus,
+  type OrderStatus,
 } from "@/stores/ordersStore";
+import { fmtBRL, fmtDate } from "@/lib/utils/formatters";
 import {
   FULFILLMENT_FLOW, FULFILLMENT_LABEL, FULFILLMENT_DESCRIPTION, setOrderFulfillment,
   getOrderPublic, type FulfillmentStage,

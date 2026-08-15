@@ -3,9 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Eye, Printer, XCircle, RefreshCw, X, SlidersHorizontal } from "lucide-react";
 import {
-  useOrdersStore, ORDER_STATUS_LABEL, statusTone, fmtBRL, fmtDate,
+  useOrdersStore, ORDER_STATUS_LABEL, statusTone,
   type OrderStatus, type PaymentMethod, type PaymentStatus,
 } from "@/stores/ordersStore";
+import { fmtBRL, fmtDate } from "@/lib/utils/formatters";
 
 export const Route = createFileRoute("/pedidos/")({
   head: () => ({
