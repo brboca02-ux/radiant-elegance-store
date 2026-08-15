@@ -492,7 +492,7 @@ function ProductPage() {
                       onClick={() => setSize(s)}
                       disabled={!avail}
                       aria-pressed={active}
-                      className={`min-w-10 h-9 px-3 text-xs font-semibold rounded-md border transition ${active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60"} ${!avail ? "opacity-40 line-through cursor-not-allowed" : ""}`}
+                      className={`min-w-10 sm:min-w-12 h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold rounded-md border transition ${active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60"} ${!avail ? "opacity-40 line-through cursor-not-allowed" : ""}`}
                     >
                       {s}
                     </button>
