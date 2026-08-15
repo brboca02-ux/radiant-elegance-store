@@ -29,19 +29,21 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative h-[42vh] min-h-[320px] md:h-[50vh] md:min-h-[400px] lg:h-[58vh] lg:min-h-[480px] overflow-hidden bg-background">
-      <img
-        src={heroCouple.url}
-        alt="J&S Store — Moda Masculina e Feminina"
-        width={1376}
-        height={768}
-        fetchPriority="high"
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-90"
-      />
-      {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+    <section className="relative overflow-hidden bg-background">
+      <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] xl:aspect-[2.4] max-h-[85vh] w-full bg-black">
+        <img
+          src={heroCouple.url}
+          alt="J&S Store — Moda Masculina e Feminina"
+          width={1376}
+          height={768}
+          fetchPriority="high"
+          className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center sm:object-[center_20%] lg:object-center opacity-90"
+        />
+        {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+      </div>
       
-      <div className="relative h-full max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-8 md:pb-12">
+      <div className="absolute inset-x-0 bottom-0 max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-8 md:pb-12">
         <div className="max-w-2xl text-center">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
             <Button
@@ -332,7 +334,7 @@ export function InstagramSection() {
   return (
     <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="text-center max-w-2xl mx-auto mb-10">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3 inline-flex items-center gap-2">
             <Instagram className="h-3.5 w-3.5" strokeWidth={1.8} /> Instagram
           </p>
@@ -340,9 +342,32 @@ export function InstagramSection() {
             @{INSTAGRAM_HANDLE}
           </h2>
           <p className="text-sm md:text-base text-muted-foreground mt-3">
-            Lançamentos, bastidores e provas da semana. Toque em um post para abrir no Instagram.
+            Lançamentos, bastidores e novidades exclusivas.
           </p>
         </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 mb-10">
+          {cells.map((cell, idx) => (
+            <a
+              key={idx}
+              href={cell.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative aspect-square overflow-hidden bg-secondary border border-gold/5"
+            >
+              <img
+                src={cell.img}
+                alt="Post Instagram J&S Store"
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Instagram className="text-white w-5 h-5" />
+              </div>
+            </a>
+          ))}
+        </div>
+
         <div className="text-center">
           <Button
             size="lg"
@@ -350,7 +375,6 @@ export function InstagramSection() {
             asChild
           >
             <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-              <Instagram className="w-4 h-4 mr-2" strokeWidth={1.5} />
               Seguir @{INSTAGRAM_HANDLE}
             </a>
           </Button>
