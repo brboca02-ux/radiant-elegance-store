@@ -463,7 +463,7 @@ function ProductPage() {
                       title={c}
                       aria-label={`Cor ${c}`}
                       aria-pressed={active}
-                      className={`relative h-9 w-9 rounded-full border transition ${active ? "ring-2 ring-primary ring-offset-2 border-primary" : "border-border hover:border-foreground/50"} ${!avail ? "opacity-40" : ""}`}
+                      className={`relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border transition ${active ? "ring-2 ring-primary ring-offset-2 border-primary" : "border-border hover:border-foreground/50"} ${!avail ? "opacity-40" : ""}`}
                       style={{ backgroundColor: colorSwatch(c, colorHexMap[c]) }}
                     >
                       {active && (
