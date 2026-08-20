@@ -12,7 +12,7 @@ export const Route = createFileRoute("/trocas-e-devolucoes")({
       { property: "og:type", content: "article" },
       { name: "robots", content: "index, follow" },
     ],
-    links: [{ rel: "canonical", href: "/trocas-e-devolucoes" }],
+    links: [{ rel: "canonical", href: "https://www.jesstorejoinville.com.br/trocas-e-devolucoes" }],
   }),
   component: TrocasPage,
 });

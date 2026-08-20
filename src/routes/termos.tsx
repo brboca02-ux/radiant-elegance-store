@@ -12,7 +12,7 @@ export const Route = createFileRoute("/termos")({
       { property: "og:type", content: "article" },
       { name: "robots", content: "index, follow" },
     ],
-    links: [{ rel: "canonical", href: "/termos" }],
+    links: [{ rel: "canonical", href: "https://www.jesstorejoinville.com.br/termos" }],
   }),
   component: TermosPage,
 });

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/privacidade")({
       { property: "og:type", content: "article" },
       { name: "robots", content: "index, follow" },
     ],
-    links: [{ rel: "canonical", href: "/privacidade" }],
+    links: [{ rel: "canonical", href: "https://www.jesstorejoinville.com.br/privacidade" }],
   }),
   component: PrivacidadePage,
 });
