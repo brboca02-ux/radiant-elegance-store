@@ -1,53 +1,45 @@
-# Auditoria de integração — Painel admin x Loja
+# Correção da versão mobile (prioridade SEO)
 
-## O que já foi verificado no banco
+Auditoria feita agora em `https://www.jesstorejoinville.com.br` num iPhone simulado (390x844) e comparada com o preview. O que foi confirmado:
 
-| Dado | Situação |
-| --- | --- |
-| Produtos | 75 no total: 52 ativos (29 masculino, 23 feminino) e 23 arquivados |
-| Vitrine | 11 produtos marcados para a vitrine |
-| Imagens / variações | 83 imagens e 188 variações cadastradas |
-| Categorias | 2 (masculino, feminino) |
-| Textos da home (`site_config`) | 1 registro salvo — integração funcionando |
-| Imagens editáveis da home (`site_media`) | **0 registros** |
-| Pedidos, leads, carrinhos abandonados | **0 registros** |
-| Cupons | 2 cadastrados |
+## Problemas confirmados
 
-Confirmado por leitura de código: painel e loja leem as mesmas fontes (produtos, categorias, cupons, textos da home). Não há divergência de tabela entre as duas pontas.
+1. **Hero da home quebrado no celular** — a moldura do banner usa proporção 3/4.5 + altura de 75% da tela, mas a foto é 16:9 e entra em modo "encaixar inteira". Resultado real medido: cerca de 200px de faixa preta vazia acima da imagem e mais de 300px vazios abaixo, com os botões "Comprar Feminino/Masculino" isolados no meio do nada. É o primeiro elemento visto no celular (e o LCP que o Google mede).
+2. **Loja sem nenhum produto** — a consulta do catálogo retorna zero itens porque, no banco, todos os 75 produtos estão com status arquivado (27 femininos, 48 masculinos). Home e /colecao mostram "Coleção em preparação" tanto na produção quanto no preview. Sem produtos indexáveis, não há ranqueamento de loja.
+3. **Endereço canônico apontando para o domínio errado** — 20 ocorrências de `jsstore.lovable.app` no código (canonical, og:url, breadcrumbs e sitemap). O site oficial é `www.jesstorejoinville.com.br`; isso faz o Google atribuir as páginas ao domínio antigo.
+4. **Home sem título principal (H1)** — a página inicial não tem nenhum H1; o Google usa esse sinal para entender o tema da loja.
+5. **Ajustes finos de mobile** — faixa rolante do topo com espaçamentos largos demais no celular, link "Início" da trilha de navegação com área de toque abaixo de 36px, e a foto do hero recortando as pessoas em telas estreitas.
 
-## Pontos de atenção encontrados
+Não foram encontrados erros de JavaScript nem rolagem horizontal indevida (a faixa rolante é intencional).
 
-1. **Imagens da home não estão persistidas.** A tela de mídia do painel grava em `site_media`, mas a tabela está vazia. Hoje a home e a lista de categorias exibem as imagens embutidas no código como fallback — ou seja, qualquer troca de banner feita no painel não sobreviveu. Precisa ser reproduzido para descobrir se o upload falha (bucket privado + rota de imagem) ou se nunca foi salvo.
-2. **23 produtos arquivados.** Eles não aparecem na loja. É preciso confirmar se isso é intencional ou se são peças que deveriam estar à venda.
-3. **Nenhum pedido no sistema.** Dashboard, Pedidos e a recuperação de carrinho nunca rodaram com dado real neste banco, então esses painéis não estão validados ponta a ponta.
-4. **Cache no navegador.** Textos da home, pedidos e leads mantêm cópia local no navegador. Se o banco falhar, a tela mostra dado antigo sem avisar — o painel pode parecer "salvo" quando não salvou.
+## O que será feito
 
-## Plano de auditoria e correção
+### 1. Hero mobile (maior impacto visual)
+- Trocar a moldura do banner no celular para uma proporção coerente com a imagem, eliminando as faixas preto vazias.
+- Fazer a foto preencher a moldura com recorte centrado nas pessoas, sem distorção.
+- Reposicionar o bloco de botões logo abaixo do conteúdo da imagem, com respiro consistente, e empilhar em largura total no celular com altura mínima de toque de 44px.
+- Adicionar um H1 curto com a marca e o nicho ("Moda masculina e feminina em Joinville") sobre o hero, servindo tanto ao SEO quanto ao preenchimento visual.
 
-### Fase 1 — Provar o fluxo de imagens da home
-- Entrar no painel autenticado e fazer upload real de imagem de categoria e de vitrine.
-- Confirmar que a linha aparece em `site_media`, que a URL abre pela rota pública de imagem e que a home e a lista de categorias passam a usá-la.
-- Corrigir o que estiver quebrado (upload, permissão do bucket, leitura na home) e remover o silêncio em caso de erro: o painel deve mostrar mensagem clara quando o salvamento falhar.
+### 2. Reativar o catálogo
+- Reativar os produtos das categorias Masculino e Feminino no banco, de modo que voltem a aparecer na vitrine, na coleção e nas categorias. Produtos que você realmente quer fora do ar continuam podendo ser arquivados no painel, um a um.
+- Conferir depois, no celular, que a grade aparece com 2 colunas e imagens carregando.
 
-### Fase 2 — Catálogo
-- Listar os 23 arquivados e confirmar com você quais devem voltar para a loja.
-- Validar contadores por categoria, marcação de vitrine e ligação imagem–cor no formulário de produto.
+### 3. Domínio correto para o Google
+- Substituir todas as URLs `jsstore.lovable.app` por `https://www.jesstorejoinville.com.br` em canonical, og:url, dados estruturados (breadcrumbs/produto) e no sitemap.
 
-### Fase 3 — Pedido de ponta a ponta
-- Fazer um pedido de teste na loja (com cupom e variação) e acompanhar: criação do pedido, baixa de estoque, aparecimento em Pedidos, atualização de etapas de entrega, KPIs do Dashboard e página de acompanhamento do cliente.
-- Registrar um carrinho abandonado no checkout e confirmar que ele aparece na aba de Marketing com o link de recuperação.
+### 4. Acabamento mobile
+- Reduzir espaçamentos e tamanho da faixa rolante no celular.
+- Aumentar a área de toque dos links de trilha de navegação e dos filtros.
+- Revisar espaçamentos verticais das seções da home no celular (vitrine, categorias, confiança, newsletter) para ritmo uniforme.
+- Garantir que o botão flutuante do WhatsApp não cubra botões de ação (checkout e adicionar à sacola).
 
-### Fase 4 — Marketing e configurações
-- Capturar um lead pelo site e conferir que ele chega na lista do painel.
-- Criar/expirar um cupom no painel e validar o comportamento no checkout.
-- Editar textos da home no painel e confirmar a mudança na loja em uma aba nova (sem cache).
+### 5. Verificação
+- Nova passagem com navegador simulado em 390px e 360px nas páginas home, coleção, produto e checkout: capturas de tela, checagem de rolagem horizontal, alvos de toque e ausência de erros de console.
 
-### Fase 5 — Endurecer o que estiver frágil
-- Onde o cache local puder mascarar falha de salvamento, trocar por erro visível.
-- Limpar dados de teste criados durante a auditoria.
+## Detalhes técnicos
 
-## Notas técnicas
-- Auditoria feita com Playwright em desktop e mobile, com sessão de administrador.
-- Fontes por área: `products`/`product_images`/`product_variants`, `categories`, `orders`/`order_items`, `leads`, `coupons`, `abandoned_carts`, `site_config`, `site_media`.
-- Imagens servidas por `/api/public/img/*` sobre o bucket privado `product-images`.
-- Pedidos criados pela função `place_order` (preço, desconto e estoque calculados no servidor) — nenhum valor vindo do navegador é confiado.
+- `src/components/HomeSections.tsx` → `HomeHero`: substituir `aspect-[3/4.5] h-[75vh] object-contain` por proporção mobile (~4/5) com `object-cover object-[center_25%]`; mover o container de botões de `absolute inset-x-0 bottom-0` para dentro do fluxo em telas pequenas, mantendo overlay em `sm+`; adicionar `<h1>` (visível, tipografia display, tamanho responsivo).
+- Reativação do catálogo via migração: `update public.products set status = 'ativo' where category_id in ('masculino','feminino')`.
+- URLs: atualizar `src/routes/index.tsx`, `colecao.tsx`, `produto.$handle.tsx`, `sobre.tsx`, `sitemap[.]xml.ts`, `__root.tsx`, `src/components/Breadcrumbs.tsx`, `src/lib/api/abandoned.ts`, `src/lib/integrations/payment.ts`.
+- `src/components/Header.tsx`: faixa marquee com `gap-4 px-3` no mobile; `tap-target` aplicado aos links de breadcrumb em `src/routes/colecao.tsx`.
+- Verificação com Playwright (`scripts/visual-regression.py` como base) em 390px e 360px.
