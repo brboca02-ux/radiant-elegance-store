@@ -872,44 +872,46 @@ export function ProductForm({ productId }: { productId?: string }) {
               </div>
 
               {/* Tamanhos */}
-              <div>
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
-                  Tamanhos disponíveis
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {aiSizesSuggested.map((s) => {
-                    const active = selSizes.has(s);
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => toggle(selSizes, s, setSelSizes)}
-                        className={`min-w-10 h-8 px-2.5 text-xs font-semibold rounded-md border transition ${
-                          active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60 text-foreground"
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    );
-                  })}
+              {sizeMode === "multi" && (
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                    Tamanhos disponíveis
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {aiSizesSuggested.map((s) => {
+                      const active = selSizes.has(s);
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => toggle(selSizes, s, setSelSizes)}
+                          className={`min-w-10 h-8 px-2.5 text-xs font-semibold rounded-md border transition ${
+                            active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60 text-foreground"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      value={customSize}
+                      onChange={(e) => setCustomSize(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
+                      placeholder="Adicionar outro tamanho…"
+                      className={`${input} text-xs h-8`}
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustomSize}
+                      className="rounded-md border border-border px-2 text-xs hover:bg-muted"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
-                <div className="mt-2 flex gap-2">
-                  <input
-                    value={customSize}
-                    onChange={(e) => setCustomSize(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
-                    placeholder="Adicionar outro tamanho…"
-                    className={`${input} text-xs h-8`}
-                  />
-                  <button
-                    type="button"
-                    onClick={addCustomSize}
-                    className="rounded-md border border-border px-2 text-xs hover:bg-muted"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
+              )}
 
               {/* Estoque por variação */}
               <div>
