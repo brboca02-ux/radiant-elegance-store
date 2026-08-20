@@ -299,9 +299,10 @@ export function ProductForm({ productId }: { productId?: string }) {
     const szsMap = new Map<string, string>();
     [...selSizes].forEach((s) => { const k = norm(s); if (k && !szsMap.has(k)) szsMap.set(k, s); });
     const cols = [...colsMap.values()];
-    const szs = [...szsMap.values()];
-    if (cols.length === 0 || szs.length === 0) {
-      toast.error("Selecione ao menos uma cor e um tamanho.");
+    const szs = sizeMode === "unico" ? ["Único"] : [...szsMap.values()];
+    
+    if (cols.length === 0 || (sizeMode !== "unico" && szs.length === 0)) {
+      toast.error("Selecione ao menos uma cor.");
       return;
     }
     const hexByName = new Map(aiColors.map((c) => [norm(c.name), c.hex]));
