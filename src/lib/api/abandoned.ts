@@ -17,49 +17,23 @@ export interface AbandonedCart {
 }
 
 export async function upsertAbandonedCart(input: Partial<AbandonedCart>) {
-  // We identify by email or phone to update existing records if possible
-  // For simplicity in this implementation, we'll use email/phone as identifiers
   if (!input.customer_email && !input.customer_phone) return;
 
-  const identifier = input.customer_email || input.customer_phone;
-  
-  // Try to find an existing non-recovered cart for this user in the last 24h
-  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  
-  const { data: existing } = await supabase
-    .from("abandoned_carts")
-    .select("id")
-    .or(`customer_email.eq.${input.customer_email},customer_phone.eq.${input.customer_phone}`)
-    .is("recovered_at", null)
-    .gt("created_at", oneDayAgo)
-    .order("last_updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const data = {
-    customer_name: input.customer_name,
-    customer_email: input.customer_email,
-    customer_phone: input.customer_phone,
-    cart_data: input.cart_data,
-    subtotal: input.subtotal,
-    shipping_cost: input.shipping_cost,
-    discount: input.discount,
-    total: input.total,
-    last_updated_at: new Date().toISOString(),
-  };
-
-  if (existing?.id) {
-    const { error } = await supabase
-      .from("abandoned_carts")
-      .update(data)
-      .eq("id", existing.id);
-    if (error) console.error("Error updating abandoned cart:", error);
-  } else {
-    const { error } = await supabase
-      .from("abandoned_carts")
-      .insert(data);
-    if (error) console.error("Error inserting abandoned cart:", error);
-  }
+  // A escrita é feita por uma função segura no servidor, que valida os dados
+  // e identifica o carrinho pelo e-mail/telefone informado no checkout.
+  const { error } = await supabase.rpc("upsert_abandoned_cart", {
+    payload: {
+      customer_name: input.customer_name ?? null,
+      customer_email: input.customer_email ?? null,
+      customer_phone: input.customer_phone ?? null,
+      cart_data: input.cart_data ?? [],
+      subtotal: input.subtotal ?? 0,
+      shipping_cost: input.shipping_cost ?? 0,
+      discount: input.discount ?? 0,
+      total: input.total ?? 0,
+    },
+  });
+  if (error) console.error("Error saving abandoned cart");
 }
 
 export async function loadAbandonedCarts(): Promise<AbandonedCart[]> {
