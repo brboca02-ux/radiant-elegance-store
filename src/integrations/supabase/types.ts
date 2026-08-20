@@ -678,6 +678,7 @@ export type Database = {
         Args: { p_order_id: string; p_stage: string }
         Returns: undefined
       }
+      upsert_abandoned_cart: { Args: { payload: Json }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
