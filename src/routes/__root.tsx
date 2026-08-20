@@ -185,7 +185,7 @@ const localBusinessJsonLd = {
   "@id": `${SITE_URL}/#store`,
   name: "J&S Store",
   description:
-    "Loja de moda masculina e feminina no bairro Aventureiro, em Joinville/SC. Camisas polo, camisetas, bermudas de sarja e calças jeans importadas.",
+    "Loja de moda masculina e feminina em Joinville/SC. Camisas polo, camisetas, bermudas de sarja e calças jeans importadas.",
   image: LOGO_URL,
   logo: LOGO_URL,
   url: `${SITE_URL}/`,
