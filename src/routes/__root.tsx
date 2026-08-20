@@ -155,10 +155,10 @@ const organizationJsonLd = {
   email: "contato@jsstore.com.br",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Santa Luzia, 550",
+    streetAddress: "Rua Carlos Emílio Alexandre Schwartz, 369",
     addressLocality: "Joinville",
     addressRegion: "SC",
-    postalCode: "89225-100",
+    postalCode: "89235-188",
     addressCountry: "BR",
   },
   sameAs: ["https://www.instagram.com/jes.storejoinville/"],
@@ -195,10 +195,10 @@ const localBusinessJsonLd = {
   paymentAccepted: "Pix, Cartão de crédito, Boleto",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Santa Luzia, 550",
+    streetAddress: "Rua Carlos Emílio Alexandre Schwartz, 369",
     addressLocality: "Joinville",
     addressRegion: "SC",
-    postalCode: "89225-100",
+    postalCode: "89235-188",
     addressCountry: "BR",
     neighborhood: "Aventureiro",
   },
@@ -208,7 +208,7 @@ const localBusinessJsonLd = {
     longitude: -48.8112,
   },
   hasMap:
-    "https://www.google.com/maps?q=Rua+Santa+Luzia%2C+550+-+Aventureiro%2C+Joinville%2C+SC",
+    "https://www.google.com/maps?q=Rua+Carlos+Em%C3%ADlio+Alexandre+Schwartz+369%2C+Joinville%2C+Santa+Catarina%2C+Brazil+89235-188",
   areaServed: [
     { "@type": "City", name: "Joinville" },
     { "@type": "AdministrativeArea", name: "Santa Catarina" },
