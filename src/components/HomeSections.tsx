@@ -103,15 +103,15 @@ export function TrustStrip() {
               d: "Sua compra protegida com as melhores tecnologias de segurança." 
             }
           ].map((item, idx) => (
-            <div key={idx} className="flex flex-col items-center text-center space-y-3 group">
-              <div className="p-3 rounded-full bg-gold/5 border border-gold/10 group-hover:border-gold/30 transition-colors">
-                <item.i className="h-5 w-5 md:h-6 md:w-6 text-gold" strokeWidth={1.2} />
+            <div key={idx} className="flex flex-col items-center text-center space-y-2 group flex-shrink-0 min-w-[240px] sm:min-w-0">
+              <div className="p-2 rounded-full bg-gold/5 border border-gold/10 group-hover:border-gold/30 transition-colors">
+                <item.i className="h-4 w-4 md:h-6 md:w-6 text-gold" strokeWidth={1.2} />
               </div>
               <div>
-                <h3 className="text-xs md:text-sm font-bold uppercase tracking-widest text-gold mb-1">
+                <h3 className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-gold mb-0.5">
                   {item.t}
                 </h3>
-                <p className="text-[10px] md:text-xs text-muted-foreground/80 leading-relaxed max-w-[200px] mx-auto">
+                <p className="text-[9px] md:text-xs text-muted-foreground/80 leading-relaxed max-w-[200px] mx-auto">
                   {item.d}
                 </p>
               </div>
