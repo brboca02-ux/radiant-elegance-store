@@ -151,7 +151,7 @@ export function Header() {
           ))}
         </div>
       </div>
-      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 h-14 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
         <button
           aria-label="Abrir menu"
           onClick={() => setOpen(true)}
