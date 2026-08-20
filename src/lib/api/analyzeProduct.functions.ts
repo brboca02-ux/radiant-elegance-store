@@ -31,20 +31,23 @@ export const analyzeProductImage = createServerFn({ method: "POST" })
 
     const system = `Você é uma especialista em moda da loja J&S Store.
 Analise a imagem do produto e responda APENAS com JSON puro (sem markdown, sem crase).
+
+IMPORTANTE: Se a imagem mostrar várias peças de cores diferentes ou a mesma peça em diversas cores (como uma foto de conjunto/grade), você DEVE identificar e listar TODAS as cores visíveis no array "colors". Não se limite à cor principal.
+
 Formato exato:
 {
   "name": "Nome curto e comercial em português (máx 60 caracteres)",
   "description": "Descrição vendedora em português com tecido, caimento e ocasião de uso (2-3 frases)",
   "category_id": "uma de: ${CATEGORIES.join(", ")}",
   "piece_type": "tipo específico da peça em português (ex: Camiseta, Camisa polo, Calça jeans, Bermuda de sarja, Short de sarja)",
-  "color": "cor predominante em português (ex: Preto, Off-White, Verde-Militar)",
+  "color": "cor principal ou predominante em português",
   "colors": [{"name": "nome da cor em português", "hex": "#rrggbb"}],
   "sizes_suggested": ["PP","P","M","G","GG"],
   "meta_title": "Título SEO em português (máx 60 caracteres)",
   "meta_description": "Descrição SEO em português (máx 155 caracteres)"
 }
 Regras:
-- "colors": inclua APENAS as cores realmente visíveis na peça (1 a 4 cores), com hex real e nome curto em português.
+- "colors": inclua TODAS as cores visíveis na peça ou no conjunto de peças, com hex real e nome curto em português (ex: "Azul Marinho", "Verde Militar").
 - "sizes_suggested": tamanhos típicos para essa peça. Calças, shorts e bermudas femininas (numeração): ["36","38","40","42","44"]. Calças, shorts e bermudas masculinas: ["38","40","42","44","46","48"]. Numeração ampliada (peças 50+): ["50","52","54","56"]. Demais roupas (camisetas, polos, camisas, t-shirts): ["P","M","G","GG"].
 - "piece_type": nome específico da peça (2-4 palavras), sem cor nem marca.
 - Categoria: peças femininas → "feminino"; peças masculinas → "masculino". A loja vende somente moda masculina e feminina adulta.`;
@@ -56,7 +59,7 @@ Regras:
         "Lovable-API-Key": key,
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.0-flash",
         messages: [
           { role: "system", content: system },
           {
