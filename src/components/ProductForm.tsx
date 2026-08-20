@@ -943,7 +943,7 @@ export function ProductForm({ productId }: { productId?: string }) {
             <button
               type="button"
               onClick={applyAiVariants}
-              disabled={aiLoading || selColors.size === 0 || selSizes.size === 0}
+              disabled={aiLoading || selColors.size === 0 || (sizeMode !== "unico" && selSizes.size === 0)}
               className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold disabled:opacity-50"
             >
               <Check className="h-4 w-4" /> Aplicar variações
