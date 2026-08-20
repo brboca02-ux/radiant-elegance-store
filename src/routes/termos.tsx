@@ -8,7 +8,7 @@ export const Route = createFileRoute("/termos")({
       { name: "description", content: "Termos e condições de uso do site e da loja online J&S Store: pedidos, pagamentos, entregas e responsabilidades." },
       { property: "og:title", content: "Termos de Uso — J&S Store" },
       { property: "og:description", content: "Regras de uso, pedidos, pagamentos e entregas da J&S Store." },
-      { property: "og:url", content: "/termos" },
+      { property: "og:url", content: "https://www.jesstorejoinville.com.br/termos" },
       { property: "og:type", content: "article" },
       { name: "robots", content: "index, follow" },
     ],

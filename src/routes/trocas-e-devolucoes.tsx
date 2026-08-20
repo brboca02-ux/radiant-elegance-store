@@ -8,7 +8,7 @@ export const Route = createFileRoute("/trocas-e-devolucoes")({
       { name: "description", content: "Como solicitar troca ou devolução de peças compradas na J&S Store. Prazos, condições e atendimento pelo WhatsApp." },
       { property: "og:title", content: "Trocas e Devoluções — J&S Store" },
       { property: "og:description", content: "Política de trocas, devoluções e atendimento da J&S Store." },
-      { property: "og:url", content: "/trocas-e-devolucoes" },
+      { property: "og:url", content: "https://www.jesstorejoinville.com.br/trocas-e-devolucoes" },
       { property: "og:type", content: "article" },
       { name: "robots", content: "index, follow" },
     ],
