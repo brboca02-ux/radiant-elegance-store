@@ -331,23 +331,10 @@ export function DifferentialsSection() {
 }
 
 export function InstagramSection() {
-  // Grid curada de posts recentes. Para plugar o feed real do Instagram (Graph API),
-  // basta substituir "cells" por dados retornados de uma server function usando um
-  // token de longa duração da Meta e mapear cada item para { image, permalink }.
-  const cells: Array<{ img: string; permalink: string }> = [
-    { img: CAT_IMG("camisa-gola-polo-importada"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("camiseta-peruana-branca"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("calca-jeans-masc-importada-azul-escuro"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("bermuda-sarja-lacoste"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("tshirt-feminina"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("calca-jeans-fem-azul-claro"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("short-sarja-mauricinho-reserva"), permalink: INSTAGRAM_URL },
-    { img: CAT_IMG("camiseta-malha-supima"), permalink: INSTAGRAM_URL },
-  ];
   return (
     <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="text-center max-w-2xl mx-auto mb-10">
+        <div className="text-center max-w-2xl mx-auto mb-8">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground mb-3 inline-flex items-center gap-2">
             <Instagram className="h-3.5 w-3.5" strokeWidth={1.8} /> Instagram
           </p>
@@ -357,28 +344,6 @@ export function InstagramSection() {
           <p className="text-sm md:text-base text-muted-foreground mt-3">
             Lançamentos, bastidores e novidades exclusivas.
           </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 mb-10">
-          {cells.map((cell, idx) => (
-            <a
-              key={idx}
-              href={cell.permalink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative aspect-square overflow-hidden bg-secondary border border-gold/5"
-            >
-              <img
-                src={cell.img}
-                alt="Post Instagram J&S Store"
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Instagram className="text-white w-5 h-5" />
-              </div>
-            </a>
-          ))}
         </div>
 
         <div className="text-center">
