@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "J&S Store — Moda Masculina e Feminina em Joinville/SC" },
       { name: "description", content: "J&S Store: moda masculina e feminina em Joinville. Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja." },
-      { name: "keywords", content: "moda em Joinville, loja de roupas Aventureiro, moda masculina Joinville, moda feminina Joinville, J&S Store" },
+      { name: "keywords", content: "moda em Joinville, loja de roupas Joinville, moda masculina Joinville, moda feminina Joinville, J&S Store" },
       { name: "geo.region", content: "BR-SC" },
       { name: "geo.placename", content: "Joinville" },
       { property: "og:title", content: "J&S Store — Moda Masculina e Feminina em Joinville/SC" },

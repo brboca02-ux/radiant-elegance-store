@@ -284,7 +284,7 @@ export function LojaFisicaSection() {
         <div className="space-y-5 order-1 md:order-2">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">Visite nossa loja</p>
           <h2 id="loja-titulo" className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
-            Loja J&S Store — Aventureiro, Joinville/SC
+            Loja J&S Store — Joinville/SC
           </h2>
           <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
             <p className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5 text-foreground shrink-0" /> {STORE_INFO.street} — {STORE_INFO.city}/{STORE_INFO.region}</p>

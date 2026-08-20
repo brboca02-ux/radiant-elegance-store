@@ -22,7 +22,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
     h1: "Moda Feminina",
     eyebrow: "Coleção Feminina",
     intro:
-      "Descubra a coleção feminina da J&S Store: t-shirts em malha 100% algodão e calças jeans importadas com elastano, selecionadas a dedo na loja do Aventureiro, em Joinville. Peças versáteis para o dia a dia, com atendimento próximo pelo WhatsApp e envio para todo o Brasil.",
+      "Descubra a coleção feminina da J&S Store: t-shirts em malha 100% algodão e calças jeans importadas com elastano, selecionadas a dedo na nossa loja em Joinville. Peças versáteis para o dia a dia, com atendimento próximo pelo WhatsApp e envio para todo o Brasil.",
     keywords: ["moda feminina joinville", "roupa feminina", "calça jeans feminina importada", "t-shirt feminina"],
   },
   masculino: {
