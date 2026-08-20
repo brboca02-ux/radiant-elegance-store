@@ -313,7 +313,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                   </select>
                 </Field>
                 <Field label="Marca">
-                  <input value={data.brand} onChange={(e) => set("brand", e.target.value)} className={input} />
+                  <input value={data.brand} onChange={(e) => set("brand", e.target.value)} placeholder="Ex: Nike, Lacoste, J&S Store" className={input} />
                 </Field>
                 <Field label="SKU">
                   <input value={data.sku} onChange={(e) => set("sku", e.target.value)} className={input} />
@@ -459,7 +459,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                     </select>
                     <div className="col-span-5 relative group/vitem">
                       <input 
-                        placeholder="Cor (ex: Preto)" 
+                        placeholder="Cor (ex: Preto, Azul Marinho)" 
                         value={v.color} 
                         onChange={(e) => updateVariant(v.id, { color: e.target.value })}
                         className={`${input} pr-8`} 
