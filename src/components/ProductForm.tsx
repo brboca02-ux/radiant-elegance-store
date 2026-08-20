@@ -193,6 +193,9 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [aiPieceType, setAiPieceType] = useState<string>("");
   const [aiMetaTitle, setAiMetaTitle] = useState<string>("");
   const [aiMetaDescription, setAiMetaDescription] = useState<string>("");
+  const [aiBrand, setAiBrand] = useState<string>("");
+  const [aiBrands, setAiBrands] = useState<string[]>([]);
+  const [aiImageUrls, setAiImageUrls] = useState<string[]>([]);
 
   const norm = (s: string) => s.trim().toLowerCase();
 
