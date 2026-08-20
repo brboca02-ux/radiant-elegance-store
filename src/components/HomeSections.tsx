@@ -77,7 +77,7 @@ export function HomeHero() {
         </div>
 
         {/* Mobile Action Buttons - Below the image on narrow screens to avoid covering content */}
-        <div className="sm:hidden flex flex-col gap-3 p-6 bg-black border-t border-gold/10">
+        <div className="sm:hidden flex flex-col gap-2 px-4 py-4 bg-black">
           <Button
             size="lg"
             className="w-full bg-gold hover:bg-gold/90 text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
