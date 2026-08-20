@@ -56,7 +56,7 @@ function QuickAddPage() {
     }
     setAnalyzing(true);
     try {
-      const result = await analyzeProductImage({ data: { imageDataUrl: preview } });
+      const result = await analyzeProductImage({ data: { imageDataUrls: [preview] } });
       setAnalyzed(result);
       toast.success("Foto analisada! Confira os dados e ajuste se preciso.");
     } catch (e) {
@@ -93,7 +93,7 @@ function QuickAddPage() {
         slug,
         description: analyzed.description,
         category_id: analyzed.category_id,
-        brand: "J&S Store",
+        brand: analyzed.brand || "J&S Store",
         sku: "",
         price: priceNum,
         sale_price: salePriceNum && salePriceNum > 0 && salePriceNum < priceNum ? salePriceNum : null,
