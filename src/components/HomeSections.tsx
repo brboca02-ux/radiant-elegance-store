@@ -30,35 +30,35 @@ const diferenciais = [
 export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div className="flex flex-col sm:block relative w-full bg-black">
+      <div className="relative w-full">
         {/* Mobile H1 - SEO first, hidden visually to save space but kept for indexing */}
         <h1 className="sr-only">
           Moda Masculina e Feminina em Joinville — Curadoria J&S Store
         </h1>
 
-        <div className="relative w-full overflow-hidden flex items-center justify-center bg-black sm:aspect-video lg:aspect-[21/9] h-auto">
+        <div className="relative w-full overflow-hidden flex items-center justify-center bg-black sm:aspect-video lg:aspect-[21/9] h-auto min-h-[400px]">
           <img
             src={heroCouple.url}
             alt="J&S Store — Moda Masculina e Feminina"
             width={1376}
             height={768}
             fetchPriority="high"
-            className="w-full h-auto sm:h-full sm:object-cover sm:object-center opacity-90 transition-transform duration-[2000ms] hover:scale-105"
+            className="w-full h-full object-cover sm:object-cover sm:object-center opacity-90 transition-transform duration-[2000ms] hover:scale-105"
           />
           {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent sm:block hidden" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           
           {/* Desktop SEO H1 */}
           <h1 className="sr-only sm:not-sr-only sm:absolute sm:left-10 sm:top-1/3 sm:max-w-xl sm:text-5xl lg:text-7xl sm:font-bold sm:tracking-tighter sm:text-white sm:leading-[0.9] hidden">
             MODA PARA O<br />SEU DIA A DIA.
           </h1>
           
-          <div className="absolute inset-x-0 bottom-0 hidden sm:flex items-end justify-center pb-8 md:pb-12">
-            <div className="max-w-2xl text-center">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center pb-6 md:pb-12">
+            <div className="max-w-2xl w-full px-6 text-center">
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
                 <Button
                   size="xl"
-                  className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12"
+                  className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 sm:h-12 text-xs tracking-widest uppercase"
                   asChild
                 >
                   <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
@@ -66,7 +66,7 @@ export function HomeHero() {
                 <Button
                   size="xl"
                   variant="outline"
-                  className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12 transition-all"
+                  className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 sm:h-12 transition-all text-xs tracking-widest uppercase"
                   asChild
                 >
                   <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
@@ -74,25 +74,6 @@ export function HomeHero() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile Action Buttons - Below the image on narrow screens to avoid covering content */}
-        <div className="sm:hidden flex flex-col gap-2 px-4 py-4 bg-black">
-          <Button
-            size="lg"
-            className="w-full bg-gold hover:bg-gold/90 text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
-            asChild
-          >
-            <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="w-full border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
-            asChild
-          >
-            <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
-          </Button>
         </div>
       </div>
     </section>
