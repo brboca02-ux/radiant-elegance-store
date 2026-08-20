@@ -16,7 +16,7 @@ const DEFAULT_SEO = {
   h1: "Toda a Coleção",
   eyebrow: "Coleção",
   intro:
-    "Curadoria completa de moda masculina e feminina na J&S Store. Loja no Aventureiro, Joinville, com entrega para todo o Brasil.",
+    "Curadoria completa de moda masculina e feminina na J&S Store. Loja física em Joinville, com entrega para todo o Brasil.",
 };
 
 export const Route = createFileRoute("/colecao")({

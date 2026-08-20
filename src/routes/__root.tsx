@@ -200,7 +200,7 @@ const localBusinessJsonLd = {
     addressRegion: "SC",
     postalCode: "89235-188",
     addressCountry: "BR",
-    neighborhood: "Aventureiro",
+    
   },
   geo: {
     "@type": "GeoCoordinates",
