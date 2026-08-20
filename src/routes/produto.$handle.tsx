@@ -89,7 +89,10 @@ function ProductPage() {
       const s = v.selectedOptions.find((o) => o.name === "Tamanho")?.value;
       if (s) set.add(s);
     });
-    return [...set];
+    const result = [...set];
+    // Se só existe "Único", não mostramos o seletor
+    if (result.length === 1 && result[0] === "Único") return [];
+    return result;
   }, [variants]);
 
   const [color, setColor] = useState<string | null>(null);
