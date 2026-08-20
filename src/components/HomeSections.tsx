@@ -31,13 +31,10 @@ export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
       <div className="flex flex-col sm:block relative w-full bg-black">
-        {/* Mobile H1 - SEO first, visible in the flow */}
-        <div className="sm:hidden px-6 pt-6 pb-2">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-white leading-tight">
-            Moda Masculina e Feminina em Joinville
-          </h1>
-          <p className="text-gold text-xs tracking-[0.2em] uppercase mt-2 font-medium">Curadoria J&S Store</p>
-        </div>
+        {/* Mobile H1 - SEO first, hidden visually to save space but kept for indexing */}
+        <h1 className="sr-only">
+          Moda Masculina e Feminina em Joinville — Curadoria J&S Store
+        </h1>
 
         <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[21/9] h-auto max-h-[85vh] w-full overflow-hidden flex items-center justify-center bg-black">
           <img
