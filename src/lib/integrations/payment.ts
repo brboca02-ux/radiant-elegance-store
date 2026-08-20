@@ -33,7 +33,7 @@ function currentSiteUrl(): string {
   if (typeof window !== "undefined" && window.location?.origin) {
     return window.location.origin;
   }
-  return "https://jsstore.lovable.app";
+  return "https://www.jesstorejoinville.com.br";
 }
 
 export const MercadoPagoProvider: PaymentProvider = {

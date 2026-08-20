@@ -24,11 +24,12 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "J&S Store — Moda Masculina e Feminina em Joinville/SC" },
       { property: "og:description", content: "J&S Store: moda masculina e feminina em Joinville. Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://jsstore.lovable.app/" },
+      { property: "og:url", content: "https://www.jesstorejoinville.com.br/" },
       { property: "og:locale", content: "pt_BR" },
     ],
     links: [
-      { rel: "canonical", href: "https://jsstore.lovable.app/" },
+      { rel: "canonical", href: "https://www.jesstorejoinville.com.br/" },
+
       // Preload LCP hero with high priority
       { rel: "preload", as: "image", href: heroCouple, fetchPriority: "high" },
     ],

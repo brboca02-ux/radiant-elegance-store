@@ -11,7 +11,7 @@ interface Props {
   className?: string;
 }
 
-const SITE = "https://jsstore.lovable.app";
+const SITE = "https://www.jesstorejoinville.com.br";
 
 /**
  * Breadcrumb visual + JSON-LD (schema.org BreadcrumbList) em um único componente.

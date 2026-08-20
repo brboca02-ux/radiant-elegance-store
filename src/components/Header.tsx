@@ -138,9 +138,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-background text-foreground border-b border-gold/20">
       <div className="bg-black text-gold border-b border-gold/10 py-2 overflow-hidden relative">
-        <div className="flex animate-marquee whitespace-nowrap">
+        <div className="flex animate-marquee whitespace-nowrap gap-4 md:gap-0">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
+            <div key={i} className="flex items-center gap-6 md:gap-16 px-3 md:px-8">
               <span className="text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase">Entregamos para todo o Brasil</span>
               <span className="h-1 w-1 bg-gold rounded-full" />
               <span className="text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase">Parcelamento em até 10x</span>

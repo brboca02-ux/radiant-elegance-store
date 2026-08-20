@@ -21,10 +21,10 @@ export const Route = createFileRoute("/produto/$handle")({
         { property: "og:title", content: `${params.handle} — J&S Store` },
         { property: "og:description", content: desc },
         { name: "twitter:description", content: desc },
-        { property: "og:url", content: `https://jsstore.lovable.app/produto/${params.handle}` },
+        { property: "og:url", content: `https://www.jesstorejoinville.com.br/produto/${params.handle}` },
         { property: "og:type", content: "product" },
       ],
-      links: [{ rel: "canonical", href: `https://jsstore.lovable.app/produto/${params.handle}` }],
+      links: [{ rel: "canonical", href: `https://www.jesstorejoinville.com.br/produto/${params.handle}` }],
     };
   },
   component: ProductPage,
@@ -220,7 +220,7 @@ function ProductPage() {
   ].filter(Boolean).join(" ");
   const waLink = buildWhatsAppLink(waMessage);
 
-  const canonicalUrl = `https://jsstore.lovable.app/produto/${handle}`;
+  const canonicalUrl = `https://www.jesstorejoinville.com.br/produto/${handle}`;
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -239,7 +239,7 @@ function ProductPage() {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       url: canonicalUrl,
-      seller: { "@type": "Organization", name: "J&S Store", "@id": "https://jsstore.lovable.app/#organization" },
+      seller: { "@type": "Organization", name: "J&S Store", "@id": "https://www.jesstorejoinville.com.br/#organization" },
     },
   };
 
@@ -247,8 +247,9 @@ function ProductPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://jsstore.lovable.app/" },
-      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://jsstore.lovable.app/colecao" },
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://www.jesstorejoinville.com.br/" },
+      { "@type": "ListItem", position: 2, name: "Coleção", item: "https://www.jesstorejoinville.com.br/colecao" },
+
       { "@type": "ListItem", position: 3, name: data.title, item: canonicalUrl },
     ],
   };
