@@ -840,23 +840,62 @@ export function ProductForm({ productId }: { productId?: string }) {
               </div>
 
 
+              {/* Marca detectada */}
+              {aiBrand ? (
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                    Marca detectada
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(aiBrands.length ? aiBrands : [aiBrand]).map((b) => (
+                      <button
+                        key={b}
+                        type="button"
+                        onClick={() => { set("brand", b); toast.success(`Marca aplicada: ${b}`); }}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
+                          norm(data.brand) === norm(b)
+                            ? "border-primary bg-primary/10 text-foreground"
+                            : "border-border hover:border-foreground/50 text-muted-foreground"
+                        }`}
+                      >
+                        <span className="font-medium">{b}</span>
+                        {norm(data.brand) === norm(b) && <Check className="h-3 w-3 text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Clique para aplicar no campo Marca. Atual: <b>{data.brand || "—"}</b>
+                  </p>
+                </div>
+              ) : null}
+
               {/* Cores */}
               <div>
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
-                  Cores detectadas
+                  Cores detectadas ({aiColors.length})
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {aiColors.map((c) => {
                     const active = selColors.has(c.name);
+                    const thumb = aiImageUrls[c.image_index];
                     return (
                       <button
                         key={c.name}
                         type="button"
                         onClick={() => toggle(selColors, c.name, setSelColors)}
-                        className={`inline-flex items-center gap-2 rounded-full border pl-1.5 pr-3 py-1 text-xs transition ${
+                        title={thumb ? `Detectada na foto ${c.image_index + 1}` : c.name}
+                        className={`inline-flex items-center gap-2 rounded-full border pl-1 pr-3 py-1 text-xs transition ${
                           active ? "border-primary bg-primary/10 text-foreground" : "border-border hover:border-foreground/50 text-muted-foreground"
                         }`}
                       >
+                        {thumb ? (
+                          <img
+                            src={thumb}
+                            alt={c.name}
+                            loading="lazy"
+                            className="h-7 w-6 rounded-md object-cover border border-border shrink-0"
+                          />
+                        ) : null}
                         <span
                           className="h-5 w-5 rounded-full border border-border shrink-0"
                           style={{ backgroundColor: c.hex || "#cfcfcf" }}
@@ -867,6 +906,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                     );
                   })}
                 </div>
+
                 <div className="mt-2 flex gap-2">
                   <input
                     value={customColor}
