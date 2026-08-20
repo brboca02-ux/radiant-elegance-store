@@ -193,29 +193,40 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [aiPieceType, setAiPieceType] = useState<string>("");
   const [aiMetaTitle, setAiMetaTitle] = useState<string>("");
   const [aiMetaDescription, setAiMetaDescription] = useState<string>("");
+  const [aiBrand, setAiBrand] = useState<string>("");
+  const [aiBrands, setAiBrands] = useState<string[]>([]);
+  const [aiImageUrls, setAiImageUrls] = useState<string[]>([]);
 
   const norm = (s: string) => s.trim().toLowerCase();
 
+  const toDataUrl = async (url: string) => {
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result ?? ""));
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+  };
+
   const runAnalysis = async () => {
-    const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
-    if (!primary) {
+    if (data.images.length === 0) {
       toast.error("Envie ao menos uma imagem antes de usar a IA.");
       return;
     }
     setAiLoading(true);
     try {
-      const resp = await fetch(primary.url);
-      const blob = await resp.blob();
-      const dataUrl: string = await new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(String(r.result ?? ""));
-        r.onerror = reject;
-        r.readAsDataURL(blob);
-      });
-      const result = await analyzeProductImage({ data: { imageDataUrl: dataUrl } });
+      // Ordena com a principal primeiro e analisa TODAS as fotos (cada foto pode ser uma cor).
+      const ordered = [...data.images].sort((a, b) => Number(b.is_primary) - Number(a.is_primary));
+      const used = ordered.slice(0, 8);
+      const imageDataUrls = await Promise.all(used.map((i) => toDataUrl(i.url)));
+      setAiImageUrls(used.map((i) => i.url));
+
+      const result = await analyzeProductImage({ data: { imageDataUrls } });
       // Dedupe colors by normalized name
       const seenC = new Set<string>();
-      const colorsRaw = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      const colorsRaw = result.colors.length ? result.colors : [{ name: result.color, hex: "", image_index: 0 }];
       const colors = colorsRaw.filter((c) => {
         const k = norm(c.name);
         if (!k || seenC.has(k)) return false;
@@ -238,6 +249,8 @@ export function ProductForm({ productId }: { productId?: string }) {
       setAiPieceType(result.piece_type || "");
       setAiMetaTitle(result.meta_title || "");
       setAiMetaDescription(result.meta_description || "");
+      setAiBrand(result.brand || "");
+      setAiBrands(result.brands || []);
     } catch (e) {
       toast.error((e as Error).message);
       throw e;
@@ -245,6 +258,7 @@ export function ProductForm({ productId }: { productId?: string }) {
       setAiLoading(false);
     }
   };
+
 
   const openAiSuggest = async () => {
     setAiOpen(true);
@@ -268,7 +282,7 @@ export function ProductForm({ productId }: { productId?: string }) {
     const key = norm(name);
     const exists = aiColors.find((c) => norm(c.name) === key);
     if (!exists) {
-      setAiColors((c) => [...c, { name, hex: "" }]);
+      setAiColors((c) => [...c, { name, hex: "", image_index: 0 }]);
       setSelColors((s) => new Set(s).add(name));
     } else {
       setSelColors((s) => new Set(s).add(exists.name));
@@ -826,23 +840,62 @@ export function ProductForm({ productId }: { productId?: string }) {
               </div>
 
 
+              {/* Marca detectada */}
+              {aiBrand ? (
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                    Marca detectada
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(aiBrands.length ? aiBrands : [aiBrand]).map((b) => (
+                      <button
+                        key={b}
+                        type="button"
+                        onClick={() => { set("brand", b); toast.success(`Marca aplicada: ${b}`); }}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
+                          norm(data.brand) === norm(b)
+                            ? "border-primary bg-primary/10 text-foreground"
+                            : "border-border hover:border-foreground/50 text-muted-foreground"
+                        }`}
+                      >
+                        <span className="font-medium">{b}</span>
+                        {norm(data.brand) === norm(b) && <Check className="h-3 w-3 text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Clique para aplicar no campo Marca. Atual: <b>{data.brand || "—"}</b>
+                  </p>
+                </div>
+              ) : null}
+
               {/* Cores */}
               <div>
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
-                  Cores detectadas
+                  Cores detectadas ({aiColors.length})
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {aiColors.map((c) => {
                     const active = selColors.has(c.name);
+                    const thumb = aiImageUrls[c.image_index];
                     return (
                       <button
                         key={c.name}
                         type="button"
                         onClick={() => toggle(selColors, c.name, setSelColors)}
-                        className={`inline-flex items-center gap-2 rounded-full border pl-1.5 pr-3 py-1 text-xs transition ${
+                        title={thumb ? `Detectada na foto ${c.image_index + 1}` : c.name}
+                        className={`inline-flex items-center gap-2 rounded-full border pl-1 pr-3 py-1 text-xs transition ${
                           active ? "border-primary bg-primary/10 text-foreground" : "border-border hover:border-foreground/50 text-muted-foreground"
                         }`}
                       >
+                        {thumb ? (
+                          <img
+                            src={thumb}
+                            alt={c.name}
+                            loading="lazy"
+                            className="h-7 w-6 rounded-md object-cover border border-border shrink-0"
+                          />
+                        ) : null}
                         <span
                           className="h-5 w-5 rounded-full border border-border shrink-0"
                           style={{ backgroundColor: c.hex || "#cfcfcf" }}
@@ -853,6 +906,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                     );
                   })}
                 </div>
+
                 <div className="mt-2 flex gap-2">
                   <input
                     value={customColor}
