@@ -282,7 +282,7 @@ export function ProductForm({ productId }: { productId?: string }) {
     const key = norm(name);
     const exists = aiColors.find((c) => norm(c.name) === key);
     if (!exists) {
-      setAiColors((c) => [...c, { name, hex: "" }]);
+      setAiColors((c) => [...c, { name, hex: "", image_index: 0 }]);
       setSelColors((s) => new Set(s).add(name));
     } else {
       setSelColors((s) => new Set(s).add(exists.name));
