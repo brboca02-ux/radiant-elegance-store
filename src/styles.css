@@ -203,3 +203,9 @@
     @apply py-4 md:py-8;
   }
 }
+
+@layer utilities {
+  .mobile-tap-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+}
