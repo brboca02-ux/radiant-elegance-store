@@ -39,14 +39,14 @@ export function HomeHero() {
           <p className="text-gold text-xs tracking-[0.2em] uppercase mt-2 font-medium">Curadoria J&S Store</p>
         </div>
 
-        <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[21/9] h-auto max-h-[85vh] w-full overflow-hidden">
+        <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[21/9] h-auto max-h-[85vh] w-full overflow-hidden flex items-center justify-center bg-black">
           <img
             src={heroCouple.url}
             alt="J&S Store — Moda Masculina e Feminina"
             width={1376}
             height={768}
             fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center bg-black opacity-90 transition-transform duration-[2000ms] hover:scale-105"
+            className="w-full h-full object-contain sm:object-cover sm:object-center opacity-90 transition-transform duration-[2000ms] hover:scale-105"
           />
           {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent sm:block hidden" />
