@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2, Sparkles, Check } from "lucide-react";
+import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2, Sparkles, Check, ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
 import {
   useProductsStore, CATEGORIES, SIZES, emptyProduct, slugify,
   type Product, type ProductImage, type ProductVariant, type ProductStatus,
@@ -9,6 +9,7 @@ import {
 import { uploadProductImage } from "@/lib/api/supaProducts";
 import { analyzeProductImage, type DetectedColor } from "@/lib/api/analyzeProduct.functions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { computeFallbackSizes } from "@/lib/products/variantSizes";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
