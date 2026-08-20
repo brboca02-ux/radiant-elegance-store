@@ -200,7 +200,6 @@ const localBusinessJsonLd = {
     addressRegion: "SC",
     postalCode: "89235-188",
     addressCountry: "BR",
-    
   },
   geo: {
     "@type": "GeoCoordinates",
