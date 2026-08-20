@@ -36,7 +36,7 @@ export function HomeHero() {
           Moda Masculina e Feminina em Joinville — Curadoria J&S Store
         </h1>
 
-        <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[21/9] h-auto max-h-[85vh] w-full overflow-hidden flex items-center justify-center bg-black border-y border-gold/5">
+        <div className="relative aspect-square sm:aspect-video lg:aspect-[21/9] h-auto max-h-[85vh] w-full overflow-hidden flex items-center justify-center bg-black">
           <img
             src={heroCouple.url}
             alt="J&S Store — Moda Masculina e Feminina"
