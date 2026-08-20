@@ -1,0 +1,1 @@
+UPDATE public.products SET status = 'ativo' WHERE category_id IN ('masculino', 'feminino');
