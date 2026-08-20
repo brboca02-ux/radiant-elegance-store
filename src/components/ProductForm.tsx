@@ -196,26 +196,34 @@ export function ProductForm({ productId }: { productId?: string }) {
 
   const norm = (s: string) => s.trim().toLowerCase();
 
+  const toDataUrl = async (url: string) => {
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result ?? ""));
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+  };
+
   const runAnalysis = async () => {
-    const primary = data.images.find((i) => i.is_primary) ?? data.images[0];
-    if (!primary) {
+    if (data.images.length === 0) {
       toast.error("Envie ao menos uma imagem antes de usar a IA.");
       return;
     }
     setAiLoading(true);
     try {
-      const resp = await fetch(primary.url);
-      const blob = await resp.blob();
-      const dataUrl: string = await new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(String(r.result ?? ""));
-        r.onerror = reject;
-        r.readAsDataURL(blob);
-      });
-      const result = await analyzeProductImage({ data: { imageDataUrl: dataUrl } });
+      // Ordena com a principal primeiro e analisa TODAS as fotos (cada foto pode ser uma cor).
+      const ordered = [...data.images].sort((a, b) => Number(b.is_primary) - Number(a.is_primary));
+      const used = ordered.slice(0, 8);
+      const imageDataUrls = await Promise.all(used.map((i) => toDataUrl(i.url)));
+      setAiImageUrls(used.map((i) => i.url));
+
+      const result = await analyzeProductImage({ data: { imageDataUrls } });
       // Dedupe colors by normalized name
       const seenC = new Set<string>();
-      const colorsRaw = result.colors.length ? result.colors : [{ name: result.color, hex: "" }];
+      const colorsRaw = result.colors.length ? result.colors : [{ name: result.color, hex: "", image_index: 0 }];
       const colors = colorsRaw.filter((c) => {
         const k = norm(c.name);
         if (!k || seenC.has(k)) return false;
@@ -238,6 +246,8 @@ export function ProductForm({ productId }: { productId?: string }) {
       setAiPieceType(result.piece_type || "");
       setAiMetaTitle(result.meta_title || "");
       setAiMetaDescription(result.meta_description || "");
+      setAiBrand(result.brand || "");
+      setAiBrands(result.brands || []);
     } catch (e) {
       toast.error((e as Error).message);
       throw e;
@@ -245,6 +255,7 @@ export function ProductForm({ productId }: { productId?: string }) {
       setAiLoading(false);
     }
   };
+
 
   const openAiSuggest = async () => {
     setAiOpen(true);
