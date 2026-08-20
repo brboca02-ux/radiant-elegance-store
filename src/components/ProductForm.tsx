@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2, Sparkles, Check } from "lucide-react";
+import { ArrowLeft, Trash2, Star, StarOff, Upload, GripVertical, X, Plus, Loader2, Sparkles, Check, ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
 import {
   useProductsStore, CATEGORIES, SIZES, emptyProduct, slugify,
   type Product, type ProductImage, type ProductVariant, type ProductStatus,
@@ -9,6 +9,7 @@ import {
 import { uploadProductImage } from "@/lib/api/supaProducts";
 import { analyzeProductImage, type DetectedColor } from "@/lib/api/analyzeProduct.functions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { computeFallbackSizes } from "@/lib/products/variantSizes";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -86,14 +87,97 @@ export function ProductForm({ productId }: { productId?: string }) {
     return { ...d, images: next.map((i, idx) => ({ ...i, position: idx })) };
   });
 
-  // ---------- Variants ----------
-  const addVariant = () => setData((d) => ({
-    ...d, variants: [...d.variants, { id: uid(), product_id: productId ?? "new", size: "M", color: "", stock: 0 }],
-  }));
-  const updateVariant = (id: string, patch: Partial<ProductVariant>) => setData((d) => ({
-    ...d, variants: d.variants.map((v) => (v.id === id ? { ...v, ...patch } : v)),
-  }));
-  const removeVariant = (id: string) => setData((d) => ({ ...d, variants: d.variants.filter((v) => v.id !== id) }));
+  // ---------- Grouped Variants (by Color) ----------
+  const [sizeMode, setSizeMode] = useState<"unico" | "multi">(() => {
+    if (existing?.variants.length) {
+      const hasNonUnico = existing.variants.some(v => v.size !== "Único");
+      return hasNonUnico ? "multi" : "unico";
+    }
+    return "unico";
+  });
+
+  const groupedVariants = useMemo(() => {
+    const groups: Record<string, { color: string; color_hex: string | null; variants: ProductVariant[] }> = {};
+    data.variants.forEach(v => {
+      const key = v.color.toLowerCase().trim() || "sem-cor";
+      if (!groups[key]) {
+        groups[key] = { color: v.color, color_hex: v.color_hex || null, variants: [] };
+      }
+      groups[key].variants.push(v);
+    });
+    return Object.values(groups);
+  }, [data.variants]);
+
+  const updateColorGroup = (oldColor: string, patch: { color?: string; color_hex?: string | null }) => {
+    setData(d => ({
+      ...d,
+      variants: d.variants.map(v => {
+        if (v.color.toLowerCase().trim() === oldColor.toLowerCase().trim()) {
+          return { ...v, ...patch };
+        }
+        return v;
+      })
+    }));
+  };
+
+  const removeColorGroup = (color: string) => {
+    setData(d => ({
+      ...d,
+      variants: d.variants.filter(v => v.color.toLowerCase().trim() !== color.toLowerCase().trim())
+    }));
+  };
+
+  const toggleSizeInGroup = (color: string, size: string) => {
+    const key = color.toLowerCase().trim();
+    const group = groupedVariants.find(g => (g.color.toLowerCase().trim() || "sem-cor") === (key || "sem-cor"));
+    if (!group) return;
+
+    const exists = group.variants.find(v => v.size === size);
+    if (exists) {
+      if (group.variants.length > 1) {
+        setData(d => ({
+          ...d,
+          variants: d.variants.filter(v => !(v.color.toLowerCase().trim() === key && v.size === size))
+        }));
+      } else {
+        toast.error("Uma cor precisa ter ao menos um tamanho.");
+      }
+    } else {
+      setData(d => ({
+        ...d,
+        variants: [...d.variants, {
+          id: uid(),
+          product_id: productId ?? "new",
+          size,
+          color: group.color,
+          color_hex: group.color_hex,
+          stock: 0
+        }]
+      }));
+    }
+  };
+
+  const addColorGroup = () => {
+    const newColor = "Nova Cor";
+    setData(d => ({
+      ...d,
+      variants: [...d.variants, {
+        id: uid(),
+        product_id: productId ?? "new",
+        size: sizeMode === "unico" ? "Único" : "M",
+        color: newColor,
+        color_hex: null,
+        stock: 0
+      }]
+    }));
+  };
+
+  const updateVariantStock = (id: string, stock: number) => {
+    setData(d => ({
+      ...d,
+      variants: d.variants.map(v => v.id === id ? { ...v, stock } : v)
+    }));
+  };
 
   // ---------- AI variant suggestion ----------
   const [aiOpen, setAiOpen] = useState(false);
@@ -215,9 +299,10 @@ export function ProductForm({ productId }: { productId?: string }) {
     const szsMap = new Map<string, string>();
     [...selSizes].forEach((s) => { const k = norm(s); if (k && !szsMap.has(k)) szsMap.set(k, s); });
     const cols = [...colsMap.values()];
-    const szs = [...szsMap.values()];
-    if (cols.length === 0 || szs.length === 0) {
-      toast.error("Selecione ao menos uma cor e um tamanho.");
+    const szs = sizeMode === "unico" ? ["Único"] : [...szsMap.values()];
+    
+    if (cols.length === 0 || (sizeMode !== "unico" && szs.length === 0)) {
+      toast.error("Selecione ao menos uma cor.");
       return;
     }
     const hexByName = new Map(aiColors.map((c) => [norm(c.name), c.hex]));
@@ -390,16 +475,15 @@ export function ProductForm({ productId }: { productId?: string }) {
                       
                       {/* Image-Variant Link Indicators */}
                       <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[calc(100%-8px)]">
-                        {data.variants
-                          .filter(v => v.color && data.images.find(img_i => img_i.id === img.id)?.url?.includes(v.color.toLowerCase().replace(/\s+/g, '-')))
-                          .map(v => (
-                            <span 
-                              key={v.id} 
-                              className="text-[8px] bg-black/60 text-white px-1 py-0.5 rounded backdrop-blur-sm border border-white/20 uppercase font-bold"
-                              title={`Vinculado à cor: ${v.color}`}
-                            >
-                              {v.color.slice(0, 3)}
-                            </span>
+                        {groupedVariants
+                          .filter(g => g.color && img.url.toLowerCase().includes(g.color.toLowerCase().replace(/\s+/g, '-')))
+                          .map(g => (
+                            <div 
+                              key={g.color}
+                              className="h-3 w-3 rounded-full border border-white/40 shadow-sm"
+                              style={{ backgroundColor: g.color_hex || "#cfcfcf" }}
+                              title={`Vinculado à cor: ${g.color}`}
+                            />
                           ))}
                       </div>
 
@@ -431,66 +515,202 @@ export function ProductForm({ productId }: { productId?: string }) {
             </Card>
 
             {/* Variants */}
-            <Card title="Variações" hint="Controle estoque por tamanho e cor.">
-              <div className="-mt-2 mb-3 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={openAiSuggest}
-                  disabled={aiLoading || data.images.length === 0}
-                  title={data.images.length === 0 ? "Envie uma imagem primeiro" : "Detectar cores e sugerir tamanhos com IA"}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/5 text-primary px-2.5 py-1.5 text-xs font-semibold hover:bg-primary/10 disabled:opacity-50"
-                >
-                  {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                  Detectar cores e tamanhos com IA
-                </button>
-                <span className="text-[11px] text-muted-foreground">
-                  Só clicar, marcar tamanhos e confirmar cores.
-                </span>
+            <Card 
+              title="Variações" 
+              hint="Organize por cor e defina o estoque por tamanho."
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-border">
+                <div className="flex bg-muted p-1 rounded-lg self-start">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSizeMode("unico");
+                      // Convert all existing to Único if switching to single
+                      setData(d => ({
+                        ...d,
+                        variants: groupedVariants.map(g => ({
+                          ...g.variants[0],
+                          size: "Único",
+                          stock: g.variants.reduce((acc, v) => acc + v.stock, 0)
+                        }))
+                      }));
+                    }}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${sizeMode === 'unico' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    Tamanho Único
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSizeMode("multi")}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${sizeMode === 'multi' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    Vários Tamanhos
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={openAiSuggest}
+                    disabled={aiLoading || data.images.length === 0}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/5 text-primary px-3 py-2 text-xs font-semibold hover:bg-primary/10 disabled:opacity-50"
+                  >
+                    {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                    IA: Detectar Cores
+                  </button>
+                </div>
               </div>
-              <div className="space-y-2">
-                {data.variants.map((v) => (
-                  <div key={v.id} className="grid grid-cols-12 gap-2 items-center">
-                    <select value={v.size} onChange={(e) => updateVariant(v.id, { size: e.target.value })}
-                      className={`${input} col-span-3`}>
-                      {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
-                      {!SIZES.includes(v.size as typeof SIZES[number]) && v.size && (
-                        <option value={v.size}>{v.size}</option>
-                      )}
-                    </select>
-                    <div className="col-span-5 relative group/vitem">
-                      <input 
-                        placeholder="Cor (ex: Preto, Azul Marinho)" 
-                        value={v.color} 
-                        onChange={(e) => updateVariant(v.id, { color: e.target.value })}
-                        className={`${input} pr-8`} 
-                      />
-                      {v.color && (
-                        <div className="absolute right-1 top-1/2 -translate-y-1/2 flex -space-x-1.5 pointer-events-none">
-                          {data.images
-                            .filter(img => img.url.toLowerCase().includes(v.color.toLowerCase().replace(/\s+/g, '-')))
-                            .slice(0, 2)
-                            .map((img, idx) => (
-                              <div key={idx} className="h-4 w-4 rounded-full border border-background overflow-hidden bg-muted ring-1 ring-border shadow-sm">
-                                <img src={img.url} className="h-full w-full object-cover" alt="" />
-                              </div>
-                            ))}
+
+              <div className="space-y-4">
+                {groupedVariants.map((group) => {
+                  const colorKey = group.color.toLowerCase().trim() || "sem-cor";
+                  const fallbackSizes = computeFallbackSizes({ category: data.category_id });
+                  
+                  return (
+                    <div key={colorKey} className="group relative rounded-xl border border-border bg-muted/20 overflow-hidden">
+                      <div className="p-4 bg-muted/30 border-b border-border flex flex-wrap items-center gap-4">
+                        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                          <div className="relative h-8 w-8 shrink-0">
+                            <input 
+                              type="color" 
+                              value={group.color_hex || "#000000"} 
+                              onChange={(e) => updateColorGroup(group.color, { color_hex: e.target.value })}
+                              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            />
+                            <div 
+                              className="w-full h-full rounded-full border border-border shadow-inner"
+                              style={{ backgroundColor: group.color_hex || "#cfcfcf" }}
+                            />
+                          </div>
+                          <input 
+                            value={group.color} 
+                            onChange={(e) => updateColorGroup(group.color, { color: e.target.value })}
+                            placeholder="Nome da cor (ex: Preto)"
+                            className="bg-transparent border-none focus:ring-0 font-medium text-sm p-0 h-auto"
+                          />
                         </div>
-                      )}
+
+                        <div className="flex items-center gap-3">
+                          {/* Image Link */}
+                          <div className="flex items-center gap-1.5">
+                            {data.images
+                              .filter(img => img.url.toLowerCase().includes(group.color.toLowerCase().replace(/\s+/g, '-')))
+                              .slice(0, 1)
+                              .map((img) => (
+                                <div key={img.id} className="h-8 w-8 rounded border border-border overflow-hidden bg-background">
+                                  <img src={img.url} className="h-full w-full object-cover" alt="" />
+                                </div>
+                              ))}
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                              {data.images.filter(img => img.url.toLowerCase().includes(group.color.toLowerCase().replace(/\s+/g, '-'))).length} fotos
+                            </span>
+                          </div>
+
+                          <button 
+                            onClick={() => removeColorGroup(group.color)}
+                            className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-4 space-y-4">
+                        {sizeMode === "unico" ? (
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Estoque Total</span>
+                              <input 
+                                type="number" 
+                                value={group.variants[0]?.stock || 0}
+                                onChange={(e) => updateVariantStock(group.variants[0].id, Number(e.target.value))}
+                                className={input}
+                              />
+                            </div>
+                            <div className="pt-5">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-foreground/5 text-foreground/70 uppercase">
+                                Tamanho Único
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {/* Fast size selection */}
+                            <div>
+                              <span className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Tamanhos disponíveis</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {fallbackSizes.map(sz => {
+                                  const isActive = group.variants.some(v => v.size === sz);
+                                  return (
+                                    <button
+                                      key={sz}
+                                      type="button"
+                                      onClick={() => toggleSizeInGroup(group.color, sz)}
+                                      className={`h-8 min-w-[32px] px-2 rounded border text-xs font-semibold transition ${isActive ? 'bg-primary border-primary text-primary-foreground' : 'bg-background border-border text-muted-foreground hover:border-muted-foreground'}`}
+                                    >
+                                      {sz}
+                                    </button>
+                                  );
+                                })}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const custom = prompt("Digite o tamanho:");
+                                    if (custom) toggleSizeInGroup(group.color, custom.toUpperCase());
+                                  }}
+                                  className="h-8 w-8 rounded border border-dashed border-border flex items-center justify-center hover:bg-muted"
+                                >
+                                  <Plus className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Individual stock inputs */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                              {group.variants.map(v => (
+                                <div key={v.id} className="p-2 rounded-lg bg-background border border-border">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-[10px] font-bold text-foreground/80">{v.size}</span>
+                                    {group.variants.length > 1 && (
+                                      <button onClick={() => toggleSizeInGroup(group.color, v.size)} className="text-muted-foreground hover:text-destructive">
+                                        <X className="h-3 w-3" />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <input 
+                                    type="number" 
+                                    value={v.stock}
+                                    onChange={(e) => updateVariantStock(v.id, Number(e.target.value))}
+                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-medium"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <input type="number" placeholder="Estoque" value={v.stock} onChange={(e) => updateVariant(v.id, { stock: Number(e.target.value) })}
-                      className={`${input} col-span-3`} />
-                    <button onClick={() => removeVariant(v.id)} className="col-span-1 rounded p-2 hover:bg-muted text-destructive" title="Remover">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-                {data.variants.length === 0 && (
-                  <p className="text-sm text-muted-foreground">Nenhuma variação cadastrada.</p>
-                )}
+                  );
+                })}
+
+                <button 
+                  onClick={addColorGroup} 
+                  className="w-full py-4 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30 transition flex flex-col items-center justify-center gap-1"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span className="text-xs font-semibold uppercase tracking-wider">Adicionar nova cor</span>
+                </button>
               </div>
-              <button onClick={addVariant} className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-                <Plus className="h-4 w-4" /> Adicionar variação
-              </button>
+
+              {/* Total Summary */}
+              <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+                <div className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
+                  Resumo: {data.variants.length} variações
+                </div>
+                <div className="text-sm font-bold">
+                  Total em estoque: {data.variants.reduce((acc, v) => acc + v.stock, 0)} pçs
+                </div>
+              </div>
             </Card>
           </div>
 
@@ -652,44 +872,46 @@ export function ProductForm({ productId }: { productId?: string }) {
               </div>
 
               {/* Tamanhos */}
-              <div>
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
-                  Tamanhos disponíveis
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {aiSizesSuggested.map((s) => {
-                    const active = selSizes.has(s);
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => toggle(selSizes, s, setSelSizes)}
-                        className={`min-w-10 h-8 px-2.5 text-xs font-semibold rounded-md border transition ${
-                          active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60 text-foreground"
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    );
-                  })}
+              {sizeMode === "multi" && (
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">
+                    Tamanhos disponíveis
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {aiSizesSuggested.map((s) => {
+                      const active = selSizes.has(s);
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => toggle(selSizes, s, setSelSizes)}
+                          className={`min-w-10 h-8 px-2.5 text-xs font-semibold rounded-md border transition ${
+                            active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground/60 text-foreground"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      value={customSize}
+                      onChange={(e) => setCustomSize(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
+                      placeholder="Adicionar outro tamanho…"
+                      className={`${input} text-xs h-8`}
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustomSize}
+                      className="rounded-md border border-border px-2 text-xs hover:bg-muted"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
-                <div className="mt-2 flex gap-2">
-                  <input
-                    value={customSize}
-                    onChange={(e) => setCustomSize(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
-                    placeholder="Adicionar outro tamanho…"
-                    className={`${input} text-xs h-8`}
-                  />
-                  <button
-                    type="button"
-                    onClick={addCustomSize}
-                    className="rounded-md border border-border px-2 text-xs hover:bg-muted"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
+              )}
 
               {/* Estoque por variação */}
               <div>
@@ -704,7 +926,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                   className={`${input} h-9 w-32`}
                 />
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  Serão criadas <b>{selColors.size * selSizes.size}</b> variações (cor × tamanho).
+                  Serão criadas <b>{selColors.size * (sizeMode === "unico" ? 1 : selSizes.size)}</b> variações (cor × tamanho).
                 </p>
               </div>
             </div>
@@ -721,7 +943,7 @@ export function ProductForm({ productId }: { productId?: string }) {
             <button
               type="button"
               onClick={applyAiVariants}
-              disabled={aiLoading || selColors.size === 0 || selSizes.size === 0}
+              disabled={aiLoading || selColors.size === 0 || (sizeMode !== "unico" && selSizes.size === 0)}
               className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold disabled:opacity-50"
             >
               <Check className="h-4 w-4" /> Aplicar variações
