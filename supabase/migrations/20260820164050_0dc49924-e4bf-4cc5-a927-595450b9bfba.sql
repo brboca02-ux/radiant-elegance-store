@@ -1,0 +1,1 @@
+UPDATE public.products SET status = 'arquivado' WHERE status = 'ativo';
