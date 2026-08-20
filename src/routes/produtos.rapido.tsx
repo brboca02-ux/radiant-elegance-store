@@ -1,13 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Sparkles, Upload, Camera, Loader2, Check, ArrowLeft, X, Plus, ImageIcon } from "lucide-center"; // Fixed icon library name if needed, usually lucide-react
 import { AdminShell, PRODUCTS_TABS } from "@/components/AdminShell";
 import { analyzeProductImage, type AnalyzedProduct } from "@/lib/api/analyzeProduct.functions";
 import { uploadProductImage } from "@/lib/api/supaProducts";
 import { useProductsStore, slugify, SIZES, type ProductVariant } from "@/stores/productsStore";
-
-// Wait, I noticed 'lucide-center' was a typo in my thought process, keeping lucide-react
 import { ArrowLeft as BackIcon, Sparkles as AIAcon, X as CloseIcon, Plus as AddIcon, ImageIcon as ImgIcon, Loader2 as Spinner, Check as CheckIcon, Camera as CamIcon } from "lucide-react";
 
 export const Route = createFileRoute("/produtos/rapido")({
