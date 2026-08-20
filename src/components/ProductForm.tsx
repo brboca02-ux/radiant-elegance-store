@@ -926,7 +926,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                   className={`${input} h-9 w-32`}
                 />
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  Serão criadas <b>{selColors.size * selSizes.size}</b> variações (cor × tamanho).
+                  Serão criadas <b>{selColors.size * (sizeMode === "unico" ? 1 : selSizes.size)}</b> variações (cor × tamanho).
                 </p>
               </div>
             </div>
