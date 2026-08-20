@@ -29,8 +29,8 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative overflow-hidden bg-background">
-      <div className="relative w-full">
+    <section className="relative overflow-hidden">
+      <div className="relative w-full px-0">
         {/* Mobile H1 - SEO first, hidden visually to save space but kept for indexing */}
         <h1 className="sr-only">
           Moda Masculina e Feminina em Joinville — Curadoria J&S Store
