@@ -30,43 +30,68 @@ const diferenciais = [
 export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div className="relative aspect-[3/4.5] sm:aspect-[16/9] lg:aspect-[1376/768] h-[75vh] sm:h-auto max-h-[90vh] w-full bg-black">
-        <img
-          src={heroCouple.url}
-          alt="J&S Store — Moda Masculina e Feminina"
-          width={1376}
-          height={768}
-          fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center sm:object-[center_12%] lg:object-[center_top] opacity-90"
-        />
-        {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-      </div>
-      
-      <div className="absolute inset-x-0 bottom-0 max-w-[1400px] mx-auto px-6 lg:px-16 flex items-end justify-center pb-8 md:pb-12">
-        <div className="max-w-2xl text-center">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-            <Button
-              size="xl"
-              className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12"
-              asChild
-            >
-              <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
-            </Button>
-            <Button
-              size="xl"
-              variant="outline"
-              className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12 transition-all"
-              asChild
-            >
-              <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
-            </Button>
+      <div className="flex flex-col sm:block relative w-full bg-black">
+        <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[1376/768] h-[65vh] sm:h-auto max-h-[90vh] w-full">
+          <img
+            src={heroCouple.url}
+            alt="J&S Store — Moda Masculina e Feminina"
+            width={1376}
+            height={768}
+            fetchPriority="high"
+            className="absolute inset-0 w-full h-full object-cover object-[center_20%] sm:object-[center_12%] lg:object-[center_top] opacity-90"
+          />
+          {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent sm:block hidden" />
+          
+          {/* SEO H1 Hidden but present for crawlers and context */}
+          <h1 className="sr-only">J&S Store — Moda Masculina e Feminina em Joinville/SC</h1>
+          
+          <div className="absolute inset-x-0 bottom-0 hidden sm:flex items-end justify-center pb-8 md:pb-12">
+            <div className="max-w-2xl text-center">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+                <Button
+                  size="xl"
+                  className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12"
+                  asChild
+                >
+                  <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
+                </Button>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12 transition-all"
+                  asChild
+                >
+                  <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
+                </Button>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Mobile Action Buttons - Below the image on narrow screens to avoid covering content */}
+        <div className="sm:hidden flex flex-col gap-3 p-6 bg-background">
+          <Button
+            size="lg"
+            className="w-full bg-gold hover:bg-gold/90 text-primary-foreground rounded-none font-semibold h-12 text-sm tracking-widest uppercase"
+            asChild
+          >
+            <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="w-full border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none font-semibold h-12 text-sm tracking-widest uppercase"
+            asChild
+          >
+            <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
+          </Button>
         </div>
       </div>
     </section>
   );
 }
+
 
 export function TrustStrip() {
   return (

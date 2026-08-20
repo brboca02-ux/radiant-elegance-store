@@ -122,8 +122,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" },
-      { rel: "alternate", hrefLang: "pt-BR", href: "https://jsstore.lovable.app/" },
-      { rel: "alternate", hrefLang: "x-default", href: "https://jsstore.lovable.app/" },
+      { rel: "alternate", hrefLang: "pt-BR", href: "https://www.jesstorejoinville.com.br/" },
+      { rel: "alternate", hrefLang: "x-default", href: "https://www.jesstorejoinville.com.br/" },
+
     ],
   }),
   shellComponent: RootShell,
@@ -135,7 +136,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
 
-const SITE_URL = "https://jsstore.com.br";
+const SITE_URL = "https://www.jesstorejoinville.com.br";
 const LOGO_URL = `${SITE_URL}/logo-js.jpg`;
 
 const organizationJsonLd = {
