@@ -83,9 +83,9 @@ export function HomeHero() {
 
 export function TrustStrip() {
   return (
-    <div className="bg-black border-y border-gold/10 py-4 md:py-6">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
+    <div className="bg-black border-y border-gold/10 py-3 md:py-6">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-10">
+        <div className="flex overflow-x-auto sm:grid sm:grid-cols-3 gap-6 md:gap-12 no-scrollbar">
           {[
             { 
               i: Truck, 
