@@ -29,39 +29,36 @@ const diferenciais = [
 
 export function HomeHero() {
   return (
-    <section className="relative overflow-hidden bg-background">
-      <div className="flex flex-col sm:block relative w-full bg-black">
-        {/* Mobile H1 - SEO first, visible in the flow */}
-        <div className="sm:hidden px-6 pt-6 pb-2">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-white leading-tight">
-            Moda Masculina e Feminina em Joinville
-          </h1>
-          <p className="text-gold text-xs tracking-[0.2em] uppercase mt-2 font-medium">Curadoria J&S Store</p>
-        </div>
+    <section className="relative overflow-hidden">
+      <div className="relative w-full px-0">
+        {/* Mobile H1 - SEO first, hidden visually to save space but kept for indexing */}
+        <h1 className="sr-only">
+          Moda Masculina e Feminina em Joinville — Curadoria J&S Store
+        </h1>
 
-        <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[21/9] h-auto max-h-[85vh] w-full overflow-hidden flex items-center justify-center bg-black">
+        <div className="relative w-full overflow-hidden flex items-center justify-center sm:aspect-video lg:aspect-[21/9] h-auto">
           <img
             src={heroCouple.url}
             alt="J&S Store — Moda Masculina e Feminina"
             width={1376}
             height={768}
             fetchPriority="high"
-            className="w-full h-full object-contain sm:object-cover sm:object-center opacity-90 transition-transform duration-[2000ms] hover:scale-105"
+            className="w-full h-full object-cover sm:object-cover sm:object-center opacity-90 transition-transform duration-[2000ms] hover:scale-105"
           />
           {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent sm:block hidden" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           
           {/* Desktop SEO H1 */}
           <h1 className="sr-only sm:not-sr-only sm:absolute sm:left-10 sm:top-1/3 sm:max-w-xl sm:text-5xl lg:text-7xl sm:font-bold sm:tracking-tighter sm:text-white sm:leading-[0.9] hidden">
             MODA PARA O<br />SEU DIA A DIA.
           </h1>
           
-          <div className="absolute inset-x-0 bottom-0 hidden sm:flex items-end justify-center pb-8 md:pb-12">
-            <div className="max-w-2xl text-center">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center pb-6 md:pb-12">
+            <div className="max-w-2xl w-full px-6 text-center">
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
                 <Button
                   size="xl"
-                  className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12"
+                  className="bg-gold hover:bg-gold/90 text-primary-foreground rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 sm:h-12 text-xs tracking-widest uppercase"
                   asChild
                 >
                   <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
@@ -69,7 +66,7 @@ export function HomeHero() {
                 <Button
                   size="xl"
                   variant="outline"
-                  className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-10 md:h-12 transition-all"
+                  className="bg-transparent border-white/40 text-white hover:bg-white hover:text-black rounded-none px-8 lg:px-12 font-semibold shadow-xl h-12 sm:h-12 transition-all text-xs tracking-widest uppercase"
                   asChild
                 >
                   <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
@@ -77,25 +74,6 @@ export function HomeHero() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile Action Buttons - Below the image on narrow screens to avoid covering content */}
-        <div className="sm:hidden flex flex-col gap-3 p-6 bg-black border-t border-gold/10">
-          <Button
-            size="lg"
-            className="w-full bg-gold hover:bg-gold/90 text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
-            asChild
-          >
-            <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="w-full border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
-            asChild
-          >
-            <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
-          </Button>
         </div>
       </div>
     </section>
@@ -105,9 +83,9 @@ export function HomeHero() {
 
 export function TrustStrip() {
   return (
-    <div className="bg-black border-y border-gold/10 py-4 md:py-6">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
+    <div className="bg-black border-y border-gold/10 py-3 md:py-6">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-10">
+        <div className="flex overflow-x-auto sm:grid sm:grid-cols-3 gap-6 md:gap-12 no-scrollbar">
           {[
             { 
               i: Truck, 
@@ -125,15 +103,15 @@ export function TrustStrip() {
               d: "Sua compra protegida com as melhores tecnologias de segurança." 
             }
           ].map((item, idx) => (
-            <div key={idx} className="flex flex-col items-center text-center space-y-3 group">
-              <div className="p-3 rounded-full bg-gold/5 border border-gold/10 group-hover:border-gold/30 transition-colors">
-                <item.i className="h-5 w-5 md:h-6 md:w-6 text-gold" strokeWidth={1.2} />
+            <div key={idx} className="flex flex-col items-center text-center space-y-2 group flex-shrink-0 min-w-[240px] sm:min-w-0">
+              <div className="p-2 rounded-full bg-gold/5 border border-gold/10 group-hover:border-gold/30 transition-colors">
+                <item.i className="h-4 w-4 md:h-6 md:w-6 text-gold" strokeWidth={1.2} />
               </div>
               <div>
-                <h3 className="text-xs md:text-sm font-bold uppercase tracking-widest text-gold mb-1">
+                <h3 className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-gold mb-0.5">
                   {item.t}
                 </h3>
-                <p className="text-[10px] md:text-xs text-muted-foreground/80 leading-relaxed max-w-[200px] mx-auto">
+                <p className="text-[9px] md:text-xs text-muted-foreground/80 leading-relaxed max-w-[200px] mx-auto">
                   {item.d}
                 </p>
               </div>
