@@ -40,24 +40,24 @@ export function Breadcrumbs({ items, className }: Props) {
         aria-label="breadcrumb"
         className={
           className ??
-          "max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pt-4 text-xs text-muted-foreground"
+          "max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pt-4 text-[10px] sm:text-xs text-muted-foreground overflow-x-auto no-scrollbar"
         }
       >
-        <ol className="flex flex-wrap items-center gap-1.5">
+        <ol className="flex items-center gap-1.5 whitespace-nowrap">
           {items.map((it, i) => {
             const last = i === items.length - 1;
             return (
               <Fragment key={`${it.name}-${i}`}>
-                <li className={last ? "text-foreground truncate max-w-[60vw]" : ""} aria-current={last ? "page" : undefined}>
+                <li className={last ? "text-foreground font-semibold" : ""} aria-current={last ? "page" : undefined}>
                   {last || !it.href ? (
-                    <span>{it.name}</span>
+                    <span className="px-1">{it.name}</span>
                   ) : (
-                    <a href={it.href} className="hover:text-foreground transition">
+                    <a href={it.href} className="hover:text-foreground transition min-h-[44px] inline-flex items-center px-2 -mx-1">
                       {it.name}
                     </a>
                   )}
                 </li>
-                {!last && <li aria-hidden="true">/</li>}
+                {!last && <li aria-hidden="true" className="opacity-40">/</li>}
               </Fragment>
             );
           })}

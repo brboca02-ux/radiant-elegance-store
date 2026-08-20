@@ -6,7 +6,7 @@ Auditoria feita agora em `https://www.jesstorejoinville.com.br` num iPhone simul
 
 1. **Hero da home quebrado no celular** — a moldura do banner usa proporção 3/4.5 + altura de 75% da tela, mas a foto é 16:9 e entra em modo "encaixar inteira". Resultado real medido: cerca de 200px de faixa preta vazia acima da imagem e mais de 300px vazios abaixo, com os botões "Comprar Feminino/Masculino" isolados no meio do nada. É o primeiro elemento visto no celular (e o LCP que o Google mede).
 2. **Loja sem nenhum produto** — a consulta do catálogo retorna zero itens porque, no banco, todos os 75 produtos estão com status arquivado (27 femininos, 48 masculinos). Home e /colecao mostram "Coleção em preparação" tanto na produção quanto no preview. Sem produtos indexáveis, não há ranqueamento de loja.
-3. **Endereço canônico apontando para o domínio errado** — 20 ocorrências de `jsstore.lovable.app` no código (canonical, og:url, breadcrumbs e sitemap). O site oficial é `www.jesstorejoinville.com.br`; isso faz o Google atribuir as páginas ao domínio antigo.
+3. **Endereço canônico apontando para o domínio errado** — 20 ocorrências de `www.jesstorejoinville.com.br` no código (canonical, og:url, breadcrumbs e sitemap). O site oficial é `www.jesstorejoinville.com.br`; isso faz o Google atribuir as páginas ao domínio antigo.
 4. **Home sem título principal (H1)** — a página inicial não tem nenhum H1; o Google usa esse sinal para entender o tema da loja.
 5. **Ajustes finos de mobile** — faixa rolante do topo com espaçamentos largos demais no celular, link "Início" da trilha de navegação com área de toque abaixo de 36px, e a foto do hero recortando as pessoas em telas estreitas.
 
@@ -25,7 +25,7 @@ Não foram encontrados erros de JavaScript nem rolagem horizontal indevida (a fa
 - Conferir depois, no celular, que a grade aparece com 2 colunas e imagens carregando.
 
 ### 3. Domínio correto para o Google
-- Substituir todas as URLs `jsstore.lovable.app` por `https://www.jesstorejoinville.com.br` em canonical, og:url, dados estruturados (breadcrumbs/produto) e no sitemap.
+- Substituir todas as URLs `www.jesstorejoinville.com.br` por `https://www.jesstorejoinville.com.br` em canonical, og:url, dados estruturados (breadcrumbs/produto) e no sitemap.
 
 ### 4. Acabamento mobile
 - Reduzir espaçamentos e tamanho da faixa rolante no celular.
