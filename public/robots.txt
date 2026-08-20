@@ -8,4 +8,4 @@ Disallow: /meus-pedidos
 Disallow: /pedido/
 Disallow: /pedidos/
 
-Sitemap: https://jsstore.lovable.app/sitemap.xml
+Sitemap: https://www.jesstorejoinville.com.br/sitemap.xml

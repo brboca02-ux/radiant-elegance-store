@@ -31,20 +31,30 @@ export function HomeHero() {
   return (
     <section className="relative overflow-hidden bg-background">
       <div className="flex flex-col sm:block relative w-full bg-black">
-        <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[1376/768] h-[65vh] sm:h-auto max-h-[90vh] w-full">
+        {/* Mobile H1 - SEO first, visible in the flow */}
+        <div className="sm:hidden px-6 pt-6 pb-2">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-white leading-tight">
+            Moda Masculina e Feminina em Joinville
+          </h1>
+          <p className="text-gold text-xs tracking-[0.2em] uppercase mt-2 font-medium">Curadoria J&S Store</p>
+        </div>
+
+        <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[1376/768] h-auto max-h-[90vh] w-full overflow-hidden">
           <img
             src={heroCouple.url}
             alt="J&S Store — Moda Masculina e Feminina"
             width={1376}
             height={768}
             fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover object-[center_20%] sm:object-[center_12%] lg:object-[center_top] opacity-90"
+            className="absolute inset-0 w-full h-full object-cover object-[center_20%] sm:object-[center_12%] lg:object-[center_top] opacity-90 transition-transform duration-[2000ms] hover:scale-105"
           />
           {/* Overlay escuro estratégico reforçado na base para legibilidade dos botões */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent sm:block hidden" />
           
-          {/* SEO H1 Hidden but present for crawlers and context */}
-          <h1 className="sr-only">J&S Store — Moda Masculina e Feminina em Joinville/SC</h1>
+          {/* Desktop SEO H1 */}
+          <h1 className="sr-only sm:not-sr-only sm:absolute sm:left-10 sm:top-1/3 sm:max-w-xl sm:text-5xl lg:text-7xl sm:font-bold sm:tracking-tighter sm:text-white sm:leading-[0.9] hidden">
+            MODA PARA O<br />SEU DIA A DIA.
+          </h1>
           
           <div className="absolute inset-x-0 bottom-0 hidden sm:flex items-end justify-center pb-8 md:pb-12">
             <div className="max-w-2xl text-center">
@@ -70,10 +80,10 @@ export function HomeHero() {
         </div>
 
         {/* Mobile Action Buttons - Below the image on narrow screens to avoid covering content */}
-        <div className="sm:hidden flex flex-col gap-3 p-6 bg-background">
+        <div className="sm:hidden flex flex-col gap-3 p-6 bg-black border-t border-gold/10">
           <Button
             size="lg"
-            className="w-full bg-gold hover:bg-gold/90 text-primary-foreground rounded-none font-semibold h-12 text-sm tracking-widest uppercase"
+            className="w-full bg-gold hover:bg-gold/90 text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
             asChild
           >
             <Link to="/colecao" search={{ c: "feminino" }}>Comprar Feminino</Link>
@@ -81,7 +91,7 @@ export function HomeHero() {
           <Button
             size="lg"
             variant="outline"
-            className="w-full border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none font-semibold h-12 text-sm tracking-widest uppercase"
+            className="w-full border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-none font-semibold h-14 text-sm tracking-widest uppercase"
             asChild
           >
             <Link to="/colecao" search={{ c: "masculino" }}>Comprar Masculino</Link>
