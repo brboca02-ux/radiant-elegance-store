@@ -31,6 +31,8 @@ function QuickAddPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzed, setAnalyzed] = useState<AnalyzedProduct | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
+
 
   const [price, setPrice] = useState<string>("");
   const [salePrice, setSalePrice] = useState<string>("");
