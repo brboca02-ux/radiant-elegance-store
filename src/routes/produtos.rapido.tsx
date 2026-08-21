@@ -373,7 +373,7 @@ function QuickAddPage() {
                     className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-foreground text-background px-4 py-3 text-sm font-semibold disabled:opacity-50 mt-4"
                   >
                     {saving ? <Spinner className="h-4 w-4 animate-spin" /> : <CheckIcon className="h-4 w-4" />}
-                    {saving ? "Cadastrando..." : "Confirmar e Criar Produto"}
+                    {saving ? (uploadProgress || "Cadastrando...") : "Confirmar e Criar Produto"}
                   </button>
                 </div>
               )}
