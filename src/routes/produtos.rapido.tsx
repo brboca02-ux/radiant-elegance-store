@@ -174,10 +174,17 @@ function QuickAddPage() {
       toast.success("Produto cadastrado com sucesso!");
       navigate({ to: "/produtos" });
     } catch (e) {
-      toast.error("Não foi possível cadastrar: " + (e as Error).message);
+      const msg = (e as Error).message || "erro desconhecido";
+      toast.error(
+        /failed to fetch|network|load failed/i.test(msg)
+          ? "Falha de rede ao cadastrar. Verifique a conexão e tente novamente — as fotos já enviadas não serão perdidas."
+          : "Não foi possível cadastrar: " + msg,
+      );
     } finally {
       setSaving(false);
+      setUploadProgress("");
     }
+
   }
 
   return (
