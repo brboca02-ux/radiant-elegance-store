@@ -200,21 +200,42 @@ async function replaceImagesAndVariants(
 }
 
 // ----- Storage upload ----------------------------------------------------
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export async function uploadProductImage(file: File): Promise<string> {
   // Normaliza para 3:4 com fundo detectado, reescala e converte para webp
   // — assim a vitrine usa object-cover sem cortar nenhuma peça.
   const { normalizeProductImage } = await import("@/lib/imageProcessing");
   const processed = await normalizeProductImage(file).catch(() => file);
-  const ext = processed.name.split(".").pop() ?? "webp";
+  const ext = (processed.name?.split(".").pop() || "webp").toLowerCase();
   const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const { error } = await supabase.storage.from("product-images").upload(path, processed, {
-    cacheControl: "31536000", upsert: false, contentType: processed.type,
-  });
-  if (error) throw error;
-  // O bucket é privado neste workspace, então servimos por uma rota de proxy
-  // pública somente-leitura (URL estável, sem expiração).
-  return `/api/public/img/${path}`;
+
+  // Envios grandes podem falhar por instabilidade de rede ("Failed to fetch").
+  // Tentamos até 3 vezes com pequeno intervalo antes de desistir.
+  let lastMessage = "";
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { error } = await supabase.storage.from("product-images").upload(path, processed, {
+        cacheControl: "31536000", upsert: true, contentType: processed.type || "image/webp",
+      });
+      if (!error) {
+        // O bucket é privado neste workspace, então servimos por uma rota de proxy
+        // pública somente-leitura (URL estável, sem expiração).
+        return `/api/public/img/${path}`;
+      }
+      lastMessage = error.message;
+    } catch (e) {
+      lastMessage = (e as Error).message || "Failed to fetch";
+    }
+    if (attempt < 3) await sleep(attempt * 800);
+  }
+
+  const friendly = /failed to fetch|network|load failed/i.test(lastMessage)
+    ? `Falha de rede ao enviar a imagem "${file.name}". Verifique sua conexão e tente novamente (fotos menores enviam mais rápido).`
+    : `Erro ao enviar a imagem "${file.name}": ${lastMessage}`;
+  throw new Error(friendly);
 }
+
 
 
 // ----- Stock movements ---------------------------------------------------

@@ -31,6 +31,8 @@ function QuickAddPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzed, setAnalyzed] = useState<AnalyzedProduct | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
+
 
   const [price, setPrice] = useState<string>("");
   const [salePrice, setSalePrice] = useState<string>("");
@@ -120,8 +122,15 @@ function QuickAddPage() {
 
     setSaving(true);
     try {
-      // 1. Upload all images
-      const uploadedUrls = await Promise.all(images.map(i => uploadProductImage(i.file)));
+      // 1. Upload das imagens — sequencial para não saturar a rede (8 fotos em
+      //    paralelo era a causa do "Failed to fetch").
+      const uploadedUrls: string[] = [];
+      for (let i = 0; i < images.length; i++) {
+        setUploadProgress(`Enviando foto ${i + 1} de ${images.length}...`);
+        uploadedUrls.push(await uploadProductImage(images[i]!.file));
+      }
+      setUploadProgress("Salvando produto...");
+
       
       // 2. Map variants
       const variants: ProductVariant[] = [];
@@ -167,10 +176,17 @@ function QuickAddPage() {
       toast.success("Produto cadastrado com sucesso!");
       navigate({ to: "/produtos" });
     } catch (e) {
-      toast.error("Não foi possível cadastrar: " + (e as Error).message);
+      const msg = (e as Error).message || "erro desconhecido";
+      toast.error(
+        /failed to fetch|network|load failed/i.test(msg)
+          ? "Falha de rede ao cadastrar. Verifique a conexão e tente novamente — as fotos já enviadas não serão perdidas."
+          : "Não foi possível cadastrar: " + msg,
+      );
     } finally {
       setSaving(false);
+      setUploadProgress("");
     }
+
   }
 
   return (
@@ -357,7 +373,7 @@ function QuickAddPage() {
                     className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-foreground text-background px-4 py-3 text-sm font-semibold disabled:opacity-50 mt-4"
                   >
                     {saving ? <Spinner className="h-4 w-4 animate-spin" /> : <CheckIcon className="h-4 w-4" />}
-                    {saving ? "Cadastrando..." : "Confirmar e Criar Produto"}
+                    {saving ? (uploadProgress || "Cadastrando...") : "Confirmar e Criar Produto"}
                   </button>
                 </div>
               )}
