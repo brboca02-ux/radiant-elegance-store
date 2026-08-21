@@ -120,8 +120,15 @@ function QuickAddPage() {
 
     setSaving(true);
     try {
-      // 1. Upload all images
-      const uploadedUrls = await Promise.all(images.map(i => uploadProductImage(i.file)));
+      // 1. Upload das imagens — sequencial para não saturar a rede (8 fotos em
+      //    paralelo era a causa do "Failed to fetch").
+      const uploadedUrls: string[] = [];
+      for (let i = 0; i < images.length; i++) {
+        setUploadProgress(`Enviando foto ${i + 1} de ${images.length}...`);
+        uploadedUrls.push(await uploadProductImage(images[i]!.file));
+      }
+      setUploadProgress("Salvando produto...");
+
       
       // 2. Map variants
       const variants: ProductVariant[] = [];
