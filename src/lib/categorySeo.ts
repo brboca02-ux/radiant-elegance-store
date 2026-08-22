@@ -23,8 +23,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Moda feminina em Joinville: t-shirts em algodão e calças jeans importadas na J&S Store. Compre online com envio para todo o Brasil.",
     h1: "Moda Feminina",
     eyebrow: "Coleção Feminina",
-    intro:
-      "Descubra a coleção feminina da J&S Store: t-shirts em malha 100% algodão e calças jeans importadas com elastano, selecionadas a dedo na nossa loja em Joinville. Peças versáteis para o dia a dia, com atendimento próximo pelo WhatsApp e envio para todo o Brasil.",
+    intro: "",
     keywords: ["moda feminina joinville", "roupa feminina", "calça jeans feminina importada", "t-shirt feminina"],
   },
   masculino: {
@@ -35,8 +34,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Roupas masculinas na J&S Store: camisas polo, camisetas peruanas, bermudas, shorts e calças jeans e sarja. Loja em Joinville com envio para todo o Brasil.",
     h1: "Moda Masculina",
     eyebrow: "Coleção Masculina",
-    intro:
-      "A coleção masculina da J&S Store reúne camisas gola polo importadas, camisetas peruanas e Supima, bermudas e shorts de sarja e calças jeans com elastano. Modelagens atuais, tecidos de qualidade e curadoria feita na nossa loja física em Joinville.",
+    intro: "",
     keywords: ["moda masculina joinville", "camisa polo importada", "camiseta peruana", "bermuda de sarja"],
   },
   promocoes: {
@@ -47,8 +45,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Peças selecionadas com desconto na J&S Store. Aproveite as promoções de moda masculina e feminina enquanto durar o estoque.",
     h1: "Promoções",
     eyebrow: "Ofertas da semana",
-    intro:
-      "Seleção de peças com preço promocional na J&S Store. Moda masculina e feminina com desconto real, curadoria da nossa loja em Joinville e envio para todo o Brasil.",
+    intro: "",
     keywords: ["promoção de roupas joinville", "moda com desconto", "roupas em promoção", "outlet de moda joinville"],
   },
   "recebidos-da-semana": {
@@ -59,8 +56,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Confira os recebidos da semana na J&S Store: novidades de moda masculina e feminina que acabaram de chegar em Joinville.",
     h1: "Recebidos da Semana",
     eyebrow: "Acabou de chegar",
-    intro:
-      "As peças que acabaram de chegar na J&S Store. Novidades de moda masculina e feminina toda semana, selecionadas na nossa loja em Joinville, com envio para todo o Brasil.",
+    intro: "",
     keywords: ["novidades moda joinville", "recebidos da semana", "roupas novas joinville", "lançamentos de moda"],
   },
 };
