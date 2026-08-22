@@ -1,5 +1,7 @@
 // SEO textual único por categoria — títulos, descrições e copy de intro
 // usados na página /colecao?c=<id> para reforçar ranqueamento long-tail.
+import { resolveCollection } from "@/lib/collections";
+
 
 export interface CategorySeo {
   id: string;
