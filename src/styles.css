@@ -80,7 +80,10 @@
   h1, h2, h3, h4, .font-display { font-family: var(--font-display); font-weight: 700; letter-spacing: normal; }
 }
 
+@utility grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @utility grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@utility md\:grid-cols-3 { @media (min-width: 768px) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@utility lg\:grid-cols-5 { @media (min-width: 1024px) { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 @utility xl\:grid-cols-5 { @media (min-width: 1280px) { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 
 @utility no-scrollbar {
