@@ -34,7 +34,7 @@ async function fetchShopify({ query, first = 12, sortKey, reverse }: FetchOpts):
 
 export function ProductGrid({
   query, first = 12, sortKey, reverse, emptyHint = true, size = "default",
-  columns = { mobile: 2, lg: 4 },
+  columns = { mobile: 2, lg: 5 },
 }: { 
   query?: string; 
   first?: number; 
