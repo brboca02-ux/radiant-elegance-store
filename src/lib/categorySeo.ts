@@ -66,5 +66,13 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
 
 export function getCategorySeo(id?: string): CategorySeo | null {
   if (!id) return null;
-  return CATEGORY_SEO[id] ?? null;
+  const direct = CATEGORY_SEO[id];
+  if (direct) return direct;
+
+  // Apelidos de coleção (ex.: "ultimas", "novidades") reaproveitam o SEO canônico.
+  const kind = resolveCollection(id);
+  if (kind === "promo") return CATEGORY_SEO["promocoes"] ?? null;
+  if (kind === "recent") return CATEGORY_SEO["recebidos-da-semana"] ?? null;
+  return null;
 }
+
