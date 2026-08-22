@@ -111,9 +111,11 @@ function ColecaoPage() {
           <span className="eyebrow">{eyebrow}</span>
           <h1 className="font-display text-4xl md:text-6xl mt-3">{h1}</h1>
           <span className="gold-rule mt-5" />
-          <p className="mt-6 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            {intro}
-          </p>
+          {intro && (
+            <p className="mt-6 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              {intro}
+            </p>
+          )}
         </div>
       </div>
 
