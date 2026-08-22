@@ -23,8 +23,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Moda feminina em Joinville: t-shirts em algodão e calças jeans importadas na J&S Store. Compre online com envio para todo o Brasil.",
     h1: "Moda Feminina",
     eyebrow: "Coleção Feminina",
-    intro:
-      "Descubra a coleção feminina da J&S Store: t-shirts em malha 100% algodão e calças jeans importadas com elastano, selecionadas a dedo na nossa loja em Joinville. Peças versáteis para o dia a dia, com atendimento próximo pelo WhatsApp e envio para todo o Brasil.",
+    intro: "",
     keywords: ["moda feminina joinville", "roupa feminina", "calça jeans feminina importada", "t-shirt feminina"],
   },
   masculino: {
