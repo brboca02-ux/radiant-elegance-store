@@ -82,6 +82,11 @@ function QuickAddPage() {
       });
       setAnalyzed(result);
       setBrand(result.brand || "");
+      if (result.sizes_suggested.length === 1 && result.sizes_suggested[0] === "Único") {
+        setSizeMode("unico");
+      } else {
+        setSizeMode("multi");
+      }
       toast.success("Análise concluída!");
     } catch (e) {
       toast.error((e as Error).message);
