@@ -148,7 +148,7 @@ function ColecaoPage() {
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12">
         <h2 className="sr-only">Produtos</h2>
-        <ProductGrid query={query} columns={{ mobile: 2, tablet: 3, lg: 5 }} />
+        <ProductGrid query={query} first={48} columns={{ mobile: 2, tablet: 3, lg: 5, desktop: 6 }} />
       </div>
     </div>
   );
