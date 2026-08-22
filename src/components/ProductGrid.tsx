@@ -94,9 +94,18 @@ export function ProductGrid({
   }, [products, query, first, sortKey, reverse, shopifyData]);
 
 
+  const gridCols = useMemo(() => {
+    const mobile = columns.mobile ?? 2;
+    const tablet = columns.tablet ?? 3;
+    const lg = columns.lg ?? 4;
+    const desktop = columns.desktop ?? lg;
+    
+    return `grid-cols-${mobile} md:grid-cols-${tablet} lg:grid-cols-${lg} xl:grid-cols-${desktop}`;
+  }, [columns]);
+
   if ((!loaded && loading) || (!loaded && items.length === 0)) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12">
+      <div className={`grid ${gridCols} gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12`}>
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="aspect-[3/4] rounded-md bg-secondary animate-pulse" />
         ))}
