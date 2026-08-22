@@ -211,7 +211,7 @@ export function BestSellersSection() {
     <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Os queridinhos da loja" title="Mais Vendidos" subtitle="As peças preferidas pelas clientes da J&S Store." link={{ to: "/colecao", label: "Ver todos", c: "mais-vendidos" }} />
-        <ProductGrid sortKey="BEST_SELLING" first={8} />
+        <ProductGrid sortKey="BEST_SELLING" first={12} columns={{ mobile: 2, tablet: 3, lg: 5, desktop: 6 }} />
       </div>
     </section>
   );
@@ -222,7 +222,7 @@ export function LaunchSection() {
     <section id="colecao" className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Acabou de chegar" title="Novidades" link={{ to: "/colecao", label: "Ver coleção", c: "novidades" }} />
-        <ProductGrid sortKey="CREATED_AT" reverse first={8} />
+        <ProductGrid sortKey="CREATED_AT" reverse first={12} columns={{ mobile: 2, tablet: 3, lg: 5, desktop: 6 }} />
       </div>
     </section>
   );

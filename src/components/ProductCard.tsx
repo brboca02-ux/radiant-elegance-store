@@ -135,10 +135,10 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
         </button>
       </div>
       <div className={`flex flex-1 flex-col text-center ${size === "compact" ? "pt-2" : "pt-3"}`}>
-        <h3 className={`font-display leading-snug line-clamp-2 overflow-hidden text-ellipsis ${size === "compact" ? "text-[10px] md:text-xs min-h-[2.4em]" : "text-sm sm:text-base min-h-[2.6em]"}`}>
+        <h3 className={`font-display leading-snug line-clamp-2 overflow-hidden text-ellipsis ${size === "compact" ? "text-[10px] md:text-[11px] min-h-[2.4em]" : "text-[11px] sm:text-[13px] md:text-sm min-h-[2.6em]"}`}>
           {product.node.title}
         </h3>
-        <p className={`${size === "compact" ? "text-xs pt-1" : "text-sm sm:text-[15px] pt-2"} mt-auto font-semibold text-foreground`}>
+        <p className={`${size === "compact" ? "text-[10px] md:text-xs pt-1" : "text-[11px] sm:text-xs md:text-sm pt-2"} mt-auto font-semibold text-foreground`}>
           {formatPrice(price.amount, price.currencyCode)}
         </p>
       </div>

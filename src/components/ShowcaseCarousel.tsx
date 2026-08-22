@@ -83,7 +83,7 @@ export function ShowcaseCarousel() {
           className="flex gap-4 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-4"
         >
           {showcaseProducts.map((p) => (
-            <div key={p.node.id} className="shrink-0 w-[140px] sm:w-[160px] md:w-[180px] snap-start">
+            <div key={p.node.id} className="shrink-0 w-[120px] sm:w-[140px] md:w-[160px] snap-start">
               <ProductCard product={p} size="compact" />
             </div>
           ))}

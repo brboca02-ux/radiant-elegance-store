@@ -61,7 +61,7 @@ Formato exato:
 Regras:
 - "colors": uma entrada por cor visível, com hex real aproximado e nome curto em português (ex: "Rosa Pink", "Azul Marinho", "Cinza Mescla", "Verde Esmeralda"). Não repita a mesma cor duas vezes.
 - "brand"/"brands": NUNCA invente marca. Só informe se houver texto/logo realmente legível na peça ou etiqueta; caso contrário devolva "" e [].
-- "sizes_suggested": tamanhos típicos para essa peça. Calças, shorts e bermudas femininas (numeração): ["36","38","40","42","44"]. Calças, shorts e bermudas masculinas: ["38","40","42","44","46","48"]. Numeração ampliada (peças 50+): ["50","52","54","56"]. Demais roupas (camisetas, polos, camisas, t-shirts): ["P","M","G","GG"].
+- "sizes_suggested": tamanhos típicos para essa peça. Calças, shorts e bermudas femininas (numeração): ["36","38","40","42","44"]. Calças, shorts e bermudas masculinas: ["38","40","42","44","46","48"]. Numeração ampliada (peças 50+): ["50","52","54","56"]. Demais roupas (camisetas, polos, camisas, t-shirts, tricot): ["P","M","G","GG"]. Se a peça for claramente tamanho único (ex: echarpe, cinto, poncho, ou etiqueta dizendo U), inclua apenas ["Único"].
 - "piece_type": nome específico da peça (2-4 palavras), sem cor nem marca.
 - Categoria: peças femininas → "feminino"; peças masculinas → "masculino". A loja vende somente moda masculina e feminina adulta.`;
 
