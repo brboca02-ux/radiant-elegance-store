@@ -22,7 +22,7 @@ export function buildSrcSet(url: string, widths: number[] = [320, 480, 640, 800,
   return widths.map((w) => `${withWidth(url, w)} ${w}w`).join(", ");
 }
 
-export const CARD_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
+export const CARD_SIZES = "(min-width: 1536px) 16vw, (min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw";
 export const PDP_SIZES = "(min-width: 1024px) 50vw, 100vw";
 
 // Placeholder SVG blurry inline (tiny, ~1KB). Cor neutra da marca.
