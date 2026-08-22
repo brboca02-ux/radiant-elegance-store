@@ -50,28 +50,38 @@ export function ProductGrid({
 
   const items = useMemo<ShopifyProduct[]>(() => {
     const q = (query ?? "").toLowerCase();
+    const collection = resolveCollection(q);
     const active = products.filter((p) => p.status === "ativo");
-    let filtered = q
-      ? active.filter(
-          (p) =>
-            p.name.toLowerCase().includes(q) ||
-            p.category_id.toLowerCase().includes(q) ||
-            p.description.toLowerCase().includes(q),
-        )
-      : active;
 
-    if (sortKey === "CREATED_AT") {
-      filtered = [...filtered].sort((a, b) => (reverse ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at)));
-    } else if (sortKey === "PRICE") {
-      filtered = [...filtered].sort((a, b) => (reverse ? b.price - a.price : a.price - b.price));
-    } else if (sortKey === "TITLE") {
-      filtered = [...filtered].sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)));
+    let filtered = active;
+    if (collection === "promo") {
+      filtered = active.filter((p) => p.sale_price != null && p.sale_price > 0 && p.sale_price < p.price);
+    } else if (collection === "recent") {
+      filtered = [...active].sort((a, b) => b.created_at.localeCompare(a.created_at));
+    } else if (q) {
+      filtered = active.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.category_id.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q),
+      );
+    }
+
+    if (!collection) {
+      if (sortKey === "CREATED_AT") {
+        filtered = [...filtered].sort((a, b) => (reverse ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at)));
+      } else if (sortKey === "PRICE") {
+        filtered = [...filtered].sort((a, b) => (reverse ? b.price - a.price : a.price - b.price));
+      } else if (sortKey === "TITLE") {
+        filtered = [...filtered].sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)));
+      }
     }
 
     const fromSupabase = filtered.slice(0, first).map(productToShopify);
     if (fromSupabase.length > 0) return fromSupabase;
     return shopifyData ?? [];
   }, [products, query, first, sortKey, reverse, shopifyData]);
+
 
   if ((!loaded && loading) || (!loaded && items.length === 0)) {
     return (
