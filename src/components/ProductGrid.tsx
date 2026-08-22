@@ -100,7 +100,7 @@ export function ProductGrid({
     const lg = columns.lg ?? 4;
     const desktop = columns.desktop ?? lg;
     
-    return `grid-cols-${mobile} md:grid-cols-${tablet} lg:grid-cols-${lg} xl:grid-cols-${desktop}`;
+    return `grid-cols-${mobile} md:grid-cols-${tablet} lg:grid-cols-${lg} xl:grid-cols-${desktop} 2xl:grid-cols-6`;
   }, [columns]);
 
   if ((!loaded && loading) || (!loaded && items.length === 0)) {
