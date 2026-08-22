@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ProductGrid } from "@/components/ProductGrid";
 import { CATEGORIES } from "@/stores/productsStore";
 import { getCategorySeo } from "@/lib/categorySeo";
+import { COLLECTION_CHIPS, resolveCollection } from "@/lib/collections";
+
 
 interface ColecaoSearch { c?: string }
 
@@ -130,7 +132,18 @@ function ColecaoPage() {
               {cat.name}
             </Link>
           ))}
+          {COLLECTION_CHIPS.map((col) => (
+            <Link
+              key={col.id}
+              to="/colecao"
+              search={{ c: col.id }}
+              className={chip(resolveCollection(safe) === resolveCollection(col.id) && !!resolveCollection(safe))}
+            >
+              {col.name}
+            </Link>
+          ))}
         </nav>
+
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12">
