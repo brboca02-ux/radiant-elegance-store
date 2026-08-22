@@ -4,6 +4,8 @@ import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib
 import { useProductsStore } from "@/stores/productsStore";
 import { productToShopify } from "@/lib/mockProducts";
 import { ProductCard } from "./ProductCard";
+import { resolveCollection } from "@/lib/collections";
+
 
 interface FetchOpts {
   query?: string;

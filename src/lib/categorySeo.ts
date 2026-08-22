@@ -37,7 +37,32 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "A coleção masculina da J&S Store reúne camisas gola polo importadas, camisetas peruanas e Supima, bermudas e shorts de sarja e calças jeans com elastano. Modelagens atuais, tecidos de qualidade e curadoria feita na nossa loja física em Joinville.",
     keywords: ["moda masculina joinville", "camisa polo importada", "camiseta peruana", "bermuda de sarja"],
   },
+  promocoes: {
+    id: "promocoes",
+    name: "Promoções",
+    title: "Promoções J&S Store — Moda com Desconto em Joinville",
+    description:
+      "Peças selecionadas com desconto na J&S Store. Aproveite as promoções de moda masculina e feminina enquanto durar o estoque.",
+    h1: "Promoções",
+    eyebrow: "Ofertas da semana",
+    intro:
+      "Seleção de peças com preço promocional na J&S Store. Moda masculina e feminina com desconto real, curadoria da nossa loja em Joinville e envio para todo o Brasil.",
+    keywords: ["promoção de roupas joinville", "moda com desconto", "roupas em promoção", "outlet de moda joinville"],
+  },
+  "recebidos-da-semana": {
+    id: "recebidos-da-semana",
+    name: "Recebidos da Semana",
+    title: "Recebidos da Semana — Novidades J&S Store Joinville",
+    description:
+      "Confira os recebidos da semana na J&S Store: novidades de moda masculina e feminina que acabaram de chegar em Joinville.",
+    h1: "Recebidos da Semana",
+    eyebrow: "Acabou de chegar",
+    intro:
+      "As peças que acabaram de chegar na J&S Store. Novidades de moda masculina e feminina toda semana, selecionadas na nossa loja em Joinville, com envio para todo o Brasil.",
+    keywords: ["novidades moda joinville", "recebidos da semana", "roupas novas joinville", "lançamentos de moda"],
+  },
 };
+
 
 export function getCategorySeo(id?: string): CategorySeo | null {
   if (!id) return null;
