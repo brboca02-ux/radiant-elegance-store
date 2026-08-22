@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ProductGrid } from "@/components/ProductGrid";
 import { CATEGORIES } from "@/stores/productsStore";
 import { getCategorySeo } from "@/lib/categorySeo";
+import { COLLECTION_CHIPS, resolveCollection } from "@/lib/collections";
+
 
 interface ColecaoSearch { c?: string }
 
