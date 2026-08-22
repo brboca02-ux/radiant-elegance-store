@@ -20,17 +20,10 @@ const FEMININO: MegaContent = {
     {
       title: "Roupas",
       items: [
-        { label: "T-Shirts", c: "t-shirt" },
-        { label: "Calças Jeans", c: "calca-jeans" },
-      ],
-    },
-    {
-      title: "Tamanhos",
-      items: [
-        { label: "P", c: "tamanho-p" },
-        { label: "M", c: "tamanho-m" },
-        { label: "G", c: "tamanho-g" },
-        { label: "GG", c: "tamanho-gg" },
+        { label: "Blusas e Tricôs", c: "blusa" },
+        { label: "Calças", c: "calça" },
+        { label: "Shorts", c: "short" },
+        { label: "Ver tudo Feminino", c: "feminino" },
       ],
     },
     {
@@ -54,13 +47,10 @@ const MASCULINO: MegaContent = {
     {
       title: "Roupas",
       items: [
-        { label: "Camisetas", c: "camisetas" },
-        { label: "Polos", c: "polos" },
-        { label: "Camisas", c: "camisas-masc" },
-        { label: "Bermudas", c: "bermudas" },
-        { label: "Calças", c: "calcas-masc" },
-        { label: "Moletons", c: "moletons" },
-        { label: "Jaquetas", c: "jaquetas-masc" },
+        { label: "Camisas Polo", c: "polo" },
+        { label: "Camisetas", c: "camiseta" },
+        { label: "Calças Jeans", c: "jeans" },
+        { label: "Ver tudo Masculino", c: "masculino" },
       ],
     },
     {
@@ -79,7 +69,7 @@ const PROMOCOES: MegaContent = {
     {
       title: "Ofertas",
       items: [
-        { label: "Até 50% OFF", c: "50-off", highlight: true },
+        { label: "Todas as promoções", c: "promocoes", highlight: true },
         { label: "Últimas oportunidades", c: "ultimas", highlight: true },
         { label: "Recebidos em promoção", c: "recebidos-promo", highlight: true },
       ],
@@ -92,6 +82,7 @@ const PROMOCOES: MegaContent = {
     c: "promocoes",
   },
 };
+
 
 type MenuKey = "feminino" | "masculino" | "promocoes" | null;
 
