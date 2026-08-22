@@ -34,8 +34,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Roupas masculinas na J&S Store: camisas polo, camisetas peruanas, bermudas, shorts e calças jeans e sarja. Loja em Joinville com envio para todo o Brasil.",
     h1: "Moda Masculina",
     eyebrow: "Coleção Masculina",
-    intro:
-      "A coleção masculina da J&S Store reúne camisas gola polo importadas, camisetas peruanas e Supima, bermudas e shorts de sarja e calças jeans com elastano. Modelagens atuais, tecidos de qualidade e curadoria feita na nossa loja física em Joinville.",
+    intro: "",
     keywords: ["moda masculina joinville", "camisa polo importada", "camiseta peruana", "bermuda de sarja"],
   },
   promocoes: {
