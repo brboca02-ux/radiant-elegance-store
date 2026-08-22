@@ -233,7 +233,7 @@ export function RecebidosHomeSection() {
     <section className="section-compact bg-background">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         <SectionHeader kicker="Esta semana" title="Recebidos da Semana" link={{ to: "/colecao", label: "Ver lançamentos", c: "recebidos-da-semana" }} />
-        <ProductGrid sortKey="CREATED_AT" reverse first={4} />
+        <ProductGrid sortKey="CREATED_AT" reverse first={4} columns={{ mobile: 2, tablet: 3, lg: 5 }} />
       </div>
     </section>
   );

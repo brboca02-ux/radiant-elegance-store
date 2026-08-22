@@ -80,6 +80,9 @@
   h1, h2, h3, h4, .font-display { font-family: var(--font-display); font-weight: 700; letter-spacing: normal; }
 }
 
+@utility grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@utility xl\:grid-cols-5 { @media (min-width: 1280px) { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
