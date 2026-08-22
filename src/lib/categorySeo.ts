@@ -45,8 +45,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Peças selecionadas com desconto na J&S Store. Aproveite as promoções de moda masculina e feminina enquanto durar o estoque.",
     h1: "Promoções",
     eyebrow: "Ofertas da semana",
-    intro:
-      "Seleção de peças com preço promocional na J&S Store. Moda masculina e feminina com desconto real, curadoria da nossa loja em Joinville e envio para todo o Brasil.",
+    intro: "",
     keywords: ["promoção de roupas joinville", "moda com desconto", "roupas em promoção", "outlet de moda joinville"],
   },
   "recebidos-da-semana": {
@@ -57,8 +56,7 @@ export const CATEGORY_SEO: Record<string, CategorySeo> = {
       "Confira os recebidos da semana na J&S Store: novidades de moda masculina e feminina que acabaram de chegar em Joinville.",
     h1: "Recebidos da Semana",
     eyebrow: "Acabou de chegar",
-    intro:
-      "As peças que acabaram de chegar na J&S Store. Novidades de moda masculina e feminina toda semana, selecionadas na nossa loja em Joinville, com envio para todo o Brasil.",
+    intro: "",
     keywords: ["novidades moda joinville", "recebidos da semana", "roupas novas joinville", "lançamentos de moda"],
   },
 };

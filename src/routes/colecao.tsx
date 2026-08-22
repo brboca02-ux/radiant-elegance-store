@@ -17,8 +17,7 @@ const DEFAULT_SEO = {
     "Explore a coleção completa da J&S Store: moda masculina e feminina selecionada com curadoria em Joinville. Envio para todo o Brasil.",
   h1: "Toda a Coleção",
   eyebrow: "Coleção",
-  intro:
-    "Curadoria completa de moda masculina e feminina na J&S Store. Loja física em Joinville, com entrega para todo o Brasil.",
+  intro: "",
 };
 
 export const Route = createFileRoute("/colecao")({
