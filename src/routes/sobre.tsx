@@ -57,7 +57,7 @@ function SobrePage() {
             <li className="flex items-center gap-2"><Heart className="h-4 w-4 text-primary" /> Curadoria semanal de novidades</li>
             <li className="flex items-center gap-2"><MessageCircle className="h-4 w-4 text-primary" /> Consultoria de estilo no WhatsApp</li>
             <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Loja física em {STORE_INFO.city}/{STORE_INFO.region}</li>
-            <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Seg a Sáb · 9h às 18h</li>
+            <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Seg a Sex · 8h às 22h · Sáb e Dom · 8h às 20h</li>
           </ul>
           <a href={wa} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-full font-semibold">
             <MessageCircle className="h-4 w-4" /> Falar no WhatsApp

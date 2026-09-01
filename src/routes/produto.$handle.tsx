@@ -428,7 +428,7 @@ function ProductPage() {
             </p>
             {selected && (
               <p className="text-sm text-muted-foreground mt-1">
-                ou 4x de {formatPrice(parseFloat(selected.price.amount) / 4, selected.price.currencyCode)} sem juros · <span className="text-gold font-semibold">10% off no Pix</span>
+                ou 3x de {formatPrice(parseFloat(selected.price.amount) / 3, selected.price.currencyCode)} sem juros · até 12x com juros
               </p>
             )}
             <div className="mt-2 flex flex-wrap items-center gap-2">
