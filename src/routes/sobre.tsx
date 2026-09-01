@@ -38,8 +38,9 @@ function SobrePage() {
           <h1 className="font-display text-4xl md:text-6xl mt-3">Sobre a J&S Store — Moda em Joinville</h1>
           <span className="gold-rule mt-5" />
           <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Há anos vestindo Joinville com peças selecionadas com carinho. Acreditamos em moda
-            acessível, atendimento próximo e na confiança de quem compra na loja do bairro.
+            A J&S Store nasceu em Joinville com o propósito de oferecer moda masculina e feminina com qualidade, estilo e preço justo. Cada peça é selecionada com carinho para atender quem valoriza bom gosto, conforto e economia.
+
+Acreditamos em um atendimento próximo e transparente, construindo uma relação de confiança com cada cliente. Mais do que vender roupas, queremos fazer parte das suas escolhas e oferecer uma experiência especial em cada compra.
           </p>
         </div>
       </section>
