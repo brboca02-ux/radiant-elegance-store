@@ -3,6 +3,7 @@ import { MapPin, MessageCircle, Clock, Heart } from "lucide-react";
 import { STORE_INFO, buildWhatsAppLink } from "@/lib/shopify";
 import lookbook1 from "@/assets/lookbook-1.jpg";
 import lookbook2 from "@/assets/lookbook-2.jpg";
+import sobreLojaAsset from "@/assets/sobre-loja.jpg.asset.json";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export const Route = createFileRoute("/sobre")({
