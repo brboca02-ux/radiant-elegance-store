@@ -46,7 +46,7 @@ function SobrePage() {
       </section>
 
       <section className="max-w-[1200px] mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-        <img src={lookbook1} alt="Loja J&S Store em Joinville" className="w-full aspect-[4/5] object-cover rounded-md" />
+<img src={sobreLojaAsset.url} alt="Casal sorrindo em frente à loja J&S Store em Joinville" className="w-full aspect-[4/5] object-cover rounded-md" />
         <div>
           <h2 className="font-display text-3xl md:text-4xl">Uma loja real, feita por pessoas reais</h2>
           <p className="mt-5 text-muted-foreground leading-relaxed">
