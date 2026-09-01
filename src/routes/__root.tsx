@@ -151,11 +151,11 @@ const organizationJsonLd = {
   },
   description:
     "J&S Store — moda masculina e feminina em Joinville/SC. Camisas polo, camisetas peruanas, bermudas de sarja e calças jeans importadas.",
-  telephone: "+55 47 98446-8103",
+  telephone: "+55 41 8407-5860",
   email: "contato@jsstore.com.br",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Carlos Emílio Alexandre Schwartz, 369",
+    streetAddress: "Rua Carlos Emílio Alexandre Schwartz, 335",
     addressLocality: "Joinville",
     addressRegion: "SC",
     postalCode: "89235-188",
@@ -189,13 +189,13 @@ const localBusinessJsonLd = {
   image: LOGO_URL,
   logo: LOGO_URL,
   url: `${SITE_URL}/`,
-  telephone: "+55 47 98446-8103",
+  telephone: "+55 41 8407-5860",
   priceRange: "$$",
   currenciesAccepted: "BRL",
   paymentAccepted: "Pix, Cartão de crédito, Boleto",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua Carlos Emílio Alexandre Schwartz, 369",
+    streetAddress: "Rua Carlos Emílio Alexandre Schwartz, 335",
     addressLocality: "Joinville",
     addressRegion: "SC",
     postalCode: "89235-188",
@@ -207,7 +207,7 @@ const localBusinessJsonLd = {
     longitude: -48.8112,
   },
   hasMap:
-    "https://www.google.com/maps?q=Rua+Carlos+Em%C3%ADlio+Alexandre+Schwartz+369%2C+Joinville%2C+Santa+Catarina%2C+Brazil+89235-188",
+    "https://www.google.com/maps?q=Rua+Carlos+Em%C3%ADlio+Alexandre+Schwartz+335%2C+Joinville%2C+Santa+Catarina%2C+Brazil+89235-188",
   areaServed: [
     { "@type": "City", name: "Joinville" },
     { "@type": "AdministrativeArea", name: "Santa Catarina" },
@@ -216,14 +216,14 @@ const localBusinessJsonLd = {
     {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:00",
-      closes: "18:00",
+      opens: "08:00",
+      closes: "22:00",
     },
     {
       "@type": "OpeningHoursSpecification",
-      dayOfWeek: "Saturday",
-      opens: "09:00",
-      closes: "13:00",
+      dayOfWeek: ["Saturday", "Sunday"],
+      opens: "08:00",
+      closes: "20:00",
     },
   ],
   sameAs: ["https://www.instagram.com/jes.storejoinville/"],

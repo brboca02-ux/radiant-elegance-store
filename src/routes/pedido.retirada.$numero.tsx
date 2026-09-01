@@ -25,9 +25,8 @@ export const Route = createFileRoute("/pedido/retirada/$numero")({
 });
 
 const HOURS = [
-  { d: "Segunda a Sexta", h: "09h às 18h30" },
-  { d: "Sábado", h: "09h às 13h" },
-  { d: "Domingo e feriados", h: "Fechado" },
+  { d: "Segunda a Sexta", h: "08h às 22h" },
+  { d: "Sábado e Domingo", h: "08h às 20h" },
 ];
 
 function PickupInstructionsPage() {
