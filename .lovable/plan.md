@@ -1,46 +1,65 @@
-# Plano: filtros da home direcionando para produtos existentes
+# Atualizar horários, endereço, WhatsApp, parcelamento e regra de descontos
 
 ## Objetivo
-Garantir que os cliques em **Feminino**, **Masculino**, **Promoções**, **PROMOÇÃO** e **Recebidos da Semana** na home levem o cliente para coleções que realmente exibem produtos ativos. O link **Sobre** continua para a página institucional.
 
-## Diagnóstico confirmado
-- Hoje existem **15 produtos ativos** no banco, divididos entre `feminino` e `masculino`.
-- Os links para **Promoções** (`/colecao?c=promocoes`) e **Recebidos da Semana** (`/colecao?c=recebidos-da-semana`) não retornam produtos porque essas categorias não existem na tabela `categories` e nenhum produto está marcado com esses `category_id`.
-- Nenhum produto ativo possui `sale_price`, portanto não há promoções reais no momento.
-- O link **Sobre** no rodapé já aponta corretamente para `/sobre` e será mantido.
+Aplicar as 5 solicitações do lojista no site J&S Store:
 
-## O que será feito
+1. Horário de funcionamento: Seg a Sex 08h–22h · Sáb e Dom 08h–20h
+2. Trocar número da casa de 369 para 335
+3. Centralizar contatos no WhatsApp +55 41 8407-5860
+4. Parcelamento: até 3x sem juros · até 12x com juros
+5. Descontos apenas via cupom (primeira compra) ou em ações promocionais — remover descontos automáticos
 
-### 1. Criar categorias no banco
-- Inserir na tabela `categories`:
-  - **Promoções** (`slug: promocoes`, `name: Promoções`)
-  - **Recebidos da Semana** (`slug: recebidos-da-semana`, `name: Recebidos da Semana`)
-- Ambas ficam visíveis no menu e na home, mas só aparecerão na vitrine quando tiverem produtos ativos vinculados.
+## Mudanças no código
 
-### 2. Atualizar constantes e SEO
-- Atualizar a constante `CATEGORIES` em `src/stores/productsStore.ts` para incluir `promocoes` e `recebidos-da-semana`.
-- Adicionar entradas em `src/lib/categorySeo.ts` com títulos, descrições e H1 específicos para as novas categorias.
+### 1. Endereço + WhatsApp (fonte única: `src/lib/shopify.ts`)
 
-### 3. Ajustar filtros e navegação
-- Garantir que os links/banners da home para **Promoções** e **Recebidos da Semana** usem os slugs corretos (`promocoes`, `recebidos-da-semana`).
-- Verificar `Header.tsx`, `HomeSections.tsx`, `PromoSections.tsx` e `colecao.tsx` para alinhar todos os pontos de entrada.
-- Confirmar que a página `/colecao` exibe os chips das novas categorias.
+- `STORE_INFO.street`: "Rua Carlos Emílio Alexandre Schwartz, 369" → **335**
+- `STORE_INFO.mapsEmbed`: atualizar a URL do Google Maps (369 → 335)
+- `STORE_INFO.phone`: `+55 47 98446-8103` → **+55 41 8407-5860**
+- `STORE_INFO.whatsapp`: `5547984468103` → **554184075860**
 
-### 4. Permitir marcação no painel admin
-- Atualizar `ProductForm.tsx` e a listagem de produtos para que o seletor de categoria ofereça **Promoções** e **Recebidos da Semana**.
-- Garantir que filtros e buscas no admin reconheçam os novos `category_id`.
+Tudo que usa `STORE_INFO` (Footer, sobre, Home, WhatsAppCTA, WhatsAppFloat, recuperação de carrinho, mensagens de pedido) herda a atualização automaticamente.
 
-### 5. Popular as novas categorias
-- Marcar alguns produtos ativos como `category_id = 'promocoes'`.
-- Marcar alguns produtos ativos como `category_id = 'recebidos-da-semana'`.
-- Como cada produto tem apenas um `category_id`, a distribuição será feita de forma que nenhuma coleção fique vazia e os produtos em promoção/recebidos ainda sejam visíveis em suas respectivas coleções (as páginas de categoria filtram por `category_id` exato).
+### 2. JSON-LD (`src/routes/__root.tsx`)
 
-### 6. Verificação
-- Testar cada filtro da home em preview: Feminino, Masculino, Promoções, Recebidos da Semana.
-- Confirmar que a página `/colecao` exibe produtos para cada categoria selecionada.
-- Validar que o link Sobre continua funcionando normalmente.
+- `telephone` (2 ocorrências, Organization e ClothingStore): → **+55 41 8407-5860**
+- `streetAddress` (2 ocorrências) e `hasMap`: 369 → **335**
+- `openingHoursSpecification`:
+  - Seg a Sex: `opens 08:00` / `closes 22:00`
+  - Sáb e Dom: `opens 08:00` / `closes 20:00`
 
-## Decisões assumidas
-- Cada produto possui um único `category_id`. Produtos marcados como promoção ou recebidos não aparecerão simultaneamente nos filtros Feminino/Masculino.
-- Quando houver campanhas reais de desconto, o ideal será marcar os produtos em promoção como `category_id = 'promocoes'` no painel.
-- "Recebidos da Semana" será mantido manualmente: o administrador marca/desmarca produtos nessa categoria conforme novidades chegam.
+### 3. Textos de horário visíveis
+
+- `src/routes/sobre.tsx` (linha ~60): "Seg a Sáb · 9h às 18h" → **"Seg a Sex · 8h às 22h · Sáb e Dom · 8h às 20h"**
+- `src/components/HomeSections.tsx` (linha ~291): "Seg a Sex: 9h–18h · Sáb: 9h–13h" → **"Seg a Sex: 8h–22h · Sáb e Dom: 8h–20h"**
+- `src/routes/pedido.retirada.$numero.tsx` (array `HOURS`): "Segunda a Sexta 09h às 18h30 / Sábado 09h às 13h / Domingo e feriados Fechado" → **"Segunda a Sexta 08h às 22h / Sábado e Domingo 08h às 20h"**
+
+### 4. Parcelamento (3x sem juros / 12x com juros)
+
+- `src/routes/produto.$handle.tsx` (linha ~431): "ou 4x de ... sem juros · 10% off no Pix" → **"ou 3x de ... sem juros · até 12x com juros"** (remover o "10% off no Pix", ver item 5)
+- `src/components/Header.tsx` (marquee, linha ~137): "Parcelamento em até 10x" → **"Parcelamento em até 3x sem juros"**
+- Máximo de parcelas no Mercado Pago já está em 12 (`installments: 12` na preference e `maxInstallments: 12` no Brick) — manter.
+- **Passo externo (lojista):** o limite "3x sem juros" é configurado na conta Mercado Pago (área do vendedor → Custos e financiamento → parcelas sem juros). O código não controla isso; será orientado ao usuário para configurar lá.
+
+### 5. Descontos apenas via cupom ou ação promocional
+
+- **Banco de dados**: remover os preços promocionais de teste (`sale_price`) dos 2 produtos que ainda têm desconto (Blusa Tricô Feminina Gola Alta e Short Alfaiataria Feminino), deixando `NULL`. Com isso a coleção "Promoções" fica vazia até o lojista ativar uma ação no painel (quando ele definir um `sale_price`, ela volta a aparecer).
+- **Remover o desconto automático "10% off no Pix"** do `produto.$handle.tsx` (o desconto nunca foi aplicado de fato no checkout — era só texto).
+- Manter o sistema de cupons existente (CRUD no painel + `BEMVINDA5` de primeira compra no checkout).
+
+## Arquivos alterados
+
+- `src/lib/shopify.ts`
+- `src/routes/__root.tsx`
+- `src/routes/sobre.tsx`
+- `src/components/HomeSections.tsx`
+- `src/routes/pedido.retirada.$numero.tsx`
+- `src/components/Header.tsx`
+- `src/routes/produto.$handle.tsx`
+- Banco de dados: `UPDATE public.products SET sale_price = NULL WHERE sale_price IS NOT NULL;`
+
+## Verificação
+
+- Build sem erros.
+- Conferir no preview: horários novos no Sobre, na Home e na página de retirada; endereço 335 no rodapé e no mapa; links de WhatsApp abrindo para +55 41 8407-5860; texto de parcelamento 3x sem juros na página de produto e no topo.
