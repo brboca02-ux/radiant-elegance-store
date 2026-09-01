@@ -73,7 +73,7 @@ function SobrePage() {
             <span className="gold-rule mt-4" />
             <p className="mt-5 text-muted-foreground leading-relaxed">{STORE_INFO.street} — {STORE_INFO.city}/{STORE_INFO.region}</p>
             <p className="text-muted-foreground">CEP {STORE_INFO.postalCode} · Tel {STORE_INFO.phone}</p>
-            <img src={lookbook2} alt="Fachada da loja" className="mt-6 w-full aspect-[3/2] object-cover rounded-md" />
+            
           </div>
           <div className="order-1 md:order-2 aspect-[4/3] overflow-hidden rounded-md border border-border">
             <iframe
