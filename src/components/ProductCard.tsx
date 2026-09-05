@@ -13,6 +13,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
   const [isAdding, setIsAdding] = useState(false);
   const [loaded0, setLoaded0] = useState(false);
   const [loaded1, setLoaded1] = useState(false);
+  const [failed0, setFailed0] = useState(false);
   const allVariants = product.node.variants.edges.map((e) => e.node);
   // Escolhe a primeira variante COM estoque disponível (não apenas a primeira da lista),
   // pra evitar marcar como "Esgotado" quando só o PP zerou mas M/G têm estoque.
