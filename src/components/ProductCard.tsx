@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2, ImageOff } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
