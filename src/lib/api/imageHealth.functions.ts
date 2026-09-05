@@ -13,9 +13,17 @@ export type ImageHealth = {
  * baixá-la pelos dois caminhos (público e autenticado). Usado no painel para
  * que uma falha de credencial apareça no mesmo dia, e não semanas depois.
  */
-export const checkImageDelivery = createServerFn({ method: "GET" }).handler(
-  async (): Promise<ImageHealth> => {
+export const checkImageDelivery = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<ImageHealth> => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Response("Forbidden", { status: 403 });
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
 
     const { data: rows, error: dbError } = await supabaseAdmin
       .from("product_images")
