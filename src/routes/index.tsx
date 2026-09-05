@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
       { rel: "canonical", href: "https://www.jesstorejoinville.com.br/" },
 
       // Preload LCP hero with high priority
-      { rel: "preload", as: "image", href: heroCouple, fetchPriority: "high" },
+      { rel: "preload", as: "image", href: heroCouple.url, fetchPriority: "high" },
     ],
   }),
   component: Index,
