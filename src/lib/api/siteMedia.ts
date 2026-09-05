@@ -47,7 +47,8 @@ export async function uploadSiteImage(
     cacheControl: "31536000", upsert: false, contentType: processed.type,
   });
   if (error) throw error;
-  return `/api/public/img/${path}`;
+  const { buildImageUrl } = await import("@/lib/imageDelivery");
+  return buildImageUrl(path);
 }
 
 export function useSiteMedia(): SiteMediaMap {
