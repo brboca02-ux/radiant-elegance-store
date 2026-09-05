@@ -11,7 +11,7 @@ import {
 } from "@/components/HomeSections";
 import { ShowcaseCarousel } from "@/components/ShowcaseCarousel";
 import { NewsletterSection } from "@/components/NewsletterCapture";
-import heroCouple from "@/assets/hero-couple.jpg.asset.json?url";
+import heroCouple from "@/assets/hero-couple.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
       { rel: "canonical", href: "https://www.jesstorejoinville.com.br/" },
 
       // Preload LCP hero with high priority
-      { rel: "preload", as: "image", href: heroCouple, fetchPriority: "high" },
+      { rel: "preload", as: "image", href: heroCouple.url, fetchPriority: "high" },
     ],
   }),
   component: Index,

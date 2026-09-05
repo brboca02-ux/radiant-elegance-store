@@ -219,9 +219,10 @@ export async function uploadProductImage(file: File): Promise<string> {
         cacheControl: "31536000", upsert: true, contentType: processed.type || "image/webp",
       });
       if (!error) {
-        // O bucket é privado neste workspace, então servimos por uma rota de proxy
-        // pública somente-leitura (URL estável, sem expiração).
-        return `/api/public/img/${path}`;
+        // Servimos por uma rota de proxy pública somente-leitura (URL estável,
+        // sem expiração) com fallback público → autenticado.
+        const { buildImageUrl } = await import("@/lib/imageDelivery");
+        return buildImageUrl(path);
       }
       lastMessage = error.message;
     } catch (e) {

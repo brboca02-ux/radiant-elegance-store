@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2, ImageOff } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
@@ -13,6 +13,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
   const [isAdding, setIsAdding] = useState(false);
   const [loaded0, setLoaded0] = useState(false);
   const [loaded1, setLoaded1] = useState(false);
+  const [failed0, setFailed0] = useState(false);
   const allVariants = product.node.variants.edges.map((e) => e.node);
   // Escolhe a primeira variante COM estoque disponível (não apenas a primeira da lista),
   // pra evitar marcar como "Esgotado" quando só o PP zerou mas M/G têm estoque.
@@ -68,7 +69,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
       className="group flex h-full w-full flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
     >
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary border border-gold/5">
-        {img0 ? (
+        {img0 && !failed0 ? (
           <>
             {!loaded0 && (
               <img
@@ -88,6 +89,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
               width={600}
               height={800}
               onLoad={() => setLoaded0(true)}
+              onError={() => setFailed0(true)}
               className={`absolute inset-0 w-full h-full object-contain object-top transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
             />
             {img1 && (
@@ -108,9 +110,9 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
           </>
 
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
-            <ImageOff className="h-8 w-8 mb-2" />
-            <span className="text-xs">Sem imagem</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-secondary/40 text-muted-foreground">
+            <span className="font-display text-base tracking-widest text-primary">J&amp;S</span>
+            <span className="text-[10px] uppercase tracking-widest">Foto em breve</span>
           </div>
         )}
 

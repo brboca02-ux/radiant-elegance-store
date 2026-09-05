@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { HomeMediaSettings } from "@/components/admin/HomeMediaSettings";
+import { ImageHealthCard } from "@/components/admin/ImageHealthCard";
 import {
   DEFAULT_SITE_CONFIG,
   loadSiteConfig,
@@ -127,6 +128,11 @@ function AdminPanel() {
       </section>
 
       <HomeMediaSettings />
+
+      <div className="mt-10">
+        <ImageHealthCard />
+      </div>
+
 
       <div className="flex flex-wrap gap-3 mt-10">
         <button onClick={save} className="bg-primary text-primary-foreground rounded-md px-5 py-2.5 text-sm font-semibold">
