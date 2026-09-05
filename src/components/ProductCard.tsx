@@ -69,7 +69,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
       className="group flex h-full w-full flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
     >
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary border border-gold/5">
-        {img0 ? (
+        {img0 && !failed0 ? (
           <>
             {!loaded0 && (
               <img
