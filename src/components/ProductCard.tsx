@@ -89,6 +89,7 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
               width={600}
               height={800}
               onLoad={() => setLoaded0(true)}
+              onError={() => setFailed0(true)}
               className={`absolute inset-0 w-full h-full object-contain object-top transition-all duration-700 group-hover:opacity-0 ${loaded0 ? "opacity-100" : "opacity-0"}`}
             />
             {img1 && (
@@ -109,9 +110,9 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
           </>
 
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
-            <ImageOff className="h-8 w-8 mb-2" />
-            <span className="text-xs">Sem imagem</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-secondary/40 text-muted-foreground">
+            <span className="font-display text-base tracking-widest text-primary">J&amp;S</span>
+            <span className="text-[10px] uppercase tracking-widest">Foto em breve</span>
           </div>
         )}
 
