@@ -59,5 +59,5 @@ export const checkImageDelivery = createServerFn({ method: "GET" })
       checkedPath: path,
       message: `Problema na entrega de imagens: ${error?.message ?? "erro desconhecido"}`,
     };
-  },
-);
+  });
+
