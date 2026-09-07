@@ -135,7 +135,7 @@ export function ProductGrid({
     ].join(" ");
   }, [columns]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if ((!loaded && loading) || (!loaded && items.length === 0)) {
+  if (!loaded && loading) {
     return (
       <div className={`grid ${gridCols} gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12`}>
         {Array.from({ length: 8 }).map((_, i) => (

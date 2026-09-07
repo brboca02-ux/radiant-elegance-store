@@ -73,6 +73,7 @@ export async function listAllProducts(): Promise<Product[]> {
     .from("products").select(SELECT).in("category_id", ["feminino", "masculino"])
     .order("created_at", { ascending: false });
   if (error) throw error;
+  if (!data) return []; // Supabase indisponível — retorna lista vazia sem quebrar
   
   // Apenas categorias Masculino e Feminino
   const allowedCategories = ["masculino", "feminino"];
