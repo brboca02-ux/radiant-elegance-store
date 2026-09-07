@@ -66,9 +66,10 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
       to="/produto/$handle"
       params={{ handle: product.node.handle }}
       aria-label={`Ver detalhes de ${product.node.title}`}
-      className="group flex h-full w-full flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+      className="group flex h-full w-full min-w-0 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-secondary border border-gold/5">
+      {/* Imagem: proporção fixa 3:4, não deixa o card crescer */}
+      <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-md bg-secondary border border-gold/5">
         {img0 && !failed0 ? (
           <>
             {!loaded0 && (
@@ -136,11 +137,29 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
           {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : soldOut ? "Esgotado" : "Comprar"}
         </button>
       </div>
-      <div className={`flex flex-1 flex-col text-center ${size === "compact" ? "pt-2" : "pt-3"}`}>
-        <h3 className={`font-display leading-snug line-clamp-2 overflow-hidden text-ellipsis ${size === "compact" ? "text-[10px] md:text-[11px] min-h-[2.4em]" : "text-[11px] sm:text-[13px] md:text-sm min-h-[2.6em]"}`}>
+
+      {/* Texto: altura reservada para evitar cards com alturas diferentes */}
+      <div
+        className={`flex min-w-0 flex-col text-center ${
+          size === "compact" ? "pt-2 gap-0.5" : "pt-3 gap-1"
+        }`}
+      >
+        {/* Nome: sempre 2 linhas reservadas — evita empurrar o preço */}
+        <h3
+          className={`min-w-0 font-display leading-snug overflow-hidden ${
+            size === "compact"
+              ? "text-[10px] md:text-[11px] line-clamp-2 min-h-[2.4em]"
+              : "text-[11px] sm:text-[13px] md:text-sm line-clamp-2 min-h-[2.6em]"
+          }`}
+        >
           {product.node.title}
         </h3>
-        <p className={`${size === "compact" ? "text-[10px] md:text-xs pt-1" : "text-[11px] sm:text-xs md:text-sm pt-2"} mt-auto font-semibold text-foreground`}>
+        {/* Preço: sempre na mesma linha vertical, sem empurrar card */}
+        <p
+          className={`min-w-0 font-semibold text-foreground whitespace-nowrap truncate ${
+            size === "compact" ? "text-[10px] md:text-xs" : "text-[11px] sm:text-xs md:text-sm"
+          }`}
+        >
           {formatPrice(price.amount, price.currencyCode)}
         </p>
       </div>

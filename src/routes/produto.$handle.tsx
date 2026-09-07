@@ -141,15 +141,77 @@ function ProductPage() {
     return map;
   }, [variants, colors]);
 
-  // Filtra imagens pela cor selecionada (via altText / url); se não houver match, mostra todas.
+  // Filtra imagens pela cor selecionada com três camadas de confiança:
+  //  1. colorImages: mapa pré-calculado pelo adaptador (fonte mais confiável)
+  //  2. altText/URL: heurística textual como segunda opção
+  //  3. Mapeamento posicional: divide as imagens igualmente entre as N cores
+  // Fallback final: todas as imagens.
   const images = useMemo(() => {
     if (!color || allImages.length <= 1) return allImages;
+
+    // Camada 1: mapa pré-calculado (apenas produtos Supabase)
+    const colorImagesMap = data?.colorImages;
+    if (colorImagesMap) {
+      // Busca exata primeiro, depois case-insensitive normalizado
+      const urls =
+        colorImagesMap[color] ??
+        colorImagesMap[
+          Object.keys(colorImagesMap).find(
+            (k) => norm(k) === norm(color),
+          ) ?? ""
+        ];
+      if (urls && urls.length > 0) {
+        // Converte as URLs de volta para o formato { url, altText }
+        return urls
+          .map((u) => allImages.find((i) => i.url === u))
+          .filter((i): i is (typeof allImages)[0] => i !== undefined);
+      }
+      // colorMap existe mas a cor não tem fotos próprias → usa todas
+      return allImages;
+    }
+
+    // Camada 2: altText/URL textual
     const key = norm(color);
-    const filtered = allImages.filter(
-      (i) => norm(i.altText ?? "").includes(key) || norm(i.url).includes(key.replace(/\s+/g, "-")),
+    const slug = key.replace(/\s+/g, "-");
+    const plain = key.replace(/\s+/g, "");
+    const byText = allImages.filter(
+      (i) =>
+        norm(i.altText ?? "").includes(key) ||
+        norm(i.url).includes(slug) ||
+        norm(i.url).includes(plain),
     );
-    return filtered.length ? filtered : allImages;
-  }, [allImages, color]);
+    if (byText.length > 0) return byText;
+
+    // Camada 3: divisão posicional (somente quando há múltiplas cores)
+    if (colors.length > 1 && allImages.length >= colors.length) {
+      const colorIdx = colors.indexOf(color);
+      if (colorIdx >= 0) {
+        const base = Math.floor(allImages.length / colors.length);
+        const extra = allImages.length % colors.length;
+        let start = 0;
+        for (let i = 0; i < colorIdx; i++) {
+          start += base + (i < extra ? 1 : 0);
+        }
+        const count = base + (colorIdx < extra ? 1 : 0);
+        const slice = allImages.slice(start, start + count);
+        if (slice.length > 0) return slice;
+      }
+    }
+
+    // Fallback: todas as imagens
+    return allImages;
+  }, [allImages, color, colors, data?.colorImages]);
+
+  // Reseta o carrossel para a primeira imagem sempre que a cor mudar
+  const prevColorRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevColorRef.current !== null && prevColorRef.current !== color) {
+      setCarouselIdx(0);
+      const el = scrollerRef.current;
+      if (el) el.scrollTo({ left: 0, behavior: "smooth" });
+    }
+    prevColorRef.current = color;
+  }, [color]);
 
   useEffect(() => {
     if (data && selected) {

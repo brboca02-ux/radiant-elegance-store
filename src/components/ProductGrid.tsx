@@ -35,6 +35,7 @@ async function fetchShopify({ query, first = 12, sortKey, reverse }: FetchOpts):
 export function ProductGrid({
   query, first = 12, sortKey, reverse, emptyHint = true, size = "default",
   columns = { mobile: 2, lg: 5 },
+  excludeShowcase = false,
 }: { 
   query?: string; 
   first?: number; 
@@ -43,6 +44,8 @@ export function ProductGrid({
   emptyHint?: boolean; 
   size?: "default" | "compact";
   columns?: { mobile?: number; tablet?: number; desktop?: number; lg?: number };
+  /** Quando true, exclui produtos marcados como showcase (já exibidos no carrossel). */
+  excludeShowcase?: boolean;
 }) {
   // Fonte primária: Supabase (via store). Reativo: re-renderiza ao hidratar/CRUD.
   const products = useProductsStore((s) => s.products);
@@ -62,7 +65,12 @@ export function ProductGrid({
   const items = useMemo<ShopifyProduct[]>(() => {
     const q = (query ?? "").toLowerCase();
     const collection = resolveCollection(q);
-    const active = products.filter((p) => p.status === "ativo");
+    let active = products.filter((p) => p.status === "ativo");
+
+    // Exclui produtos já exibidos no ShowcaseCarousel, se solicitado
+    if (excludeShowcase) {
+      active = active.filter((p) => !p.showcase);
+    }
 
     let filtered = active;
     if (collection === "promo") {
@@ -91,7 +99,7 @@ export function ProductGrid({
     const fromSupabase = filtered.slice(0, first).map(productToShopify);
     if (fromSupabase.length > 0) return fromSupabase;
     return shopifyData ?? [];
-  }, [products, query, first, sortKey, reverse, shopifyData]);
+  }, [products, query, first, sortKey, reverse, shopifyData, excludeShowcase]);
 
 
   // Mapa estático de classes para evitar que o Tailwind purgue classes geradas dinamicamente.
@@ -151,9 +159,9 @@ export function ProductGrid({
   }
 
   return (
-    <div className={`grid ${gridCols} gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12 items-stretch`}>
+    <div className={`grid ${gridCols} gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12 items-start`}>
       {items.map((p) => (
-        <div key={p.node.id} className="flex">
+        <div key={p.node.id} className="flex min-w-0">
           <ProductCard product={p} size={size} />
         </div>
       ))}

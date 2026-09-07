@@ -52,6 +52,8 @@ export interface ShopifyProduct {
     media?: { edges: Array<{ node: ShopifyMediaNode }> };
     variants: { edges: Array<{ node: ShopifyVariantNode }> };
     options: Array<{ name: string; values: string[] }>;
+    /** Mapa pre-calculado cor → URLs de imagem (apenas em produtos do Supabase). */
+    colorImages?: Record<string, string[]>;
   };
 }
 
