@@ -33,8 +33,8 @@ import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as ProdutosNovoRouteImport } from './routes/produtos.novo'
 import { Route as ProdutosRapidoRouteImport } from './routes/produtos.rapido'
-import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
 import { Route as ApiPublicInfinitpayWebhookRouteImport } from './routes/api/public/infinitpay-webhook'
+import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
 import { Route as ApiPublicReconcilePaymentsRouteImport } from './routes/api/public/reconcile-payments'
 import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
 import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retirada.$numero'
@@ -163,14 +163,15 @@ const ProdutosRapidoRoute = ProdutosRapidoRouteImport.update({
   path: '/produtos/rapido',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicInfinitpayWebhookRoute =
+  ApiPublicInfinitpayWebhookRouteImport.update({
+    id: '/api/public/infinitpay-webhook',
+    path: '/api/public/infinitpay-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentWebhookRoute = ApiPublicPaymentWebhookRouteImport.update({
   id: '/api/public/payment-webhook',
   path: '/api/public/payment-webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicInfinitpayWebhookRoute = ApiPublicInfinitpayWebhookRouteImport.update({
-  id: '/api/public/infinitpay-webhook',
-  path: '/api/public/infinitpay-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicReconcilePaymentsRoute =
@@ -234,8 +235,8 @@ export interface FileRoutesByFullPath {
   '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
-  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/infinitpay-webhook': typeof ApiPublicInfinitpayWebhookRoute
+  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
@@ -268,8 +269,8 @@ export interface FileRoutesByTo {
   '/marketing': typeof MarketingIndexRoute
   '/pedidos': typeof PedidosIndexRoute
   '/produtos': typeof ProdutosIndexRoute
-  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/infinitpay-webhook': typeof ApiPublicInfinitpayWebhookRoute
+  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
@@ -304,8 +305,8 @@ export interface FileRoutesById {
   '/marketing/': typeof MarketingIndexRoute
   '/pedidos/': typeof PedidosIndexRoute
   '/produtos/': typeof ProdutosIndexRoute
-  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/infinitpay-webhook': typeof ApiPublicInfinitpayWebhookRoute
+  '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
@@ -340,8 +341,8 @@ export interface FileRouteTypes {
     | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
-    | '/api/public/payment-webhook'
     | '/api/public/infinitpay-webhook'
+    | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
@@ -374,8 +375,8 @@ export interface FileRouteTypes {
     | '/marketing'
     | '/pedidos'
     | '/produtos'
-    | '/api/public/payment-webhook'
     | '/api/public/infinitpay-webhook'
+    | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
@@ -409,8 +410,8 @@ export interface FileRouteTypes {
     | '/marketing/'
     | '/pedidos/'
     | '/produtos/'
-    | '/api/public/payment-webhook'
     | '/api/public/infinitpay-webhook'
+    | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
@@ -444,8 +445,8 @@ export interface RootRouteChildren {
   MarketingIndexRoute: typeof MarketingIndexRoute
   PedidosIndexRoute: typeof PedidosIndexRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
-  ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   ApiPublicInfinitpayWebhookRoute: typeof ApiPublicInfinitpayWebhookRoute
+  ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   ApiPublicReconcilePaymentsRoute: typeof ApiPublicReconcilePaymentsRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
   PedidoRetiradaNumeroRoute: typeof PedidoRetiradaNumeroRoute
@@ -625,18 +626,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosRapidoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payment-webhook': {
-      id: '/api/public/payment-webhook'
-      path: '/api/public/payment-webhook'
-      fullPath: '/api/public/payment-webhook'
-      preLoaderRoute: typeof ApiPublicPaymentWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/infinitpay-webhook': {
       id: '/api/public/infinitpay-webhook'
       path: '/api/public/infinitpay-webhook'
       fullPath: '/api/public/infinitpay-webhook'
       preLoaderRoute: typeof ApiPublicInfinitpayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payment-webhook': {
+      id: '/api/public/payment-webhook'
+      path: '/api/public/payment-webhook'
+      fullPath: '/api/public/payment-webhook'
+      preLoaderRoute: typeof ApiPublicPaymentWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/reconcile-payments': {
@@ -726,8 +727,8 @@ const rootRouteChildren: RootRouteChildren = {
   MarketingIndexRoute: MarketingIndexRoute,
   PedidosIndexRoute: PedidosIndexRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
-  ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   ApiPublicInfinitpayWebhookRoute: ApiPublicInfinitpayWebhookRoute,
+  ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   ApiPublicReconcilePaymentsRoute: ApiPublicReconcilePaymentsRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
   PedidoRetiradaNumeroRoute: PedidoRetiradaNumeroRoute,
