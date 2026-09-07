@@ -169,7 +169,8 @@ export async function setStockRemote(id: string, value: number): Promise<void> {
 
 export async function adjustStockRemote(id: string, delta: number): Promise<void> {
   // Operação atómica via RPC para evitar race conditions em vendas simultâneas.
-  const { error } = await supabase.rpc("adjust_product_stock", {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.rpc as any)("adjust_product_stock", {
     p_product_id: id,
     p_delta: delta,
   });

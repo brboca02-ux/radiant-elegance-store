@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import { toast } from "sonner";
 import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck, Check, Copy, QrCode } from "lucide-react";
 import { z } from "zod";
@@ -271,6 +272,7 @@ function CheckoutPage() {
         if (r.status === "approved") {
           setPix((p) => (p ? { ...p, status: "pago" } : p));
           clearCart();
+          track.purchase({ value: total, transactionId: pix.orderNumber });
           toast.success("Pagamento confirmado!");
           setTimeout(() => {
             navigate({ to: "/pedido/sucesso/$numero", params: { numero: pix.orderNumber } });
@@ -333,7 +335,10 @@ function CheckoutPage() {
           district: v.district, city: v.city, state: v.stateUf,
         },
         items: items.map((i) => ({
-          product_id: null, // mapping para uuid real (opcional)
+          // Extrai o UUID real removendo o prefixo "mock:" adicionado pelo adaptador
+          product_id: i.product.node.id.startsWith("mock:")
+            ? i.product.node.id.slice(5)
+            : i.product.node.id,
           product_name: i.product.node.title,
           variant_size: i.selectedOptions.find((o) => /tam|size/i.test(o.name))?.value,
           variant_color: i.selectedOptions.find((o) => /cor|color/i.test(o.name))?.value,
@@ -455,6 +460,8 @@ function CheckoutPage() {
           clearCart();
           try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
           toast.success("Pedido criado! Redirecionando para InfinitPay…");
+          // InfinitPay: rastreia como purchase no momento do redirect (pagamento confirmado pelo webhook depois)
+          track.purchase({ value: order.total, transactionId: order.order_number });
           window.location.href = ipRes.paymentUrl;
           return;
         } catch (e) {
@@ -971,6 +978,7 @@ function CheckoutPage() {
 
                 if (pay.status === "approved") {
                   clearCart();
+                  track.purchase({ value: card.amount, transactionId: card.orderNumber });
                   toast.success("Pagamento aprovado!");
                   navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
                   return;

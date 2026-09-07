@@ -155,6 +155,8 @@ function SuccessPage() {
   const waLink = buildWhatsAppLink(waMsg);
   const showPayCta = order.status === "aguardando_pagamento" && order.payment_url;
   const paid = order.status === "pago";
+  // Frete "cotação sob consulta": alerta o cliente e oferece link WhatsApp para combinar o valor
+  const needsShippingQuote = order.shipping_method?.toLowerCase().includes("cotação") || order.shipping_method?.toLowerCase().includes("cotacao");
 
   const copyOrderNumber = async () => {
     try {
@@ -208,6 +210,24 @@ function SuccessPage() {
           </a>
         </div>
       </div>
+
+      {/* Aviso de frete sob cotação */}
+      {needsShippingQuote && (
+        <div className="mt-6 border border-amber-500/40 rounded-md p-4 bg-amber-500/5">
+          <p className="text-sm font-semibold text-amber-700 mb-1">⚠️ Frete a combinar</p>
+          <p className="text-xs text-amber-700/80">
+            Sua cidade está fora da nossa área de entrega padrão. Entraremos em contato pelo WhatsApp para informar o valor do frete antes de despachar.
+          </p>
+          <a
+            href={buildWhatsAppLink(`Olá! Fiz o pedido *${order.order_number}* e minha cidade precisa de cotação de frete. Poderia me ajudar?`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-1.5 bg-[#25D366] text-white px-3 py-2 rounded-md text-xs font-semibold hover:opacity-90"
+          >
+            <MessageCircle className="h-3.5 w-3.5" /> Combinar frete pelo WhatsApp
+          </a>
+        </div>
+      )}
 
       <div className={`mt-8 border rounded-md p-6 ${m.bg} ${m.border}`}>
         <div className="flex items-start gap-3">

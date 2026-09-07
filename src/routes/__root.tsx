@@ -106,15 +106,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "J&S Store" },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@jesstore" },
+      { name: "twitter:site", content: "@jesstorejoinville" },
       { name: "theme-color", content: "#0A0A0A" },
       { name: "format-detection", content: "telephone=no" },
       { property: "og:title", content: "J&S Store — Moda Masculina e Feminina em Joinville/SC" },
       { name: "twitter:title", content: "J&S Store — Moda Masculina e Feminina em Joinville/SC" },
       { property: "og:description", content: "J&S Store: moda masculina e feminina em Joinville. Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja." },
       { name: "twitter:description", content: "J&S Store: moda masculina e feminina em Joinville. Camisas polo, camisetas peruanas, calças jeans e bermudas de sarja." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b1021764-cbe2-4aff-b74a-fead97b3375b" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b1021764-cbe2-4aff-b74a-fead97b3375b" },
+      { property: "og:image", content: `${SITE_URL}/og-image.jpg` },
+      { name: "twitter:image", content: `${SITE_URL}/og-image.jpg` },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon.png" },
@@ -174,7 +174,7 @@ const websiteJsonLd = {
   publisher: { "@id": `${SITE_URL}/#organization` },
   potentialAction: {
     "@type": "SearchAction",
-    target: `${SITE_URL}/colecao?q={search_term_string}`,
+    target: `${SITE_URL}/colecao?c={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
@@ -249,6 +249,17 @@ function RootShell({ children }: { children: ReactNode }) {
         )}
       </head>
       <body>
+        {META_PIXEL_ID && (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+              alt=""
+            />
+          </noscript>
+        )}
         {children}
         <Scripts />
       </body>

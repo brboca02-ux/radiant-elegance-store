@@ -206,9 +206,23 @@ export const useCartStore = create<CartStore>()(
       },
     }),
     {
-      name: "aura-cart",
+      name: "js-store-cart",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl }),
+      // Migração transparente da chave legada "aura-cart" para "js-store-cart"
+      migrate: (persisted) => {
+        if (typeof window !== "undefined") {
+          try {
+            const legacy = localStorage.getItem("aura-cart");
+            if (legacy && !localStorage.getItem("js-store-cart")) {
+              localStorage.setItem("js-store-cart", legacy);
+            }
+            localStorage.removeItem("aura-cart");
+          } catch { /* ignora erros de storage */ }
+        }
+        return persisted as never;
+      },
+      version: 1,
     },
   ),
 );

@@ -6,6 +6,7 @@ import { CartDrawer } from "./CartDrawer";
 import { SearchBox } from "./SearchBox";
 import { buildWhatsAppLink } from "@/lib/shopify";
 import { track } from "@/lib/analytics";
+import { useAuth } from "@/hooks/useAuth";
 
 type SearchParam = { c?: string };
 type LinkItem = { label: string; c: string; highlight?: boolean };
@@ -101,6 +102,8 @@ export function Header() {
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useAuth();
+  const isAdmin = !!user;
 
   useEffect(() => {
     setOpen(false);
@@ -368,13 +371,15 @@ export function Header() {
               >
                 Sobre
               </Link>
-              <Link
-                to="/dashboard"
-                onClick={() => setOpen(false)}
-                className="block px-5 py-3 text-base font-semibold border-b border-gold/20 text-gold hover:text-gold/80 transition"
-              >
-                Painel admin
-              </Link>
+              {isAdmin && (
+                <Link
+                  to="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="block px-5 py-3 text-base font-semibold border-b border-gold/20 text-gold hover:text-gold/80 transition"
+                >
+                  Painel admin
+                </Link>
+              )}
             </nav>
             <a
               href={buildWhatsAppLink("Olá! Vim pelo site da J&S Store e gostaria de ajuda.")}

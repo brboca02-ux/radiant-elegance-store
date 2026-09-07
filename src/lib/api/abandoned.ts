@@ -41,7 +41,7 @@ export async function upsertAbandonedCart(input: Partial<Omit<AbandonedCart, "ca
       customer_name: input.customer_name ?? null,
       customer_email: input.customer_email ?? null,
       customer_phone: input.customer_phone ?? null,
-      cart_data: input.cart_data ?? { items: [] },
+      cart_data: (input.cart_data ?? { items: [] }) as unknown as never,
       subtotal: input.subtotal ?? 0,
       shipping_cost: input.shipping_cost ?? 0,
       discount: input.discount ?? 0,
@@ -60,7 +60,7 @@ export async function loadAbandonedCarts(): Promise<AbandonedCart[]> {
     .order("last_updated_at", { ascending: false });
     
   if (error) throw new Error(error.message);
-  return (data || []) as AbandonedCart[];
+  return (data || []) as unknown as AbandonedCart[];
 }
 
 export async function markAsRecovered(id: string) {

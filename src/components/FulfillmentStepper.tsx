@@ -27,7 +27,11 @@ export function FulfillmentStepper({
   const currentIdx = current ? FULFILLMENT_FLOW.indexOf(current) : -1;
 
   return (
-    <ol className={`grid gap-2 sm:gap-4 grid-cols-${FULFILLMENT_FLOW.length}`} style={{ gridTemplateColumns: `repeat(${FULFILLMENT_FLOW.length}, minmax(0, 1fr))` }}>
+    <ol
+      aria-label="Etapas de entrega do pedido"
+      className="grid gap-2 sm:gap-4"
+      style={{ gridTemplateColumns: `repeat(${FULFILLMENT_FLOW.length}, minmax(0, 1fr))` }}
+    >
       {FULFILLMENT_FLOW.map((stage, i) => {
         const done = paid && currentIdx >= i;
         const isCurrent = paid && currentIdx === i;

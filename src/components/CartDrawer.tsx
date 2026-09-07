@@ -67,7 +67,7 @@ export function CartDrawer() {
                 return (
                   <div key={item.variantId} className="flex gap-4">
                     <div className="w-20 h-28 bg-secondary overflow-hidden flex-shrink-0">
-                      {img && <img src={img.url} alt={img.altText ?? item.product.node.title} className="w-full h-full object-cover" />}
+                      {img && <img src={img.url} alt={img.altText ?? item.product.node.title} className="w-full h-full object-contain" />}
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
