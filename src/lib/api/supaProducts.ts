@@ -136,9 +136,13 @@ export async function archiveProductRemote(id: string): Promise<void> {
 }
 
 export async function deleteProductRemote(id: string): Promise<void> {
-  // Remove dependências primeiro (evita bloqueio por FK)
-  await supabase.from("product_images").delete().eq("product_id", id);
-  await supabase.from("product_variants").delete().eq("product_id", id);
+  // Remove dependências primeiro (evita bloqueio por FK).
+  // Erros aqui são capturados e relançados para não deixar dados órfãos.
+  const { error: imgErr } = await supabase.from("product_images").delete().eq("product_id", id);
+  if (imgErr) throw new Error(`Erro ao remover imagens do produto: ${imgErr.message}`);
+
+  const { error: varErr } = await supabase.from("product_variants").delete().eq("product_id", id);
+  if (varErr) throw new Error(`Erro ao remover variantes do produto: ${varErr.message}`);
 
   const { data, error } = await supabase
     .from("products").delete().eq("id", id).select("id");
@@ -164,11 +168,22 @@ export async function setStockRemote(id: string, value: number): Promise<void> {
 }
 
 export async function adjustStockRemote(id: string, delta: number): Promise<void> {
-  // read then write — race ok para painel pequeno
-  const { data, error } = await supabase.from("products").select("stock").eq("id", id).single();
-  if (error) throw error;
-  const next = Math.max(0, (data?.stock ?? 0) + delta);
-  await setStockRemote(id, next);
+  // Operação atómica via RPC para evitar race conditions em vendas simultâneas.
+  const { error } = await supabase.rpc("adjust_product_stock", {
+    p_product_id: id,
+    p_delta: delta,
+  });
+  if (error) {
+    // Fallback para read-modify-write se a RPC não existir ainda.
+    if (error.code === "42883" /* function does not exist */) {
+      const { data, error: readErr } = await supabase.from("products").select("stock").eq("id", id).single();
+      if (readErr) throw readErr;
+      const next = Math.max(0, (data?.stock ?? 0) + delta);
+      await setStockRemote(id, next);
+      return;
+    }
+    throw error;
+  }
 }
 
 async function replaceImagesAndVariants(

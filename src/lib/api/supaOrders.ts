@@ -155,3 +155,15 @@ export async function listMyOrders(): Promise<OrderFull[]> {
   if (error) throw error;
   return (data ?? []) as unknown as OrderFull[];
 }
+
+/**
+ * Cancela um pedido no Supabase.
+ * Atualiza o status para "cancelado" — persiste no banco de dados.
+ */
+export async function cancelOrderRemote(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("orders")
+    .update({ status: "cancelado" })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}

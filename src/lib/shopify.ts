@@ -1,9 +1,12 @@
 import { toast } from "sonner";
 
 export const SHOPIFY_API_VERSION = "2025-07";
-export const SHOPIFY_STORE_PERMANENT_DOMAIN = "aura-boutique-u79e9.myshopify.com";
+export const SHOPIFY_STORE_PERMANENT_DOMAIN =
+  import.meta.env.VITE_SHOPIFY_DOMAIN ?? "aura-boutique-u79e9.myshopify.com";
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-export const SHOPIFY_STOREFRONT_TOKEN = "e7b6f8596fe2ff012a17ffc6a00d11fb";
+// Token lido de variável de ambiente — nunca commitar o valor real aqui.
+export const SHOPIFY_STOREFRONT_TOKEN =
+  import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN ?? "";
 
 // ====== Loja física – J&S Store Joinville ======
 export const STORE_INFO = {
@@ -52,6 +55,13 @@ export interface ShopifyProduct {
   };
 }
 
+export class StorefrontUnavailableError extends Error {
+  constructor() {
+    super("Shopify: loja sem plano ativo");
+    this.name = "StorefrontUnavailableError";
+  }
+}
+
 export async function storefrontApiRequest(query: string, variables: Record<string, unknown> = {}) {
   const response = await fetch(SHOPIFY_STOREFRONT_URL, {
     method: "POST",
@@ -66,7 +76,7 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
     toast.error("Shopify: pagamento necessário", {
       description: "Sua loja precisa de um plano ativo. Acesse admin.shopify.com para fazer upgrade.",
     });
-    return;
+    throw new StorefrontUnavailableError();
   }
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();

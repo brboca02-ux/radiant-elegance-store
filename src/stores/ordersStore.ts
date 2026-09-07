@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyOrders, type OrderFull } from "@/lib/api/supaOrders";
+import { listMyOrders, cancelOrderRemote, type OrderFull } from "@/lib/api/supaOrders";
 
 export const STORE_ID = "store_js_store";
 
@@ -14,7 +14,7 @@ export type OrderStatus =
   | "cancelado";
 
 export type PaymentStatus = "pendente" | "pago" | "estornado" | "falhou";
-export type PaymentMethod = "pix" | "cartao" | "boleto" | "whatsapp" | "manual";
+export type PaymentMethod = "pix" | "cartao" | "boleto" | "whatsapp" | "manual" | "infinitpay";
 
 export const ORDER_STATUS_FLOW: OrderStatus[] = [
   "novo", "pago", "separando", "enviado", "entregue",
@@ -222,7 +222,7 @@ interface OrdersState {
   list: () => Order[];
   get: (id: string) => Order | undefined;
   setStatus: (id: string, status: OrderStatus, user_id?: string, note?: string) => void;
-  cancel: (id: string, user_id?: string, note?: string) => void;
+  cancel: (id: string, user_id?: string, note?: string) => Promise<void>;
   remove: (id: string) => void;
   hydrate: () => Promise<void>;
   subscribeRealtime: () => () => void;
@@ -250,7 +250,16 @@ export const useOrdersStore = create<OrdersState>()(
             return { ...o, status, payment_status, history: [...o.history, entry] };
           }),
         })),
-      cancel: (id, user_id = "admin", note) => get().setStatus(id, "cancelado", user_id, note),
+      cancel: async (id, user_id = "admin", note) => {
+        // Persiste o cancelamento no Supabase antes de atualizar o estado local.
+        try {
+          await cancelOrderRemote(id);
+        } catch (e) {
+          console.error("Falha ao cancelar pedido no banco:", e);
+          throw e; // propaga para o caller mostrar toast de erro
+        }
+        get().setStatus(id, "cancelado", user_id, note);
+      },
       remove: (id) => set((s) => ({ orders: s.orders.filter((o) => o.id !== id) })),
 
       // Puxa pedidos reais do Supabase (respeitando RLS do admin logado).

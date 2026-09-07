@@ -13,6 +13,7 @@ import { createOrder } from "@/lib/api/supaOrders";
 import { supabase } from "@/integrations/supabase/client";
 import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
 import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
+import { createInfinitPayLink } from "@/lib/integrations/infinitpay.functions";
 import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
 import { validateCoupon, calculateDiscount, type Coupon } from "@/lib/coupons";
 import { Ticket, X as CloseIcon } from "lucide-react";
@@ -368,11 +369,16 @@ function CheckoutPage() {
               },
             },
           });
-          await supabase.rpc("attach_order_payment", {
+          // Vincula o payment_id ao pedido — crítico para o webhook reconhecer o pagamento.
+          const { error: attachErr } = await supabase.rpc("attach_order_payment", {
             p_order_id: order.id,
             p_provider: pixRes.provider,
             p_payment_id: pixRes.paymentId,
           });
+          if (attachErr) {
+            console.error("Falha ao vincular pagamento PIX ao pedido:", attachErr.message);
+            toast.warning("PIX gerado, mas houve um problema interno ao registar o pagamento. Anote o código e entre em contacto se necessário.");
+          }
           setPix({
             orderNumber: order.order_number,
             paymentId: pixRes.paymentId,
@@ -409,6 +415,59 @@ function CheckoutPage() {
         return;
       }
 
+      // InfinitPay: redireciona para o checkout deles (Pix ou Cartão em até 12x).
+      if (paymentMethod === "infinitpay") {
+        try {
+          const ipRes = await createInfinitPayLink({
+            data: {
+              orderId: order.id,
+              orderNumber: order.order_number,
+              siteUrl: window.location.origin,
+              customer: {
+                name: v.name,
+                email: v.email,
+                phone: onlyDigits(v.phone ?? "") || undefined,
+              },
+              address: {
+                cep: v.cep,
+                number: v.number,
+                complement: v.complement || undefined,
+              },
+              items: [
+                {
+                  description: `Pedido ${order.order_number} — J&S Store`,
+                  quantity: 1,
+                  price: order.total,
+                },
+              ],
+            },
+          });
+          const { error: attachErr } = await supabase.rpc("attach_order_payment", {
+            p_order_id: order.id,
+            p_provider: ipRes.provider,
+            p_payment_id: ipRes.paymentId,
+            p_payment_url: ipRes.paymentUrl,
+          });
+          if (attachErr) {
+            console.error("Falha ao vincular InfinitPay ao pedido:", attachErr.message);
+          }
+          setSubmitStage("redirecting");
+          clearCart();
+          try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+          toast.success("Pedido criado! Redirecionando para InfinitPay…");
+          window.location.href = ipRes.paymentUrl;
+          return;
+        } catch (e) {
+          console.error(e);
+          toast.error("Não foi possível iniciar o pagamento InfinitPay", {
+            description: (e as Error).message,
+          });
+          setSubmitStage("idle");
+          setSubmitting(false);
+          return;
+        }
+      }
+
       // Boleto: continua via Checkout Pro (redirect).
       let paymentUrl: string | undefined;
       try {
@@ -420,12 +479,15 @@ function CheckoutPage() {
           customer: { name, email, cpf: onlyDigits(cpf) || undefined, phone: onlyDigits(phone) || undefined },
         });
         paymentUrl = pay.paymentUrl;
-        await supabase.rpc("attach_order_payment", {
+        const { error: attachErr } = await supabase.rpc("attach_order_payment", {
           p_order_id: order.id,
           p_provider: pay.provider,
           p_payment_id: pay.paymentId,
           p_payment_url: pay.paymentUrl ?? undefined,
         });
+        if (attachErr) {
+          console.error("Falha ao vincular pagamento ao pedido:", attachErr.message);
+        }
       } catch (e) {
         console.warn("Pagamento não pôde ser criado:", e);
         toast.warning("Pedido criado, mas o pagamento não pôde ser iniciado agora.", {
@@ -623,21 +685,30 @@ function CheckoutPage() {
 
             {/* Pagamento */}
             <Section icon={<CreditCard className="h-4 w-4" />} title="Pagamento">
-              <div className="grid sm:grid-cols-3 gap-2">
-                {(["pix", "cartao", "boleto"] as PaymentMethod[]).map((m) => (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                {(["pix", "cartao", "boleto", "infinitpay"] as PaymentMethod[]).map((m) => (
                   <label key={m} className={`border rounded-md p-3 cursor-pointer text-sm font-medium text-center transition ${paymentMethod === m ? "border-primary bg-primary/5" : "border-border hover:border-foreground/40"}`}>
                     <input type="radio" name="pm" className="hidden" checked={paymentMethod === m} onChange={() => setPaymentMethod(m)} />
-                    {m === "pix" ? "Pix" : m === "cartao" ? "Cartão de crédito" : "Boleto"}
+                    {m === "pix" ? "Pix"
+                      : m === "cartao" ? "Cartão de crédito"
+                      : m === "boleto" ? "Boleto"
+                      : (
+                        <span className="flex flex-col items-center gap-0.5">
+                          <span>InfinitPay</span>
+                          <span className="text-[10px] text-muted-foreground font-normal">Pix ou Cartão</span>
+                        </span>
+                      )}
                   </label>
                 ))}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                Pagamento processado com segurança pelo Mercado Pago.{" "}
                 {paymentMethod === "pix"
-                  ? "O QR Code é gerado aqui mesmo, sem sair do site."
+                  ? "Pagamento processado com segurança pelo Mercado Pago. O QR Code é gerado aqui mesmo, sem sair do site."
                   : paymentMethod === "cartao"
-                    ? "Você digita os dados do cartão diretamente nesta página."
-                    : "Você será redirecionado para concluir o pagamento do boleto."}
+                    ? "Pagamento processado com segurança pelo Mercado Pago. Você digita os dados do cartão diretamente nesta página."
+                    : paymentMethod === "boleto"
+                      ? "Pagamento processado com segurança pelo Mercado Pago. Você será redirecionado para concluir o pagamento do boleto."
+                      : "Pagamento processado com segurança pela InfinitPay. Aceita Pix (recebimento na hora) e cartão de crédito em até 12x. Você será redirecionado para a tela de pagamento."}
               </p>
             </Section>
           </div>

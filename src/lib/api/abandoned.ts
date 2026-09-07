@@ -1,11 +1,28 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// Tipagem do item dentro de cart_data para evitar uso de `any`
+export interface CartDataItem {
+  quantity: number;
+  product: {
+    node: {
+      title: string;
+      images?: { edges?: Array<{ node?: { url?: string } }> };
+    };
+  };
+  price?: { amount: string };
+  selectedOptions?: Array<{ name: string; value: string }>;
+}
+
+export interface AbandonedCartData {
+  items: CartDataItem[];
+}
+
 export interface AbandonedCart {
   id: string;
   customer_name: string | null;
   customer_email: string | null;
   customer_phone: string | null;
-  cart_data: any;
+  cart_data: AbandonedCartData;
   subtotal: number;
   shipping_cost: number;
   discount: number;
@@ -16,24 +33,22 @@ export interface AbandonedCart {
   created_at: string;
 }
 
-export async function upsertAbandonedCart(input: Partial<AbandonedCart>) {
+export async function upsertAbandonedCart(input: Partial<Omit<AbandonedCart, "cart_data"> & { cart_data: AbandonedCartData | Record<string, unknown> }>) {
   if (!input.customer_email && !input.customer_phone) return;
 
-  // A escrita é feita por uma função segura no servidor, que valida os dados
-  // e identifica o carrinho pelo e-mail/telefone informado no checkout.
   const { error } = await supabase.rpc("upsert_abandoned_cart", {
     payload: {
       customer_name: input.customer_name ?? null,
       customer_email: input.customer_email ?? null,
       customer_phone: input.customer_phone ?? null,
-      cart_data: input.cart_data ?? [],
+      cart_data: input.cart_data ?? { items: [] },
       subtotal: input.subtotal ?? 0,
       shipping_cost: input.shipping_cost ?? 0,
       discount: input.discount ?? 0,
       total: input.total ?? 0,
     },
   });
-  if (error) console.error("Error saving abandoned cart");
+  if (error) console.error("Error saving abandoned cart:", error.message);
 }
 
 export async function loadAbandonedCarts(): Promise<AbandonedCart[]> {
@@ -57,11 +72,13 @@ export async function markAsRecovered(id: string) {
 }
 
 export function buildAbandonmentWhatsAppLink(cart: AbandonedCart) {
-  const items = cart.cart_data.items || [];
-  const itemsList = items.map((i: any) => `- ${i.quantity}x ${i.product.node.title}`).join("\n");
-  
+  const items = cart.cart_data?.items ?? [];
+  const itemsList = items
+    .map((i) => `- ${i.quantity}x ${i.product?.node?.title ?? "produto"}`)
+    .join("\n");
+
   const message = `Olá ${cart.customer_name || ""}! Notamos que você deixou alguns itens incríveis na sua sacola na J&S Store:\n\n${itemsList}\n\nAinda dá tempo de garantir as suas peças! Clique aqui para finalizar sua compra: https://www.jesstorejoinville.com.br/checkout\n\nQualquer dúvida, estamos à disposição!`;
-  
+
   const phone = (cart.customer_phone || "").replace(/\D/g, "");
   return `https://wa.me/55${phone}?text=${encodeURIComponent(message)}`;
 }

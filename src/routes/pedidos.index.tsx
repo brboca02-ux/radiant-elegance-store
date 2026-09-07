@@ -1,6 +1,7 @@
 import { AdminShell } from "@/components/AdminShell";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { Search, Eye, Printer, XCircle, RefreshCw, X, SlidersHorizontal } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, statusTone,
@@ -22,10 +23,10 @@ const STATUS_OPTIONS: ("todos" | OrderStatus)[] = [
   "todos", "novo", "pago", "separando", "enviado", "entregue", "cancelado",
 ];
 const METHOD_OPTIONS: ("todos" | PaymentMethod)[] = [
-  "todos", "pix", "cartao", "boleto", "whatsapp", "manual",
+  "todos", "pix", "cartao", "boleto", "whatsapp", "manual", "infinitpay",
 ];
 const METHOD_LABEL: Record<PaymentMethod, string> = {
-  pix: "PIX", cartao: "Cartão", boleto: "Boleto", whatsapp: "WhatsApp", manual: "Manual",
+  pix: "PIX", cartao: "Cartão", boleto: "Boleto", whatsapp: "WhatsApp", manual: "Manual", infinitpay: "InfinitPay",
 };
 const PAYSTATUS_OPTIONS: ("todos" | PaymentStatus)[] = [
   "todos", "pendente", "pago", "estornado", "falhou",
@@ -349,7 +350,15 @@ function OrdersListPage() {
                       </Link>
                       {o.status !== "cancelado" && o.status !== "entregue" && (
                         <button
-                          onClick={() => confirm(`Cancelar pedido ${o.number}?`) && cancel(o.id)}
+                          onClick={async () => {
+                            if (!confirm(`Cancelar pedido ${o.number}?`)) return;
+                            try {
+                              await cancel(o.id);
+                              toast.success(`Pedido ${o.number} cancelado.`);
+                            } catch {
+                              toast.error("Não foi possível cancelar o pedido.");
+                            }
+                          }}
                           className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-rose-600 hover:bg-rose-50">
                           <XCircle className="h-3.5 w-3.5" /> Cancelar
                         </button>

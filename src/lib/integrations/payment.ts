@@ -1,10 +1,11 @@
-// Adapter de pagamento. Implementação ativa: Mercado Pago (Checkout Pro).
-// A criação da preference roda no server (server function), mantendo o
-// MP_ACCESS_TOKEN fora do bundle do client.
+// Adapter de pagamento. Implementações activas: Mercado Pago + InfinitPay.
+// A criação de preferências/links corre no server (server functions),
+// mantendo tokens fora do bundle do client.
 
 import { createMpPreference } from "./mercadopago.functions";
+import { createInfinitPayLink } from "./infinitpay.functions";
 
-export type PaymentMethod = "pix" | "cartao" | "boleto";
+export type PaymentMethod = "pix" | "cartao" | "boleto" | "infinitpay";
 
 export interface CreatePaymentInput {
   orderId: string;
@@ -44,9 +45,39 @@ export const MercadoPagoProvider: PaymentProvider = {
         orderId: input.orderId,
         orderNumber: input.orderNumber,
         amount: input.amount,
-        method: input.method,
+        method: input.method as "pix" | "cartao" | "boleto",
         siteUrl: currentSiteUrl(),
         customer: input.customer,
+      },
+    });
+    return {
+      provider: result.provider,
+      paymentId: result.paymentId,
+      paymentUrl: result.paymentUrl,
+    };
+  },
+};
+
+export const InfinitPayProvider: PaymentProvider = {
+  name: "infinitpay",
+  async createPayment(input) {
+    const result = await createInfinitPayLink({
+      data: {
+        orderId: input.orderId,
+        orderNumber: input.orderNumber,
+        siteUrl: currentSiteUrl(),
+        customer: {
+          name: input.customer.name,
+          email: input.customer.email,
+          phone: input.customer.phone,
+        },
+        items: [
+          {
+            description: `Pedido ${input.orderNumber} — J&S Store`,
+            quantity: 1,
+            price: input.amount,
+          },
+        ],
       },
     });
     return {

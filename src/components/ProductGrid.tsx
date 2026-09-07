@@ -94,14 +94,38 @@ export function ProductGrid({
   }, [products, query, first, sortKey, reverse, shopifyData]);
 
 
+  // Mapa estático de classes para evitar que o Tailwind purgue classes geradas dinamicamente.
+  const COL_MAP: Record<number, string> = {
+    1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3",
+    4: "grid-cols-4", 5: "grid-cols-5", 6: "grid-cols-6",
+  };
+  const MD_COL_MAP: Record<number, string> = {
+    1: "md:grid-cols-1", 2: "md:grid-cols-2", 3: "md:grid-cols-3",
+    4: "md:grid-cols-4", 5: "md:grid-cols-5", 6: "md:grid-cols-6",
+  };
+  const LG_COL_MAP: Record<number, string> = {
+    1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3",
+    4: "lg:grid-cols-4", 5: "lg:grid-cols-5", 6: "lg:grid-cols-6",
+  };
+  const XL_COL_MAP: Record<number, string> = {
+    1: "xl:grid-cols-1", 2: "xl:grid-cols-2", 3: "xl:grid-cols-3",
+    4: "xl:grid-cols-4", 5: "xl:grid-cols-5", 6: "xl:grid-cols-6",
+  };
+
   const gridCols = useMemo(() => {
     const mobile = columns.mobile ?? 2;
     const tablet = columns.tablet ?? 3;
     const lg = columns.lg ?? 4;
     const desktop = columns.desktop ?? lg;
-    
-    return `grid-cols-${mobile} md:grid-cols-${tablet} lg:grid-cols-${lg} xl:grid-cols-${desktop} 2xl:grid-cols-6`;
-  }, [columns]);
+
+    return [
+      COL_MAP[mobile] ?? "grid-cols-2",
+      MD_COL_MAP[tablet] ?? "md:grid-cols-3",
+      LG_COL_MAP[lg] ?? "lg:grid-cols-4",
+      XL_COL_MAP[desktop] ?? "xl:grid-cols-4",
+      "2xl:grid-cols-6",
+    ].join(" ");
+  }, [columns]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if ((!loaded && loading) || (!loaded && items.length === 0)) {
     return (

@@ -42,17 +42,24 @@ export async function deleteCoupon(id: string) {
 
 export async function validateCoupon(code: string): Promise<Coupon | null> {
   const c = code.toUpperCase().trim();
-  const coupons = await loadCoupons();
-  const coupon = coupons.find(x => x.code === c && x.is_active);
-  
-  if (!coupon) return null;
-  
+
+  // Busca apenas o cupão específico — evita expor todos os cupões ao cliente.
+  const { data, error } = await supabase
+    .from("coupons")
+    .select("*")
+    .eq("code", c)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  const coupon = data as unknown as Coupon;
+
   // Expiry check
   if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) return null;
-  
+
   // Usage limit check
   if (coupon.usage_limit && coupon.usage_count >= coupon.usage_limit) return null;
-  
+
   return coupon;
 }
 
