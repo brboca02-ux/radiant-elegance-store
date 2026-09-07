@@ -31,7 +31,7 @@ import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { LeadPopup } from "@/components/LeadPopup";
 import { useCartSync } from "@/hooks/useCartSync";
 import { useHydrateStores } from "@/hooks/useHydrateStores";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseAvailable } from "@/integrations/supabase/client";
 
 /** Sincroniza router/cache com o estado de autenticação e conclui o retorno do OAuth. */
 function useAuthSync() {
@@ -39,23 +39,28 @@ function useAuthSync() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+    if (!isSupabaseAvailable()) return;
+    try {
+      const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+        router.invalidate();
+        if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
 
-      if (event === "SIGNED_IN" && session) {
-        let target: string | null = null;
-        try {
-          target = sessionStorage.getItem("js_post_login_redirect");
-          sessionStorage.removeItem("js_post_login_redirect");
-        } catch { /* ignore */ }
-        if (target && target.startsWith("/") && !target.startsWith("//")) {
-          router.navigate({ to: target });
+        if (event === "SIGNED_IN" && session) {
+          let target: string | null = null;
+          try {
+            target = sessionStorage.getItem("js_post_login_redirect");
+            sessionStorage.removeItem("js_post_login_redirect");
+          } catch { /* ignore */ }
+          if (target && target.startsWith("/") && !target.startsWith("//")) {
+            router.navigate({ to: target });
+          }
         }
-      }
-    });
-    return () => sub.subscription.unsubscribe();
+      });
+      return () => sub.subscription.unsubscribe();
+    } catch (e) {
+      console.error("[useAuthSync] Failed to subscribe to auth state:", e);
+    }
   }, [router, queryClient]);
 }
 

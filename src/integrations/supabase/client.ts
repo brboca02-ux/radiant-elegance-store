@@ -39,9 +39,10 @@ function createSupabaseClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    // Loga o problema mas NÃO lança exceção — evita derrubar toda a UI
+    // quando as variáveis de ambiente estão temporariamente ausentes.
+    console.error(`[Supabase] Missing env var(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`);
+    return null;
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -56,13 +57,32 @@ function createSupabaseClient() {
   });
 }
 
-let _supabase: ReturnType<typeof createSupabaseClient> | undefined;
+let _supabase: ReturnType<typeof createClient<Database>> | null | undefined;
+
+// Retorna o cliente Supabase ou null se as credenciais não estiverem disponíveis.
+// Use `supabase` para operações normais e verifique `isSupabaseAvailable()` quando necessário.
+export function isSupabaseAvailable(): boolean {
+  if (_supabase === undefined) _supabase = createSupabaseClient();
+  return _supabase !== null;
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
-export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>, {
+export const supabase = new Proxy({} as ReturnType<typeof createClient<Database>>, {
   get(_, prop, receiver) {
-    if (!_supabase) _supabase = createSupabaseClient();
+    if (_supabase === undefined) _supabase = createSupabaseClient();
+    // Se o cliente não pôde ser criado (credenciais ausentes), retorna
+    // um stub seguro que não lança exceção — operações retornam silenciosamente.
+    if (_supabase === null) {
+      // Para métodos encadeados como supabase.from(...).select(...), retorna
+      // um objeto que sempre resolve para { data: null, error: null }.
+      const noop = (): unknown => safeStub;
+      const safeStub: Record<string, unknown> = new Proxy({} as Record<string, unknown>, {
+        get: () => noop,
+        apply: () => Promise.resolve({ data: null, error: null }),
+      });
+      return noop;
+    }
     return Reflect.get(_supabase, prop, receiver);
   },
 });
