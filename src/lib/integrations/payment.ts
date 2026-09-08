@@ -88,4 +88,5 @@ export const InfinitPayProvider: PaymentProvider = {
   },
 };
 
-export const payment: PaymentProvider = MercadoPagoProvider;
+// Método de pagamento ativo da loja: InfinitPay (Mercado Pago desativado).
+export const payment: PaymentProvider = InfinitPayProvider;
