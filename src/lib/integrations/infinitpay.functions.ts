@@ -1,5 +1,5 @@
 // Server function que cria um link de pagamento via InfinitPay Checkout Integrado.
-// A chave INFINITPAY_HANDLE permanece server-only — nunca exposta ao cliente.
+// A chave INFINITPAY_INFINITETAG permanece server-only — nunca exposta ao cliente.
 //
 // Documentação: https://ajuda.infinitepay.io/pt-BR/articles/10766888-como-usar-o-checkout-da-infinitepay
 // Endpoint: POST https://api.checkout.infinitepay.io/links
