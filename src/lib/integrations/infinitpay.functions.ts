@@ -1,5 +1,5 @@
 // Server function que cria um link de pagamento via InfinitPay Checkout Integrado.
-// A chave INFINITPAY_HANDLE permanece server-only — nunca exposta ao cliente.
+// A chave INFINITPAY_INFINITETAG permanece server-only — nunca exposta ao cliente.
 //
 // Documentação: https://ajuda.infinitepay.io/pt-BR/articles/10766888-como-usar-o-checkout-da-infinitepay
 // Endpoint: POST https://api.checkout.infinitepay.io/links
@@ -50,8 +50,8 @@ export interface InfinitPayResult {
 export const createInfinitPayLink = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
   .handler(async ({ data }): Promise<InfinitPayResult> => {
-    const handle = process.env.INFINITPAY_HANDLE;
-    if (!handle) throw new Error("INFINITPAY_HANDLE não configurado");
+    const handle = process.env.INFINITPAY_INFINITETAG;
+    if (!handle) throw new Error("INFINITPAY_INFINITETAG não configurado");
 
     // Segurança: valores SEMPRE relidos do banco — nunca confiamos no cliente.
     const supaUrl = process.env.EXTERNAL_SUPABASE_URL ?? process.env.SUPABASE_URL;
@@ -140,8 +140,8 @@ export const checkInfinitPayStatus = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    const handle = process.env.INFINITPAY_HANDLE;
-    if (!handle) throw new Error("INFINITPAY_HANDLE não configurado");
+    const handle = process.env.INFINITPAY_INFINITETAG;
+    if (!handle) throw new Error("INFINITPAY_INFINITETAG não configurado");
 
     const res = await fetch("https://api.checkout.infinitepay.io/payment_check", {
       method: "POST",

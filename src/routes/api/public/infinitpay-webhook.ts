@@ -1,6 +1,6 @@
 // Webhook da InfinitPay — Checkout Integrado.
 //
-// URL configurada em: INFINITPAY_HANDLE + webhook_url no payload de criação do link.
+// URL configurada em: INFINITPAY_INFINITETAG + webhook_url no payload de criação do link.
 // A InfinitPay envia POST com os dados da transação após pagamento confirmado.
 //
 // Payload recebido:
