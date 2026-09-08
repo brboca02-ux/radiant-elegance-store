@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
 import { toast } from "sonner";
-import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck } from "lucide-react";
+import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck, Check } from "lucide-react";
 import { z } from "zod";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
