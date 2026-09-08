@@ -35,7 +35,7 @@ Todas as variáveis abaixo devem ser configuradas no painel da **Lovable Cloud**
 
 | Variável | Onde encontrar |
 |---|---|
-| `INFINITPAY_HANDLE` | App InfinitPay → canto superior esquerdo (InfiniteTag, **sem o `$`**) |
+| `INFINITPAY_INFINITETAG` | App InfinitPay → canto superior esquerdo (InfiniteTag, **sem o `$`**) |
 
 **Antes de usar:** no App InfinitPay vai a:
 `Vendas → Checkout → Configurações → Habilitar Checkout Integrado`
@@ -67,6 +67,6 @@ Todas as variáveis abaixo devem ser configuradas no painel da **Lovable Cloud**
 2. Vai a **Vendas → Checkout → Configurações → Habilitar Checkout Integrado**
 3. Copia a tua **InfiniteTag** (ex: `jsestore`) — aparece no topo esquerdo do app
 4. Na Lovable Cloud: **Settings → Environment Variables → Add**
-   - Nome: `INFINITPAY_HANDLE`
+   - Nome: `INFINITPAY_INFINITETAG`
    - Valor: `jsestore` *(o teu handle, sem o `$`)*
 5. Redeploy — pronto ✅
