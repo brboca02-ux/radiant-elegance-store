@@ -97,7 +97,7 @@ function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
-  const pollRef = useRef<number | null>(null);
+  
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -240,45 +240,6 @@ function CheckoutPage() {
     setStateUf(data.uf || stateUf);
   };
 
-  // Polling do status do PIX enquanto o modal está aberto (a cada 4s, até 15 min).
-  useEffect(() => {
-    if (!pix || pix.status !== "aguardando") return;
-    let cancelled = false;
-    const start = Date.now();
-    const tick = async () => {
-      if (cancelled) return;
-      if (Date.now() - start > 15 * 60 * 1000) {
-        setPix((p) => (p ? { ...p, status: "expirado" } : p));
-        return;
-      }
-      try {
-        const r = await getMpPaymentStatus({ data: { paymentId: pix.paymentId } });
-        if (cancelled) return;
-        if (r.status === "approved") {
-          setPix((p) => (p ? { ...p, status: "pago" } : p));
-          clearCart();
-          track.purchase({ value: total, transactionId: pix.orderNumber });
-          toast.success("Pagamento confirmado!");
-          setTimeout(() => {
-            navigate({ to: "/pedido/sucesso/$numero", params: { numero: pix.orderNumber } });
-          }, 1200);
-          return;
-        }
-        if (["rejected", "cancelled", "refunded"].includes(r.status)) {
-          setPix((p) => (p ? { ...p, status: "erro" } : p));
-          return;
-        }
-      } catch (e) {
-        console.warn("polling pix:", e);
-      }
-      pollRef.current = window.setTimeout(tick, 4000);
-    };
-    pollRef.current = window.setTimeout(tick, 4000);
-    return () => {
-      cancelled = true;
-      if (pollRef.current) window.clearTimeout(pollRef.current);
-    };
-  }, [pix?.paymentId, pix?.status]); // eslint-disable-line
 
   const canSubmit =
     items.length > 0 &&
@@ -342,70 +303,7 @@ function CheckoutPage() {
       // Pagamento
       setSubmitStage("processing");
 
-      if (paymentMethod === "pix") {
-        // PIX inline: cria pagamento direto e exibe QR Code no próprio checkout.
-        try {
-          const pixRes = await createMpPixPayment({
-            data: {
-              orderId: order.id,
-              orderNumber: order.order_number,
-              amount: order.total,
-              siteUrl: window.location.origin,
-              customer: {
-                name: v.name,
-                email: v.email,
-                cpf: onlyDigits(v.cpf ?? "") || undefined,
-                phone: onlyDigits(v.phone ?? "") || undefined,
-              },
-            },
-          });
-          // Vincula o payment_id ao pedido — crítico para o webhook reconhecer o pagamento.
-          const { error: attachErr } = await supabase.rpc("attach_order_payment", {
-            p_order_id: order.id,
-            p_provider: pixRes.provider,
-            p_payment_id: pixRes.paymentId,
-          });
-          if (attachErr) {
-            console.error("Falha ao vincular pagamento PIX ao pedido:", attachErr.message);
-            toast.warning("PIX gerado, mas houve um problema interno ao registar o pagamento. Anote o código e entre em contacto se necessário.");
-          }
-          setPix({
-            orderNumber: order.order_number,
-            paymentId: pixRes.paymentId,
-            qrCode: pixRes.qrCode,
-            qrCodeBase64: pixRes.qrCodeBase64,
-            status: "aguardando",
-          });
-          try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
-          toast.success("PIX gerado — escaneie ou copie o código.");
-          setSubmitStage("idle");
-          setSubmitting(false);
-          return;
-        } catch (e) {
-          console.error(e);
-          toast.error("Não foi possível gerar o PIX", { description: (e as Error).message });
-          setSubmitStage("idle");
-          setSubmitting(false);
-          return;
-        }
-      }
-
-      // Cartão: abre Card Payment Brick inline (checkout transparente).
-      if (paymentMethod === "cartao") {
-        setCard({
-          orderId: order.id,
-          orderNumber: order.order_number,
-          amount: order.total,
-          email: v.email,
-        });
-        try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
-        toast.success("Pedido criado — preencha os dados do cartão.");
-        setSubmitStage("idle");
-        setSubmitting(false);
-        return;
-      }
-
-      // InfinitPay: redireciona para o checkout deles (Pix ou Cartão em até 12x).
+      // InfinitPay (único método): redireciona para o checkout deles (Pix ou Cartão em até 12x).
       if (paymentMethod === "infinitpay") {
         try {
           const ipRes = await createInfinitPayLink({
