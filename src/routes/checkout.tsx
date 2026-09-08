@@ -2,20 +2,17 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { toast } from "sonner";
-import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck, Check, Copy, QrCode } from "lucide-react";
+import { Loader2, MapPin, CreditCard, User, ChevronRight, Truck } from "lucide-react";
 import { z } from "zod";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPrice } from "@/lib/shopify";
 import { shipping, type ShippingQuote } from "@/lib/integrations/shipping";
-import { payment, type PaymentMethod } from "@/lib/integrations/payment";
+import type { PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
 import { supabase } from "@/integrations/supabase/client";
-import { createMpPixPayment, getMpPaymentStatus } from "@/lib/integrations/mercadopago-pix.functions";
-import { createMpCardPayment } from "@/lib/integrations/mercadopago-card.functions";
 import { createInfinitPayLink } from "@/lib/integrations/infinitpay.functions";
-import { CardBrickPayment, type CardBrickFormData } from "@/components/CardBrickPayment";
 import { validateCoupon, calculateDiscount, type Coupon } from "@/lib/coupons";
 import { Ticket, X as CloseIcon } from "lucide-react";
 import { upsertAbandonedCart } from "@/lib/api/abandoned";
@@ -93,22 +90,10 @@ function CheckoutPage() {
   const [quotes, setQuotes] = useState<ShippingQuote[]>([]);
   const [quotesLoading, setQuotesLoading] = useState(false);
   const [shippingCode, setShippingCode] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
+  // Pagamento exclusivo via InfinitPay.
+  const paymentMethod: PaymentMethod = "infinitpay";
   const [submitting, setSubmitting] = useState(false);
   const [submitStage, setSubmitStage] = useState<"idle" | "creating" | "processing" | "redirecting">("idle");
-  const [pix, setPix] = useState<{
-    orderNumber: string;
-    paymentId: string;
-    qrCode: string | null;
-    qrCodeBase64: string | null;
-    status: "aguardando" | "pago" | "expirado" | "erro";
-  } | null>(null);
-  const [card, setCard] = useState<{
-    orderId: string;
-    orderNumber: string;
-    amount: number;
-    email: string;
-  } | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
