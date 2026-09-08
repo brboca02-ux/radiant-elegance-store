@@ -358,42 +358,11 @@ function CheckoutPage() {
         }
       }
 
-      // Boleto: continua via Checkout Pro (redirect).
-      let paymentUrl: string | undefined;
-      try {
-        const pay = await payment.createPayment({
-          orderId: order.id,
-          orderNumber: order.order_number,
-          amount: order.total,
-          method: paymentMethod,
-          customer: { name, email, cpf: onlyDigits(cpf) || undefined, phone: onlyDigits(phone) || undefined },
-        });
-        paymentUrl = pay.paymentUrl;
-        const { error: attachErr } = await supabase.rpc("attach_order_payment", {
-          p_order_id: order.id,
-          p_provider: pay.provider,
-          p_payment_id: pay.paymentId,
-          p_payment_url: pay.paymentUrl ?? undefined,
-        });
-        if (attachErr) {
-          console.error("Falha ao vincular pagamento ao pedido:", attachErr.message);
-        }
-      } catch (e) {
-        console.warn("Pagamento não pôde ser criado:", e);
-        toast.warning("Pedido criado, mas o pagamento não pôde ser iniciado agora.", {
-          description: "Você poderá pagar pela página do pedido.",
-        });
-      }
-
+      // Fallback de segurança (não deve ocorrer: InfinitPay redireciona acima).
       setSubmitStage("redirecting");
       clearCart();
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       toast.success("Pedido criado!", { description: order.order_number });
-
-      if (paymentUrl) {
-        window.location.href = paymentUrl;
-        return;
-      }
       navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number }, search: { email: v.email } });
     } catch (e) {
       console.error(e);
@@ -575,30 +544,14 @@ function CheckoutPage() {
 
             {/* Pagamento */}
             <Section icon={<CreditCard className="h-4 w-4" />} title="Pagamento">
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
-                {(["pix", "cartao", "boleto", "infinitpay"] as PaymentMethod[]).map((m) => (
-                  <label key={m} className={`border rounded-md p-3 cursor-pointer text-sm font-medium text-center transition ${paymentMethod === m ? "border-primary bg-primary/5" : "border-border hover:border-foreground/40"}`}>
-                    <input type="radio" name="pm" className="hidden" checked={paymentMethod === m} onChange={() => setPaymentMethod(m)} />
-                    {m === "pix" ? "Pix"
-                      : m === "cartao" ? "Cartão de crédito"
-                      : m === "boleto" ? "Boleto"
-                      : (
-                        <span className="flex flex-col items-center gap-0.5">
-                          <span>InfinitPay</span>
-                          <span className="text-[10px] text-muted-foreground font-normal">Pix ou Cartão</span>
-                        </span>
-                      )}
-                  </label>
-                ))}
+              <div className="border border-primary bg-primary/5 rounded-md p-3 text-sm font-medium text-center">
+                <span className="flex flex-col items-center gap-0.5">
+                  <span>InfinitPay</span>
+                  <span className="text-[10px] text-muted-foreground font-normal">Pix ou Cartão em até 12x</span>
+                </span>
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                {paymentMethod === "pix"
-                  ? "Pagamento processado com segurança pelo Mercado Pago. O QR Code é gerado aqui mesmo, sem sair do site."
-                  : paymentMethod === "cartao"
-                    ? "Pagamento processado com segurança pelo Mercado Pago. Você digita os dados do cartão diretamente nesta página."
-                    : paymentMethod === "boleto"
-                      ? "Pagamento processado com segurança pelo Mercado Pago. Você será redirecionado para concluir o pagamento do boleto."
-                      : "Pagamento processado com segurança pela InfinitPay. Aceita Pix (recebimento na hora) e cartão de crédito em até 12x. Você será redirecionado para a tela de pagamento."}
+                Pagamento processado com segurança pela InfinitPay. Aceita Pix (recebimento na hora) e cartão de crédito em até 12x. Você será redirecionado para a tela de pagamento.
               </p>
             </Section>
           </div>
@@ -708,183 +661,6 @@ function CheckoutPage() {
         </fieldset>
       </div>
 
-      {pix && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="pix-title"
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-        >
-          <div className="bg-background rounded-lg max-w-md w-full p-6 shadow-xl">
-            <div className="flex items-center gap-2 mb-1">
-              <QrCode className="h-5 w-5 text-primary" />
-              <h2 id="pix-title" className="font-display text-xl">Pague com PIX</h2>
-            </div>
-            <p className="text-xs text-muted-foreground mb-4">
-              Pedido <span className="font-medium text-foreground">{pix.orderNumber}</span> · Total {formatPrice(total, "BRL")}
-            </p>
-
-            {pix.status === "aguardando" && (
-              <>
-                {pix.qrCodeBase64 ? (
-                  <div className="flex justify-center bg-white rounded-md p-3 border border-border">
-                    <img
-                      src={`data:image/png;base64,${pix.qrCodeBase64}`}
-                      alt="QR Code PIX"
-                      className="h-56 w-56 object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-56 flex items-center justify-center text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Gerando QR Code…
-                  </div>
-                )}
-
-                {pix.qrCode && (
-                  <div className="mt-4">
-                    <label className="block text-xs font-medium text-muted-foreground mb-1">PIX copia e cola</label>
-                    <div className="flex gap-2">
-                      <input
-                        readOnly
-                        value={pix.qrCode}
-                        className="flex-1 h-10 px-3 rounded-md border border-border bg-secondary/30 text-xs font-mono truncate"
-                        onFocus={(e) => e.currentTarget.select()}
-                      />
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await navigator.clipboard.writeText(pix.qrCode!);
-                            toast.success("Código copiado!");
-                          } catch {
-                            toast.error("Não foi possível copiar");
-                          }
-                        }}
-                        className="h-10 px-3 rounded-md bg-foreground text-background text-xs font-medium inline-flex items-center gap-1"
-                      >
-                        <Copy className="h-3.5 w-3.5" /> Copiar
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <p className="mt-4 text-xs text-muted-foreground flex items-center gap-2">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  Aguardando confirmação do pagamento… você será redirecionado automaticamente.
-                </p>
-                <p className="mt-1 text-[10px] text-muted-foreground">
-                  O código expira em 30 minutos.
-                </p>
-              </>
-            )}
-
-            {pix.status === "pago" && (
-              <div className="py-6 text-center">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-3">
-                  <Check className="h-6 w-6" />
-                </div>
-                <p className="font-medium">Pagamento confirmado!</p>
-                <p className="text-xs text-muted-foreground mt-1">Redirecionando para o resumo do pedido…</p>
-              </div>
-            )}
-
-            {(pix.status === "expirado" || pix.status === "erro") && (
-              <div className="py-6 text-center">
-                <p className="font-medium">
-                  {pix.status === "expirado" ? "O código PIX expirou." : "O pagamento não foi concluído."}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Você pode acompanhar ou refazer pela página do pedido.
-                </p>
-                <button
-                  onClick={() => navigate({ to: "/pedido/sucesso/$numero", params: { numero: pix.orderNumber } })}
-                  className="mt-4 h-10 px-4 rounded-md bg-foreground text-background text-xs uppercase tracking-widest"
-                >
-                  Ver meu pedido
-                </button>
-              </div>
-            )}
-
-            {pix.status !== "pago" && (
-              <button
-                onClick={() => setPix(null)}
-                className="mt-4 w-full text-[11px] text-muted-foreground hover:text-foreground"
-              >
-                Fechar
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {card && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="card-title"
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 overflow-y-auto overscroll-contain"
-        >
-          <div className="bg-background w-full sm:max-w-lg rounded-t-2xl sm:rounded-lg p-4 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl sm:my-8 max-h-[95vh] overflow-y-auto">
-            <div className="flex items-center gap-2 mb-1">
-              <CreditCard className="h-5 w-5 text-primary shrink-0" />
-              <h2 id="card-title" className="font-display text-lg sm:text-xl">Pagamento com cartão</h2>
-            </div>
-            <p className="text-xs text-muted-foreground mb-4 break-words">
-              Pedido <span className="font-medium text-foreground">{card.orderNumber}</span> · Total {formatPrice(card.amount, "BRL")}
-            </p>
-
-            <CardBrickPayment
-              amount={card.amount}
-              payerEmail={card.email}
-              onSubmit={async (data: CardBrickFormData) => {
-                const pay = await createMpCardPayment({
-                  data: {
-                    orderId: card.orderId,
-                    orderNumber: card.orderNumber,
-                    amount: card.amount,
-                    siteUrl: window.location.origin,
-                    token: data.token,
-                    installments: data.installments,
-                    paymentMethodId: data.payment_method_id,
-                    issuerId: data.issuer_id,
-                    payer: {
-                      email: data.payer.email ?? card.email,
-                      identification: data.payer.identification,
-                    },
-                  },
-                });
-                await supabase.rpc("attach_order_payment", {
-                  p_order_id: card.orderId,
-                  p_provider: pay.provider,
-                  p_payment_id: pay.paymentId,
-                });
-
-                if (pay.status === "approved") {
-                  clearCart();
-                  track.purchase({ value: card.amount, transactionId: card.orderNumber });
-                  toast.success("Pagamento aprovado!");
-                  navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
-                  return;
-                }
-                if (pay.status === "in_process" || pay.status === "pending") {
-                  clearCart();
-                  toast.info("Pagamento em análise — acompanhe pelo pedido.");
-                  navigate({ to: "/pedido/sucesso/$numero", params: { numero: card.orderNumber } });
-                  return;
-                }
-                throw new Error(pay.statusDetail ?? "Pagamento não autorizado. Tente outro cartão.");
-              }}
-            />
-
-            <button
-              onClick={() => setCard(null)}
-              className="mt-4 w-full text-[11px] text-muted-foreground hover:text-foreground"
-            >
-              Cancelar e voltar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
