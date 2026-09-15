@@ -68,8 +68,8 @@ export function ProductCard({ product, size = "default" }: { product: ShopifyPro
       aria-label={`Ver detalhes de ${product.node.title}`}
       className="group flex h-full w-full min-w-0 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
     >
-      {/* Imagem: proporção fixa 3:4, não deixa o card crescer */}
-      <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-md bg-secondary border border-gold/5">
+      {/* Imagem: proporção fixa 1:1, não deixa o card crescer */}
+      <div className="relative aspect-square w-full shrink-0 overflow-hidden rounded-md bg-secondary border border-gold/5">
         {img0 && !failed0 ? (
           <>
             {!loaded0 && (
