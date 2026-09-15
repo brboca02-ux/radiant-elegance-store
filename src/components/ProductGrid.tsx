@@ -139,7 +139,7 @@ export function ProductGrid({
     return (
       <div className={`grid ${gridCols} gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:gap-x-6 md:gap-y-12`}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="aspect-[3/4] rounded-md bg-secondary animate-pulse" />
+          <div key={i} className="aspect-square rounded-md bg-secondary animate-pulse" />
         ))}
       </div>
     );
