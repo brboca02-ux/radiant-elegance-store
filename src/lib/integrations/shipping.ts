@@ -1,7 +1,10 @@
-// Adapter de frete. Tabela fixa a partir de Joinville/SC (transportadora
-// própria + parceiro FLASH SERVICOS em algumas cidades). Retirada na loja
-// disponível para clientes de Joinville. Troque a implementação quando
-// integrar Melhor Envio / Frenet / Correios.
+// Orquestrador de frete.
+// - Dentro de Joinville: retirada na loja + entrega rápida (moto/Uber) por faixa
+//   de bairro/distância (JOINVILLE_ZONES, editável abaixo).
+// - Fora de Joinville: cotação em tempo real no Melhor Envio; se a API falhar ou
+//   não estiver configurada, usa a tabela fixa CITY_TABLE como fallback.
+
+import { quoteMelhorEnvio } from "./melhorenvio.functions";
 
 export interface ShippingQuote {
   code: string;
@@ -18,6 +21,7 @@ export interface ShippingQuoteInput {
   itemsCount: number;
   city?: string;
   state?: string;
+  district?: string;
 }
 
 export interface ShippingProvider {
@@ -26,6 +30,41 @@ export interface ShippingProvider {
 }
 
 const FREE_SHIPPING_THRESHOLD = 299;
+
+// Faixas de entrega rápida em Joinville (moto/Uber). Ajuste livremente.
+type JoinvilleZone = { price: number; label: string; districts: string[] };
+
+const JOINVILLE_ZONES: JoinvilleZone[] = [
+  {
+    price: 12,
+    label: "Centro e bairros próximos (até ~5 km)",
+    districts: [
+      "CENTRO", "AMERICA", "ANITA GARIBALDI", "ATIRADORES", "BOM RETIRO",
+      "BUCAREIN", "COSTA E SILVA", "FLORESTA", "GLORIA", "GUANABARA",
+      "ITAUM", "JARDIM IRIRIU", "SAGUACU", "SANTO ANTONIO", "BOEHMERWALD",
+    ],
+  },
+  {
+    price: 18,
+    label: "Faixa intermediária (5–10 km)",
+    districts: [
+      "ADHEMAR GARCIA", "AVENTUREIRO", "BOA VISTA", "COMASA", "ESPINHEIROS",
+      "FATIMA", "IRIRIU", "JARDIM PARAISO", "JARDIM SOFIA", "JARIVATUBA",
+      "NOVA BRASILIA", "PARANAGUAMIRIM", "PETROPOLIS", "PROFIPO",
+      "SANTA CATARINA", "SAO MARCOS", "VILA CUBATAO", "VILA NOVA",
+      "MORRO DO MEIO", "ULYSSES GUIMARAES",
+    ],
+  },
+  {
+    price: 26,
+    label: "Faixa externa e distritos (10–20 km)",
+    districts: [
+      "PIRABEIRABA", "RIO BONITO", "CANTA GALO", "ZONA INDUSTRIAL NORTE",
+      "ZONA INDUSTRIAL TUPY", "VILA RURAL", "DONA FRANCISCA", "JOAO COSTA",
+    ],
+  },
+];
+
 
 // Normaliza nome de cidade: remove acentos, uppercase, tira parênteses.
 function normalizeCity(s: string): string {
