@@ -103,12 +103,11 @@ export const StoreShippingProvider: ShippingProvider = {
       description: "Pronto para retirada em até 24h úteis.",
     });
 
-     // 2. ENTREGA EXPRESSA LOCAL VIA UBER DIRECT
+    // 2. ENTREGA EXPRESSA LOCAL VIA UBER DIRECT (Sem frete grátis)
     if (isJoinville) {
       let uberPrice = getUberRate(district); // Preço base fallback
 
       try {
-        // Tenta cotar na API oficial da Uber em tempo real
         const uberQuote = await quoteUberDirect({
           cep: cleanCep,
           city: city || "Joinville",
@@ -127,13 +126,13 @@ export const StoreShippingProvider: ShippingProvider = {
         code: "uber-direct",
         name: "Uber Flash / Entrega Expressa",
         price: uberPrice,
-        description: freeShipping
-          : "Entrega expressa no mesmo dia via motorista parceiro Uber",
+        days: 0,
+        description: "Entrega expressa no mesmo dia via motorista parceiro Uber",
         carrier: "Uber Direct",
       });
     }
 
-    // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (Correios PAC/SEDEX, Jadlog, etc.)
+    // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (Sem frete grátis)
     try {
       const meQuotes = await quoteMelhorEnvio({
         cep: cleanCep,
@@ -147,13 +146,15 @@ export const StoreShippingProvider: ShippingProvider = {
             code: q.code,
             name: q.name,
             price: q.price,
+            days: q.days,
             description: q.description,
+            carrier: q.carrier || "Melhor Envio",
           });
         });
       }
     } catch (err) {
       console.warn("Melhor Envio offline ou não configurado:", err);
-      // Fallback simples se Melhor Envio falhar e for fora de Joinville
+      // Fallback se o Melhor Envio falhar e não for Joinville
       if (!isJoinville && quotes.length === 1) {
         quotes.push({
           code: "pac-fallback",
@@ -169,5 +170,3 @@ export const StoreShippingProvider: ShippingProvider = {
     return quotes;
   },
 };
-
-export const shipping: ShippingProvider = StoreShippingProvider;

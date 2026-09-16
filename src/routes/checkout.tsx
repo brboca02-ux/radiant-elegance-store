@@ -97,7 +97,6 @@ function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
-  
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -189,7 +188,6 @@ function CheckoutPage() {
     return () => window.clearTimeout(t);
   }, [name, email, phone, cpf, cep, street, number, complement, district, city, stateUf, items, subtotal, shippingCost, discount, total]);
 
-
   // auto-preenche endereço assim que o CEP fica completo (8 dígitos)
   useEffect(() => {
     const c = onlyDigits(cep);
@@ -210,21 +208,28 @@ function CheckoutPage() {
     return () => { cancelled = true; };
   }, [cep]);
 
-  // cotação de frete sempre que CEP/cidade/subtotal mudam
+  // cotação de frete sempre que CEP/cidade/bairro/subtotal mudam
   useEffect(() => {
     const c = onlyDigits(cep);
     if (c.length !== 8) { setQuotes([]); setShippingCode(""); setQuotesLoading(false); return; }
     let cancelled = false;
     setQuotesLoading(true);
     (async () => {
-      const q = await shipping.quote({ cep: c, subtotal, itemsCount, city, state: stateUf });
+      const q = await shipping.quote({ 
+        cep: c, 
+        subtotal, 
+        itemsCount, 
+        city, 
+        state: stateUf,
+        district 
+      });
       if (cancelled) return;
       setQuotesLoading(false);
       setQuotes(q);
       if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
     })();
     return () => { cancelled = true; };
-  }, [cep, city, stateUf, subtotal, itemsCount]); // eslint-disable-line
+  }, [cep, city, district, stateUf, subtotal, itemsCount]); // eslint-disable-line
 
   const onCepBlur = async () => {
     // fallback caso o efeito não tenha rodado (ex.: colar sem disparar change)
@@ -240,7 +245,6 @@ function CheckoutPage() {
     setStateUf(data.uf || stateUf);
   };
 
-
   const canSubmit =
     items.length > 0 &&
     name.trim().length >= 2 &&
@@ -255,9 +259,18 @@ function CheckoutPage() {
       return;
     }
     const parsed = checkoutSchema.safeParse({
-      name, email, phone, cpf,
-      cep: onlyDigits(cep), street, number, complement,
-      district, city, stateUf, shippingCode,
+      name,
+      email,
+      phone,
+      cpf,
+      cep: onlyDigits(cep),
+      street,
+      number,
+      complement,
+      district,
+      city,
+      stateUf,
+      shippingCode,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Dados inválidos");
@@ -266,80 +279,109 @@ function CheckoutPage() {
     const v = parsed.data;
     setSubmitting(true);
     setSubmitStage("creating");
+
+    try {
+      // 1. Cria o pedido no Supabase
+      const order = await createOrder({
+        customer: {
+          name: v.name,
+          email: v.email,
+          phone: v.phone,
+          cpf: v.cpf,
+        },
+        shipping_address: {
+          cep: v.cep,
+          street: v.street,
+          number: v.number,
+          complement: v.complement,
+          district: v.district,
+          city: v.city,
+          state: v.stateUf,
+        },
+        items: items.map((i) => ({
+          title: i.product.node.title,
+          variant_title: i.selectedOptions.map((o) => o.value).join(" / "),
+          quantity: i.quantity,
+          unit_price: parseFloat(i.price.amount),
+          image_url: i.product.node.images?.edges?.[0]?.node?.url,
+        })),
+        subtotal,
+        shipping_cost: shippingCost,
+        discount,
+        total,
+        shipping_method: selectedQuote?.name || v.shippingCode,
         payment_method: "infinitepay",
         coupon_code: appliedCoupon?.code,
       });
 
-      // Pagamento
+      // 2. Cria link de pagamento InfinitPay
       setSubmitStage("processing");
-              try {
-          const ipRes = await createInfinitPayLink({
-            data: {
-              orderId: order.id,
-              orderNumber: order.order_number,
-              siteUrl: window.location.origin,
-              customer: {
-                name: v.name,
-                email: v.email,
-                phone: onlyDigits(v.phone ?? "") || undefined,
-              },
-              address: {
-                cep: v.cep,
-                number: v.number,
-                complement: v.complement || undefined,
-              },
-              items: [
-                {
-                  description: `Pedido ${order.order_number} — J&S Store`,
-                  quantity: 1,
-                  price: order.total,
-                },
-              ],
+      try {
+        const ipRes = await createInfinitPayLink({
+          data: {
+            orderId: order.id,
+            orderNumber: order.order_number,
+            siteUrl: window.location.origin,
+            customer: {
+              name: v.name,
+              email: v.email,
+              phone: onlyDigits(v.phone ?? "") || undefined,
             },
-          });
-          const { error: attachErr } = await supabase.rpc("attach_order_payment", {
-            p_order_id: order.id,
-            p_provider: ipRes.provider,
-            p_payment_id: ipRes.paymentId,
-            p_payment_url: ipRes.paymentUrl,
-          });
-          if (attachErr) {
-            console.error("Falha ao vincular InfinitPay ao pedido:", attachErr.message);
-          }
-          setSubmitStage("redirecting");
-          clearCart();
-          try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
-          toast.success("Pedido criado! Redirecionando para InfinitPay…");
-          // InfinitPay: rastreia como purchase no momento do redirect (pagamento confirmado pelo webhook depois)
-          track.purchase({ value: order.total, transactionId: order.order_number });
-          window.location.href = ipRes.paymentUrl;
-          return;
-        } catch (e) {
-          console.error(e);
-          toast.error("Não foi possível iniciar o pagamento InfinitPay", {
-            description: (e as Error).message,
-          });
-          setSubmitStage("idle");
-          setSubmitting(false);
-          return;
-        }
-      }
+            address: {
+              cep: v.cep,
+              number: v.number,
+              complement: v.complement || undefined,
+            },
+            items: [
+              {
+                description: `Pedido ${order.order_number} — J&S Store`,
+                quantity: 1,
+                price: order.total,
+              },
+            ],
+          },
+        });
 
-      // Fallback de segurança (não deve ocorrer: InfinitPay redireciona acima).
-      setSubmitStage("redirecting");
-      clearCart();
-      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
-      toast.success("Pedido criado!", { description: order.order_number });
-      navigate({ to: "/pedido/sucesso/$numero", params: { numero: order.order_number }, search: { email: v.email } });
+        const { error: attachErr } = await supabase.rpc("attach_order_payment", {
+          p_order_id: order.id,
+          p_provider: ipRes.provider,
+          p_payment_id: ipRes.paymentId,
+          p_payment_url: ipRes.paymentUrl,
+        });
+        if (attachErr) {
+          console.error("Falha ao vincular InfinitPay ao pedido:", attachErr.message);
+        }
+
+        setSubmitStage("redirecting");
+        clearCart();
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch {
+          /* ignore */
+        }
+        toast.success("Pedido criado! Redirecionando para InfinitPay…");
+        track.purchase({ value: order.total, transactionId: order.order_number });
+        window.location.href = ipRes.paymentUrl;
+        return;
+      } catch (e) {
+        console.error(e);
+        toast.error("Não foi possível iniciar o pagamento InfinitPay", {
+          description: (e as Error).message,
+        });
+        setSubmitStage("idle");
+        setSubmitting(false);
+        return;
+      }
     } catch (e) {
       console.error(e);
-      toast.error("Não foi possível finalizar o pedido", { description: (e as Error).message });
+      toast.error("Não foi possível finalizar o pedido", {
+        description: (e as Error).message,
+      });
       setSubmitStage("idle");
     } finally {
       setSubmitting(false);
     }
   };
-
 
   const stageMessage =
     submitStage === "creating" ? "Criando seu pedido…"
@@ -351,7 +393,7 @@ function CheckoutPage() {
   const stepIdentDone = name.trim().length >= 2 && /.+@.+\..+/.test(email);
   const stepAddrDone = onlyDigits(cep).length === 8 && !!street && !!number && !!district && !!city && !!stateUf;
   const stepShipDone = !!shippingCode;
-  const stepPayDone = stepShipDone; // sempre há um método selecionado
+  const stepPayDone = stepShipDone;
 
   if (items.length === 0) {
     return (
