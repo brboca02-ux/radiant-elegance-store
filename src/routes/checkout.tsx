@@ -266,46 +266,13 @@ function CheckoutPage() {
     const v = parsed.data;
     setSubmitting(true);
     setSubmitStage("creating");
-    try {
-      const order = await createOrder({
-        customer: {
-          name: v.name,
-          email: v.email,
-          phone: onlyDigits(v.phone ?? "") || undefined,
-          cpf: onlyDigits(v.cpf ?? "") || undefined,
-          user_id: user?.id ?? null,
-        },
-        address: {
-          cep: v.cep,
-          street: v.street, number: v.number, complement: v.complement || undefined,
-          district: v.district, city: v.city, state: v.stateUf,
-        },
-        items: items.map((i) => ({
-          // Extrai o UUID real removendo o prefixo "mock:" adicionado pelo adaptador
-          product_id: i.product.node.id.startsWith("mock:")
-            ? i.product.node.id.slice(5)
-            : i.product.node.id,
-          product_name: i.product.node.title,
-          variant_size: i.selectedOptions.find((o) => /tam|size/i.test(o.name))?.value,
-          variant_color: i.selectedOptions.find((o) => /cor|color/i.test(o.name))?.value,
-          unit_price: parseFloat(i.price.amount),
-          quantity: i.quantity,
-        })),
-        subtotal: +subtotal.toFixed(2),
-        shipping_cost: +shippingCost.toFixed(2),
-        shipping_method: selectedQuote?.name ?? "",
-        discount: +discount.toFixed(2),
-        total: +total.toFixed(2),
-        payment_method: paymentMethod,
+        payment_method: "infinitepay",
         coupon_code: appliedCoupon?.code,
       });
 
       // Pagamento
       setSubmitStage("processing");
-
-      // InfinitPay (único método): redireciona para o checkout deles (Pix ou Cartão em até 12x).
-      if (paymentMethod === "infinitpay") {
-        try {
+              try {
           const ipRes = await createInfinitPayLink({
             data: {
               orderId: order.id,
