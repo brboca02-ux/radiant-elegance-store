@@ -16,6 +16,7 @@ import { createInfinitPayLink } from "@/lib/integrations/infinitpay.functions";
 import { validateCoupon, calculateDiscount, type Coupon } from "@/lib/coupons";
 import { Ticket, X as CloseIcon } from "lucide-react";
 import { upsertAbandonedCart } from "@/lib/api/abandoned";
+import { DevBanner } from "@/components/DevBanner";
 
 const DRAFT_KEY = "md_checkout_draft_v1";
 
@@ -412,6 +413,10 @@ function CheckoutPage() {
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
+         {/* ⚠️ AVISO DE AMBIENTE DE TESTES / DEV */}
+         <div className="mb-6">
+          <DevBanner mode="card" />
+        </div>
         <h1 className="font-display text-3xl md:text-4xl tracking-tight">Finalizar Compra</h1>
         <p className="text-sm text-muted-foreground mt-1">Preencha seus dados para concluir o pedido.</p>
 

@@ -7,6 +7,7 @@ import { SearchBox } from "./SearchBox";
 import { buildWhatsAppLink } from "@/lib/shopify";
 import { track } from "@/lib/analytics";
 import { useAuth } from "@/hooks/useAuth";
+import { DevBanner } from "./DevBanner";
 
 type SearchParam = { c?: string };
 type LinkItem = { label: string; c: string; highlight?: boolean };
