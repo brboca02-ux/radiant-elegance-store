@@ -112,23 +112,16 @@ export function Header() {
     setMobileSearch(false);
   }, [pathname]);
 
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setActiveMenu(null);
-        setOpen(false);
-      }
-    }
-    function onClick(e: MouseEvent) {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) setActiveMenu(null);
-    }
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("mousedown", onClick);
+     useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      // fechar menu/gaveta se necessário
+    };
+    document.addEventListener("mousedown", handleOutside);
     return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("mousedown", handleOutside);
     };
   }, []);
+
 
   return (
     <header className="sticky top-0 z-40 bg-background text-foreground border-b border-gold/20">

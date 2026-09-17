@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPrice } from "@/lib/shopify";
-import { shipping, type ShippingQuote } from "@/lib/integrations/shipping";
+import type { ShippingQuote } from "@/lib/integrations/shipping";
 import type { PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
