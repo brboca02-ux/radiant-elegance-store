@@ -7,12 +7,12 @@ interface DevBannerProps {
 export function DevBanner({ mode = "topbar" }: DevBannerProps) {
   if (mode === "card") {
     return (
-      <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-amber-200">
-        <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" />
+      <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-amber-200">
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
         <div className="text-sm">
           <strong className="font-semibold text-amber-300">Ambiente de Demonstração:</strong>
           <p className="mt-1 text-amber-200/90">
-            Este e-commerce está em fase de desenvolvimento e testes. Nenhum pedido real será processado ou cobrado.
+            Este e-commerce está em fase de desenvolvimento e testes. Nenhum pedido real será cobrado.
           </p>
         </div>
       </div>

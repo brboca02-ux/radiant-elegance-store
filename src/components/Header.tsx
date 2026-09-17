@@ -132,6 +132,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-background text-foreground border-b border-gold/20">
+      <DevBanner mode="topbar" />
       <div className="bg-black text-gold border-b border-gold/10 py-1 md:py-2.5 overflow-hidden relative">
         <div className="flex animate-marquee whitespace-nowrap gap-4 md:gap-0">
           {[1, 2, 3, 4].map((i) => (
