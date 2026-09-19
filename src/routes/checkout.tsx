@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPrice } from "@/lib/shopify";
-import type { ShippingQuote } from "@/lib/integrations/shipping";
+import { StoreShippingProvider as shipping, type ShippingQuote } from "@/lib/integrations/shipping";
 import type { PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
@@ -292,7 +292,7 @@ function CheckoutPage() {
           phone: v.phone,
           cpf: v.cpf,
         },
-        shipping_address: {
+        address: {
           cep: v.cep,
           street: v.street,
           number: v.number,
@@ -302,18 +302,19 @@ function CheckoutPage() {
           state: v.stateUf,
         },
         items: items.map((i) => ({
-          title: i.product.node.title,
-          variant_title: i.selectedOptions.map((o) => o.value).join(" / "),
+          product_id: i.product.node.id ?? null,
+          product_name: i.product.node.title,
+          variant_size: i.selectedOptions.find((o) => /tamanho|size/i.test(o.name))?.value,
+          variant_color: i.selectedOptions.find((o) => /cor|color/i.test(o.name))?.value,
           quantity: i.quantity,
           unit_price: parseFloat(i.price.amount),
-          image_url: i.product.node.images?.edges?.[0]?.node?.url,
         })),
         subtotal,
         shipping_cost: shippingCost,
         discount,
         total,
         shipping_method: selectedQuote?.name || v.shippingCode,
-        payment_method: "infinitepay",
+        payment_method: "infinitpay",
         coupon_code: appliedCoupon?.code,
       });
 
