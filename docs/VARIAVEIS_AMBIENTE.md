@@ -70,3 +70,25 @@ Todas as variáveis abaixo devem ser configuradas no painel da **Lovable Cloud**
    - Nome: `INFINITPAY_INFINITETAG`
    - Valor: `jsestore` *(o teu handle, sem o `$`)*
 5. Redeploy — pronto ✅
+
+---
+
+## Melhor Envio (frete nacional — fora de Joinville)
+
+| Variável | Onde encontrar |
+|---|---|
+| `MELHORENVIO_TOKEN` | melhorenvio.com.br → Configurações → Tokens/Integrações → gerar token (escopo `shipping-calculate`) |
+| `MELHORENVIO_ENV` | `production` ou `sandbox` |
+| `MELHORENVIO_FROM_CEP` | CEP de origem da loja (só dígitos) |
+
+## Uber Direct (entrega expressa em Joinville)
+
+| Variável | Onde encontrar |
+|---|---|
+| `UBER_CLIENT_ID` | developer.uber.com → Direct → sua aplicação |
+| `UBER_CLIENT_SECRET` | Mesma tela ⚠️ secreta |
+| `UBER_CUSTOMER_ID` | Painel Uber Direct → Customer ID |
+| `UBER_PICKUP_ADDRESS` | Endereço completo da loja: rua, nº, bairro, Joinville/SC, CEP |
+
+Sem estas variáveis o checkout continua funcionando: mostra retirada na loja,
+a tabela de faixas de Joinville e uma estimativa de PAC.
