@@ -216,13 +216,15 @@ function CheckoutPage() {
     let cancelled = false;
     setQuotesLoading(true);
     (async () => {
-      const q = await shipping.quote({ 
-        cep: c, 
-        subtotal, 
-        itemsCount, 
-        city, 
+      const q = await shipping.quote({
+        cep: c,
+        subtotal,
+        itemsCount,
+        city,
         state: stateUf,
-        district 
+        district,
+        street,
+        number,
       });
       if (cancelled) return;
       setQuotesLoading(false);
