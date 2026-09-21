@@ -27,7 +27,14 @@ export interface ShippingQuoteInput {
   district?: string;
   street?: string;
   number?: string;
-  items?: Array<{ product_id: string; quantity: number }>;
+  items?: Array<{
+    product_id: string;
+    quantity: number;
+    weight: number;
+    height: number | null;
+    width: number | null;
+    length: number | null;
+  }>;
 }
 
 export interface ShippingProvider {
