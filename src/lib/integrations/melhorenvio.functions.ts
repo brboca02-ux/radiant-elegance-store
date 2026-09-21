@@ -115,9 +115,11 @@ const quoteSchema = z.object({
   itemsCount: z.number().int().min(1).max(100).optional(),
   items: z
     .array(z.object({
-      product_id: z.string().uuid(),
+      product_id: z.string().min(1).max(255),
+      name: z.string().min(1).max(120),
       quantity: z.number().int().min(1).max(50),
-      weight: z.number().min(0),
+      unitary_value: z.number().min(0),
+      weight: z.number().positive().nullable(),
       height: z.number().positive().nullable(),
       width: z.number().positive().nullable(),
       length: z.number().positive().nullable(),
@@ -142,19 +144,28 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
 
     let body: Record<string, unknown>;
 
-    // Preferimos os produtos reais do pedido (peso/dimensões/valor do banco).
-    const items = data.items?.filter((i) => i.product_id) ?? [];
-    let meProducts: MEProduct[] = [];
-    if (items.length) {
-      const qtyById = new Map<string, number>();
-      for (const i of items) qtyById.set(i.product_id, (qtyById.get(i.product_id) ?? 0) + i.quantity);
-      const rows = await loadProducts([...qtyById.keys()]);
-       const converted = toMEProducts(rows, qtyById);
-       if (converted.missing.length) {
-         return { quotes: [], error: `Dados de embalagem ausentes: ${[...new Set(converted.missing)].join(", ")}` };
-       }
-       meProducts = converted.products;
+    const items = data.items ?? [];
+    const missing = items.flatMap((item) => {
+      const fields: string[] = [];
+      if (!item.weight) fields.push(`${item.name}: peso`);
+      if (!item.height) fields.push(`${item.name}: altura`);
+      if (!item.width) fields.push(`${item.name}: largura`);
+      if (!item.length) fields.push(`${item.name}: comprimento`);
+      return fields;
+    });
+    if (missing.length) {
+      return { quotes: [], error: `Dados de embalagem ausentes: ${[...new Set(missing)].join(", ")}` };
     }
+    const meProducts: MEProduct[] = items.map((item) => ({
+      id: item.product_id,
+      name: item.name,
+      quantity: item.quantity,
+      unitary_value: +item.unitary_value.toFixed(2),
+      weight: Number(item.weight),
+      height: Number(item.height),
+      width: Number(item.width),
+      length: Number(item.length),
+    }));
 
     if (meProducts.length) {
       body = {
