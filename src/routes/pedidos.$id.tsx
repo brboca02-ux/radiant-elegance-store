@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
-  Clock, Send, Truck, MessageCircle, Store, Copy, ExternalLink,
+  Clock, Send, Truck, MessageCircle, Store, Copy, ExternalLink, Loader2, RefreshCw, Tag,
 } from "lucide-react";
 import {
   useOrdersStore, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW, statusTone,
@@ -15,6 +15,11 @@ import {
 } from "@/lib/api/orderTracking";
 import { buildCustomerWhatsAppLink, buildOrderPaidMessage, buildStageMessage } from "@/lib/shopify";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  buyShipment, cancelShipment, generateLabel, getShipmentState, quoteOrderShipping,
+  refreshTracking, type MelhorEnvioQuote, type ShipmentState,
+} from "@/lib/integrations/melhorenvio.functions";
 
 export const Route = createFileRoute("/pedidos/$id")({
   head: () => ({
@@ -35,6 +40,11 @@ function OrderDetailPage() {
 
   const [fulfillment, setFulfillment] = useState<FulfillmentStage | null>(null);
   const [savingStage, setSavingStage] = useState<FulfillmentStage | null>(null);
+  const [shipment, setShipment] = useState<ShipmentState | null>(null);
+  const [shippingQuotes, setShippingQuotes] = useState<MelhorEnvioQuote[]>([]);
+  const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [shippingAction, setShippingAction] = useState<string | null>(null);
+  const [shippingMissing, setShippingMissing] = useState<string[]>([]);
 
   // Carrega fulfillment atual do banco (o store local não guarda essa coluna).
   useEffect(() => {
@@ -45,6 +55,15 @@ function OrderDetailPage() {
       .catch(() => { /* ignore */ });
     return () => { cancelled = true; };
   }, [order?.number, order?.customer?.email]);
+
+  useEffect(() => {
+    if (!order?.id) return;
+    let cancelled = false;
+    getShipmentState({ data: { orderId: order.id } })
+      .then((state) => { if (!cancelled) setShipment(state); })
+      .catch(() => { /* painel continua disponível mesmo se o frete estiver indisponível */ });
+    return () => { cancelled = true; };
+  }, [order?.id]);
 
   const paid = order?.payment_status === "pago";
 
@@ -125,6 +144,40 @@ function OrderDetailPage() {
       toast.success("Link de retirada copiado!");
     } catch {
       toast.error("Não foi possível copiar o link.");
+    }
+  };
+
+  const runShippingAction = async (name: string, action: () => Promise<ShipmentState>) => {
+    setShippingAction(name);
+    try {
+      const result = await action();
+      setShipment(result);
+      setShippingMissing(result.missingData ?? []);
+      if (result.ok) toast.success(result.message ?? "Operação concluída.");
+      else toast.error(result.message ?? "Não foi possível concluir a operação.");
+      void hydrate();
+    } catch (error) {
+      toast.error("Falha no Melhor Envio", { description: error instanceof Error ? error.message : String(error) });
+    } finally {
+      setShippingAction(null);
+    }
+  };
+
+  const handleQuoteShipping = async () => {
+    if (!order) return;
+    setShippingAction("quote");
+    try {
+      const result = await quoteOrderShipping({ data: { orderId: order.id } });
+      setShippingQuotes(result.quotes);
+      setShippingMissing(result.missingData ?? []);
+      setSelectedService(result.quotes[0]?.serviceId ?? null);
+      if (result.error) toast.error(result.error);
+      else if (result.quotes.length) toast.success("Cotações atualizadas.");
+      else toast.error("Nenhuma opção de frete foi encontrada.");
+    } catch (error) {
+      toast.error("Falha ao cotar frete", { description: error instanceof Error ? error.message : String(error) });
+    } finally {
+      setShippingAction(null);
     }
   };
 
@@ -352,6 +405,96 @@ function OrderDetailPage() {
                   Clique no ícone verde para atualizar a etapa <strong>e</strong> abrir o WhatsApp já com a mensagem pronta.
                 </p>
               )}
+            </Card>
+
+            <Card title="Melhor Envio" icon={<Tag className="h-4 w-4" />}>
+              <div className="space-y-3 text-xs">
+                {shipment?.melhorEnvioOrderId ? (
+                  <div className="space-y-1 rounded-md border border-border bg-muted/40 p-3">
+                    <p><strong>Serviço:</strong> {shipment.serviceName || "—"}</p>
+                    <p><strong>Valor:</strong> {shipment.shippingPrice != null ? fmtBRL(shipment.shippingPrice) : "—"}</p>
+                    <p><strong>Status:</strong> {shipment.shippingStatus || "—"}</p>
+                    <p><strong>Rastreio:</strong> {shipment.trackingCode || "Aguardando postagem"}</p>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">Cote e compre o frete após a confirmação do pagamento.</p>
+                )}
+
+                {shippingMissing.length > 0 && (
+                  <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-destructive">
+                    <p className="font-medium">Dados obrigatórios pendentes:</p>
+                    <ul className="mt-1 list-disc pl-4">
+                      {shippingMissing.map((item) => <li key={item}>{item}</li>)}
+                    </ul>
+                  </div>
+                )}
+
+                {!shipment?.melhorEnvioOrderId && (
+                  <>
+                    <Button className="w-full" variant="outline" size="sm" onClick={handleQuoteShipping} disabled={shippingAction !== null}>
+                      {shippingAction === "quote" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                      Cotar Melhor Envio
+                    </Button>
+                    {shippingQuotes.length > 0 && (
+                      <div className="space-y-2">
+                        {shippingQuotes.map((quote) => (
+                          <label key={quote.serviceId} className="flex cursor-pointer items-start gap-2 rounded-md border border-border p-3">
+                            <input type="radio" name="me-service" className="mt-0.5" checked={selectedService === quote.serviceId} onChange={() => setSelectedService(quote.serviceId)} />
+                            <span className="flex-1">
+                              <strong className="block">{quote.name}</strong>
+                              <span className="text-muted-foreground">{fmtBRL(quote.price)} · até {quote.days} dias úteis</span>
+                            </span>
+                          </label>
+                        ))}
+                        <Button
+                          className="w-full"
+                          size="sm"
+                          disabled={!paid || !selectedService || shippingAction !== null}
+                          onClick={() => {
+                            if (!selectedService || !confirm("Comprar este frete no Melhor Envio? O valor será debitado da carteira.")) return;
+                            void runShippingAction("buy", () => buyShipment({ data: { orderId: order.id, serviceId: selectedService } }));
+                          }}
+                        >
+                          {shippingAction === "buy" && <Loader2 className="h-4 w-4 animate-spin" />}
+                          Comprar frete
+                        </Button>
+                        {!paid && <p className="text-muted-foreground">Confirme o pagamento para liberar a compra.</p>}
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {shipment?.melhorEnvioOrderId && shipment.shippingStatus !== "canceled" && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button variant="outline" size="sm" disabled={shippingAction !== null} onClick={() => void runShippingAction("label", () => generateLabel({ data: { orderId: order.id } }))}>
+                      {shippingAction === "label" && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Gerar etiqueta
+                    </Button>
+                    <Button variant="outline" size="sm" disabled={shippingAction !== null} onClick={() => void runShippingAction("tracking", () => refreshTracking({ data: { orderId: order.id } }))}>
+                      {shippingAction === "tracking" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                      Rastrear
+                    </Button>
+                    {shipment.labelUrl && (
+                      <Button asChild size="sm" className="col-span-2">
+                        <a href={shipment.labelUrl} target="_blank" rel="noopener noreferrer"><Printer className="h-4 w-4" /> Abrir etiqueta</a>
+                      </Button>
+                    )}
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="col-span-2"
+                      disabled={shippingAction !== null}
+                      onClick={() => {
+                        if (!confirm("Solicitar cancelamento deste envio no Melhor Envio?")) return;
+                        void runShippingAction("cancel", () => cancelShipment({ data: { orderId: order.id, reason: "Pedido cancelado pela loja J&S Store." } }));
+                      }}
+                    >
+                      {shippingAction === "cancel" && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Cancelar envio
+                    </Button>
+                  </div>
+                )}
+              </div>
             </Card>
 
             {/* Atalhos 1-clique para etapas de retirada/entrega */}

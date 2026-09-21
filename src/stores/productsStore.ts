@@ -33,6 +33,7 @@ export interface Product {
   price: number; sale_price: number | null;
   stock: number; reserved_stock: number; minimum_stock: number;
   track_stock: boolean; weight: number;
+  height_cm: number | null; width_cm: number | null; length_cm: number | null;
   status: ProductStatus;
   showcase: boolean;
   meta_title: string; meta_description: string;
@@ -119,7 +120,9 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
       brand: orig.brand, sku: (orig.sku || "") + "-COPY",
       price: orig.price, sale_price: orig.sale_price, stock: orig.stock,
       reserved_stock: orig.reserved_stock, minimum_stock: orig.minimum_stock,
-      track_stock: orig.track_stock, weight: orig.weight, status: orig.status,
+       track_stock: orig.track_stock, weight: orig.weight,
+       height_cm: orig.height_cm, width_cm: orig.width_cm, length_cm: orig.length_cm,
+       status: orig.status,
       showcase: orig.showcase,
       meta_title: orig.meta_title, meta_description: orig.meta_description,
       images: orig.images, variants: orig.variants,
@@ -166,7 +169,8 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
 export const emptyProduct = (): Omit<Product, "id" | "store_id" | "created_at"> => ({
   name: "", slug: "", description: "", category_id: "feminino", brand: "J&S Store",
   sku: "", price: 0, sale_price: null, stock: 0, reserved_stock: 0,
-  minimum_stock: 5, track_stock: true, weight: 0, status: "ativo",
+   minimum_stock: 5, track_stock: true, weight: 0,
+   height_cm: null, width_cm: null, length_cm: null, status: "ativo",
   showcase: false,
   meta_title: "", meta_description: "", images: [], variants: [],
 });

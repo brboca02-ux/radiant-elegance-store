@@ -1,6 +1,12 @@
+<<<<<<< HEAD
+=======
+// Orquestrador de frete: Uber Direct (Local Joinville) + Melhor Envio (Nacional)
+>>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 import { quoteMelhorEnvio } from "./melhorenvio.functions";
 import { quoteUberDirect } from "./uberdirect.functions";
 import type { PackageItemInput } from "./packaging";
+
+export const FREE_SHIPPING_THRESHOLD = 299;
 
 export interface ShippingQuote {
   code: string;
@@ -19,10 +25,13 @@ export interface ShippingQuoteInput {
   city?: string;
   state?: string;
   district?: string;
+  street?: string;
+  number?: string;
+  items?: Array<{ product_id: string; quantity: number }>;
 }
 
 
-// Faixas de entrega rápida em Joinville via Moto/Uber
+// Faixas de entrega rápida em Joinville via Moto/Uber (fallback quando a API falha)
 type JoinvilleZone = { price: number; label: string; districts: string[] };
 
 const JOINVILLE_ZONES: JoinvilleZone[] = [
@@ -80,7 +89,11 @@ function getUberRate(district?: string): number {
 
 export const StoreShippingProvider: ShippingProvider = {
   name: "js-store-orchestrator",
+<<<<<<< HEAD
   async quote({ cep, subtotal, itemsCount, items, city, district }) {
+=======
+  async quote({ cep, subtotal, itemsCount, city, state, district, street, number, items }) {
+>>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
     const cleanCep = cep.replace(/\D/g, "");
     const isJoinville =
       (city && cleanText(city).includes("JOINVILLE")) ||
@@ -91,7 +104,7 @@ export const StoreShippingProvider: ShippingProvider = {
 
     const quotes: ShippingQuote[] = [];
 
-    // 1. RETIRADA NA LOJA (Sempre presente)
+    // 1. RETIRADA NA LOJA (sempre presente)
     quotes.push({
       code: "retirada",
       name: "Retirada na loja (Joinville/SC)",
@@ -100,23 +113,21 @@ export const StoreShippingProvider: ShippingProvider = {
       description: "Pronto para retirada em até 24h úteis.",
     });
 
-    // 2. ENTREGA EXPRESSA LOCAL VIA UBER DIRECT (Sem frete grátis)
+    // 2. ENTREGA EXPRESSA LOCAL VIA UBER DIRECT (sem frete grátis)
     if (isJoinville) {
-      let uberPrice = getUberRate(district); // Preço base fallback
+      let uberPrice = getUberRate(district); // fallback por faixa de bairro
+      let eta: number | undefined;
 
       try {
-        const uberQuote = await quoteUberDirect({
-          cep: cleanCep,
-          city: city || "Joinville",
-          district,
-          subtotal,
+        const uber = await quoteUberDirect({
+          data: { cep: cleanCep, city: city || "Joinville", state: state || "SC", district, street, number, subtotal },
         });
-
-        if (uberQuote && typeof uberQuote.fee === "number") {
-          uberPrice = uberQuote.fee;
+        if (uber && !uber.error && uber.fee > 0) {
+          uberPrice = uber.fee;
+          eta = uber.estimatedMinutes;
         }
       } catch (e) {
-        console.warn("Usando tabela fixa de zonas para Uber:", e);
+        console.warn("[frete] Uber Direct indisponível, usando tabela de faixas:", e);
       }
 
       quotes.push({
@@ -124,13 +135,19 @@ export const StoreShippingProvider: ShippingProvider = {
         name: "Uber Flash / Entrega Expressa",
         price: uberPrice,
         days: 0,
-        description: "Entrega expressa no mesmo dia via motorista parceiro Uber",
+        description: eta
+          ? `Entrega hoje via motorista parceiro Uber (~${eta} min)`
+          : "Entrega expressa no mesmo dia via motorista parceiro Uber",
         carrier: "Uber Direct",
       });
     }
 
-    // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (Sem frete grátis)
+    // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (frete grátis acima do limite)
+    const freeNational = subtotal >= FREE_SHIPPING_THRESHOLD;
+    let nationalAdded = false;
+
     try {
+<<<<<<< HEAD
       // Chama o serverFn com a propriedade 'data' conforme o TanStack Start exige
       const res = await quoteMelhorEnvio({
         data: {
@@ -168,6 +185,32 @@ export const StoreShippingProvider: ShippingProvider = {
           carrier: "Correios",
         });
       }
+=======
+      const me = await quoteMelhorEnvio({
+        data: {
+          toCep: cleanCep,
+          itemsCount: Math.max(1, itemsCount),
+          insuranceValue: Math.max(0, subtotal),
+          items,
+        },
+      });
+
+      for (const q of me?.quotes ?? []) {
+        nationalAdded = true;
+        quotes.push({
+          code: q.code,
+          name: q.name,
+          price: freeNational ? 0 : q.price,
+          days: q.days,
+          description: freeNational ? "Frete grátis acima de R$ 299" : undefined,
+          carrier: q.carrier || "Melhor Envio",
+        });
+      }
+    } catch (err) {
+      console.warn("[frete] Melhor Envio offline ou não configurado:", err);
+    }
+
+>>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
     return quotes;
   },
 };

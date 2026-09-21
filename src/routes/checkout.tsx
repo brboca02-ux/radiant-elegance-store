@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPrice } from "@/lib/shopify";
-import type { ShippingQuote } from "@/lib/integrations/shipping";
+import { StoreShippingProvider as shipping, type ShippingQuote } from "@/lib/integrations/shipping";
 import type { PaymentMethod } from "@/lib/integrations/payment";
 import { lookupCep, formatCep } from "@/lib/integrations/viacep";
 import { createOrder } from "@/lib/api/supaOrders";
@@ -125,6 +125,12 @@ function CheckoutPage() {
     [items],
   );
   const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
+  const shippingItems = useMemo(
+    () => items
+      .map((item) => ({ product_id: item.product.node.id, quantity: item.quantity }))
+      .filter((item) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.product_id)),
+    [items],
+  );
   const selectedQuote = quotes.find((q) => q.code === shippingCode);
   const shippingCost = selectedQuote?.price ?? 0;
   const discount = appliedCoupon ? calculateDiscount(subtotal, appliedCoupon) : 0;
@@ -216,6 +222,7 @@ function CheckoutPage() {
     let cancelled = false;
     setQuotesLoading(true);
     (async () => {
+<<<<<<< HEAD
       const q = await shipping.quote({ 
         cep: c, 
         subtotal, 
@@ -231,8 +238,18 @@ function CheckoutPage() {
         length_cm: (i.product as any)?.node?.length_cm ?? null,
       })),
         city, 
+=======
+      const q = await shipping.quote({
+        cep: c,
+        subtotal,
+        itemsCount,
+        city,
+>>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
         state: stateUf,
-        district 
+        district,
+        street,
+        number,
+        items: shippingItems,
       });
       if (cancelled) return;
       setQuotesLoading(false);
@@ -240,7 +257,7 @@ function CheckoutPage() {
       if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
     })();
     return () => { cancelled = true; };
-  }, [cep, city, district, stateUf, subtotal, itemsCount]); // eslint-disable-line
+  }, [cep, city, district, stateUf, subtotal, itemsCount, shippingItems]); // eslint-disable-line
 
   const onCepBlur = async () => {
     // fallback caso o efeito não tenha rodado (ex.: colar sem disparar change)
@@ -300,7 +317,7 @@ function CheckoutPage() {
           phone: v.phone,
           cpf: v.cpf,
         },
-        shipping_address: {
+        address: {
           cep: v.cep,
           street: v.street,
           number: v.number,
@@ -310,18 +327,19 @@ function CheckoutPage() {
           state: v.stateUf,
         },
         items: items.map((i) => ({
-          title: i.product.node.title,
-          variant_title: i.selectedOptions.map((o) => o.value).join(" / "),
+          product_id: i.product.node.id ?? null,
+          product_name: i.product.node.title,
+          variant_size: i.selectedOptions.find((o) => /tamanho|size/i.test(o.name))?.value,
+          variant_color: i.selectedOptions.find((o) => /cor|color/i.test(o.name))?.value,
           quantity: i.quantity,
           unit_price: parseFloat(i.price.amount),
-          image_url: i.product.node.images?.edges?.[0]?.node?.url,
         })),
         subtotal,
         shipping_cost: shippingCost,
         discount,
         total,
         shipping_method: selectedQuote?.name || v.shippingCode,
-        payment_method: "infinitepay",
+        payment_method: "infinitpay",
         coupon_code: appliedCoupon?.code,
       });
 
@@ -521,7 +539,7 @@ function CheckoutPage() {
             <Section icon={<Truck className="h-4 w-4" />} title="Frete">
               {onlyDigits(cep).length !== 8 ? (
                 <p className="text-sm text-muted-foreground">Informe o CEP para ver as opções de entrega.</p>
-              ) : quotesLoading || quotes.length === 0 ? (
+              ) : quotesLoading ? (
                 <div className="space-y-2" aria-live="polite" aria-busy="true">
                   <p className="text-xs text-muted-foreground flex items-center gap-2">
                     <Loader2 className="h-3 w-3 animate-spin" /> Calculando opções de entrega…
@@ -539,6 +557,10 @@ function CheckoutPage() {
                     </div>
                   ))}
                 </div>
+              ) : quotes.length === 0 ? (
+                <p className="rounded-md border border-border p-3 text-sm text-muted-foreground">
+                  Não foi possível calcular o frete para este CEP. Confira o endereço ou fale com a loja.
+                </p>
               ) : (
                 <div className="space-y-2">
                   {quotes.map((q) => (
