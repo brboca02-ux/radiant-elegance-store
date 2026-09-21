@@ -321,6 +321,10 @@ export type Database = {
           fulfillment_history: Json
           fulfillment_status: string | null
           id: string
+          label_generated_at: string | null
+          label_url: string | null
+          melhor_envio_order_id: string | null
+          melhor_envio_shipment_id: string | null
           notes: string | null
           order_number: string
           paid_at: string | null
@@ -330,10 +334,15 @@ export type Database = {
           payment_url: string | null
           shipping_cost: number
           shipping_method: string | null
+          shipping_price: number | null
+          shipping_service_id: number | null
+          shipping_service_name: string | null
+          shipping_status: string | null
           status: string
           subtotal: number
           total: number
           tracking_code: string | null
+          tracking_updated_at: string | null
           updated_at: string
         }
         Insert: {
@@ -344,6 +353,10 @@ export type Database = {
           fulfillment_history?: Json
           fulfillment_status?: string | null
           id?: string
+          label_generated_at?: string | null
+          label_url?: string | null
+          melhor_envio_order_id?: string | null
+          melhor_envio_shipment_id?: string | null
           notes?: string | null
           order_number: string
           paid_at?: string | null
@@ -353,10 +366,15 @@ export type Database = {
           payment_url?: string | null
           shipping_cost?: number
           shipping_method?: string | null
+          shipping_price?: number | null
+          shipping_service_id?: number | null
+          shipping_service_name?: string | null
+          shipping_status?: string | null
           status?: string
           subtotal?: number
           total?: number
           tracking_code?: string | null
+          tracking_updated_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -367,6 +385,10 @@ export type Database = {
           fulfillment_history?: Json
           fulfillment_status?: string | null
           id?: string
+          label_generated_at?: string | null
+          label_url?: string | null
+          melhor_envio_order_id?: string | null
+          melhor_envio_shipment_id?: string | null
           notes?: string | null
           order_number?: string
           paid_at?: string | null
@@ -376,10 +398,15 @@ export type Database = {
           payment_url?: string | null
           shipping_cost?: number
           shipping_method?: string | null
+          shipping_price?: number | null
+          shipping_service_id?: number | null
+          shipping_service_name?: string | null
+          shipping_status?: string | null
           status?: string
           subtotal?: number
           total?: number
           tracking_code?: string | null
+          tracking_updated_at?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -478,7 +505,9 @@ export type Database = {
           category_id: string
           created_at: string
           description: string
+          height_cm: number | null
           id: string
+          length_cm: number | null
           meta_description: string
           meta_title: string
           minimum_stock: number
@@ -494,13 +523,16 @@ export type Database = {
           track_stock: boolean
           updated_at: string
           weight: number
+          width_cm: number | null
         }
         Insert: {
           brand?: string
           category_id: string
           created_at?: string
           description?: string
+          height_cm?: number | null
           id?: string
+          length_cm?: number | null
           meta_description?: string
           meta_title?: string
           minimum_stock?: number
@@ -516,13 +548,16 @@ export type Database = {
           track_stock?: boolean
           updated_at?: string
           weight?: number
+          width_cm?: number | null
         }
         Update: {
           brand?: string
           category_id?: string
           created_at?: string
           description?: string
+          height_cm?: number | null
           id?: string
+          length_cm?: number | null
           meta_description?: string
           meta_title?: string
           minimum_stock?: number
@@ -538,6 +573,7 @@ export type Database = {
           track_stock?: boolean
           updated_at?: string
           weight?: number
+          width_cm?: number | null
         }
         Relationships: []
       }
