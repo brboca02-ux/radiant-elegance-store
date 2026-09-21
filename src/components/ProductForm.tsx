@@ -28,7 +28,9 @@ export function ProductForm({ productId }: { productId?: string }) {
           reserved_stock: existing.reserved_stock ?? 0,
           minimum_stock: existing.minimum_stock ?? 5,
           track_stock: existing.track_stock ?? true,
-          weight: existing.weight, status: existing.status,
+          weight: existing.weight,
+          height_cm: existing.height_cm, width_cm: existing.width_cm, length_cm: existing.length_cm,
+          status: existing.status,
           showcase: existing.showcase ?? false,
           meta_title: existing.meta_title, meta_description: existing.meta_description,
           images: existing.images, variants: existing.variants,
@@ -441,9 +443,21 @@ export function ProductForm({ productId }: { productId?: string }) {
                   <input type="number" value={data.stock} onChange={(e) => set("stock", Number(e.target.value))} className={input} />
                 </Field>
                 <Field label="Peso (kg)">
-                  <input type="number" step="0.01" value={data.weight} onChange={(e) => set("weight", Number(e.target.value))} className={input} />
+                  <input type="number" min="0" step="0.001" value={data.weight || ""} onChange={(e) => set("weight", Number(e.target.value))} className={input} />
                 </Field>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Field label="Altura da embalagem (cm)">
+                  <input type="number" min="2" step="0.1" value={data.height_cm ?? ""} onChange={(e) => set("height_cm", e.target.value ? Number(e.target.value) : null)} className={input} />
+                </Field>
+                <Field label="Largura da embalagem (cm)">
+                  <input type="number" min="11" step="0.1" value={data.width_cm ?? ""} onChange={(e) => set("width_cm", e.target.value ? Number(e.target.value) : null)} className={input} />
+                </Field>
+                <Field label="Comprimento da embalagem (cm)">
+                  <input type="number" min="16" step="0.1" value={data.length_cm ?? ""} onChange={(e) => set("length_cm", e.target.value ? Number(e.target.value) : null)} className={input} />
+                </Field>
+              </div>
+              <p className="text-xs text-muted-foreground">Peso e medidas da embalagem são obrigatórios para calcular o Melhor Envio.</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 border-t border-border">
                 <Field label="Estoque mínimo">
                   <input type="number" min={0} value={data.minimum_stock}

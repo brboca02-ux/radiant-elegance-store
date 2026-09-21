@@ -19,6 +19,9 @@ type DbProduct = {
   minimum_stock: number;
   track_stock: boolean;
   weight: number | string;
+  height_cm: number | string | null;
+  width_cm: number | string | null;
+  length_cm: number | string | null;
   status: ProductStatus;
   showcase: boolean;
   meta_title: string | null;
@@ -55,6 +58,9 @@ function rowToProduct(r: DbProduct): Product {
     minimum_stock: r.minimum_stock,
     track_stock: r.track_stock,
     weight: num(r.weight),
+    height_cm: r.height_cm == null ? null : num(r.height_cm),
+    width_cm: r.width_cm == null ? null : num(r.width_cm),
+    length_cm: r.length_cm == null ? null : num(r.length_cm),
     status: r.status,
     showcase: r.showcase,
     meta_title: r.meta_title ?? "",
@@ -65,7 +71,7 @@ function rowToProduct(r: DbProduct): Product {
 }
 
 const SELECT =
-  "id, slug, name, description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, status, showcase, meta_title, meta_description, created_at, product_images(id,url,position,is_primary), product_variants(id,size,color,color_hex,stock)";
+  "id, slug, name, description, category_id, brand, sku, price, sale_price, stock, reserved_stock, minimum_stock, track_stock, weight, height_cm, width_cm, length_cm, status, showcase, meta_title, meta_description, created_at, product_images(id,url,position,is_primary), product_variants(id,size,color,color_hex,stock)";
 
 // ----- Reads -------------------------------------------------------------
 export async function listAllProducts(): Promise<Product[]> {
@@ -98,7 +104,9 @@ export async function createProduct(p: ProductInput): Promise<Product> {
     category_id: p.category_id, brand: p.brand, sku: p.sku,
     price: p.price, sale_price: p.sale_price, stock: p.stock,
     reserved_stock: p.reserved_stock, minimum_stock: p.minimum_stock,
-    track_stock: p.track_stock, weight: p.weight, status: p.status,
+    track_stock: p.track_stock, weight: p.weight,
+    height_cm: p.height_cm, width_cm: p.width_cm, length_cm: p.length_cm,
+    status: p.status,
     showcase: p.showcase,
     meta_title: p.meta_title, meta_description: p.meta_description,
   }).select("id").single();
@@ -126,7 +134,7 @@ export async function updateProduct(id: string, patch: Partial<ProductInput>): P
 
 const PRODUCT_FIELDS = [
     "slug","name","description","category_id","brand","sku","price","sale_price",
-    "stock","reserved_stock","minimum_stock","track_stock","weight","status",
+    "stock","reserved_stock","minimum_stock","track_stock","weight","height_cm","width_cm","length_cm","status",
     "showcase",
     "meta_title","meta_description",
 ] as const;

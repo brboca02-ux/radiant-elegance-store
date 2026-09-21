@@ -125,6 +125,12 @@ function CheckoutPage() {
     [items],
   );
   const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
+  const shippingItems = useMemo(
+    () => items
+      .map((item) => ({ product_id: item.product.node.id, quantity: item.quantity }))
+      .filter((item) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.product_id)),
+    [items],
+  );
   const selectedQuote = quotes.find((q) => q.code === shippingCode);
   const shippingCost = selectedQuote?.price ?? 0;
   const discount = appliedCoupon ? calculateDiscount(subtotal, appliedCoupon) : 0;
@@ -225,6 +231,7 @@ function CheckoutPage() {
         district,
         street,
         number,
+        items: shippingItems,
       });
       if (cancelled) return;
       setQuotesLoading(false);
@@ -232,7 +239,7 @@ function CheckoutPage() {
       if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
     })();
     return () => { cancelled = true; };
-  }, [cep, city, district, stateUf, subtotal, itemsCount]); // eslint-disable-line
+  }, [cep, city, district, stateUf, subtotal, itemsCount, shippingItems]); // eslint-disable-line
 
   const onCepBlur = async () => {
     // fallback caso o efeito não tenha rodado (ex.: colar sem disparar change)
@@ -514,7 +521,7 @@ function CheckoutPage() {
             <Section icon={<Truck className="h-4 w-4" />} title="Frete">
               {onlyDigits(cep).length !== 8 ? (
                 <p className="text-sm text-muted-foreground">Informe o CEP para ver as opções de entrega.</p>
-              ) : quotesLoading || quotes.length === 0 ? (
+              ) : quotesLoading ? (
                 <div className="space-y-2" aria-live="polite" aria-busy="true">
                   <p className="text-xs text-muted-foreground flex items-center gap-2">
                     <Loader2 className="h-3 w-3 animate-spin" /> Calculando opções de entrega…
@@ -532,6 +539,10 @@ function CheckoutPage() {
                     </div>
                   ))}
                 </div>
+              ) : quotes.length === 0 ? (
+                <p className="rounded-md border border-border p-3 text-sm text-muted-foreground">
+                  Não foi possível calcular o frete para este CEP. Confira o endereço ou fale com a loja.
+                </p>
               ) : (
                 <div className="space-y-2">
                   {quotes.map((q) => (
