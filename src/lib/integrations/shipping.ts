@@ -13,6 +13,11 @@ export interface ShippingQuote {
   carrier?: string;
 }
 
+export interface ShippingQuoteResult {
+  quotes: ShippingQuote[];
+  error?: string;
+}
+
 export interface ShippingQuoteInput {
   cep: string;
   subtotal: number;
@@ -27,7 +32,15 @@ export interface ShippingQuoteInput {
 
 export interface ShippingProvider {
   name: string;
-  quote(input: ShippingQuoteInput): Promise<ShippingQuote[]>;
+  quote(input: ShippingQuoteInput): Promise<ShippingQuoteResult>;
+}
+
+function shippingErrorMessage(error?: string): string | undefined {
+  if (!error) return undefined;
+  if (error === "not_configured") return "A cotação nacional está temporariamente indisponível.";
+  if (error === "upstream_error") return "O Melhor Envio não respondeu à cotação. Tente novamente em instantes.";
+  if (error === "network_error") return "Não foi possível conectar ao Melhor Envio. Tente novamente.";
+  return error;
 }
 
 // Faixas de entrega rápida em Joinville via Moto/Uber (fallback quando a API falha)
@@ -139,7 +152,7 @@ export const StoreShippingProvider: ShippingProvider = {
 
     // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (frete grátis acima do limite)
     const freeNational = subtotal >= FREE_SHIPPING_THRESHOLD;
-    let nationalAdded = false;
+    let nationalError: string | undefined;
 
     try {
       const me = await quoteMelhorEnvio({
@@ -151,8 +164,9 @@ export const StoreShippingProvider: ShippingProvider = {
         },
       });
 
+      nationalError = shippingErrorMessage(me?.error);
+
       for (const q of me?.quotes ?? []) {
-        nationalAdded = true;
         quotes.push({
           code: q.code,
           name: q.name,
@@ -164,7 +178,8 @@ export const StoreShippingProvider: ShippingProvider = {
       }
     } catch (err) {
       console.warn("[frete] Melhor Envio offline ou não configurado:", err);
+      nationalError = "Não foi possível calcular o frete nacional. Tente novamente.";
     }
-    return quotes;
+    return { quotes, error: nationalError };
   },
 };

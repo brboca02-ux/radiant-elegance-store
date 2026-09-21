@@ -90,6 +90,7 @@ function CheckoutPage() {
   // frete e pagamento
   const [quotes, setQuotes] = useState<ShippingQuote[]>([]);
   const [quotesLoading, setQuotesLoading] = useState(false);
+  const [shippingError, setShippingError] = useState<string | null>(null);
   const [shippingCode, setShippingCode] = useState<string>("");
   // Pagamento exclusivo via InfinitPay.
   const paymentMethod: PaymentMethod = "infinitpay";
@@ -218,25 +219,42 @@ function CheckoutPage() {
   // cotação de frete sempre que CEP/cidade/bairro/subtotal mudam
   useEffect(() => {
     const c = onlyDigits(cep);
-    if (c.length !== 8) { setQuotes([]); setShippingCode(""); setQuotesLoading(false); return; }
+    if (c.length !== 8) {
+      setQuotes([]);
+      setShippingCode("");
+      setShippingError(null);
+      setQuotesLoading(false);
+      return;
+    }
     let cancelled = false;
     setQuotesLoading(true);
+    setShippingError(null);
     (async () => {
-      const q = await shipping.quote({
-        cep: c,
-        subtotal,
-        itemsCount,
-        city,
-        state: stateUf,
-        district,
-        street,
-        number,
-        items: shippingItems,
-      });
-      if (cancelled) return;
-      setQuotesLoading(false);
-      setQuotes(q);
-      if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
+      try {
+        const result = await shipping.quote({
+          cep: c,
+          subtotal,
+          itemsCount,
+          city,
+          state: stateUf,
+          district,
+          street,
+          number,
+          items: shippingItems,
+        });
+        if (cancelled) return;
+        setQuotes(result.quotes);
+        setShippingError(result.error ?? null);
+        if (result.quotes.length && !result.quotes.find((x) => x.code === shippingCode)) {
+          setShippingCode(result.quotes[0].code);
+        }
+      } catch {
+        if (cancelled) return;
+        setQuotes([]);
+        setShippingError("Não foi possível calcular o frete. Tente novamente.");
+      } finally {
+        if (!cancelled) setQuotesLoading(false);
+      }
     })();
     return () => { cancelled = true; };
   }, [cep, city, district, stateUf, subtotal, itemsCount, shippingItems]); // eslint-disable-line
@@ -541,10 +559,11 @@ function CheckoutPage() {
                 </div>
               ) : quotes.length === 0 ? (
                 <p className="rounded-md border border-border p-3 text-sm text-muted-foreground">
-                  Não foi possível calcular o frete para este CEP. Confira o endereço ou fale com a loja.
+                  {shippingError ?? "Não foi possível calcular o frete para este CEP. Confira o endereço ou fale com a loja."}
                 </p>
               ) : (
                 <div className="space-y-2">
+                  {shippingError ? <p className="text-sm text-muted-foreground">{shippingError}</p> : null}
                   {quotes.map((q) => (
                     <label key={q.code} className={`flex items-center justify-between border rounded-md p-3 cursor-pointer transition ${shippingCode === q.code ? "border-primary bg-primary/5" : "border-border hover:border-foreground/40"}`}>
                       <div className="flex items-center gap-3">
