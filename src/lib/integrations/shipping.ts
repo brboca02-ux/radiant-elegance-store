@@ -22,6 +22,7 @@ export interface ShippingQuoteInput {
   district?: string;
   street?: string;
   number?: string;
+  items?: Array<{ product_id: string; quantity: number }>;
 }
 
 export interface ShippingProvider {
@@ -87,7 +88,7 @@ function getUberRate(district?: string): number {
 
 export const StoreShippingProvider: ShippingProvider = {
   name: "js-store-orchestrator",
-  async quote({ cep, subtotal, itemsCount, city, state, district, street, number }) {
+  async quote({ cep, subtotal, itemsCount, city, state, district, street, number, items }) {
     const cleanCep = cep.replace(/\D/g, "");
     const isJoinville =
       (city && cleanText(city).includes("JOINVILLE")) ||
@@ -146,6 +147,7 @@ export const StoreShippingProvider: ShippingProvider = {
           toCep: cleanCep,
           itemsCount: Math.max(1, itemsCount),
           insuranceValue: Math.max(0, subtotal),
+          items,
         },
       });
 

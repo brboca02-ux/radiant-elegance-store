@@ -54,9 +54,8 @@ async function me<T>(path: string, init: { method: string; body?: unknown }): Pr
 }
 
 // ---------------------------------------------------------------- dimensões
-/** Mínimos aceitos pelo Melhor Envio (cm/kg) — usados quando o produto não tem medida cadastrada. */
+/** Mínimos aceitos pelo Melhor Envio (cm/kg). */
 const MIN_DIM = { height: 2, width: 11, length: 16 };
-const FALLBACK = { height: 5, width: 25, length: 30, weight: 0.4 };
 
 type ProductRow = {
   id: string;
@@ -85,7 +84,7 @@ function toMEProducts(
 ): { products: MEProduct[]; missing: string[] } {
   const missing: string[] = [];
   const products = rows.map((p) => {
-    const weight = Number(p.weight) > 0 ? Number(p.weight) : FALLBACK.weight;
+    const weight = Number(p.weight);
     if (!(Number(p.weight) > 0)) missing.push(`${p.name}: peso`);
     if (!p.height_cm || !p.width_cm || !p.length_cm) missing.push(`${p.name}: dimensões`);
     return {
@@ -94,9 +93,9 @@ function toMEProducts(
       quantity: qtyById.get(p.id) ?? 1,
       unitary_value: +Number(p.price ?? 0).toFixed(2),
       weight: +weight.toFixed(3),
-      height: Math.max(MIN_DIM.height, Number(p.height_cm) || FALLBACK.height),
-      width: Math.max(MIN_DIM.width, Number(p.width_cm) || FALLBACK.width),
-      length: Math.max(MIN_DIM.length, Number(p.length_cm) || FALLBACK.length),
+      height: Number(p.height_cm),
+      width: Number(p.width_cm),
+      length: Number(p.length_cm),
     };
   });
   return { products, missing };
@@ -145,7 +144,11 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
       const qtyById = new Map<string, number>();
       for (const i of items) qtyById.set(i.product_id, (qtyById.get(i.product_id) ?? 0) + i.quantity);
       const rows = await loadProducts([...qtyById.keys()]);
-      meProducts = toMEProducts(rows, qtyById).products;
+       const converted = toMEProducts(rows, qtyById);
+       if (converted.missing.length) {
+         return { quotes: [], error: `Dados de embalagem ausentes: ${[...new Set(converted.missing)].join(", ")}` };
+       }
+       meProducts = converted.products;
     }
 
     if (meProducts.length) {
@@ -156,18 +159,7 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
         options: { insurance_value: +data.insuranceValue.toFixed(2), receipt: false, own_hand: false },
       };
     } else {
-      const qty = data.itemsCount;
-      body = {
-        from: { postal_code: fromCep() },
-        to: { postal_code: data.toCep },
-        package: {
-          height: FALLBACK.height + Math.max(0, qty - 1) * 2,
-          width: FALLBACK.width,
-          length: FALLBACK.length,
-          weight: +(FALLBACK.weight * qty).toFixed(2),
-        },
-        options: { insurance_value: +data.insuranceValue.toFixed(2), receipt: false, own_hand: false },
-      };
+      return { quotes: [], error: "Produtos sem identificação válida para calcular peso e dimensões." };
     }
 
     try {
@@ -350,15 +342,20 @@ export const quoteOrderShipping = createServerFn({ method: "POST" })
         }
         const rows = await loadProducts([...qtyById.keys()]);
         const { products, missing } = toMEProducts(rows, qtyById);
+        if (missing.length) {
+          return {
+            quotes: [],
+            error: "Cadastre peso e dimensões de embalagem antes de cotar.",
+            missingData: [...new Set(missing)],
+          };
+        }
 
         const raw = await me<Array<Record<string, unknown>>>("/api/v2/me/shipment/calculate", {
           method: "POST",
           body: {
             from: { postal_code: fromCep() },
             to: { postal_code: order.addresses.cep.replace(/\D/g, "") },
-            products: products.length
-              ? products
-              : [{ id: "generico", name: "Pedido", quantity: 1, unitary_value: order.subtotal, ...FALLBACK }],
+            products,
             options: { insurance_value: +Number(order.subtotal).toFixed(2), receipt: false, own_hand: false },
           },
         });
@@ -416,7 +413,14 @@ export const buyShipment = createServerFn({ method: "POST" })
         if (i.product_id) qtyById.set(i.product_id, (qtyById.get(i.product_id) ?? 0) + i.quantity);
       }
       const rows = await loadProducts([...qtyById.keys()]);
-      const { products } = toMEProducts(rows, qtyById);
+       const { products, missing } = toMEProducts(rows, qtyById);
+       if (missing.length) {
+         return {
+           ok: false,
+           message: "Cadastre peso e dimensões de embalagem antes de comprar o frete.",
+           missingData: [...new Set(missing)],
+         };
+       }
       if (!products.length) return { ok: false, message: "Nenhum produto válido no pedido para gerar o envio." };
 
       const totalWeight = products.reduce((s, p) => s + p.weight * p.quantity, 0);
