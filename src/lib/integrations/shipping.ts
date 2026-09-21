@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-=======
 // Orquestrador de frete: Uber Direct (Local Joinville) + Melhor Envio (Nacional)
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 import { quoteMelhorEnvio } from "./melhorenvio.functions";
 import { quoteUberDirect } from "./uberdirect.functions";
-import type { PackageItemInput } from "./packaging";
 
 export const FREE_SHIPPING_THRESHOLD = 299;
 
@@ -21,7 +17,6 @@ export interface ShippingQuoteInput {
   cep: string;
   subtotal: number;
   itemsCount: number;
-  items?: PackageItemInput[];
   city?: string;
   state?: string;
   district?: string;
@@ -30,6 +25,10 @@ export interface ShippingQuoteInput {
   items?: Array<{ product_id: string; quantity: number }>;
 }
 
+export interface ShippingProvider {
+  name: string;
+  quote(input: ShippingQuoteInput): Promise<ShippingQuote[]>;
+}
 
 // Faixas de entrega rápida em Joinville via Moto/Uber (fallback quando a API falha)
 type JoinvilleZone = { price: number; label: string; districts: string[] };
@@ -89,11 +88,7 @@ function getUberRate(district?: string): number {
 
 export const StoreShippingProvider: ShippingProvider = {
   name: "js-store-orchestrator",
-<<<<<<< HEAD
-  async quote({ cep, subtotal, itemsCount, items, city, district }) {
-=======
   async quote({ cep, subtotal, itemsCount, city, state, district, street, number, items }) {
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
     const cleanCep = cep.replace(/\D/g, "");
     const isJoinville =
       (city && cleanText(city).includes("JOINVILLE")) ||
@@ -147,45 +142,6 @@ export const StoreShippingProvider: ShippingProvider = {
     let nationalAdded = false;
 
     try {
-<<<<<<< HEAD
-      // Chama o serverFn com a propriedade 'data' conforme o TanStack Start exige
-      const res = await quoteMelhorEnvio({
-        data: {
-          toCep: cleanCep,
-          insuranceValue: subtotal,
-          itemsCount,
-          items: items ?? [],
-        },
-      });
-
-      const meQuotes = res.quotes ?? [];
-
-      if (meQuotes && meQuotes.length > 0) {
-        meQuotes.forEach((q) => {
-          quotes.push({
-            code: q.code,
-            name: q.name,
-            price: q.price,
-            days: q.days,
-            description: q.carrier ? `Envio via ${q.carrier}` : undefined,
-            carrier: q.carrier || "Melhor Envio",
-          });
-        });
-      }
-    } catch (err) {
-      console.warn("Melhor Envio offline ou não configurado:", err);
-      // Fallback se o Melhor Envio falhar e não for Joinville
-      if (!isJoinville && quotes.length === 1) {
-        quotes.push({
-          code: "pac-fallback",
-          name: "Correios PAC (Estimativa)",
-          price: 28.5,
-          days: 6,
-          description: "Envio padrão econômico",
-          carrier: "Correios",
-        });
-      }
-=======
       const me = await quoteMelhorEnvio({
         data: {
           toCep: cleanCep,
@@ -209,8 +165,6 @@ export const StoreShippingProvider: ShippingProvider = {
     } catch (err) {
       console.warn("[frete] Melhor Envio offline ou não configurado:", err);
     }
-
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
     return quotes;
   },
 };
