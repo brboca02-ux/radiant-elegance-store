@@ -1,6 +1,6 @@
-// Orquestrador de frete: Uber (Local Joinville) + Melhor Envio (Nacional)
 import { quoteMelhorEnvio } from "./melhorenvio.functions";
 import { quoteUberDirect } from "./uberdirect.functions";
+import type { PackageItemInput } from "./packaging";
 
 export interface ShippingQuote {
   code: string;
@@ -15,15 +15,12 @@ export interface ShippingQuoteInput {
   cep: string;
   subtotal: number;
   itemsCount: number;
+  items?: PackageItemInput[];
   city?: string;
   state?: string;
   district?: string;
 }
 
-export interface ShippingProvider {
-  name: string;
-  quote(input: ShippingQuoteInput): Promise<ShippingQuote[]>;
-}
 
 // Faixas de entrega rápida em Joinville via Moto/Uber
 type JoinvilleZone = { price: number; label: string; districts: string[] };
@@ -83,7 +80,7 @@ function getUberRate(district?: string): number {
 
 export const StoreShippingProvider: ShippingProvider = {
   name: "js-store-orchestrator",
-  async quote({ cep, subtotal, itemsCount, city, district }) {
+  async quote({ cep, subtotal, itemsCount, items, city, district }) {
     const cleanCep = cep.replace(/\D/g, "");
     const isJoinville =
       (city && cleanText(city).includes("JOINVILLE")) ||
@@ -134,11 +131,17 @@ export const StoreShippingProvider: ShippingProvider = {
 
     // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (Sem frete grátis)
     try {
-      const meQuotes = await quoteMelhorEnvio({
-        cep: cleanCep,
-        subtotal,
-        itemsCount,
+      // Chama o serverFn com a propriedade 'data' conforme o TanStack Start exige
+      const res = await quoteMelhorEnvio({
+        data: {
+          toCep: cleanCep,
+          insuranceValue: subtotal,
+          itemsCount,
+          items: items ?? [],
+        },
       });
+
+      const meQuotes = res.quotes ?? [];
 
       if (meQuotes && meQuotes.length > 0) {
         meQuotes.forEach((q) => {
@@ -147,7 +150,7 @@ export const StoreShippingProvider: ShippingProvider = {
             name: q.name,
             price: q.price,
             days: q.days,
-            description: q.description,
+            description: q.carrier ? `Envio via ${q.carrier}` : undefined,
             carrier: q.carrier || "Melhor Envio",
           });
         });
@@ -165,8 +168,6 @@ export const StoreShippingProvider: ShippingProvider = {
           carrier: "Correios",
         });
       }
-    }
-
     return quotes;
   },
 };

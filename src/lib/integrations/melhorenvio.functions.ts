@@ -1,18 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { calculateConsolidatedPackage } from "./packaging";
 
-/**
- * Cotação de frete via Melhor Envio.
- * Requer os segredos (lidos dentro do handler):
- *  - MELHORENVIO_TOKEN     → token Bearer da API
- *  - MELHORENVIO_ENV       → "sandbox" | "production" (default: production)
- *  - MELHORENVIO_FROM_CEP  → CEP de origem (default: 89235188 — Joinville/SC)
- */
+const itemSchema = z.object({
+  quantity: z.number().int().min(1),
+  category: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  tags: z.array(z.string()).nullable().optional(),
+  weight: z.number().nullable().optional(),
+  height_cm: z.number().nullable().optional(),
+  width_cm: z.number().nullable().optional(),
+  length_cm: z.number().nullable().optional(),
+});
 
 const inputSchema = z.object({
   toCep: z.string().regex(/^\d{8}$/),
-  itemsCount: z.number().int().min(1).max(100),
   insuranceValue: z.number().min(0).max(100000),
+  itemsCount: z.number().int().min(1).max(100).optional(),
+  items: z.array(itemSchema).optional(),
 });
 
 export interface MelhorEnvioQuote {
@@ -37,16 +42,22 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
     const env = process.env["MELHORENVIO_ENV"] === "sandbox" ? "sandbox" : "production";
     const fromCep = (process.env["MELHORENVIO_FROM_CEP"] ?? "89235188").replace(/\D/g, "");
 
-    // Pacote padrão de vestuário: 0,4 kg e 30x25x5 cm por peça.
-    const qty = data.itemsCount;
+    // Prepara os itens recebidos para o cálculo automático determinístico
+    const rawItems = data.items && data.items.length > 0
+      ? data.items
+      : Array.from({ length: data.itemsCount ?? 1 }).map(() => ({ quantity: 1 }));
+
+    // Cálculo dinâmico das dimensões e peso
+    const pkg = calculateConsolidatedPackage(rawItems);
+
     const body = {
       from: { postal_code: fromCep },
       to: { postal_code: data.toCep },
       package: {
-        height: 5 + Math.max(0, qty - 1) * 2,
-        width: 25,
-        length: 30,
-        weight: +(0.4 * qty).toFixed(2),
+        height: pkg.height,
+        width: pkg.width,
+        length: pkg.length,
+        weight: pkg.weight,
       },
       options: {
         insurance_value: +data.insuranceValue.toFixed(2),
