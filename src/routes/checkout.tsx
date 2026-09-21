@@ -521,7 +521,7 @@ function CheckoutPage() {
             <Section icon={<Truck className="h-4 w-4" />} title="Frete">
               {onlyDigits(cep).length !== 8 ? (
                 <p className="text-sm text-muted-foreground">Informe o CEP para ver as opções de entrega.</p>
-              ) : quotesLoading || quotes.length === 0 ? (
+              ) : quotesLoading ? (
                 <div className="space-y-2" aria-live="polite" aria-busy="true">
                   <p className="text-xs text-muted-foreground flex items-center gap-2">
                     <Loader2 className="h-3 w-3 animate-spin" /> Calculando opções de entrega…
@@ -539,6 +539,10 @@ function CheckoutPage() {
                     </div>
                   ))}
                 </div>
+              ) : quotes.length === 0 ? (
+                <p className="rounded-md border border-border p-3 text-sm text-muted-foreground">
+                  Não foi possível calcular o frete para este CEP. Confira o endereço ou fale com a loja.
+                </p>
               ) : (
                 <div className="space-y-2">
                   {quotes.map((q) => (

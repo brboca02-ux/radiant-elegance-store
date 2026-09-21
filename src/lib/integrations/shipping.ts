@@ -166,18 +166,6 @@ export const StoreShippingProvider: ShippingProvider = {
       console.warn("[frete] Melhor Envio offline ou não configurado:", err);
     }
 
-    // Fallback: cliente de fora sem nenhuma opção de envio
-    if (!isJoinville && !nationalAdded) {
-      quotes.push({
-        code: "pac-fallback",
-        name: "Correios PAC (estimativa)",
-        price: freeNational ? 0 : 28.5,
-        days: 6,
-        description: freeNational ? "Frete grátis acima de R$ 299" : "Envio padrão econômico",
-        carrier: "Correios",
-      });
-    }
-
     return quotes;
   },
 };

@@ -164,6 +164,7 @@ function OrderDetailPage() {
   };
 
   const handleQuoteShipping = async () => {
+    if (!order) return;
     setShippingAction("quote");
     try {
       const result = await quoteOrderShipping({ data: { orderId: order.id } });
