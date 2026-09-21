@@ -127,16 +127,16 @@ function CheckoutPage() {
   );
   const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
   const shippingItems = useMemo(
-    () => items
-      .map((item) => ({
-        product_id: item.product.node.id.replace(/^mock:/, ""),
-        quantity: item.quantity,
-        weight: item.product.node.weight ?? 0,
-        height: item.product.node.heightCm ?? null,
-        width: item.product.node.widthCm ?? null,
-        length: item.product.node.lengthCm ?? null,
-      }))
-      .filter((item) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.product_id)),
+    () => items.map((item) => ({
+      product_id: item.product.node.id,
+      name: item.product.node.title,
+      quantity: item.quantity,
+      unitary_value: Number(item.price.amount),
+      weight: item.product.node.weight ?? null,
+      height: item.product.node.heightCm ?? null,
+      width: item.product.node.widthCm ?? null,
+      length: item.product.node.lengthCm ?? null,
+    })),
     [items],
   );
   const selectedQuote = quotes.find((q) => q.code === shippingCode);

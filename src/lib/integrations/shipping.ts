@@ -29,8 +29,10 @@ export interface ShippingQuoteInput {
   number?: string;
   items?: Array<{
     product_id: string;
+    name: string;
     quantity: number;
-    weight: number;
+    unitary_value: number;
+    weight: number | null;
     height: number | null;
     width: number | null;
     length: number | null;
