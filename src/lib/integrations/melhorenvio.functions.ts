@@ -1,19 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-<<<<<<< HEAD
-import { calculateConsolidatedPackage } from "./packaging";
-
-const itemSchema = z.object({
-  quantity: z.number().int().min(1),
-  category: z.string().nullable().optional(),
-  title: z.string().nullable().optional(),
-  tags: z.array(z.string()).nullable().optional(),
-  weight: z.number().nullable().optional(),
-  height_cm: z.number().nullable().optional(),
-  width_cm: z.number().nullable().optional(),
-  length_cm: z.number().nullable().optional(),
-});
-=======
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
@@ -25,7 +11,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  *  - MELHORENVIO_FROM_*       → dados do remetente (necessários só para comprar etiqueta)
  *  - MELHORENVIO_SUPPORT_EMAIL→ e-mail do User-Agent obrigatório
  */
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 
 const SUPPORT_EMAIL = () =>
   process.env["MELHORENVIO_SUPPORT_EMAIL"] ?? "contato@jesstorejoinville.com.br";
@@ -129,15 +114,11 @@ async function loadProducts(ids: string[]): Promise<ProductRow[]> {
 const quoteSchema = z.object({
   toCep: z.string().regex(/^\d{8}$/),
   insuranceValue: z.number().min(0).max(100000),
-<<<<<<< HEAD
   itemsCount: z.number().int().min(1).max(100).optional(),
-  items: z.array(itemSchema).optional(),
-=======
   items: z
     .array(z.object({ product_id: z.string().uuid(), quantity: z.number().int().min(1).max(50) }))
     .max(50)
     .optional(),
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 });
 
 export interface MelhorEnvioQuote {
@@ -156,31 +137,6 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
 
     let body: Record<string, unknown>;
 
-<<<<<<< HEAD
-    // Prepara os itens recebidos para o cálculo automático determinístico
-    const rawItems = data.items && data.items.length > 0
-      ? data.items
-      : Array.from({ length: data.itemsCount ?? 1 }).map(() => ({ quantity: 1 }));
-
-    // Cálculo dinâmico das dimensões e peso
-    const pkg = calculateConsolidatedPackage(rawItems);
-
-    const body = {
-      from: { postal_code: fromCep },
-      to: { postal_code: data.toCep },
-      package: {
-        height: pkg.height,
-        width: pkg.width,
-        length: pkg.length,
-        weight: pkg.weight,
-      },
-      options: {
-        insurance_value: +data.insuranceValue.toFixed(2),
-        receipt: false,
-        own_hand: false,
-      },
-    };
-=======
     // Preferimos os produtos reais do pedido (peso/dimensões/valor do banco).
     const items = data.items?.filter((i) => i.product_id) ?? [];
     let meProducts: MEProduct[] = [];
@@ -205,7 +161,6 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
     } else {
       return { quotes: [], error: "Produtos sem identificação válida para calcular peso e dimensões." };
     }
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 
     try {
       const raw = await me<Array<Record<string, unknown>>>("/api/v2/me/shipment/calculate", {

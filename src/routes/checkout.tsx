@@ -222,29 +222,11 @@ function CheckoutPage() {
     let cancelled = false;
     setQuotesLoading(true);
     (async () => {
-<<<<<<< HEAD
-      const q = await shipping.quote({ 
-        cep: c, 
-        subtotal, 
-        itemsCount, 
-        items: items.map((i) => ({
-        quantity: i.quantity,
-        category: (i.product as any)?.node?.productType ?? null,
-        title: (i.product as any)?.node?.title ?? null,
-        tags: (i.product as any)?.node?.tags ?? null,
-        weight: (i.product as any)?.node?.weight ?? null,
-        height_cm: (i.product as any)?.node?.height_cm ?? null,
-        width_cm: (i.product as any)?.node?.width_cm ?? null,
-        length_cm: (i.product as any)?.node?.length_cm ?? null,
-      })),
-        city, 
-=======
       const q = await shipping.quote({
         cep: c,
         subtotal,
         itemsCount,
         city,
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
         state: stateUf,
         district,
         street,
