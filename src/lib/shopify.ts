@@ -54,6 +54,10 @@ export interface ShopifyProduct {
     options: Array<{ name: string; values: string[] }>;
     /** Mapa pre-calculado cor → URLs de imagem (apenas em produtos do Supabase). */
     colorImages?: Record<string, string[]>;
+    weight?: number;
+    heightCm?: number | null;
+    widthCm?: number | null;
+    lengthCm?: number | null;
   };
 }
 

@@ -132,6 +132,10 @@ export function productToShopify(p: Product): ShopifyProduct {
       productType: p.category_id,
       tags: [p.category_id],
       totalInventory: p.stock,
+      weight: p.weight,
+      heightCm: p.height_cm,
+      widthCm: p.width_cm,
+      lengthCm: p.length_cm,
       priceRange: { minVariantPrice: { amount: price, currencyCode: "BRL" } },
       // altText de cada imagem = nome da cor correspondente (quando mapeável),
       // permitindo que a página de produto filtre por cor de forma confiável.

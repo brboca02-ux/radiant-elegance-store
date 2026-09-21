@@ -128,7 +128,14 @@ function CheckoutPage() {
   const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
   const shippingItems = useMemo(
     () => items
-      .map((item) => ({ product_id: item.product.node.id, quantity: item.quantity }))
+      .map((item) => ({
+        product_id: item.product.node.id.replace(/^mock:/, ""),
+        quantity: item.quantity,
+        weight: item.product.node.weight ?? 0,
+        height: item.product.node.heightCm ?? null,
+        width: item.product.node.widthCm ?? null,
+        length: item.product.node.lengthCm ?? null,
+      }))
       .filter((item) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.product_id)),
     [items],
   );
@@ -257,7 +264,7 @@ function CheckoutPage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [cep, city, district, stateUf, subtotal, itemsCount, shippingItems]); // eslint-disable-line
+  }, [cep, city, district, street, number, stateUf, subtotal, itemsCount, shippingItems]); // eslint-disable-line
 
   const onCepBlur = async () => {
     // fallback caso o efeito não tenha rodado (ex.: colar sem disparar change)

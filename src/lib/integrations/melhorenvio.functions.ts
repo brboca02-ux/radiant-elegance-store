@@ -15,13 +15,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const SUPPORT_EMAIL = () =>
   process.env["MELHORENVIO_SUPPORT_EMAIL"] ?? "contato@jesstorejoinville.com.br";
 
-const BASE = () =>
-  process.env["MELHORENVIO_ENV"] === "sandbox"
-    ? "https://sandbox.melhorenvio.com.br"
-    : "https://melhorenvio.com.br";
+const BASE = "https://melhorenvio.com.br";
 
 function fromCep(): string {
-  return (process.env["MELHORENVIO_FROM_CEP"] ?? "89235188").replace(/\D/g, "");
+  return "89235188";
 }
 
 class MEError extends Error {}
@@ -30,7 +27,7 @@ async function me<T>(path: string, init: { method: string; body?: unknown }): Pr
   const token = process.env["MELHORENVIO_TOKEN"];
   if (!token) throw new MEError("Melhor Envio não configurado (token ausente).");
 
-  const res = await fetch(`${BASE()}${path}`, {
+  const res = await fetch(`${BASE}${path}`, {
     method: init.method,
     headers: {
       "Content-Type": "application/json",
@@ -42,6 +39,7 @@ async function me<T>(path: string, init: { method: string; body?: unknown }): Pr
   });
 
   const text = await res.text();
+  console.info("[melhorenvio] resposta", { method: init.method, path, status: res.status });
   if (!res.ok) {
     console.error("[melhorenvio]", init.method, path, res.status, text.slice(0, 600));
     throw new MEError(`Melhor Envio respondeu ${res.status}: ${text.slice(0, 300)}`);
@@ -116,7 +114,14 @@ const quoteSchema = z.object({
   insuranceValue: z.number().min(0).max(100000),
   itemsCount: z.number().int().min(1).max(100).optional(),
   items: z
-    .array(z.object({ product_id: z.string().uuid(), quantity: z.number().int().min(1).max(50) }))
+    .array(z.object({
+      product_id: z.string().uuid(),
+      quantity: z.number().int().min(1).max(50),
+      weight: z.number().min(0),
+      height: z.number().positive().nullable(),
+      width: z.number().positive().nullable(),
+      length: z.number().positive().nullable(),
+    }))
     .max(50)
     .optional(),
 });
@@ -187,6 +192,12 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
         .filter((q) => q.price > 0)
         .sort((a, b) => a.price - b.price);
 
+      console.info("[melhorenvio] serviços retornados", quotes.map((quote) => ({
+        serviceId: quote.serviceId,
+        name: quote.name,
+        price: quote.price,
+        days: quote.days,
+      })));
       return { quotes };
     } catch (e) {
       console.error("[melhorenvio] falha na cotação:", e);
