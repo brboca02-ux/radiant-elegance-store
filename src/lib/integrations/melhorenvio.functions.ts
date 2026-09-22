@@ -1,19 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-<<<<<<< HEAD
-import { calculateConsolidatedPackage } from "./packaging";
-
-const itemSchema = z.object({
-  quantity: z.number().int().min(1),
-  category: z.string().nullable().optional(),
-  title: z.string().nullable().optional(),
-  tags: z.array(z.string()).nullable().optional(),
-  weight: z.number().nullable().optional(),
-  height_cm: z.number().nullable().optional(),
-  width_cm: z.number().nullable().optional(),
-  length_cm: z.number().nullable().optional(),
-});
-=======
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
@@ -25,18 +11,14 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  *  - MELHORENVIO_FROM_*       → dados do remetente (necessários só para comprar etiqueta)
  *  - MELHORENVIO_SUPPORT_EMAIL→ e-mail do User-Agent obrigatório
  */
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 
 const SUPPORT_EMAIL = () =>
   process.env["MELHORENVIO_SUPPORT_EMAIL"] ?? "contato@jesstorejoinville.com.br";
 
-const BASE = () =>
-  process.env["MELHORENVIO_ENV"] === "sandbox"
-    ? "https://sandbox.melhorenvio.com.br"
-    : "https://melhorenvio.com.br";
+const BASE = "https://melhorenvio.com.br";
 
 function fromCep(): string {
-  return (process.env["MELHORENVIO_FROM_CEP"] ?? "89235188").replace(/\D/g, "");
+  return "89235188";
 }
 
 class MEError extends Error {}
@@ -45,7 +27,7 @@ async function me<T>(path: string, init: { method: string; body?: unknown }): Pr
   const token = process.env["MELHORENVIO_TOKEN"];
   if (!token) throw new MEError("Melhor Envio não configurado (token ausente).");
 
-  const res = await fetch(`${BASE()}${path}`, {
+  const res = await fetch(`${BASE}${path}`, {
     method: init.method,
     headers: {
       "Content-Type": "application/json",
@@ -57,6 +39,7 @@ async function me<T>(path: string, init: { method: string; body?: unknown }): Pr
   });
 
   const text = await res.text();
+  console.info("[melhorenvio] resposta", { method: init.method, path, status: res.status });
   if (!res.ok) {
     console.error("[melhorenvio]", init.method, path, res.status, text.slice(0, 600));
     throw new MEError(`Melhor Envio respondeu ${res.status}: ${text.slice(0, 300)}`);
@@ -129,15 +112,20 @@ async function loadProducts(ids: string[]): Promise<ProductRow[]> {
 const quoteSchema = z.object({
   toCep: z.string().regex(/^\d{8}$/),
   insuranceValue: z.number().min(0).max(100000),
-<<<<<<< HEAD
   itemsCount: z.number().int().min(1).max(100).optional(),
-  items: z.array(itemSchema).optional(),
-=======
   items: z
-    .array(z.object({ product_id: z.string().uuid(), quantity: z.number().int().min(1).max(50) }))
+    .array(z.object({
+      product_id: z.string().min(1).max(255),
+      name: z.string().min(1).max(120),
+      quantity: z.number().int().min(1).max(50),
+      unitary_value: z.number().min(0),
+      weight: z.number().positive().nullable(),
+      height: z.number().positive().nullable(),
+      width: z.number().positive().nullable(),
+      length: z.number().positive().nullable(),
+    }))
     .max(50)
     .optional(),
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 });
 
 export interface MelhorEnvioQuote {
@@ -156,44 +144,28 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
 
     let body: Record<string, unknown>;
 
-<<<<<<< HEAD
-    // Prepara os itens recebidos para o cálculo automático determinístico
-    const rawItems = data.items && data.items.length > 0
-      ? data.items
-      : Array.from({ length: data.itemsCount ?? 1 }).map(() => ({ quantity: 1 }));
-
-    // Cálculo dinâmico das dimensões e peso
-    const pkg = calculateConsolidatedPackage(rawItems);
-
-    const body = {
-      from: { postal_code: fromCep },
-      to: { postal_code: data.toCep },
-      package: {
-        height: pkg.height,
-        width: pkg.width,
-        length: pkg.length,
-        weight: pkg.weight,
-      },
-      options: {
-        insurance_value: +data.insuranceValue.toFixed(2),
-        receipt: false,
-        own_hand: false,
-      },
-    };
-=======
-    // Preferimos os produtos reais do pedido (peso/dimensões/valor do banco).
-    const items = data.items?.filter((i) => i.product_id) ?? [];
-    let meProducts: MEProduct[] = [];
-    if (items.length) {
-      const qtyById = new Map<string, number>();
-      for (const i of items) qtyById.set(i.product_id, (qtyById.get(i.product_id) ?? 0) + i.quantity);
-      const rows = await loadProducts([...qtyById.keys()]);
-       const converted = toMEProducts(rows, qtyById);
-       if (converted.missing.length) {
-         return { quotes: [], error: `Dados de embalagem ausentes: ${[...new Set(converted.missing)].join(", ")}` };
-       }
-       meProducts = converted.products;
+    const items = data.items ?? [];
+    const missing = items.flatMap((item) => {
+      const fields: string[] = [];
+      if (!item.weight) fields.push(`${item.name}: peso`);
+      if (!item.height) fields.push(`${item.name}: altura`);
+      if (!item.width) fields.push(`${item.name}: largura`);
+      if (!item.length) fields.push(`${item.name}: comprimento`);
+      return fields;
+    });
+    if (missing.length) {
+      return { quotes: [], error: `Dados de embalagem ausentes: ${[...new Set(missing)].join(", ")}` };
     }
+    const meProducts: MEProduct[] = items.map((item) => ({
+      id: item.product_id,
+      name: item.name,
+      quantity: item.quantity,
+      unitary_value: +item.unitary_value.toFixed(2),
+      weight: Number(item.weight),
+      height: Number(item.height),
+      width: Number(item.width),
+      length: Number(item.length),
+    }));
 
     if (meProducts.length) {
       body = {
@@ -205,7 +177,6 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
     } else {
       return { quotes: [], error: "Produtos sem identificação válida para calcular peso e dimensões." };
     }
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 
     try {
       const raw = await me<Array<Record<string, unknown>>>("/api/v2/me/shipment/calculate", {
@@ -232,6 +203,12 @@ export const quoteMelhorEnvio = createServerFn({ method: "POST" })
         .filter((q) => q.price > 0)
         .sort((a, b) => a.price - b.price);
 
+      console.info("[melhorenvio] serviços retornados", quotes.map((quote) => ({
+        serviceId: quote.serviceId,
+        name: quote.name,
+        price: quote.price,
+        days: quote.days,
+      })));
       return { quotes };
     } catch (e) {
       console.error("[melhorenvio] falha na cotação:", e);
