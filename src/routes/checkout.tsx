@@ -175,10 +175,7 @@ function CheckoutPage() {
           JSON.stringify({ name, email, phone, cpf, cep, street, number, complement, district, city, stateUf }),
         );
       } catch {
-        // quota / privacidade: silencia
-      }
 
-      // Sync abandoned cart
       if (email || phone) {
         void upsertAbandonedCart({
           customer_name: name || null,
@@ -194,70 +191,80 @@ function CheckoutPage() {
     }, 400);
     return () => window.clearTimeout(t);
   }, [name, email, phone, cpf, cep, street, number, complement, district, city, stateUf, items, subtotal, shippingCost, discount, total]);
+          // cotação de frete
+      useEffect(() => {
+        const c = onlyDigits(cep);
 
-  // auto-preenche endereço assim que o CEP fica completo (8 dígitos)
-  useEffect(() => {
-    const c = onlyDigits(cep);
-    if (c.length !== 8) return;
-    let cancelled = false;
-    setCepLoading(true);
-    (async () => {
-      const data = await lookupCep(c);
-      if (cancelled) return;
-      setCepLoading(false);
-      if (!data) { toast.error("CEP não encontrado. Verifique e tente novamente."); return; }
-      setStreet((prev) => data.logradouro || prev);
-      setDistrict((prev) => data.bairro || prev);
-      setCity(data.localidade || "");
-      setStateUf(data.uf || "");
-      toast.success("Endereço encontrado — calculando frete…");
-    })();
-    return () => { cancelled = true; };
-  }, [cep]);
+        if (c.length !== 8) {
+          setQuotes([]);
+          setShippingCode("");
+          setQuotesLoading(false);
+          return;
+        }
 
-  // cotação de frete sempre que CEP/cidade/bairro/subtotal mudam
-  useEffect(() => {
-    const c = onlyDigits(cep);
-    if (c.length !== 8) { setQuotes([]); setShippingCode(""); setQuotesLoading(false); return; }
-    let cancelled = false;
-    setQuotesLoading(true);
-    (async () => {
-<<<<<<< HEAD
-      const q = await shipping.quote({ 
-        cep: c, 
-        subtotal, 
-        itemsCount, 
-        items: items.map((i) => ({
-        quantity: i.quantity,
-        category: (i.product as any)?.node?.productType ?? null,
-        title: (i.product as any)?.node?.title ?? null,
-        tags: (i.product as any)?.node?.tags ?? null,
-        weight: (i.product as any)?.node?.weight ?? null,
-        height_cm: (i.product as any)?.node?.height_cm ?? null,
-        width_cm: (i.product as any)?.node?.width_cm ?? null,
-        length_cm: (i.product as any)?.node?.length_cm ?? null,
-      })),
-        city, 
-=======
-      const q = await shipping.quote({
-        cep: c,
-        subtotal,
-        itemsCount,
+        let cancelled = false;
+        setQuotesLoading(true);
+
+        (async () => {
+          const q = await shipping.quote({
+            cep: c,
+            subtotal,
+            itemsCount,
+            city,
+            state: stateUf,
+            district,
+            street,
+            number,
+            items: items.map((i) => ({
+              quantity: i.quantity,
+              category: (i.product as any)?.node?.productType ?? null,
+              title: (i.product as any)?.node?.title ?? null,
+              tags: (i.product as any)?.node?.tags ?? null,
+              weight: (i.product as any)?.node?.weight ?? null,
+              height_cm: (i.product as any)?.node?.height_cm ?? null,
+              width_cm: (i.product as any)?.node?.width_cm ?? null,
+              length_cm: (i.product as any)?.node?.length_cm ?? null,
+            })),
+          });
+
+          if (cancelled) return;
+
+          setQuotesLoading(false);
+
+          const validQuotes: ShippingQuote[] = q.filter((quote: ShippingQuote) => {
+            const isPickup =
+              quote.code === "retirada_loja" ||
+              /retirada.*loja/i.test(quote.name);
+
+            if (!isPickup) return true;
+
+            return (
+              stateUf.trim().toUpperCase() === "SC" &&
+              city.trim().toLowerCase() === "joinville"
+            );
+          });
+
+          setQuotes(validQuotes);
+
+          if (!validQuotes.some((x: ShippingQuote) => x.code === shippingCode)) {
+            setShippingCode(validQuotes[0]?.code ?? "");
+          }
+        })();
+
+        return () => {
+          cancelled = true;
+        };
+      }, [
+        cep,
         city,
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
-        state: stateUf,
         district,
+        stateUf,
         street,
         number,
-        items: shippingItems,
-      });
-      if (cancelled) return;
-      setQuotesLoading(false);
-      setQuotes(q);
-      if (q.length && !q.find((x) => x.code === shippingCode)) setShippingCode(q[0].code);
-    })();
-    return () => { cancelled = true; };
-  }, [cep, city, district, stateUf, subtotal, itemsCount, shippingItems]); // eslint-disable-line
+        subtotal,
+        itemsCount,
+        items,
+      ]);
 
   const onCepBlur = async () => {
     // fallback caso o efeito não tenha rodado (ex.: colar sem disparar change)

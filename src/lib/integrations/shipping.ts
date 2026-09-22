@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 // Orquestrador de frete: Uber Direct (Local Joinville) + Melhor Envio (Nacional)
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
 import { quoteMelhorEnvio } from "./melhorenvio.functions";
 import { quoteUberDirect } from "./uberdirect.functions";
 import type { PackageItemInput } from "./packaging";
@@ -27,7 +24,6 @@ export interface ShippingQuoteInput {
   district?: string;
   street?: string;
   number?: string;
-  items?: Array<{ product_id: string; quantity: number }>;
 }
 
 
@@ -87,13 +83,9 @@ function getUberRate(district?: string): number {
   return 18;
 }
 
-export const StoreShippingProvider: ShippingProvider = {
+export const StoreShippingProvider = {
   name: "js-store-orchestrator",
-<<<<<<< HEAD
-  async quote({ cep, subtotal, itemsCount, items, city, district }) {
-=======
-  async quote({ cep, subtotal, itemsCount, city, state, district, street, number, items }) {
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
+  async quote({ cep, subtotal, itemsCount, city, state, district, street, number, items }: ShippingQuoteInput)  {
     const cleanCep = cep.replace(/\D/g, "");
     const isJoinville =
       (city && cleanText(city).includes("JOINVILLE")) ||
@@ -147,7 +139,6 @@ export const StoreShippingProvider: ShippingProvider = {
     let nationalAdded = false;
 
     try {
-<<<<<<< HEAD
       // Chama o serverFn com a propriedade 'data' conforme o TanStack Start exige
       const res = await quoteMelhorEnvio({
         data: {
@@ -185,12 +176,17 @@ export const StoreShippingProvider: ShippingProvider = {
           carrier: "Correios",
         });
       }
-=======
       const me = await quoteMelhorEnvio({
         data: {
           toCep: cleanCep,
           itemsCount: Math.max(1, itemsCount),
           insuranceValue: Math.max(0, subtotal),
+          items,
+        },
+      });
+          try {
+      const me = await quoteMelhorEnvio({
+        data: {
           items,
         },
       });
@@ -202,15 +198,13 @@ export const StoreShippingProvider: ShippingProvider = {
           name: q.name,
           price: freeNational ? 0 : q.price,
           days: q.days,
-          description: freeNational ? "Frete grátis acima de R$ 299" : undefined,
+          description: freeNational ? "Frete conforme local de entrega" : undefined,
           carrier: q.carrier || "Melhor Envio",
-        });
-      }
-    } catch (err) {
-      console.warn("[frete] Melhor Envio offline ou não configurado:", err);
+      });
     }
-
->>>>>>> 9080b192ac2f9e0b728b2d0d0488881f716a9ca9
+  } catch (err) { // <- A linha 199 precisa estar colada no fechamento do try!
+    console.warn("[frete] Melhor Envio offline ou não configurado:", err);
+  }  
     return quotes;
   },
 };
