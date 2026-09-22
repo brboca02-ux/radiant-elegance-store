@@ -125,12 +125,6 @@ function CheckoutPage() {
     [items],
   );
   const itemsCount = items.reduce((s, i) => s + i.quantity, 0);
-  const shippingItems = useMemo(
-    () => items
-      .map((item) => ({ product_id: item.product.node.id, quantity: item.quantity }))
-      .filter((item) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.product_id)),
-    [items],
-  );
   const selectedQuote = quotes.find((q) => q.code === shippingCode);
   const shippingCost = selectedQuote?.price ?? 0;
   const discount = appliedCoupon ? calculateDiscount(subtotal, appliedCoupon) : 0;
@@ -175,7 +169,8 @@ function CheckoutPage() {
           JSON.stringify({ name, email, phone, cpf, cep, street, number, complement, district, city, stateUf }),
         );
       } catch {
-
+        // ignora indisponibilidade do armazenamento local
+      }
       if (email || phone) {
         void upsertAbandonedCart({
           customer_name: name || null,
@@ -215,15 +210,15 @@ function CheckoutPage() {
             district,
             street,
             number,
-            items: items.map((i) => ({
-              quantity: i.quantity,
-              category: (i.product as any)?.node?.productType ?? null,
-              title: (i.product as any)?.node?.title ?? null,
-              tags: (i.product as any)?.node?.tags ?? null,
-              weight: (i.product as any)?.node?.weight ?? null,
-              height_cm: (i.product as any)?.node?.height_cm ?? null,
-              width_cm: (i.product as any)?.node?.width_cm ?? null,
-              length_cm: (i.product as any)?.node?.length_cm ?? null,
+            items: items.map((item) => ({
+              product_id: item.product.node.id,
+              name: item.product.node.title,
+              quantity: item.quantity,
+              unitary_value: Number(item.price.amount),
+              weight: item.product.node.weight ?? null,
+              height: item.product.node.heightCm ?? null,
+              width: item.product.node.widthCm ?? null,
+              length: item.product.node.lengthCm ?? null,
             })),
           });
 

@@ -1,7 +1,6 @@
 // Orquestrador de frete: Uber Direct (Local Joinville) + Melhor Envio (Nacional)
 import { quoteMelhorEnvio } from "./melhorenvio.functions";
 import { quoteUberDirect } from "./uberdirect.functions";
-import type { PackageItemInput } from "./packaging";
 
 export const FREE_SHIPPING_THRESHOLD = 299;
 
@@ -18,7 +17,16 @@ export interface ShippingQuoteInput {
   cep: string;
   subtotal: number;
   itemsCount: number;
-  items?: PackageItemInput[];
+  items?: Array<{
+    product_id: string;
+    name: string;
+    quantity: number;
+    unitary_value: number;
+    weight: number | null;
+    height: number | null;
+    width: number | null;
+    length: number | null;
+  }>;
   city?: string;
   state?: string;
   district?: string;
@@ -136,10 +144,7 @@ export const StoreShippingProvider = {
 
     // 3. COTAÇÃO NACIONAL VIA MELHOR ENVIO (frete grátis acima do limite)
     const freeNational = subtotal >= FREE_SHIPPING_THRESHOLD;
-    let nationalAdded = false;
-
     try {
-      // Chama o serverFn com a propriedade 'data' conforme o TanStack Start exige
       const res = await quoteMelhorEnvio({
         data: {
           toCep: cleanCep,
@@ -149,50 +154,7 @@ export const StoreShippingProvider = {
         },
       });
 
-      const meQuotes = res.quotes ?? [];
-
-      if (meQuotes && meQuotes.length > 0) {
-        meQuotes.forEach((q) => {
-          quotes.push({
-            code: q.code,
-            name: q.name,
-            price: q.price,
-            days: q.days,
-            description: q.carrier ? `Envio via ${q.carrier}` : undefined,
-            carrier: q.carrier || "Melhor Envio",
-          });
-        });
-      }
-    } catch (err) {
-      console.warn("Melhor Envio offline ou não configurado:", err);
-      // Fallback se o Melhor Envio falhar e não for Joinville
-      if (!isJoinville && quotes.length === 1) {
-        quotes.push({
-          code: "pac-fallback",
-          name: "Correios PAC (Estimativa)",
-          price: 28.5,
-          days: 6,
-          description: "Envio padrão econômico",
-          carrier: "Correios",
-        });
-      }
-      const me = await quoteMelhorEnvio({
-        data: {
-          toCep: cleanCep,
-          itemsCount: Math.max(1, itemsCount),
-          insuranceValue: Math.max(0, subtotal),
-          items,
-        },
-      });
-          try {
-      const me = await quoteMelhorEnvio({
-        data: {
-          items,
-        },
-      });
-
-      for (const q of me?.quotes ?? []) {
-        nationalAdded = true;
+      for (const q of res.quotes ?? []) {
         quotes.push({
           code: q.code,
           name: q.name,
@@ -200,11 +162,12 @@ export const StoreShippingProvider = {
           days: q.days,
           description: freeNational ? "Frete conforme local de entrega" : undefined,
           carrier: q.carrier || "Melhor Envio",
-      });
+        });
+      }
+    } catch (err) {
+      console.warn("[frete] Melhor Envio offline ou não configurado:", err);
     }
-  } catch (err) { // <- A linha 199 precisa estar colada no fechamento do try!
-    console.warn("[frete] Melhor Envio offline ou não configurado:", err);
-  }  
+
     return quotes;
   },
 };
