@@ -343,6 +343,16 @@ export type Database = {
           total: number
           tracking_code: string | null
           tracking_updated_at: string | null
+          uber_delivery_fee: number | null
+          uber_delivery_id: string | null
+          uber_delivery_status: string | null
+          uber_dropoff_eta: string | null
+          uber_failure_reason: string | null
+          uber_pickup_eta: string | null
+          uber_quote_expires_at: string | null
+          uber_quote_id: string | null
+          uber_tracking_url: string | null
+          uber_updated_at: string | null
           updated_at: string
         }
         Insert: {
@@ -375,6 +385,16 @@ export type Database = {
           total?: number
           tracking_code?: string | null
           tracking_updated_at?: string | null
+          uber_delivery_fee?: number | null
+          uber_delivery_id?: string | null
+          uber_delivery_status?: string | null
+          uber_dropoff_eta?: string | null
+          uber_failure_reason?: string | null
+          uber_pickup_eta?: string | null
+          uber_quote_expires_at?: string | null
+          uber_quote_id?: string | null
+          uber_tracking_url?: string | null
+          uber_updated_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -407,6 +427,16 @@ export type Database = {
           total?: number
           tracking_code?: string | null
           tracking_updated_at?: string | null
+          uber_delivery_fee?: number | null
+          uber_delivery_id?: string | null
+          uber_delivery_status?: string | null
+          uber_dropoff_eta?: string | null
+          uber_failure_reason?: string | null
+          uber_pickup_eta?: string | null
+          uber_quote_expires_at?: string | null
+          uber_quote_id?: string | null
+          uber_tracking_url?: string | null
+          uber_updated_at?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -695,6 +725,18 @@ export type Database = {
           p_payment_id: string
           p_payment_url?: string
           p_provider: string
+        }
+        Returns: undefined
+      }
+      attach_order_uber_quote: {
+        Args: {
+          p_dropoff_eta: string
+          p_email: string
+          p_fee: number
+          p_order_id: string
+          p_order_number: string
+          p_quote_expires_at: string
+          p_quote_id: string
         }
         Returns: undefined
       }
