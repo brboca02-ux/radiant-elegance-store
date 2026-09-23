@@ -341,6 +341,14 @@ function CheckoutPage() {
         discount,
         total,
         shipping_method: selectedQuote?.name || v.shippingCode,
+        ...(selectedQuote?.code === "uber-direct" && selectedQuote.quoteId ? {
+          uber_quote: {
+            id: selectedQuote.quoteId,
+            expires_at: selectedQuote.expiresAt,
+            fee: selectedQuote.price,
+            dropoff_eta: selectedQuote.dropoffEta,
+          },
+        } : {}),
         payment_method: "infinitpay",
         coupon_code: appliedCoupon?.code,
       });

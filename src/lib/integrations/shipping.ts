@@ -11,6 +11,9 @@ export interface ShippingQuote {
   days: number;
   description?: string;
   carrier?: string;
+  quoteId?: string;
+  expiresAt?: string;
+  dropoffEta?: string;
 }
 
 export interface ShippingQuoteInput {
@@ -122,7 +125,7 @@ export const StoreShippingProvider = {
         const uber = await quoteUberDirect({
           data: { cep: cleanCep, city: city || "Joinville", state: state || "SC", district, street, number, subtotal },
         });
-        if (uber && !uber.error && uber.fee > 0) {
+        if (uber && !uber.error && uber.fee > 0 && uber.quoteId) {
           uberPrice = uber.fee;
           eta = uber.estimatedMinutes;
         }
@@ -139,6 +142,11 @@ export const StoreShippingProvider = {
           ? `Entrega hoje via motorista parceiro Uber (~${eta} min)`
           : "Entrega expressa no mesmo dia via motorista parceiro Uber",
         carrier: "Uber Direct",
+        ...(uber && !uber.error ? {
+          quoteId: uber.quoteId,
+          expiresAt: uber.expiresAt,
+          dropoffEta: uber.dropoffEta,
+        } : {}),
       });
     }
 
