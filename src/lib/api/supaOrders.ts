@@ -35,6 +35,12 @@ export interface NewOrderInput {
   notes?: string;
   /** Código do cupom: validado e contabilizado no servidor. */
   coupon_code?: string;
+  uber_quote?: {
+    id: string;
+    expires_at?: string;
+    fee: number;
+    dropoff_eta?: string;
+  };
 }
 
 export interface CreatedOrder {
@@ -99,6 +105,18 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
     throw new Error(msg || "Falha ao criar pedido.");
   }
   const result = data as { id: string; order_number: string; total: number };
+  if (input.uber_quote) {
+    const { error: quoteError } = await supabase.rpc("attach_order_uber_quote", {
+      p_order_id: result.id,
+      p_order_number: result.order_number,
+      p_email: input.customer.email.toLowerCase(),
+      p_quote_id: input.uber_quote.id,
+      p_quote_expires_at: input.uber_quote.expires_at ?? null,
+      p_fee: input.uber_quote.fee,
+      p_dropoff_eta: input.uber_quote.dropoff_eta ?? null,
+    });
+    if (quoteError) throw new Error("Pedido criado, mas não foi possível vincular a cotação Uber.");
+  }
   return {
     id: result.id,
     order_number: result.order_number,

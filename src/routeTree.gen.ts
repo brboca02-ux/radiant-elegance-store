@@ -36,6 +36,7 @@ import { Route as ProdutosRapidoRouteImport } from './routes/produtos.rapido'
 import { Route as ApiPublicInfinitpayWebhookRouteImport } from './routes/api/public/infinitpay-webhook'
 import { Route as ApiPublicPaymentWebhookRouteImport } from './routes/api/public/payment-webhook'
 import { Route as ApiPublicReconcilePaymentsRouteImport } from './routes/api/public/reconcile-payments'
+import { Route as ApiPublicUberDirectWebhookRouteImport } from './routes/api/public/uber-direct-webhook'
 import { Route as CategoriasIdEditarRouteImport } from './routes/categorias.$id.editar'
 import { Route as PedidoRetiradaNumeroRouteImport } from './routes/pedido.retirada.$numero'
 import { Route as PedidoSucessoNumeroRouteImport } from './routes/pedido.sucesso.$numero'
@@ -180,6 +181,12 @@ const ApiPublicReconcilePaymentsRoute =
     path: '/api/public/reconcile-payments',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicUberDirectWebhookRoute =
+  ApiPublicUberDirectWebhookRouteImport.update({
+    id: '/api/public/uber-direct-webhook',
+    path: '/api/public/uber-direct-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CategoriasIdEditarRoute = CategoriasIdEditarRouteImport.update({
   id: '/categorias/$id/editar',
   path: '/categorias/$id/editar',
@@ -238,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/api/public/infinitpay-webhook': typeof ApiPublicInfinitpayWebhookRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
+  '/api/public/uber-direct-webhook': typeof ApiPublicUberDirectWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
@@ -272,6 +280,7 @@ export interface FileRoutesByTo {
   '/api/public/infinitpay-webhook': typeof ApiPublicInfinitpayWebhookRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
+  '/api/public/uber-direct-webhook': typeof ApiPublicUberDirectWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
@@ -308,6 +317,7 @@ export interface FileRoutesById {
   '/api/public/infinitpay-webhook': typeof ApiPublicInfinitpayWebhookRoute
   '/api/public/payment-webhook': typeof ApiPublicPaymentWebhookRoute
   '/api/public/reconcile-payments': typeof ApiPublicReconcilePaymentsRoute
+  '/api/public/uber-direct-webhook': typeof ApiPublicUberDirectWebhookRoute
   '/categorias/$id/editar': typeof CategoriasIdEditarRoute
   '/pedido/retirada/$numero': typeof PedidoRetiradaNumeroRoute
   '/pedido/sucesso/$numero': typeof PedidoSucessoNumeroRoute
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/api/public/infinitpay-webhook'
     | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
+    | '/api/public/uber-direct-webhook'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/api/public/infinitpay-webhook'
     | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
+    | '/api/public/uber-direct-webhook'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
@@ -413,6 +425,7 @@ export interface FileRouteTypes {
     | '/api/public/infinitpay-webhook'
     | '/api/public/payment-webhook'
     | '/api/public/reconcile-payments'
+    | '/api/public/uber-direct-webhook'
     | '/categorias/$id/editar'
     | '/pedido/retirada/$numero'
     | '/pedido/sucesso/$numero'
@@ -448,6 +461,7 @@ export interface RootRouteChildren {
   ApiPublicInfinitpayWebhookRoute: typeof ApiPublicInfinitpayWebhookRoute
   ApiPublicPaymentWebhookRoute: typeof ApiPublicPaymentWebhookRoute
   ApiPublicReconcilePaymentsRoute: typeof ApiPublicReconcilePaymentsRoute
+  ApiPublicUberDirectWebhookRoute: typeof ApiPublicUberDirectWebhookRoute
   CategoriasIdEditarRoute: typeof CategoriasIdEditarRoute
   PedidoRetiradaNumeroRoute: typeof PedidoRetiradaNumeroRoute
   PedidoSucessoNumeroRoute: typeof PedidoSucessoNumeroRoute
@@ -647,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicReconcilePaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/uber-direct-webhook': {
+      id: '/api/public/uber-direct-webhook'
+      path: '/api/public/uber-direct-webhook'
+      fullPath: '/api/public/uber-direct-webhook'
+      preLoaderRoute: typeof ApiPublicUberDirectWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/categorias/$id/editar': {
       id: '/categorias/$id/editar'
       path: '/categorias/$id/editar'
@@ -730,6 +751,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicInfinitpayWebhookRoute: ApiPublicInfinitpayWebhookRoute,
   ApiPublicPaymentWebhookRoute: ApiPublicPaymentWebhookRoute,
   ApiPublicReconcilePaymentsRoute: ApiPublicReconcilePaymentsRoute,
+  ApiPublicUberDirectWebhookRoute: ApiPublicUberDirectWebhookRoute,
   CategoriasIdEditarRoute: CategoriasIdEditarRoute,
   PedidoRetiradaNumeroRoute: PedidoRetiradaNumeroRoute,
   PedidoSucessoNumeroRoute: PedidoSucessoNumeroRoute,

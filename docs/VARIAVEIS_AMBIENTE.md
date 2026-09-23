@@ -89,6 +89,11 @@ Todas as variáveis abaixo devem ser configuradas no painel da **Lovable Cloud**
 | `UBER_CLIENT_SECRET` | Mesma tela ⚠️ secreta |
 | `UBER_CUSTOMER_ID` | Painel Uber Direct → Customer ID |
 | `UBER_PICKUP_ADDRESS` | Endereço completo da loja: rua, nº, bairro, Joinville/SC, CEP |
+| `UBER_PICKUP_NAME` | Nome do responsável pela retirada |
+| `UBER_PICKUP_PHONE` | Telefone do remetente com DDD |
+| `UBER_PICKUP_INSTRUCTIONS` | Instruções para o motorista na coleta |
+| `UBER_WEBHOOK_SECRET` | Segredo de assinatura configurado no webhook da Uber |
 
-Sem estas variáveis o checkout continua funcionando: mostra retirada na loja,
-a tabela de faixas de Joinville e uma estimativa de PAC.
+Webhook de produção: `https://www.jesstorejoinville.com.br/api/public/uber-direct-webhook`.
+
+Sem estas variáveis o checkout continua funcionando com retirada na loja e a tabela local de Joinville. Fora da cidade, as opções continuam vindo do Melhor Envio.
