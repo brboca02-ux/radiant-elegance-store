@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790165694296,
+      "tag": "0000_add_uber_direct_delivery_fields",
+      "breakpoints": true
+    }
+  ]
+}
