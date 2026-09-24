@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
+import type { Database } from "@/integrations/supabase/types";
 
 const webhookSchema = z.object({
   event_id: z.string().max(200).optional(),
@@ -68,7 +69,7 @@ export const Route = createFileRoute("/api/public/uber-direct-webhook")({
           : ["pickup_complete", "en_route_to_dropoff", "dropoff", "arrived_at_dropoff"].includes(status)
             ? "em_transito"
             : undefined;
-        const patch: Record<string, unknown> = {
+        const patch: Database["public"]["Tables"]["orders"]["Update"] = {
           uber_delivery_status: status,
           uber_updated_at: now,
           ...(typeof trackingUrl === "string" ? { uber_tracking_url: trackingUrl } : {}),

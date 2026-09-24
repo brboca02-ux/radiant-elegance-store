@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const UBER_API = "https://api.uber.com/v1";
 const UBER_AUTH = "https://auth.uber.com/oauth/v2/token";
@@ -205,7 +206,9 @@ async function loadOrder(orderId: string): Promise<OrderRow> {
   return data as unknown as OrderRow;
 }
 
-async function patchOrder(orderId: string, values: Record<string, unknown>) {
+type OrderUpdate = Database["public"]["Tables"]["orders"]["Update"];
+
+async function patchOrder(orderId: string, values: OrderUpdate) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { error } = await supabaseAdmin.from("orders").update(values).eq("id", orderId);
   if (error) throw new Error("Não foi possível atualizar os dados da entrega.");

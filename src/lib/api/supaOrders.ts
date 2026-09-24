@@ -111,9 +111,9 @@ export async function createOrder(input: NewOrderInput): Promise<CreatedOrder> {
       p_order_number: result.order_number,
       p_email: input.customer.email.toLowerCase(),
       p_quote_id: input.uber_quote.id,
-      p_quote_expires_at: input.uber_quote.expires_at ?? null,
+      p_quote_expires_at: input.uber_quote.expires_at ?? "",
       p_fee: input.uber_quote.fee,
-      p_dropoff_eta: input.uber_quote.dropoff_eta ?? null,
+      p_dropoff_eta: input.uber_quote.dropoff_eta ?? "",
     });
     if (quoteError) throw new Error("Pedido criado, mas não foi possível vincular a cotação Uber.");
   }
