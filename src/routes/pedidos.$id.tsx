@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, Printer, CheckCircle2, XCircle, Mail, MapPin, User, Package,
@@ -20,6 +21,14 @@ import {
   buyShipment, cancelShipment, generateLabel, getShipmentState, quoteOrderShipping,
   refreshTracking, type MelhorEnvioQuote, type ShipmentState,
 } from "@/lib/integrations/melhorenvio.functions";
+import {
+  cancelUberDelivery,
+  createUberDelivery,
+  getUberDeliveryState,
+  refreshUberDelivery,
+  refreshUberQuote,
+  type UberDeliveryState,
+} from "@/lib/integrations/uberdirect.functions";
 
 export const Route = createFileRoute("/pedidos/$id")({
   head: () => ({
@@ -45,6 +54,13 @@ function OrderDetailPage() {
   const [selectedService, setSelectedService] = useState<number | null>(null);
   const [shippingAction, setShippingAction] = useState<string | null>(null);
   const [shippingMissing, setShippingMissing] = useState<string[]>([]);
+  const [uberState, setUberState] = useState<UberDeliveryState | null>(null);
+  const [uberAction, setUberAction] = useState<string | null>(null);
+  const getUberStateFn = useServerFn(getUberDeliveryState);
+  const refreshUberQuoteFn = useServerFn(refreshUberQuote);
+  const createUberDeliveryFn = useServerFn(createUberDelivery);
+  const refreshUberDeliveryFn = useServerFn(refreshUberDelivery);
+  const cancelUberDeliveryFn = useServerFn(cancelUberDelivery);
 
   // Carrega fulfillment atual do banco (o store local não guarda essa coluna).
   useEffect(() => {
@@ -64,6 +80,15 @@ function OrderDetailPage() {
       .catch(() => { /* painel continua disponível mesmo se o frete estiver indisponível */ });
     return () => { cancelled = true; };
   }, [order?.id]);
+
+  useEffect(() => {
+    if (!order?.id) return;
+    let cancelled = false;
+    getUberStateFn({ data: { orderId: order.id } })
+      .then((state) => { if (!cancelled) setUberState(state); })
+      .catch(() => { /* painel continua disponível enquanto a Uber estiver indisponível */ });
+    return () => { cancelled = true; };
+  }, [getUberStateFn, order?.id]);
 
   const paid = order?.payment_status === "pago";
 
@@ -178,6 +203,24 @@ function OrderDetailPage() {
       toast.error("Falha ao cotar frete", { description: error instanceof Error ? error.message : String(error) });
     } finally {
       setShippingAction(null);
+    }
+  };
+
+  const runUberAction = async (
+    name: string,
+    action: () => Promise<UberDeliveryState>,
+  ) => {
+    setUberAction(name);
+    try {
+      const result = await action();
+      setUberState(result);
+      if (result.ok) toast.success(result.message ?? "Operação concluída.");
+      else toast.error(result.message ?? "Não foi possível concluir a operação.");
+      void hydrate();
+    } catch (error) {
+      toast.error("Falha na Uber Direct", { description: error instanceof Error ? error.message : String(error) });
+    } finally {
+      setUberAction(null);
     }
   };
 
@@ -492,6 +535,89 @@ function OrderDetailPage() {
                       {shippingAction === "cancel" && <Loader2 className="h-4 w-4 animate-spin" />}
                       Cancelar envio
                     </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            <Card title="Uber Direct" icon={<Truck className="h-4 w-4" />}>
+              <div className="space-y-3 text-xs">
+                <div className="space-y-1 rounded-md border border-border bg-muted/40 p-3">
+                  <p><strong>Status:</strong> {uberState?.status || "Sem entrega solicitada"}</p>
+                  <p><strong>Taxa:</strong> {uberState?.fee != null ? fmtBRL(uberState.fee) : "—"}</p>
+                  <p><strong>Previsão de coleta:</strong> {uberState?.pickupEta ? fmtDate(uberState.pickupEta) : "—"}</p>
+                  <p><strong>Previsão de entrega:</strong> {uberState?.dropoffEta ? fmtDate(uberState.dropoffEta) : "—"}</p>
+                  {uberState?.failureReason && <p className="text-destructive"><strong>Motivo:</strong> {uberState.failureReason}</p>}
+                </div>
+
+                {(uberState?.missingData?.length ?? 0) > 0 && (
+                  <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-destructive">
+                    <p className="font-medium">Dados obrigatórios pendentes:</p>
+                    <ul className="mt-1 list-disc pl-4">
+                      {uberState?.missingData?.map((item) => <li key={item}>{item}</li>)}
+                    </ul>
+                  </div>
+                )}
+
+                {!uberState?.deliveryId ? (
+                  <div className="space-y-2">
+                    <Button
+                      className="w-full"
+                      variant="outline"
+                      size="sm"
+                      disabled={uberAction !== null}
+                      onClick={() => void runUberAction("quote", () => refreshUberQuoteFn({ data: { orderId: order.id } }))}
+                    >
+                      {uberAction === "quote" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                      Atualizar cotação Uber
+                    </Button>
+                    <Button
+                      className="w-full"
+                      size="sm"
+                      disabled={!paid || !uberState?.quoteId || uberAction !== null}
+                      onClick={() => {
+                        if (!confirm("Solicitar um motorista pela Uber Direct? Esta ação pode gerar cobrança real.")) return;
+                        void runUberAction("create", () => createUberDeliveryFn({ data: { orderId: order.id } }));
+                      }}
+                    >
+                      {uberAction === "create" && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Solicitar motorista
+                    </Button>
+                    {!paid && <p className="text-muted-foreground">Confirme o pagamento para solicitar o motorista.</p>}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={uberAction !== null}
+                      onClick={() => void runUberAction("refresh", () => refreshUberDeliveryFn({ data: { orderId: order.id } }))}
+                    >
+                      {uberAction === "refresh" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                      Atualizar
+                    </Button>
+                    {uberState.trackingUrl && (
+                      <Button asChild size="sm">
+                        <a href={uberState.trackingUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4" /> Rastrear
+                        </a>
+                      </Button>
+                    )}
+                    {uberState.status !== "canceled" && uberState.status !== "delivered" && uberState.status !== "completed" && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="col-span-2"
+                        disabled={uberAction !== null}
+                        onClick={() => {
+                          if (!confirm("Cancelar esta entrega na Uber Direct? O pagamento do pedido não será alterado.")) return;
+                          void runUberAction("cancel", () => cancelUberDeliveryFn({ data: { orderId: order.id } }));
+                        }}
+                      >
+                        {uberAction === "cancel" && <Loader2 className="h-4 w-4 animate-spin" />}
+                        Cancelar entrega
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>

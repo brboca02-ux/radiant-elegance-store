@@ -120,14 +120,23 @@ export const StoreShippingProvider = {
     if (isJoinville) {
       let uberPrice = getUberRate(district); // fallback por faixa de bairro
       let eta: number | undefined;
+      let uberQuote: Awaited<ReturnType<typeof quoteUberDirect>> | null = null;
 
       try {
-        const uber = await quoteUberDirect({
-          data: { cep: cleanCep, city: city || "Joinville", state: state || "SC", district, street, number, subtotal },
+        uberQuote = await quoteUberDirect({
+          data: {
+            cep: cleanCep,
+            city: city || "Joinville",
+            state: state || "SC",
+            district: district || "Não informado",
+            street: street || "Não informado",
+            number: number || "S/N",
+            subtotal,
+          },
         });
-        if (uber && !uber.error && uber.fee > 0 && uber.quoteId) {
-          uberPrice = uber.fee;
-          eta = uber.estimatedMinutes;
+        if (!uberQuote.error && uberQuote.fee > 0 && uberQuote.quoteId) {
+          uberPrice = uberQuote.fee;
+          eta = uberQuote.estimatedMinutes;
         }
       } catch (e) {
         console.warn("[frete] Uber Direct indisponível, usando tabela de faixas:", e);
@@ -142,10 +151,10 @@ export const StoreShippingProvider = {
           ? `Entrega hoje via motorista parceiro Uber (~${eta} min)`
           : "Entrega expressa no mesmo dia via motorista parceiro Uber",
         carrier: "Uber Direct",
-        ...(uber && !uber.error ? {
-          quoteId: uber.quoteId,
-          expiresAt: uber.expiresAt,
-          dropoffEta: uber.dropoffEta,
+        ...(uberQuote && !uberQuote.error && uberQuote.quoteId ? {
+          quoteId: uberQuote.quoteId,
+          expiresAt: uberQuote.expiresAt,
+          dropoffEta: uberQuote.dropoffEta,
         } : {}),
       });
     }
